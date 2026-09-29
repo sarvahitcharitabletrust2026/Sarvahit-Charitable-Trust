@@ -349,7 +349,7 @@
   <div class="topbar">
     <div class="topbar-inner">
       <strong class="admin-brand">
-        <img class="admin-logo" src="https://drive.google.com/thumbnail?id=1jYBdoDbqSILVKEYxOeKw8KGM3GEMVopG&sz=w200" alt="Sarvahit Charitable Trust logo" />
+        <img class="admin-logo" src="assets/SarvahitCharitableTrust_Logo.png" alt="Sarvahit Charitable Trust logo" />
         <span>Sarvahit Charitable Trust Admin | sarvahitcharitabletrust2026@gmail.com</span>
       </strong>
       <a class="btn btn-light" href="index.html">Back to Website</a>
@@ -474,8 +474,8 @@
           </div>
           <div class="table-wrap">
             <table class="donation-table">
-              <thead><tr><th>Date</th><th>Donor</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Amount</th><th>Certificate</th><th>Screenshot</th></tr></thead>
-              <tbody id="donation-list"><tr><td colspan="9">Login to load donation data.</td></tr></tbody>
+              <thead><tr><th>Date</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Amount</th><th>Certificate</th><th>Screenshot</th></tr></thead>
+              <tbody id="donation-list"><tr><td colspan="10">Login to load donation data.</td></tr></tbody>
             </table>
           </div>
         </section>
@@ -637,7 +637,7 @@
 
     async function renderDonationReport(reload = false) {
       const list = document.getElementById("donation-list");
-      list.innerHTML = '<tr><td colspan="9">Loading donation data...</td></tr>';
+      list.innerHTML = '<tr><td colspan="10">Loading donation data...</td></tr>';
       try {
         if (reload || !allDonations.length) {
           allDonations = await loadDonations();
@@ -660,6 +660,7 @@
           return `<tr>
             <td>${escapeHtml(date.toLocaleDateString("en-IN"))}</td>
             <td>${escapeHtml(donation.donor_name || donation.name)}</td>
+            <td>${escapeHtml(donation.pan_card_number || donation.panCardNumber || "")}</td>
             <td>${escapeHtml(donation.phone)}</td>
             <td>${escapeHtml(donation.email)}</td>
             <td>${escapeHtml(donation.city)}</td>
@@ -669,9 +670,9 @@
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
           </tr>`;
         }));
-        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="9">No donation found for selected period.</td></tr>';
+        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="10">No donation found for selected period.</td></tr>';
       } catch (error) {
-        list.innerHTML = '<tr><td colspan="9">Could not load donation data. Run the updated Supabase setup SQL.</td></tr>';
+        list.innerHTML = '<tr><td colspan="10">Could not load donation data. Run the updated Supabase setup SQL.</td></tr>';
       }
     }
 
@@ -680,6 +681,7 @@
       const rows = donations.map((item) => ({
         Date: new Date(item.created_at || item.createdAt).toLocaleDateString("en-IN"),
         "Donor Name": item.donor_name || item.name || "",
+        "PAN Card Number": item.pan_card_number || item.panCardNumber || "",
         Mobile: item.phone || "",
         Email: item.email || "",
         City: item.city || "",

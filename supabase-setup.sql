@@ -129,6 +129,7 @@ create table if not exists public.donation_records (
 );
 
 alter table public.donation_records add column if not exists screenshot_file_name text;
+alter table public.donation_records add column if not exists pan_card_number text;
 alter table public.donation_records add column if not exists screenshot_mime_type text;
 alter table public.donation_records add column if not exists screenshot_storage text not null default 'supabase';
 alter table public.donation_records add column if not exists drive_file_url text;
