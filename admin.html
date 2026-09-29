@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Sarvahit Charitable Trust</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #5b6770;
+      --paper: #fbfaf7;
+      --panel: #ffffff;
+      --green: #126a51;
+      --green-dark: #0c4b3b;
+      --gold: #d89a2b;
+      --line: #e6e0d6;
+      --danger: #9b1c1c;
+      --shadow: 0 18px 50px rgba(20, 30, 36, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Hind", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      background: var(--green-dark);
+      color: #fff;
+      padding: 10px 20px;
+    }
+
+    .topbar-inner,
+    .wrap {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .admin-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+    }
+
+    .admin-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #fff;
+    }
+
+    .btn {
+      min-height: 42px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 9px 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn:hover,
+    .btn:focus {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: var(--green-dark);
+    }
+
+    .btn-light {
+      background: #fff;
+      color: var(--green-dark);
+      border-color: var(--line);
+    }
+
+    .btn-danger {
+      background: #fff4f4;
+      color: var(--danger);
+      border-color: #e4b8b8;
+    }
+
+    .btn-danger:hover,
+    .btn-danger:focus {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    main {
+      padding: 48px 20px 70px;
+    }
+
+    h1,
+    h2 {
+      font-family: "Poppins", system-ui, sans-serif;
+      line-height: 1.15;
+      margin: 0 0 14px;
+    }
+
+    h1 {
+      font-size: clamp(34px, 5vw, 54px);
+    }
+
+    h2 {
+      font-size: 26px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .login-card {
+      max-width: 460px;
+      margin: 34px auto 0;
+    }
+
+    .dashboard {
+      display: none;
+      gap: 20px;
+    }
+
+    .dashboard.is-visible {
+      display: grid;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 112px;
+      resize: vertical;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .message {
+      display: none;
+      margin-top: 14px;
+      padding: 11px 13px;
+      border-radius: 8px;
+      background: #e8f4ee;
+      color: var(--green-dark);
+      font-weight: 800;
+    }
+
+    .message.error {
+      background: #fff4f4;
+      color: var(--danger);
+    }
+
+    .volunteer-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .volunteer-card {
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .volunteer-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .volunteer-card strong {
+      color: var(--ink);
+      font-family: "Poppins", system-ui, sans-serif;
+    }
+
+    .notice-preview {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 16px;
+      border-radius: 8px;
+      background: #fff6df;
+      border: 1px solid #efd293;
+      color: #6d4811;
+    }
+
+    .notice-preview span {
+      background: var(--gold);
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 900;
+    }
+
+    .report-filters,
+    .report-actions {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .report-filters label {
+      min-width: 170px;
+    }
+
+    .report-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .report-stat {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f7f8f5;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .report-stat strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--green-dark);
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 25px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .donation-table {
+      width: 100%;
+      min-width: 1060px;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    .donation-table th,
+    .donation-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    .donation-table th {
+      background: #eef4ef;
+      color: var(--green-dark);
+    }
+
+    .donation-table a {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    @media (max-width: 820px) {
+      .grid-2,
+      .form-grid,
+      .report-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <strong class="admin-brand">
+        <img class="admin-logo" src="https://drive.google.com/thumbnail?id=1jYBdoDbqSILVKEYxOeKw8KGM3GEMVopG&sz=w200" alt="Sarvahit Charitable Trust logo" />
+        <span>Sarvahit Charitable Trust Admin | sarvahitcharitabletrust2026@gmail.com</span>
+      </strong>
+      <a class="btn btn-light" href="index.html">Back to Website</a>
+    </div>
+  </div>
+
+  <main>
+    <div class="wrap">
+      <section class="login-card panel" id="login-panel">
+        <h1>Admin Login</h1>
+        <form id="login-form">
+          <div class="form-grid">
+            <label class="full">
+              User Name
+              <input name="username" autocomplete="username" required />
+            </label>
+            <label class="full">
+              Password
+              <input name="password" type="password" autocomplete="current-password" required />
+            </label>
+            <div class="full">
+              <button class="btn btn-primary" type="submit">Login</button>
+            </div>
+          </div>
+        </form>
+        <div class="message error" id="login-message">Wrong username or password.</div>
+      </section>
+
+      <section class="dashboard" id="dashboard">
+        <div>
+          <h1>Admin Dashboard</h1>
+          <p>Update home page impact data, notice format, and manage volunteer registrations.</p>
+        </div>
+
+        <div class="grid-2">
+          <section class="panel">
+            <h2>Impact Data</h2>
+            <form id="stats-form">
+              <div class="form-grid">
+                <label>
+                  Food packets distributed
+                  <input name="foodPackets" type="number" min="0" required />
+                </label>
+                <label>
+                  Students supported
+                  <input name="studentsSupported" type="number" min="0" required />
+                </label>
+                <label>
+                  Medical help cases
+                  <input name="medicalCases" type="number" min="0" required />
+                </label>
+                <div class="full">
+                  <button class="btn btn-primary" type="submit">Update Data</button>
+                </div>
+              </div>
+            </form>
+            <div class="message" id="stats-message">Impact data updated.</div>
+          </section>
+
+          <section class="panel">
+            <h2>Notice Format</h2>
+            <form id="notice-form">
+              <div class="form-grid">
+                <label>
+                  Notice Type
+                  <select name="title">
+                    <option>Notice</option>
+                    <option>Important</option>
+                    <option>Event</option>
+                    <option>Donation Drive</option>
+                    <option>Volunteer Call</option>
+                  </select>
+                </label>
+                <label>
+                  Short Heading
+                  <input name="customTitle" placeholder="Optional custom label" />
+                </label>
+                <label class="full">
+                  Notice Message
+                  <textarea name="message" required></textarea>
+                </label>
+                <div class="full">
+                  <button class="btn btn-primary" type="submit">Update Notice</button>
+                </div>
+              </div>
+            </form>
+            <div class="notice-preview">
+              <span id="notice-preview-title">Notice</span>
+              <p id="notice-preview-message">New food distribution and education support activities will be announced here.</p>
+            </div>
+            <div class="message" id="notice-message">Notice updated.</div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <h2>Donation Report</h2>
+          <p>View confirmed donor submissions, calculate credited amounts by year or month, and download the filtered report in Excel format.</p>
+          <div class="report-filters">
+            <label>
+              Year
+              <select id="donation-year"><option value="all">All Years</option></select>
+            </label>
+            <label>
+              Month
+              <select id="donation-month">
+                <option value="all">All Months</option>
+                <option value="0">January</option><option value="1">February</option>
+                <option value="2">March</option><option value="3">April</option>
+                <option value="4">May</option><option value="5">June</option>
+                <option value="6">July</option><option value="7">August</option>
+                <option value="8">September</option><option value="9">October</option>
+                <option value="10">November</option><option value="11">December</option>
+              </select>
+            </label>
+            <button class="btn btn-primary" type="button" id="refresh-donations">Refresh</button>
+            <button class="btn btn-light" type="button" id="export-donations">Download Excel</button>
+          </div>
+          <div class="report-summary">
+            <div class="report-stat">Selected Total<strong id="donation-selected-total">INR 0</strong></div>
+            <div class="report-stat">Year Total<strong id="donation-year-total">INR 0</strong></div>
+            <div class="report-stat">Donations<strong id="donation-record-count">0</strong></div>
+          </div>
+          <div class="table-wrap">
+            <table class="donation-table">
+              <thead><tr><th>Date</th><th>Donor</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Amount</th><th>Certificate</th><th>Screenshot</th></tr></thead>
+              <tbody id="donation-list"><tr><td colspan="9">Login to load donation data.</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Volunteer Data</h2>
+          <p>Registered volunteer details show here after admin login. Use Delete to remove a record.</p>
+          <button class="btn btn-primary" type="button" id="refresh-volunteers">Refresh Volunteer Data</button>
+          <div class="volunteer-list" id="volunteer-list"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Trusted Person Reviews</h2>
+          <p>Visitor-submitted reviews show here. Delete any wrong or unsuitable review.</p>
+          <button class="btn btn-primary" type="button" id="refresh-reviews">Refresh Reviews</button>
+          <div class="volunteer-list" id="review-list"></div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    const ADMIN_USERNAME = "Admin";
+    const ADMIN_PASSWORD = "Admin@2024";
+    const SUPABASE_URL = "https://adbwqjzlqkaatvhzpudk.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_Ei3Ef2mTTpPeOG7P87gTug_Bky1IF5A";
+    const SUPABASE_TABLE = "volunteer_registrations";
+    const SUPABASE_REVIEW_TABLE = "trusted_reviews";
+    const SUPABASE_STATS_TABLE = "trust_impact_stats";
+    const SUPABASE_DONATION_TABLE = "donation_records";
+    const PAYMENT_BUCKET = "payment-screenshots";
+    const TRUST_STATS_KEY = "trustImpactStats";
+    const TRUST_NOTICE_KEY = "trustNotice";
+    const TRUST_REVIEWS_KEY = "trustReviews";
+    let allDonations = [];
+
+    function supabaseEnabled() {
+      return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+    }
+
+    async function supabaseRequest(path, options = {}) {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+        ...options,
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
+          Prefer: "return=representation",
+          ...(options.headers || {})
+        }
+      });
+      if (!response.ok) throw new Error(await response.text());
+      if (response.status === 204) return null;
+      return response.json();
+    }
+
+    function getLocalVolunteers() {
+      return JSON.parse(localStorage.getItem("trustVolunteers") || "[]");
+    }
+
+    function saveLocalVolunteers(volunteers) {
+      localStorage.setItem("trustVolunteers", JSON.stringify(volunteers));
+    }
+
+    function getReviews() {
+      return JSON.parse(localStorage.getItem(TRUST_REVIEWS_KEY) || "[]");
+    }
+
+    function saveReviews(reviews) {
+      localStorage.setItem(TRUST_REVIEWS_KEY, JSON.stringify(reviews));
+    }
+
+    async function loadReviews() {
+      if (!supabaseEnabled()) return getReviews();
+      const rows = await supabaseRequest(`${SUPABASE_REVIEW_TABLE}?select=*&order=created_at.desc`);
+      return rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        review: row.review,
+        createdAt: row.created_at
+      }));
+    }
+
+    async function deleteReview(review, index) {
+      if (!supabaseEnabled()) {
+        const reviews = getReviews();
+        reviews.splice(index, 1);
+        saveReviews(reviews);
+        return;
+      }
+      await supabaseRequest(`${SUPABASE_REVIEW_TABLE}?id=eq.${encodeURIComponent(review.id)}`, {
+        method: "DELETE"
+      });
+    }
+
+    async function loadVolunteers() {
+      if (!supabaseEnabled()) return getLocalVolunteers();
+      const rows = await supabaseRequest(`${SUPABASE_TABLE}?select=*&order=created_at.desc`);
+      return rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        phone: row.phone,
+        email: row.email,
+        city: row.city,
+        interest: row.interest,
+        availability: row.availability,
+        joinedAt: row.created_at
+      }));
+    }
+
+    async function loadDonations() {
+      if (!supabaseEnabled()) {
+        return JSON.parse(localStorage.getItem("trustDonations") || "[]");
+      }
+      return supabaseRequest(`${SUPABASE_DONATION_TABLE}?select=*&order=created_at.desc`);
+    }
+
+    async function getScreenshotUrl(donation) {
+      if (donation.drive_file_url) return donation.drive_file_url;
+      if (!donation.screenshot_path || donation.screenshot_path.startsWith("local/")) return "";
+      const response = await fetch(`${SUPABASE_URL}/storage/v1/object/sign/${PAYMENT_BUCKET}/${donation.screenshot_path}`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ expiresIn: 3600 })
+      });
+      if (!response.ok) return "";
+      const data = await response.json();
+      return data.signedURL ? `${SUPABASE_URL}/storage/v1${data.signedURL}` : "";
+    }
+
+    function formatCurrency(value) {
+      return `INR ${Number(value || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function selectedDonations() {
+      const year = document.getElementById("donation-year").value;
+      const month = document.getElementById("donation-month").value;
+      return allDonations.filter((donation) => {
+        const date = new Date(donation.created_at || donation.createdAt);
+        return (year === "all" || date.getFullYear() === Number(year)) &&
+          (month === "all" || date.getMonth() === Number(month));
+      });
+    }
+
+    function populateDonationYears() {
+      const select = document.getElementById("donation-year");
+      const selected = select.value;
+      const years = [...new Set(allDonations.map((item) => new Date(item.created_at || item.createdAt).getFullYear()))]
+        .filter(Number.isFinite)
+        .sort((a, b) => b - a);
+      select.innerHTML = '<option value="all">All Years</option>' + years.map((year) => `<option value="${year}">${year}</option>`).join("");
+      if (["all", ...years.map(String)].includes(selected)) select.value = selected;
+    }
+
+    async function renderDonationReport(reload = false) {
+      const list = document.getElementById("donation-list");
+      list.innerHTML = '<tr><td colspan="9">Loading donation data...</td></tr>';
+      try {
+        if (reload || !allDonations.length) {
+          allDonations = await loadDonations();
+          populateDonationYears();
+        }
+        const filtered = selectedDonations();
+        const selectedYear = document.getElementById("donation-year").value;
+        const selectedTotal = filtered.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const yearRecords = selectedYear === "all"
+          ? allDonations
+          : allDonations.filter((item) => new Date(item.created_at || item.createdAt).getFullYear() === Number(selectedYear));
+        const yearTotal = yearRecords.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        document.getElementById("donation-selected-total").textContent = formatCurrency(selectedTotal);
+        document.getElementById("donation-year-total").textContent = formatCurrency(yearTotal);
+        document.getElementById("donation-record-count").textContent = String(filtered.length);
+
+        const rows = await Promise.all(filtered.map(async (donation) => {
+          const date = new Date(donation.created_at || donation.createdAt);
+          const screenshotUrl = await getScreenshotUrl(donation);
+          return `<tr>
+            <td>${escapeHtml(date.toLocaleDateString("en-IN"))}</td>
+            <td>${escapeHtml(donation.donor_name || donation.name)}</td>
+            <td>${escapeHtml(donation.phone)}</td>
+            <td>${escapeHtml(donation.email)}</td>
+            <td>${escapeHtml(donation.city)}</td>
+            <td>${escapeHtml(donation.purpose)}</td>
+            <td>${escapeHtml(formatCurrency(donation.amount))}</td>
+            <td>${escapeHtml(donation.certificate_id || donation.certificateId)}</td>
+            <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
+          </tr>`;
+        }));
+        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="9">No donation found for selected period.</td></tr>';
+      } catch (error) {
+        list.innerHTML = '<tr><td colspan="9">Could not load donation data. Run the updated Supabase setup SQL.</td></tr>';
+      }
+    }
+
+    function exportDonationExcel() {
+      const donations = selectedDonations();
+      const rows = donations.map((item) => ({
+        Date: new Date(item.created_at || item.createdAt).toLocaleDateString("en-IN"),
+        "Donor Name": item.donor_name || item.name || "",
+        Mobile: item.phone || "",
+        Email: item.email || "",
+        City: item.city || "",
+        Purpose: item.purpose || "",
+        Amount: Number(item.amount || 0),
+        "Payment Status": item.payment_status || "submitted",
+        "Certificate ID": item.certificate_id || item.certificateId || "",
+        "Screenshot Path": item.screenshot_path || item.screenshotPath || "",
+        "Google Drive URL": item.drive_file_url || ""
+      }));
+      if (!rows.length) return;
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Donations");
+      const year = document.getElementById("donation-year").value;
+      const month = document.getElementById("donation-month").value;
+      XLSX.writeFile(workbook, `Sarvahit-Donations-${year}-${month}.xlsx`);
+    }
+
+    async function deleteVolunteer(volunteer, index) {
+      if (!supabaseEnabled()) {
+        const volunteers = getLocalVolunteers();
+        volunteers.splice(index, 1);
+        saveLocalVolunteers(volunteers);
+        return;
+      }
+      await supabaseRequest(`${SUPABASE_TABLE}?id=eq.${encodeURIComponent(volunteer.id)}`, {
+        method: "DELETE"
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function showMessage(id) {
+      const message = document.getElementById(id);
+      message.style.display = "block";
+      setTimeout(() => {
+        message.style.display = "none";
+      }, 1800);
+    }
+
+    async function loadStatsForm() {
+      let stats = JSON.parse(localStorage.getItem(TRUST_STATS_KEY) || "{}");
+      if (supabaseEnabled()) {
+        const rows = await supabaseRequest(`${SUPABASE_STATS_TABLE}?select=*&id=eq.main&limit=1`);
+        if (rows[0]) {
+          stats = {
+            foodPackets: rows[0].food_packets,
+            studentsSupported: rows[0].students_supported,
+            medicalCases: rows[0].medical_cases
+          };
+          localStorage.setItem(TRUST_STATS_KEY, JSON.stringify(stats));
+        }
+      }
+      const form = document.getElementById("stats-form");
+      form.foodPackets.value = stats.foodPackets || 0;
+      form.studentsSupported.value = stats.studentsSupported || 0;
+      form.medicalCases.value = stats.medicalCases || 0;
+    }
+
+    async function saveImpactStats(stats) {
+      localStorage.setItem(TRUST_STATS_KEY, JSON.stringify(stats));
+      if (!supabaseEnabled()) return;
+      await supabaseRequest(`${SUPABASE_STATS_TABLE}?on_conflict=id`, {
+        method: "POST",
+        headers: {
+          Prefer: "resolution=merge-duplicates,return=representation"
+        },
+        body: JSON.stringify({
+          id: "main",
+          food_packets: stats.foodPackets,
+          students_supported: stats.studentsSupported,
+          medical_cases: stats.medicalCases,
+          updated_at: new Date().toISOString()
+        })
+      });
+    }
+
+    async function loadNoticeForm() {
+      let notice = JSON.parse(localStorage.getItem(TRUST_NOTICE_KEY) || "{}");
+      if (supabaseEnabled()) {
+        const rows = await supabaseRequest(`${SUPABASE_STATS_TABLE}?select=notice_title,notice_message&id=eq.main&limit=1`);
+        if (rows[0] && (rows[0].notice_title || rows[0].notice_message)) {
+          notice = {
+            title: rows[0].notice_title,
+            message: rows[0].notice_message
+          };
+          localStorage.setItem(TRUST_NOTICE_KEY, JSON.stringify(notice));
+        }
+      }
+      const form = document.getElementById("notice-form");
+      form.message.value = notice.message || "New food distribution and education support activities will be announced here.";
+      document.getElementById("notice-preview-title").textContent = notice.title || "Notice";
+      document.getElementById("notice-preview-message").textContent = form.message.value;
+    }
+
+    async function saveNotice(notice) {
+      localStorage.setItem(TRUST_NOTICE_KEY, JSON.stringify(notice));
+      if (!supabaseEnabled()) return;
+      await supabaseRequest(`${SUPABASE_STATS_TABLE}?id=eq.main`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          notice_title: notice.title,
+          notice_message: notice.message,
+          updated_at: new Date().toISOString()
+        })
+      });
+    }
+
+    async function renderVolunteers() {
+      const list = document.getElementById("volunteer-list");
+      list.innerHTML = "<p>Loading volunteer data...</p>";
+      try {
+        const volunteers = await loadVolunteers();
+        list.innerHTML = volunteers.length
+          ? volunteers.map((volunteer, index) => `
+              <article class="volunteer-card">
+                <div class="volunteer-card-header">
+                  <strong>${escapeHtml(volunteer.name)}</strong>
+                  <button class="btn btn-danger" type="button" data-delete-volunteer="${index}">Delete</button>
+                </div>
+                <div>Mobile: ${escapeHtml(volunteer.phone)}</div>
+                <div>Email: ${escapeHtml(volunteer.email)}</div>
+                <div>City: ${escapeHtml(volunteer.city)}</div>
+                <div>Work: ${escapeHtml(volunteer.interest)}</div>
+                <div>Time: ${escapeHtml(volunteer.availability)}</div>
+              </article>
+            `).join("")
+          : "<p>No volunteer registered yet.</p>";
+      } catch (error) {
+        list.innerHTML = "<p>Could not load volunteer data. Please check Supabase settings.</p>";
+      }
+    }
+
+    async function renderReviews() {
+      const list = document.getElementById("review-list");
+      list.innerHTML = "<p>Loading reviews...</p>";
+      try {
+        const reviews = await loadReviews();
+        list.innerHTML = reviews.length
+          ? reviews.map((review, index) => `
+              <article class="volunteer-card">
+                <div class="volunteer-card-header">
+                  <strong>${escapeHtml(review.name)}</strong>
+                  <button class="btn btn-danger" type="button" data-delete-review="${index}">Delete</button>
+                </div>
+                <div>${escapeHtml(review.review)}</div>
+              </article>
+            `).join("")
+          : "<p>No visitor review submitted yet.</p>";
+      } catch (error) {
+        list.innerHTML = "<p>Could not load reviews. Please check Supabase settings.</p>";
+      }
+    }
+
+    document.getElementById("login-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+      if (data.username !== ADMIN_USERNAME || data.password !== ADMIN_PASSWORD) {
+        document.getElementById("login-message").style.display = "block";
+        return;
+      }
+      document.getElementById("login-panel").style.display = "none";
+      document.getElementById("dashboard").classList.add("is-visible");
+      await loadStatsForm();
+      await loadNoticeForm();
+      await renderDonationReport(true);
+      await renderVolunteers();
+      await renderReviews();
+    });
+
+    document.getElementById("stats-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+      await saveImpactStats({
+        foodPackets: Number(data.foodPackets || 0),
+        studentsSupported: Number(data.studentsSupported || 0),
+        medicalCases: Number(data.medicalCases || 0)
+      });
+      showMessage("stats-message");
+    });
+
+    document.getElementById("notice-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+      const title = data.customTitle?.trim() || data.title;
+      await saveNotice({
+        title,
+        message: data.message
+      });
+      document.getElementById("notice-preview-title").textContent = title;
+      document.getElementById("notice-preview-message").textContent = data.message;
+      showMessage("notice-message");
+    });
+
+    document.getElementById("refresh-volunteers").addEventListener("click", renderVolunteers);
+    document.getElementById("refresh-reviews").addEventListener("click", renderReviews);
+    document.getElementById("refresh-donations").addEventListener("click", () => renderDonationReport(true));
+    document.getElementById("donation-year").addEventListener("change", () => renderDonationReport(false));
+    document.getElementById("donation-month").addEventListener("change", () => renderDonationReport(false));
+    document.getElementById("export-donations").addEventListener("click", exportDonationExcel);
+
+    document.getElementById("volunteer-list").addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-delete-volunteer]");
+      if (!button) return;
+      const index = Number(button.dataset.deleteVolunteer);
+      const volunteers = await loadVolunteers();
+      await deleteVolunteer(volunteers[index], index);
+      await renderVolunteers();
+    });
+
+    document.getElementById("review-list").addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-delete-review]");
+      if (!button) return;
+      const index = Number(button.dataset.deleteReview);
+      const reviews = await loadReviews();
+      await deleteReview(reviews[index], index);
+      await renderReviews();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+GitHub and Vercel deployment steps
+
+1. Create a new GitHub repository.
+2. Upload all files from this outputs folder to that repository.
+3. In Supabase, open SQL Editor and run supabase-setup.sql.
+4. In index.html, update these two values:
+   const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+   const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+5. In Vercel, import the GitHub repository.
+6. Use the default static site settings. The main file is index.html.
+
+Important security note:
+This static HTML version uses browser-side Supabase access. For a real owner-only volunteer list and delete action, create a backend/API route with secure authentication before making the site public.

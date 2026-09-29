@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volunteer Register | Sarvahit Charitable Trust</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #5b6770;
+      --paper: #fbfaf7;
+      --panel: #ffffff;
+      --green: #126a51;
+      --green-dark: #0c4b3b;
+      --gold: #d89a2b;
+      --line: #e6e0d6;
+      --shadow: 0 18px 50px rgba(20, 30, 36, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Hind", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      background: var(--green-dark);
+      color: #fff;
+      font-size: 14px;
+      padding: 8px 20px;
+    }
+
+    .topbar-inner,
+    .nav,
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .social-links {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .social-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: inline-grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(251, 250, 247, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: "Poppins", system-ui, sans-serif;
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--green), var(--gold));
+      font-size: 23px;
+      overflow: hidden;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    main {
+      padding: 72px 20px;
+    }
+
+    .page-head {
+      max-width: 780px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: clamp(36px, 5vw, 58px);
+      line-height: 1.08;
+      margin: 0 0 12px;
+    }
+
+    .page-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .volunteer-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.85fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    h2 {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 26px;
+      margin: 0 0 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .message {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #e8f4ee;
+      color: var(--green-dark);
+      font-weight: 700;
+    }
+
+    .count {
+      display: grid;
+      place-items: center;
+      min-height: 160px;
+      border-radius: 8px;
+      background: #eef5ef;
+      border: 1px solid #cfe2d7;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .count strong {
+      display: block;
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 54px;
+      line-height: 1;
+      color: var(--green);
+    }
+
+    .saved-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      color: var(--muted);
+    }
+
+    .saved-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .saved-item strong {
+      color: var(--ink);
+    }
+
+    footer {
+      background: #111a1c;
+      color: rgba(255, 255, 255, 0.78);
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    @media (max-width: 840px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .volunteer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      main {
+        padding: 52px 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <span>Sarvahit Charitable Trust | Volunteer registration | sarvahitcharitabletrust2026@gmail.com</span>
+      <div class="social-links" aria-label="Social media links">
+        <a class="social-icon" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">f</a>
+        <a class="social-icon" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">IG</a>
+        <a class="social-icon" href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">in</a>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html">
+        <span class="brand-mark"><img src="https://drive.google.com/thumbnail?id=1jYBdoDbqSILVKEYxOeKw8KGM3GEMVopG&sz=w200" alt="Sarvahit Charitable Trust logo" /></span>
+        <span>Sarvahit Charitable Trust</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="payment-method.html">Donation</a>
+        <a class="btn btn-primary" href="#register">Register</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="page-head">
+        <h1>Volunteer Register Form</h1>
+        <p>Join the trust as a volunteer. Your details will be saved in this browser and the volunteer count will appear on the home page.</p>
+      </div>
+
+      <div class="volunteer-grid">
+        <section class="box" id="register">
+          <h2>Register As Volunteer</h2>
+          <form id="volunteer-form">
+            <div class="form-grid">
+              <label>
+                Full Name
+                <input name="name" autocomplete="name" required />
+              </label>
+              <label>
+                Mobile Number
+                <input name="phone" type="tel" autocomplete="tel" required />
+              </label>
+              <label>
+                Email
+                <input name="email" type="email" autocomplete="email" />
+              </label>
+              <label>
+                City
+                <input name="city" autocomplete="address-level2" required />
+              </label>
+              <label>
+                Interested Work
+                <select name="interest" required>
+                  <option value="">Select work</option>
+                  <option>Food Donation</option>
+                  <option>Education Support</option>
+                  <option>Medical Help</option>
+                  <option>Community Welfare</option>
+                  <option>Clothes Distribution</option>
+                </select>
+              </label>
+              <label>
+                Available Time
+                <select name="availability" required>
+                  <option value="">Select time</option>
+                  <option>Weekdays</option>
+                  <option>Weekends</option>
+                  <option>Anytime</option>
+                </select>
+              </label>
+              <label class="full">
+                Address
+                <textarea name="address" required></textarea>
+              </label>
+              <div class="full">
+                <button class="btn btn-primary" type="submit">Save Volunteer</button>
+              </div>
+            </div>
+          </form>
+          <div class="message" id="save-message">Volunteer details saved successfully.</div>
+        </section>
+
+        <aside class="box">
+          <h2>Volunteer Joined</h2>
+          <div class="count">
+            <div>
+              <strong id="volunteer-count">0</strong>
+              <span>Total volunteers saved</span>
+            </div>
+          </div>
+          <h2>Saved Data Location</h2>
+          <p>Your volunteer data is saved in this browser under local storage key <strong>trustVolunteers</strong>.</p>
+          <div class="saved-list" id="saved-list"></div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer>© 2026 Sarvahit Charitable Trust. All rights reserved.</footer>
+
+  <script>
+    const form = document.getElementById("volunteer-form");
+    const countEl = document.getElementById("volunteer-count");
+    const listEl = document.getElementById("saved-list");
+    const messageEl = document.getElementById("save-message");
+
+    function getVolunteers() {
+      return JSON.parse(localStorage.getItem("trustVolunteers") || "[]");
+    }
+
+    function saveVolunteers(volunteers) {
+      localStorage.setItem("trustVolunteers", JSON.stringify(volunteers));
+    }
+
+    function renderVolunteers() {
+      const volunteers = getVolunteers();
+      countEl.textContent = volunteers.length;
+      const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+      listEl.innerHTML = volunteers.length
+        ? volunteers.map((volunteer) => `
+            <div class="saved-item">
+              <strong>${escapeHtml(volunteer.name)}</strong><br>
+              ${escapeHtml(volunteer.phone)} | ${escapeHtml(volunteer.city)}<br>
+              ${escapeHtml(volunteer.interest)}
+            </div>
+          `).join("")
+        : "<p>No volunteer registered yet.</p>";
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      const volunteers = getVolunteers();
+      volunteers.push({
+        ...data,
+        joinedAt: new Date().toISOString()
+      });
+      saveVolunteers(volunteers);
+      form.reset();
+      messageEl.style.display = "block";
+      renderVolunteers();
+    });
+
+    renderVolunteers();
+  </script>
+</body>
+</html>
