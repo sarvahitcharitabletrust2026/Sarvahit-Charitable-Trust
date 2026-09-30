@@ -1013,22 +1013,113 @@
 
     .drive-gallery {
       width: 100%;
-      min-height: 420px;
-      overflow: hidden;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 24px 18px;
+      align-items: start;
     }
 
-    .drive-gallery-frame {
-      display: block;
+    .drive-gallery-card {
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .drive-gallery-stage {
+      position: relative;
       width: 100%;
-      height: min(78vh, 900px);
-      min-height: 560px;
+      aspect-ratio: 1.35 / 1;
+      background: #eef1ee;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .drive-gallery-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+      transition: transform 0.18s ease;
+    }
+
+    .drive-gallery-stage:hover .drive-gallery-image {
+      transform: scale(1.015);
+    }
+
+    .drive-gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      padding: 0;
       border: 0;
-      border-radius: 10px;
-      background: #f7f8f6;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.96);
+      color: #173d2c;
+      font-size: 29px;
+      font-weight: 400;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
+      z-index: 3;
+    }
+
+    .drive-gallery-arrow.prev {
+      left: 8px;
+    }
+
+    .drive-gallery-arrow.next {
+      right: 8px;
+    }
+
+    .drive-gallery-arrow:hover,
+    .drive-gallery-arrow:focus-visible {
+      background: #fff;
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .drive-gallery-arrow:disabled {
+      opacity: 0.38;
+      cursor: default;
+      outline: none;
+    }
+
+    .drive-gallery-info {
+      padding: 10px 11px 12px;
+      text-align: center;
+      background: #fff;
+    }
+
+    .drive-gallery-title {
+      margin: 0 0 3px;
+      color: var(--green-dark);
+      font-size: 0.95rem;
+      line-height: 1.25;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .drive-gallery-count {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
     }
 
     .drive-gallery-message {
-      min-height: 200px;
+      min-height: 160px;
+      grid-column: 1 / -1;
       display: grid;
       place-items: center;
       padding: 28px;
@@ -1036,6 +1127,174 @@
       border-radius: 10px;
       color: var(--muted);
       text-align: center;
+    }
+
+    .drive-gallery-fallback {
+      grid-column: 1 / -1;
+      display: block;
+      padding: 16px 18px;
+      border-radius: 10px;
+      background: #f7f8f6;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-decoration: none;
+    }
+
+    /* Full-screen in-page photo viewer */
+    .drive-photo-viewer {
+      width: min(96vw, 1500px);
+      height: min(94vh, 1000px);
+      max-width: none;
+      max-height: none;
+      padding: 0;
+      border: 0;
+      border-radius: 16px;
+      background: #0b0d0c;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .drive-photo-viewer::backdrop {
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(3px);
+    }
+
+    .drive-photo-viewer-shell {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      min-height: 0;
+    }
+
+    .drive-photo-viewer-stage {
+      position: relative;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 58px 76px 18px;
+    }
+
+    .drive-photo-viewer-image {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+      border-radius: 6px;
+      box-shadow: 0 12px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    .drive-photo-viewer-close,
+    .drive-photo-viewer-arrow {
+      position: absolute;
+      z-index: 4;
+      display: grid;
+      place-items: center;
+      border: 0;
+      cursor: pointer;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.52);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+      transition: background 0.16s ease, transform 0.16s ease;
+    }
+
+    .drive-photo-viewer-close:hover,
+    .drive-photo-viewer-close:focus-visible,
+    .drive-photo-viewer-arrow:hover,
+    .drive-photo-viewer-arrow:focus-visible {
+      background: rgba(255, 255, 255, 0.18);
+      outline: 2px solid rgba(255, 255, 255, 0.8);
+      outline-offset: 2px;
+    }
+
+    .drive-photo-viewer-close {
+      top: 14px;
+      right: 14px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 29px;
+      line-height: 1;
+    }
+
+    .drive-photo-viewer-arrow {
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 64px;
+      border-radius: 14px;
+      font-size: 43px;
+      line-height: 1;
+    }
+
+    .drive-photo-viewer-arrow.prev {
+      left: 14px;
+    }
+
+    .drive-photo-viewer-arrow.next {
+      right: 14px;
+    }
+
+    .drive-photo-viewer-arrow:disabled {
+      opacity: 0.3;
+      cursor: default;
+      outline: none;
+    }
+
+    .drive-photo-viewer-info {
+      min-width: 0;
+      padding: 11px 20px 15px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.58);
+      border-top: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .drive-photo-viewer-title {
+      margin: 0 0 3px;
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .drive-photo-viewer-count {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 620px) {
+      .drive-photo-viewer {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+      }
+
+      .drive-photo-viewer-stage {
+        padding: 58px 48px 12px;
+      }
+
+      .drive-photo-viewer-arrow {
+        width: 42px;
+        height: 54px;
+        font-size: 35px;
+        border-radius: 12px;
+      }
+
+      .drive-photo-viewer-arrow.prev {
+        left: 7px;
+      }
+
+      .drive-photo-viewer-arrow.next {
+        right: 7px;
+      }
     }
 
     .gallery figure {
@@ -1266,14 +1525,30 @@
       }
     }
 
+    @media (max-width: 1050px) and (min-width: 621px) {
+      .drive-gallery {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
     @media (max-width: 620px) {
       .drive-gallery {
-        min-height: 360px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 12px;
       }
 
-      .drive-gallery-frame {
-        height: 560px;
-        min-height: 560px;
+      .drive-gallery-arrow {
+        width: 34px;
+        height: 34px;
+        font-size: 25px;
+      }
+
+      .drive-gallery-arrow.prev {
+        left: 6px;
+      }
+
+      .drive-gallery-arrow.next {
+        right: 6px;
       }
 
       body {
@@ -1572,10 +1847,10 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Photos from Our Community Service Programs</h2>
-          <p>Photos added to our social activities folder appear here automatically.</p>
+          <p>Each work-wise folder is shown as a card. Use the arrows to browse its photos, or double-click a photo to open it in Google Drive.</p>
         </div>
         <div class="drive-gallery" id="social-activity-gallery" aria-live="polite">
-          <p class="drive-gallery-message">Social activity photos will appear here.</p>
+          <p class="drive-gallery-message">Loading community service photos...</p>
         </div>
       </div>
     </section>
@@ -1866,9 +2141,12 @@
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
     const SUPABASE_DONATION_TABLE = "donation_records";
     const PAYMENT_BUCKET = "payment-screenshots";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://drive.google.com/drive/folders/1vdFS945OVbJ10Kr_KPgJzQ5WD6QElBsK";
-    const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/drive/folders/1s4cZj-PepVA5J1pq2Yz0EFdg5MD7T4hq";
-    const GOOGLE_DRIVE_PARENT_FOLDER_ID = "1jzejKzt8VYQzXAXURxSBr7_fLSqfwpV6";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyoAkhzAnxOK8IZyxQ_HBYPGo-nzRdXw3WkoMiXoFUwErdmJquE9uam9yMhnmDdO9Z1/exec";
+    const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
+    // Paste your deployed Google Apps Script Web App URL here.
+    // The gallery will show one photo at a time for each work-wise folder.
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwe150i-u7iDEDpx01_qCUR5bcBQHt2ilTyOlq3xIdZydWw0VCZ361xGxiKrqEPgUdv2A/exec";
+    const GOOGLE_DRIVE_PARENT_FOLDER_ID = "1vdFS945OVbJ10Kr_KPgJzQ5WD6QElBsK";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -1907,7 +2185,6 @@
         workTitle: "Our Charitable Activities",
         workText: "The Trust is committed to providing practical support that reaches those in need directly, respectfully, and in a timely manner.",
         galleryTitle: "Photos from Our Community Service Programs",
-        galleryText: "Photos added to our social activities folder appear here automatically.",
         reviewsTitle: "Trusted Person Review",
         reviewsText: "Visitors can share their name and review for the trust. Admin can remove unsuitable reviews from the admin page.",
         giveReview: "Give Your Review",
@@ -2138,15 +2415,313 @@
       document.getElementById("donor-certificate-panel").hidden = step !== 3;
     }
 
+    let socialPhotoViewer = null;
+    let socialPhotoViewerState = null;
+
+    function getSocialPhotoViewer() {
+      if (socialPhotoViewer) return socialPhotoViewer;
+
+      const dialog = document.createElement("dialog");
+      dialog.id = "drive-photo-viewer";
+      dialog.className = "drive-photo-viewer";
+      dialog.setAttribute("aria-label", "Community service photo viewer");
+
+      const shell = document.createElement("div");
+      shell.className = "drive-photo-viewer-shell";
+
+      const stage = document.createElement("div");
+      stage.className = "drive-photo-viewer-stage";
+
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "drive-photo-viewer-close";
+      close.setAttribute("aria-label", "Close photo viewer");
+      close.textContent = "×";
+
+      const previous = document.createElement("button");
+      previous.type = "button";
+      previous.className = "drive-photo-viewer-arrow prev";
+      previous.setAttribute("aria-label", "Previous photo");
+      previous.textContent = "‹";
+
+      const next = document.createElement("button");
+      next.type = "button";
+      next.className = "drive-photo-viewer-arrow next";
+      next.setAttribute("aria-label", "Next photo");
+      next.textContent = "›";
+
+      const image = document.createElement("img");
+      image.className = "drive-photo-viewer-image";
+      image.alt = "Community service photo";
+      image.draggable = false;
+
+      const info = document.createElement("div");
+      info.className = "drive-photo-viewer-info";
+
+      const title = document.createElement("p");
+      title.className = "drive-photo-viewer-title";
+
+      const count = document.createElement("p");
+      count.className = "drive-photo-viewer-count";
+
+      info.append(title, count);
+      stage.append(image, previous, next, close);
+      shell.append(stage, info);
+      dialog.appendChild(shell);
+      document.body.appendChild(dialog);
+
+      function changeViewerPhoto(direction) {
+        if (!socialPhotoViewerState) return;
+        const { images } = socialPhotoViewerState;
+        if (!images.length) return;
+        socialPhotoViewerState.activeIndex =
+          (socialPhotoViewerState.activeIndex + direction + images.length) % images.length;
+        showViewerPhoto();
+      }
+
+      function showViewerPhoto() {
+        if (!socialPhotoViewerState) return;
+        const { folderName, images, activeIndex } = socialPhotoViewerState;
+        const current = images[activeIndex];
+        if (!current) return;
+
+        const fullImageUrl = current.imageUrl || current.thumbnailUrl || "";
+        const fallbackImageUrl = current.thumbnailUrl || current.imageUrl || "";
+        image.onerror = function () {
+          if (fallbackImageUrl && image.src !== fallbackImageUrl) {
+            image.src = fallbackImageUrl;
+          }
+        };
+        image.src = fullImageUrl;
+        image.alt = current.name
+          ? folderName + " — " + current.name
+          : folderName + " community service photo";
+        title.textContent = folderName;
+        count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
+        previous.disabled = images.length < 2;
+        next.disabled = images.length < 2;
+      }
+
+      close.addEventListener("click", () => dialog.close());
+
+      previous.addEventListener("click", (event) => {
+        event.stopPropagation();
+        changeViewerPhoto(-1);
+      });
+
+      next.addEventListener("click", (event) => {
+        event.stopPropagation();
+        changeViewerPhoto(1);
+      });
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) {
+          dialog.close();
+        }
+      });
+
+      dialog.addEventListener("keydown", (event) => {
+        if (!dialog.open) return;
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          changeViewerPhoto(-1);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          changeViewerPhoto(1);
+        }
+      });
+
+      // Mobile-friendly swipe navigation.
+      let touchStartX = null;
+      stage.addEventListener("touchstart", (event) => {
+        touchStartX = event.changedTouches[0]?.clientX ?? null;
+      }, { passive: true });
+
+      stage.addEventListener("touchend", (event) => {
+        if (touchStartX === null) return;
+        const touchEndX = event.changedTouches[0]?.clientX ?? touchStartX;
+        const deltaX = touchEndX - touchStartX;
+        touchStartX = null;
+        if (Math.abs(deltaX) < 45) return;
+        changeViewerPhoto(deltaX > 0 ? -1 : 1);
+      }, { passive: true });
+
+      socialPhotoViewer = {
+        dialog,
+        showViewerPhoto
+      };
+      return socialPhotoViewer;
+    }
+
+    function openSocialPhotoViewer(folderName, images, activeIndex) {
+      const viewer = getSocialPhotoViewer();
+      socialPhotoViewerState = {
+        folderName,
+        images,
+        activeIndex
+      };
+      viewer.showViewerPhoto();
+      if (!viewer.dialog.open) {
+        viewer.dialog.showModal();
+      }
+    }
+
     function loadSocialActivityGallery() {
       const gallery = document.getElementById("social-activity-gallery");
-      if (!gallery || !GOOGLE_DRIVE_GALLERY_URL) return;
-      const frame = document.createElement("iframe");
-      frame.className = "drive-gallery-frame";
-      frame.title = "Sarvahit Charitable Trust social activity photos";
-      frame.loading = "lazy";
-      frame.src = GOOGLE_DRIVE_GALLERY_URL;
-      gallery.replaceChildren(frame);
+      if (!gallery) return;
+
+      // The Apps Script endpoint is intentionally optional. Until it is deployed,
+      // keep the existing Drive folder view as a fallback.
+      if (!GOOGLE_DRIVE_GALLERY_API_URL) {
+        if (GOOGLE_DRIVE_GALLERY_URL) {
+          const link = document.createElement("a");
+          link.className = "drive-gallery-fallback";
+          link.href = GOOGLE_DRIVE_GALLERY_URL;
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.textContent = "Gallery API is not connected yet. Open the work-wise Drive folders.";
+          gallery.replaceChildren(link);
+        }
+        return;
+      }
+
+      const callbackName = "sarvahitDriveGallery_" + Date.now();
+      const script = document.createElement("script");
+
+      window[callbackName] = function (payload) {
+        try {
+          renderSocialActivityGallery(gallery, payload);
+        } finally {
+          delete window[callbackName];
+          script.remove();
+        }
+      };
+
+      script.onerror = function () {
+        delete window[callbackName];
+        script.remove();
+        gallery.replaceChildren(
+          Object.assign(document.createElement("p"), {
+            className: "drive-gallery-message",
+            textContent: "Unable to load photos right now. Please try again later."
+          })
+        );
+      };
+
+      const separator = GOOGLE_DRIVE_GALLERY_API_URL.includes("?") ? "&" : "?";
+      script.src =
+        GOOGLE_DRIVE_GALLERY_API_URL +
+        separator +
+        "folderId=" + encodeURIComponent("1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv") +
+        "&callback=" + encodeURIComponent(callbackName);
+
+      document.head.appendChild(script);
+    }
+
+    function renderSocialActivityGallery(gallery, payload) {
+      const folders = Array.isArray(payload?.folders) ? payload.folders : [];
+
+      if (!folders.length) {
+        gallery.replaceChildren(
+          Object.assign(document.createElement("p"), {
+            className: "drive-gallery-message",
+            textContent: "No work-wise folders with photos were found."
+          })
+        );
+        return;
+      }
+
+      gallery.replaceChildren();
+
+      folders.forEach((folder) => {
+        const images = Array.isArray(folder.images) ? folder.images : [];
+        if (!images.length) return;
+
+        let activeIndex = 0;
+
+        const card = document.createElement("article");
+        card.className = "drive-gallery-card";
+        card.setAttribute("aria-label", folder.name + " photo gallery");
+
+        const stage = document.createElement("div");
+        stage.className = "drive-gallery-stage";
+
+        const image = document.createElement("img");
+        image.className = "drive-gallery-image";
+        image.loading = "lazy";
+        image.alt = folder.name + " community service photo";
+        image.title = "Double-click to enlarge this photo";
+
+        const previous = document.createElement("button");
+        previous.type = "button";
+        previous.className = "drive-gallery-arrow prev";
+        previous.setAttribute("aria-label", "Previous photo");
+        previous.textContent = "‹";
+
+        const next = document.createElement("button");
+        next.type = "button";
+        next.className = "drive-gallery-arrow next";
+        next.setAttribute("aria-label", "Next photo");
+        next.textContent = "›";
+
+        const info = document.createElement("div");
+        info.className = "drive-gallery-info";
+
+        const title = document.createElement("h3");
+        title.className = "drive-gallery-title";
+        title.textContent = folder.name;
+
+        const count = document.createElement("p");
+        count.className = "drive-gallery-count";
+
+        function showImage() {
+          const current = images[activeIndex];
+          image.src = current.thumbnailUrl || current.imageUrl || "";
+          image.alt = current.name
+            ? folder.name + " — " + current.name
+            : folder.name + " community service photo";
+          image.title = current.name
+            ? current.name + " — double-click to enlarge this photo"
+            : "Double-click to enlarge this photo";
+          count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
+          previous.disabled = images.length < 2;
+          next.disabled = images.length < 2;
+        }
+
+        previous.addEventListener("click", (event) => {
+          event.stopPropagation();
+          activeIndex = (activeIndex - 1 + images.length) % images.length;
+          showImage();
+        });
+
+        next.addEventListener("click", (event) => {
+          event.stopPropagation();
+          activeIndex = (activeIndex + 1) % images.length;
+          showImage();
+        });
+
+        image.addEventListener("dblclick", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          openSocialPhotoViewer(folder.name, images, activeIndex);
+        });
+
+        stage.append(image, previous, next);
+        info.append(title, count);
+        card.append(stage, info);
+        gallery.appendChild(card);
+
+        showImage();
+      });
+
+      if (!gallery.children.length) {
+        gallery.replaceChildren(
+          Object.assign(document.createElement("p"), {
+            className: "drive-gallery-message",
+            textContent: "The work-wise folders were found, but they contain no images."
+          })
+        );
+      }
     }
 
     loadSocialActivityGallery();
@@ -2176,7 +2751,10 @@
       });
       if (!response.ok) throw new Error("Google Drive upload failed.");
       const result = await response.json();
-      return result.fileUrl || null;
+      if (!result.ok || !result.fileUrl) {
+        throw new Error(result.error || "Google Drive did not confirm the screenshot upload.");
+      }
+      return result.fileUrl;
     }
 
     async function uploadPaymentScreenshot(file, certificateId) {
@@ -2192,18 +2770,18 @@
           apikey: SUPABASE_ANON_KEY,
           Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
           "Content-Type": file.type || "image/jpeg",
-          "x-upsert": "false"
+          "x-upsert": "true"
         },
         body: file
       });
       if (!response.ok) {
         throw new Error(await response.text());
       }
-      let driveUrl = null;
+      let driveUrl;
       try {
         driveUrl = await uploadToGoogleDrive(file, certificateId, year);
       } catch (error) {
-        console.warn("Google Drive upload is not active; screenshot remains safely stored in Supabase.");
+        throw new Error(`Google Drive upload failed: ${error.message || "Please try again."}`);
       }
       return { path, driveUrl };
     }
@@ -2237,9 +2815,35 @@
       });
     }
 
+    async function ensureJsPdf() {
+      if (window.jspdf?.jsPDF) return window.jspdf;
+      const fallbackSources = [
+        "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+        "https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"
+      ];
+      for (const src of fallbackSources) {
+        try {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = src;
+            script.onload = resolve;
+            script.onerror = () => {
+              script.remove();
+              reject(new Error("PDF library failed to load."));
+            };
+            document.head.appendChild(script);
+          });
+          if (window.jspdf?.jsPDF) return window.jspdf;
+        } catch (error) {
+          // Continue to the next public CDN.
+        }
+      }
+      throw new Error("PDF library is unavailable.");
+    }
+
     async function downloadCertificate() {
-      if (!activeDonation || !window.jspdf) return;
-      const { jsPDF } = window.jspdf;
+      if (!activeDonation) throw new Error("Donation details are unavailable.");
+      const { jsPDF } = await ensureJsPdf();
       const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
@@ -2651,14 +3255,18 @@
         status.style.display = "none";
         setDonationStep(3);
       } catch (error) {
-        status.textContent = "Payment details could not be submitted. Please check Supabase setup and try again.";
+        console.error("Donation submission failed.", error);
+        status.textContent = String(error?.message || "").includes("Google Drive")
+          ? "The payment screenshot could not be saved to Google Drive. Please try again."
+          : "Payment details could not be submitted. Please try again.";
       } finally {
         button.disabled = false;
       }
     });
 
     document.getElementById("download-certificate")?.addEventListener("click", () => {
-      downloadCertificate().catch(() => {
+      downloadCertificate().catch((error) => {
+        console.error("Certificate generation failed.", error);
         const message = document.querySelector("#donor-certificate-panel .certificate-ready p");
         if (message) message.textContent = "The certificate could not be created. Please try again.";
       });

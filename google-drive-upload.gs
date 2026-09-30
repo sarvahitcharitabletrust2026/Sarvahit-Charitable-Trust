@@ -1,4 +1,4 @@
-const DEFAULT_PARENT_FOLDER_ID = "1jzejKzt8VYQzXAXURxSBr7_fLSqfwpV6";
+const DEFAULT_PARENT_FOLDER_ID = "1vdFS945OVbJ10Kr_KPgJzQ5WD6QElBsK";
 const SOCIAL_ACTIVITY_FOLDER_ID = "1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv";
 
 function doGet() {
@@ -67,7 +67,8 @@ function doPost(event) {
     const folders = parent.getFoldersByName(year);
     const yearFolder = folders.hasNext() ? folders.next() : parent.createFolder(year);
     const bytes = Utilities.base64Decode(data.base64);
-    const blob = Utilities.newBlob(bytes, data.mimeType || "image/jpeg", data.fileName);
+    const safeName = String(data.fileName || "payment-screenshot.jpg").replace(/[\\/:*?"<>|]/g, "-");
+    const blob = Utilities.newBlob(bytes, data.mimeType || "image/jpeg", safeName);
     const file = yearFolder.createFile(blob);
 
     return ContentService
