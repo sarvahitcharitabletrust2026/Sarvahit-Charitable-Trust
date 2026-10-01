@@ -342,7 +342,6 @@
       width: min(1180px, 100%);
       margin: 0 auto;
       padding: 26px 20px 44px;
-      transform: translateY(-15vh);
     }
 
     .hero-content {
@@ -397,6 +396,11 @@
 
     section {
       padding: 70px 20px;
+    }
+
+    #home,
+    section[id] {
+      scroll-margin-top: var(--anchor-scroll-offset, 6rem);
     }
 
     .wrap {
@@ -1585,7 +1589,6 @@
 
       .hero-inner {
         padding: 26px 18px 54px;
-        transform: translateY(-2vh);
       }
 
       .hero p {
@@ -2141,12 +2144,11 @@
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
     const SUPABASE_DONATION_TABLE = "donation_records";
     const PAYMENT_BUCKET = "payment-screenshots";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyoAkhzAnxOK8IZyxQ_HBYPGo-nzRdXw3WkoMiXoFUwErdmJquE9uam9yMhnmDdO9Z1/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzrKJaI2wdJxNbswtAEH0PNCbiFjDfA0MHbmJd_NG9WCt65qRslviyBvmlhAsY1mYTA/exec";
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
     const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwe150i-u7iDEDpx01_qCUR5bcBQHt2ilTyOlq3xIdZydWw0VCZ361xGxiKrqEPgUdv2A/exec";
-    const GOOGLE_DRIVE_PARENT_FOLDER_ID = "1vdFS945OVbJ10Kr_KPgJzQ5WD6QElBsK";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -2735,16 +2737,16 @@
       });
     }
 
-    async function uploadToGoogleDrive(file, certificateId, year) {
+    async function uploadToGoogleDrive(file, certificateId, fullName) {
       if (!GOOGLE_DRIVE_UPLOAD_URL) return null;
       const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
       const response = await fetch(GOOGLE_DRIVE_UPLOAD_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
-          parentFolderId: GOOGLE_DRIVE_PARENT_FOLDER_ID,
-          year,
-          fileName: `${certificateId}.${extension}`,
+          certificateId,
+          fullName,
+          fileName: `${certificateId} - ${fullName}.${extension}`,
           mimeType: file.type || "image/jpeg",
           base64: await fileToBase64(file)
         })
@@ -2757,29 +2759,28 @@
       return result.fileUrl;
     }
 
-    async function uploadPaymentScreenshot(file, certificateId) {
-      if (!supabaseEnabled()) {
-        return { path: `local/${certificateId}-${file.name}`, driveUrl: null };
-      }
+    async function uploadPaymentScreenshot(file, certificateId, fullName) {
       const year = String(new Date().getFullYear());
       const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
       const path = `${year}/${certificateId}.${extension}`;
-      const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${PAYMENT_BUCKET}/${path}`, {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          "Content-Type": file.type || "image/jpeg",
-          "x-upsert": "true"
-        },
-        body: file
-      });
-      if (!response.ok) {
-        throw new Error(await response.text());
+      if (supabaseEnabled()) {
+        const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${PAYMENT_BUCKET}/${path}`, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            "Content-Type": file.type || "image/jpeg",
+            "x-upsert": "true"
+          },
+          body: file
+        });
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
       }
       let driveUrl;
       try {
-        driveUrl = await uploadToGoogleDrive(file, certificateId, year);
+        driveUrl = await uploadToGoogleDrive(file, certificateId, fullName);
       } catch (error) {
         throw new Error(`Google Drive upload failed: ${error.message || "Please try again."}`);
       }
@@ -3125,6 +3126,22 @@
       });
     });
 
+    const stickyHeader = document.querySelector("header");
+    if (stickyHeader) {
+      const updateAnchorScrollOffset = () => {
+        document.documentElement.style.setProperty(
+          "--anchor-scroll-offset",
+          `${stickyHeader.getBoundingClientRect().height}px`
+        );
+      };
+      updateAnchorScrollOffset();
+      if ("ResizeObserver" in window) {
+        new ResizeObserver(updateAnchorScrollOffset).observe(stickyHeader);
+      } else {
+        window.addEventListener("resize", updateAnchorScrollOffset);
+      }
+    }
+
     const getInvolvedDropdown = document.getElementById("get-involved-dropdown");
     getInvolvedDropdown?.addEventListener("mouseenter", () => {
       getInvolvedDropdown.setAttribute("open", "");
@@ -3245,7 +3262,7 @@
       status.textContent = "Submitting payment details. Please wait...";
       status.style.display = "block";
       try {
-        const screenshotUpload = await uploadPaymentScreenshot(screenshot, activeDonation.certificateId);
+        const screenshotUpload = await uploadPaymentScreenshot(screenshot, activeDonation.certificateId, activeDonation.name);
         activeDonation.screenshotPath = screenshotUpload.path;
         activeDonation.driveFileUrl = screenshotUpload.driveUrl;
         activeDonation.screenshotFileName = screenshot.name;
