@@ -2861,10 +2861,10 @@
         });
       };
       const logoData = await loadCertificateImage(
-        "/certificate-logo-transparent.png",
-        "/SarvahitCharitableTrust_Logo.png"
+        "/outputs/assets/certificate-logo-transparent.png",
+        "/outputs/assets/SarvahitCharitableTrust_Logo.png"
       );
-      const watermarkData = await loadCertificateImage("assets/certificate-watermark.png").catch(() => null);
+      const watermarkData = await loadCertificateImage("/outputs/assets/certificate-watermark.png").catch(() => null);
       const date = new Intl.DateTimeFormat("en-IN", {
         day: "2-digit",
         month: "long",
