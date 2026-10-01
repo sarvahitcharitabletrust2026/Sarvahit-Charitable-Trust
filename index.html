@@ -2848,24 +2848,23 @@
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
       const center = pageWidth / 2;
-      const logoResponse = await fetch("assets/certificate-logo-transparent.png");
-      if (!logoResponse.ok) throw new Error("Certificate logo could not be loaded.");
-      const logoBlob = await logoResponse.blob();
-      const logoData = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(logoBlob);
-      });
-      const watermarkResponse = await fetch("assets/certificate-watermark.png");
-      if (!watermarkResponse.ok) throw new Error("Certificate watermark could not be loaded.");
-      const watermarkBlob = await watermarkResponse.blob();
-      const watermarkData = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(watermarkBlob);
-      });
+      const loadCertificateImage = async (path, fallbackPath) => {
+        let response = await fetch(path);
+        if (!response.ok && fallbackPath) response = await fetch(fallbackPath);
+        if (!response.ok) throw new Error("Certificate images could not be loaded.");
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      };
+      const logoData = await loadCertificateImage(
+        "/outputs/assets/certificate-logo-transparent.png",
+        "/outputs/assets/SarvahitCharitableTrust_Logo.png"
+      );
+      const watermarkData = await loadCertificateImage("/outputs/assets/certificate-watermark.png").catch(() => null);
       const date = new Intl.DateTimeFormat("en-IN", {
         day: "2-digit",
         month: "long",
@@ -2880,7 +2879,7 @@
       doc.setDrawColor(196, 145, 45);
       doc.setLineWidth(0.8);
       doc.rect(15, 15, pageWidth - 30, pageHeight - 30);
-      doc.addImage(watermarkData, "PNG", center - 65, 61, 130, 130);
+      if (watermarkData) doc.addImage(watermarkData, "PNG", center - 65, 61, 130, 130);
       doc.addImage(logoData, "PNG", center - 13, 17, 26, 26);
 
       doc.setTextColor(28, 92, 55);
