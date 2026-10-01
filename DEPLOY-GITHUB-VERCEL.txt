@@ -8,7 +8,7 @@ GitHub and Vercel deployment steps
    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 5. In Google Apps Script, create a project and paste in google-drive-upload.gs.
 6. Deploy it as a Web app that executes as your account and is accessible to anyone. The gallery endpoint reads image files from the social activity folder configured in the script and returns a photo grid, including images inside its subfolders. All images in this folder will be visible to visitors through the public website.
-7. Copy the Apps Script web app URL into GOOGLE_DRIVE_UPLOAD_URL and GOOGLE_DRIVE_GALLERY_API_URL in index.html. Donation payment screenshots are stored under the provided Drive folder in a year subfolder. After changing google-drive-upload.gs, redeploy the Apps Script web app so the new destination folder is active.
+7. Copy the Apps Script web app URL into GOOGLE_DRIVE_UPLOAD_URL and GOOGLE_DRIVE_GALLERY_API_URL in index.html. Payment screenshots are saved in the Drive folder configured in google-drive-upload.gs using Year / MM-Month / DD folders, with filenames in the format `Certificate ID - Full Name.ext`. After changing google-drive-upload.gs, redeploy the Apps Script web app so the new destination folder and folder structure become active.
 8. In Supabase SQL Editor, run supabase-pan-name-migration.sql once to add the PAN card number column to an existing database.
 9. In Vercel, import the GitHub repository.
 10. Use the default static site settings. The main file is index.html.

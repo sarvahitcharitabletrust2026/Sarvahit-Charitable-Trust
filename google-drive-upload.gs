@@ -1,5 +1,6 @@
-const DEFAULT_PARENT_FOLDER_ID = "1vdFS945OVbJ10Kr_KPgJzQ5WD6QElBsK";
+const DEFAULT_PARENT_FOLDER_ID = "1APZJvDJR4d9LGoVGXrMuPlQvO8A1-M0F";
 const SOCIAL_ACTIVITY_FOLDER_ID = "1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv";
+const DRIVE_TIME_ZONE = "Asia/Kolkata";
 
 function doGet() {
   try {
@@ -62,21 +63,42 @@ function escapeHtml_(value) {
 function doPost(event) {
   try {
     const data = JSON.parse(event.postData.contents);
-    const parent = DriveApp.getFolderById(data.parentFolderId || DEFAULT_PARENT_FOLDER_ID);
-    const year = String(data.year || new Date().getFullYear());
-    const folders = parent.getFoldersByName(year);
-    const yearFolder = folders.hasNext() ? folders.next() : parent.createFolder(year);
+    const parent = DriveApp.getFolderById(DEFAULT_PARENT_FOLDER_ID);
+    const now = new Date();
+    const year = Utilities.formatDate(now, DRIVE_TIME_ZONE, "yyyy");
+    const monthNumber = Utilities.formatDate(now, DRIVE_TIME_ZONE, "MM");
+    const day = Utilities.formatDate(now, DRIVE_TIME_ZONE, "dd");
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const month = `${monthNumber}-${monthNames[Number(monthNumber) - 1]}`;
+    const yearFolder = getOrCreateFolder_(parent, year);
+    const monthFolder = getOrCreateFolder_(yearFolder, month);
+    const dateFolder = getOrCreateFolder_(monthFolder, day);
     const bytes = Utilities.base64Decode(data.base64);
-    const safeName = String(data.fileName || "payment-screenshot.jpg").replace(/[\\/:*?"<>|]/g, "-");
+    const certificateId = sanitizeFileNamePart_(data.certificateId || "Certificate");
+    const fullName = sanitizeFileNamePart_(data.fullName || "Donor");
+    const extension = String(data.fileName || "payment-screenshot.jpg").match(/\.([A-Za-z0-9]+)$/);
+    const safeName = `${certificateId} - ${fullName}.${extension ? extension[1] : "jpg"}`;
     const blob = Utilities.newBlob(bytes, data.mimeType || "image/jpeg", safeName);
-    const file = yearFolder.createFile(blob);
+    const file = dateFolder.createFile(blob);
 
     return ContentService
-      .createTextOutput(JSON.stringify({ ok: true, fileId: file.getId(), fileUrl: file.getUrl(), year }))
+      .createTextOutput(JSON.stringify({ ok: true, fileId: file.getId(), fileUrl: file.getUrl(), year, month, day, fileName: safeName }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService
       .createTextOutput(JSON.stringify({ ok: false, error: String(error) }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function getOrCreateFolder_(parent, name) {
+  const matchingFolders = parent.getFoldersByName(name);
+  return matchingFolders.hasNext() ? matchingFolders.next() : parent.createFolder(name);
+}
+
+function sanitizeFileNamePart_(value) {
+  return String(value)
+    .replace(/[\\/:*?"<>|\u0000-\u001f]/g, "-")
+    .replace(/\s+/g, " ")
+    .trim() || "Donor";
 }
