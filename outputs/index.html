@@ -2740,8 +2740,9 @@
     async function uploadToGoogleDrive(file, certificateId, fullName) {
       if (!GOOGLE_DRIVE_UPLOAD_URL) return null;
       const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
-      const response = await fetch(GOOGLE_DRIVE_UPLOAD_URL, {
+      await fetch(GOOGLE_DRIVE_UPLOAD_URL, {
         method: "POST",
+        mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
           certificateId,
@@ -2751,12 +2752,9 @@
           base64: await fileToBase64(file)
         })
       });
-      if (!response.ok) throw new Error("Google Drive upload failed.");
-      const result = await response.json();
-      if (!result.ok || !result.fileUrl) {
-        throw new Error(result.error || "Google Drive did not confirm the screenshot upload.");
-      }
-      return result.fileUrl;
+      // Apps Script does not expose CORS headers, so no-cors returns an opaque
+      // response whose status and file URL cannot be read from this website.
+      return null;
     }
 
     async function uploadPaymentScreenshot(file, certificateId, fullName) {
