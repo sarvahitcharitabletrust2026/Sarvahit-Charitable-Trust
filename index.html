@@ -1677,7 +1677,7 @@
         <div class="social-links" aria-label="Social media links">
           <a class="social-icon" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><img src="https://marketplace.canva.com/KrzKM/MAGzNqKrzKM/1/tl/canva-facebook-logo-MAGzNqKrzKM.png" alt="" /></a>
           <a class="social-icon" href="https://www.instagram.com/sarvahitcharitabletrust2024/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><img src="https://marketplace.canva.com/0Q87E/MAGzNm0Q87E/1/tl/canva-instagram-icon-MAGzNm0Q87E.png" alt="" /></a>
-          <a class="social-icon" href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><img src="https://marketplace.canva.com/NA4A8/MAGzNvNA4A8/1/tl/canva-linkedin-icon-MAGzNvNA4A8.png" alt="" /></a>
+          <a class="social-icon" href="https://www.linkedin.com/in/sarvahit-charitable-trust-06a594442/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><img src="https://marketplace.canva.com/NA4A8/MAGzNvNA4A8/1/tl/canva-linkedin-icon-MAGzNvNA4A8.png" alt="" /></a>
           <a class="social-icon" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><img src="https://marketplace.canva.com/KE6ns/MAElfQKE6ns/1/tl/canva-youtube-logo-MAElfQKE6ns.png" alt="" /></a>
         </div>
         <select class="language-select" id="language-select" aria-label="Select language">
@@ -2902,18 +2902,19 @@
       doc.setTextColor(70, 76, 72);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(13);
-      doc.text(
-        `With sincere gratitude for the generous donation of INR ${Number(activeDonation.amount).toLocaleString("en-IN")} towards ${activeDonation.purpose}.`,
-        center,
-        129,
-        { align: "center", maxWidth: 225 }
-      );
-      doc.text("Your support strengthens our mission to serve people and communities in need.", center, 143, { align: "center" });
+      doc.text("With sincere gratitude for your generous support.", center, 126, { align: "center" });
+      doc.setFont("helvetica", "bold");
+      doc.text(`Donation Amount: INR ${Number(activeDonation.amount).toLocaleString("en-IN")}`, center, 138, { align: "center", maxWidth: 225 });
+      doc.setFont("helvetica", "normal");
+      doc.text(`Towards ${activeDonation.purpose}.`, center, 149, { align: "center", maxWidth: 225 });
+      doc.text("Your support strengthens our mission to serve people and communities in need.", center, 160, { align: "center" });
       doc.setFontSize(11);
       doc.text(`Date: ${date}`, 34, 175);
       doc.text(`Certificate ID: ${activeDonation.certificateId}`, center, 175, { align: "center" });
       doc.text("Authorized by Sarvahit Charitable Trust", pageWidth - 34, 175, { align: "right" });
+      doc.setFont("helvetica", "bold");
       doc.text(`PAN: ${activeDonation.panCardNumber}`, 34, 190);
+      doc.setFont("helvetica", "normal");
       doc.setTextColor(28, 92, 55);
       doc.text("sarvahitcharitabletrust2026@gmail.com", center, 190, { align: "center" });
 
@@ -3085,7 +3086,10 @@
       });
     }
 
+    let donationSubmitting = false;
+
     function closeModals() {
+      if (donationSubmitting) return;
       document.querySelectorAll(".modal-overlay").forEach((modal) => {
         modal.hidden = true;
       });
@@ -3257,6 +3261,9 @@
       }
 
       button.disabled = true;
+      donationSubmitting = true;
+      document.getElementById("donor-window")?.setAttribute("aria-busy", "true");
+      document.querySelector('#donor-window [data-close-modal]')?.setAttribute("disabled", "");
       status.textContent = "Submitting payment details. Please wait...";
       status.style.display = "block";
       try {
@@ -3275,6 +3282,9 @@
           : "Payment details could not be submitted. Please try again.";
       } finally {
         button.disabled = false;
+        donationSubmitting = false;
+        document.getElementById("donor-window")?.removeAttribute("aria-busy");
+        document.querySelector('#donor-window [data-close-modal]')?.removeAttribute("disabled");
       }
     });
 
