@@ -222,6 +222,10 @@
       display: grid;
       gap: 12px;
       margin-top: 16px;
+      max-height: var(--list-visible-height, none);
+      overflow-y: auto;
+      padding-right: 6px;
+      align-content: start;
     }
 
     .volunteer-card {
@@ -240,6 +244,57 @@
       justify-content: space-between;
       gap: 12px;
     }
+
+    .entry-name {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--green-dark);
+      font: inherit;
+      font-weight: 800;
+      text-align: left;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+
+    .entry-name:hover,
+    .entry-name:focus-visible { text-decoration-color: currentColor; }
+
+    .entry-dialog {
+      width: min(560px, calc(100% - 32px));
+      max-height: min(80vh, 720px);
+      overflow: auto;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--ink);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .entry-dialog::backdrop { background: rgba(17, 26, 28, 0.68); }
+    .entry-dialog h2 { margin: 0; color: var(--green-dark); }
+    .entry-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+    .entry-dialog-close { border: 0; background: transparent; font-size: 28px; cursor: pointer; color: var(--muted); }
+    .entry-detail-grid { display: grid; gap: 12px; }
+    .entry-detail-grid p { margin: 0; overflow-wrap: anywhere; }
+    .entry-review-text { padding: 16px; border-radius: 8px; background: #f7f8f5; line-height: 1.65; }
+    .review-rating-editor { display: flex; align-items: center; gap: 8px; margin-top: 18px; }
+    .rating-star {
+      padding: 0 2px;
+      border: 0;
+      background: transparent;
+      color: #b9b9b9;
+      font-size: 32px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .rating-star.is-selected,
+    .rating-star:hover,
+    .rating-star:focus-visible { color: #e0a800; }
+    .rating-save-status { min-height: 24px; margin: 10px 0 0; color: var(--muted); }
 
     .volunteer-card strong {
       color: var(--ink);
@@ -305,9 +360,11 @@
     }
 
     .table-wrap {
-      overflow-x: auto;
+      max-height: 560px;
+      overflow: auto;
       border: 1px solid var(--line);
       border-radius: 8px;
+      overscroll-behavior: contain;
     }
 
     .donation-table {
@@ -319,6 +376,7 @@
 
     .donation-table th,
     .donation-table td {
+      height: 50px;
       padding: 11px 12px;
       border-bottom: 1px solid var(--line);
       text-align: left;
@@ -327,6 +385,9 @@
     }
 
     .donation-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
       background: #eef4ef;
       color: var(--green-dark);
     }
@@ -482,20 +543,28 @@
 
         <section class="panel">
           <h2>Volunteer Data</h2>
-          <p>Registered volunteer details show here after admin login. Use Delete to remove a record.</p>
+          <p>Only names are listed here. Click a name to view volunteer details; use Delete to remove a record.</p>
           <button class="btn btn-primary" type="button" id="refresh-volunteers">Refresh Volunteer Data</button>
           <div class="volunteer-list" id="volunteer-list"></div>
         </section>
 
         <section class="panel">
           <h2>Trusted Person Reviews</h2>
-          <p>Visitor-submitted reviews show here. Delete any wrong or unsuitable review.</p>
+          <p>Only names are listed here. Click a name to read the review and choose a 1–5 star rating. Delete any unsuitable review.</p>
           <button class="btn btn-primary" type="button" id="refresh-reviews">Refresh Reviews</button>
           <div class="volunteer-list" id="review-list"></div>
         </section>
       </section>
     </div>
   </main>
+
+  <dialog class="entry-dialog" id="entry-detail-dialog" aria-labelledby="entry-detail-title">
+    <div class="entry-dialog-header">
+      <h2 id="entry-detail-title"></h2>
+      <button class="entry-dialog-close" type="button" data-close-entry-dialog aria-label="Close details">&times;</button>
+    </div>
+    <div id="entry-detail-content"></div>
+  </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script>
@@ -556,6 +625,7 @@
         id: row.id,
         name: row.name,
         review: row.review,
+        rating: Number(row.rating) || 0,
         createdAt: row.created_at
       }));
     }
@@ -799,6 +869,76 @@
       });
     }
 
+    function sizeListForTenEntries(list) {
+      const entries = [...list.children];
+      if (entries.length <= 10) {
+        list.style.removeProperty("--list-visible-height");
+        return;
+      }
+      const gap = Number.parseFloat(getComputedStyle(list).rowGap) || 0;
+      const visibleHeight = entries.slice(0, 10).reduce((total, entry) => total + entry.getBoundingClientRect().height, 0) + gap * 9;
+      list.style.setProperty("--list-visible-height", `${visibleHeight}px`);
+    }
+
+    const entryDialog = document.getElementById("entry-detail-dialog");
+
+    function showEntryDetails(title, html) {
+      document.getElementById("entry-detail-title").textContent = title;
+      document.getElementById("entry-detail-content").innerHTML = html;
+      if (!entryDialog.open) entryDialog.showModal();
+    }
+
+    function showVolunteerDetails(volunteer) {
+      showEntryDetails(volunteer.name, `
+        <div class="entry-detail-grid">
+          <p><strong>Mobile:</strong> ${escapeHtml(volunteer.phone || "—")}</p>
+          <p><strong>Email:</strong> ${escapeHtml(volunteer.email || "—")}</p>
+          <p><strong>City:</strong> ${escapeHtml(volunteer.city || "—")}</p>
+          <p><strong>Work:</strong> ${escapeHtml(volunteer.interest || "—")}</p>
+          <p><strong>Available time:</strong> ${escapeHtml(volunteer.availability || "—")}</p>
+        </div>
+      `);
+    }
+
+    function showReviewDetails(review, index) {
+      const rating = Math.max(0, Math.min(5, Number(review.rating) || 0));
+      const stars = [1, 2, 3, 4, 5].map((value) => `
+        <button class="rating-star${value <= rating ? " is-selected" : ""}" type="button" data-review-rating="${value}" aria-label="Rate ${value} out of 5 stars" aria-pressed="${value === rating}">★</button>
+      `).join("");
+      showEntryDetails(review.name, `
+        <div class="entry-review-text">${escapeHtml(review.review)}</div>
+        <div class="review-rating-editor" aria-label="Rate this review from one to five stars">${stars}</div>
+        <p class="rating-save-status" id="rating-save-status">${rating ? `Current rating: ${rating} out of 5` : "Choose a star rating for this review."}</p>
+      `);
+      entryDialog.dataset.reviewIndex = String(index);
+    }
+
+    async function saveReviewRating(review, index, rating) {
+      const status = document.getElementById("rating-save-status");
+      if (status) status.textContent = "Saving rating…";
+      try {
+        if (supabaseEnabled()) {
+          await supabaseRequest(`${SUPABASE_REVIEW_TABLE}?id=eq.${encodeURIComponent(review.id)}`, {
+            method: "PATCH",
+            body: JSON.stringify({ rating })
+          });
+        } else {
+          const reviews = getReviews();
+          reviews[index] = { ...reviews[index], rating };
+          saveReviews(reviews);
+        }
+        review.rating = rating;
+        await renderReviews();
+        showReviewDetails(review, index);
+        const savedStatus = document.getElementById("rating-save-status");
+        if (savedStatus) savedStatus.textContent = `Saved: ${rating} out of 5 stars. This rating now appears on the website.`;
+      } catch (error) {
+        console.error("Review rating update failed.", error);
+        const errorStatus = document.getElementById("rating-save-status");
+        if (errorStatus) errorStatus.textContent = "Could not save the rating. Apply the review-rating database update, then try again.";
+      }
+    }
+
     async function renderVolunteers() {
       const list = document.getElementById("volunteer-list");
       list.innerHTML = "<p>Loading volunteer data...</p>";
@@ -808,17 +948,13 @@
           ? volunteers.map((volunteer, index) => `
               <article class="volunteer-card">
                 <div class="volunteer-card-header">
-                  <strong>${escapeHtml(volunteer.name)}</strong>
+                  <button class="entry-name" type="button" data-open-volunteer="${index}">${escapeHtml(volunteer.name)}</button>
                   <button class="btn btn-danger" type="button" data-delete-volunteer="${index}">Delete</button>
                 </div>
-                <div>Mobile: ${escapeHtml(volunteer.phone)}</div>
-                <div>Email: ${escapeHtml(volunteer.email)}</div>
-                <div>City: ${escapeHtml(volunteer.city)}</div>
-                <div>Work: ${escapeHtml(volunteer.interest)}</div>
-                <div>Time: ${escapeHtml(volunteer.availability)}</div>
               </article>
             `).join("")
           : "<p>No volunteer registered yet.</p>";
+        sizeListForTenEntries(list);
       } catch (error) {
         list.innerHTML = "<p>Could not load volunteer data. Please check Supabase settings.</p>";
       }
@@ -833,13 +969,13 @@
           ? reviews.map((review, index) => `
               <article class="volunteer-card">
                 <div class="volunteer-card-header">
-                  <strong>${escapeHtml(review.name)}</strong>
+                  <button class="entry-name" type="button" data-open-review="${index}">${escapeHtml(review.name)}</button>
                   <button class="btn btn-danger" type="button" data-delete-review="${index}">Delete</button>
                 </div>
-                <div>${escapeHtml(review.review)}</div>
               </article>
             `).join("")
           : "<p>No visitor review submitted yet.</p>";
+        sizeListForTenEntries(list);
       } catch (error) {
         list.innerHTML = "<p>Could not load reviews. Please check Supabase settings.</p>";
       }
@@ -893,6 +1029,12 @@
     document.getElementById("export-donations").addEventListener("click", exportDonationExcel);
 
     document.getElementById("volunteer-list").addEventListener("click", async (event) => {
+      const nameButton = event.target.closest("[data-open-volunteer]");
+      if (nameButton) {
+        const volunteers = await loadVolunteers();
+        showVolunteerDetails(volunteers[Number(nameButton.dataset.openVolunteer)]);
+        return;
+      }
       const button = event.target.closest("[data-delete-volunteer]");
       if (!button) return;
       const index = Number(button.dataset.deleteVolunteer);
@@ -902,6 +1044,13 @@
     });
 
     document.getElementById("review-list").addEventListener("click", async (event) => {
+      const nameButton = event.target.closest("[data-open-review]");
+      if (nameButton) {
+        const index = Number(nameButton.dataset.openReview);
+        const reviews = await loadReviews();
+        showReviewDetails(reviews[index], index);
+        return;
+      }
       const button = event.target.closest("[data-delete-review]");
       if (!button) return;
       const index = Number(button.dataset.deleteReview);
@@ -909,6 +1058,17 @@
       await deleteReview(reviews[index], index);
       await renderReviews();
     });
+
+    document.getElementById("entry-detail-dialog").addEventListener("click", async (event) => {
+      if (event.target.closest("[data-review-rating]")) {
+        const button = event.target.closest("[data-review-rating]");
+        const index = Number(entryDialog.dataset.reviewIndex);
+        const reviews = await loadReviews();
+        await saveReviewRating(reviews[index], index, Number(button.dataset.reviewRating));
+      }
+    });
+
+    document.querySelector("[data-close-entry-dialog]").addEventListener("click", () => entryDialog.close());
   </script>
 </body>
 </html>

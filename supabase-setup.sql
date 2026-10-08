@@ -39,8 +39,12 @@ create table if not exists public.trusted_reviews (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   review text not null,
+  rating integer not null default 0 check (rating between 0 and 5),
   created_at timestamptz not null default now()
 );
+
+alter table public.trusted_reviews
+  add column if not exists rating integer not null default 0;
 
 alter table public.trusted_reviews enable row level security;
 
@@ -64,6 +68,17 @@ on public.trusted_reviews
 for delete
 to anon
 using (true);
+
+drop policy if exists "Allow admin panel trusted review rating update" on public.trusted_reviews;
+create policy "Allow admin panel trusted review rating update"
+on public.trusted_reviews
+for update
+to anon
+using (true)
+with check (rating between 0 and 5);
+
+revoke update on public.trusted_reviews from anon;
+grant update (rating) on public.trusted_reviews to anon;
 
 create table if not exists public.trust_impact_stats (
   id text primary key default 'main',
