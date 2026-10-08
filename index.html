@@ -818,6 +818,63 @@
       text-align: center;
     }
 
+    .donation-status.is-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .donation-spinner {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      border: 3px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: donation-spin 0.8s linear infinite;
+    }
+
+    .donation-loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(17, 26, 28, 0.76);
+      color: #fff;
+    }
+
+    .donation-loading-overlay[hidden] {
+      display: none;
+    }
+
+    .donation-loading-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .donation-loading-content .donation-spinner {
+      width: 44px;
+      height: 44px;
+      flex-basis: 44px;
+      border-width: 5px;
+    }
+
+    @keyframes donation-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .donation-spinner { animation: none; }
+    }
+
     .certificate-ready {
       padding: 28px 18px;
       border: 2px solid var(--gold);
@@ -2028,7 +2085,7 @@
             <button class="btn btn-light" type="button" id="edit-donor-details">Edit Donor Details</button>
             <button class="btn btn-primary" type="button" id="confirm-donation">Confirm Payment</button>
           </div>
-          <div class="donation-status" id="donation-status"></div>
+          <div class="donation-status" id="donation-status" role="status" aria-live="polite"></div>
         </section>
 
         <section class="donation-panel" id="donor-certificate-panel" hidden>
@@ -2039,6 +2096,13 @@
           </div>
         </section>
       </div>
+    </div>
+  </div>
+
+  <div class="donation-loading-overlay" id="donation-loading-overlay" hidden role="status" aria-live="polite">
+    <div class="donation-loading-content">
+      <span class="donation-spinner" aria-hidden="true"></span>
+      <span>Submitting payment details. Please wait...</span>
     </div>
   </div>
 
@@ -3264,8 +3328,7 @@
       donationSubmitting = true;
       document.getElementById("donor-window")?.setAttribute("aria-busy", "true");
       document.querySelector('#donor-window [data-close-modal]')?.setAttribute("disabled", "");
-      status.textContent = "Submitting payment details. Please wait...";
-      status.style.display = "block";
+      document.getElementById("donation-loading-overlay").hidden = false;
       try {
         const screenshotUpload = await uploadPaymentScreenshot(screenshot, activeDonation.certificateId, activeDonation.name);
         activeDonation.screenshotPath = screenshotUpload.path;
@@ -3277,10 +3340,12 @@
         setDonationStep(3);
       } catch (error) {
         console.error("Donation submission failed.", error);
+        status.style.display = "block";
         status.textContent = String(error?.message || "").includes("Google Drive")
           ? "The payment screenshot could not be saved to Google Drive. Please try again."
           : "Payment details could not be submitted. Please try again.";
       } finally {
+        document.getElementById("donation-loading-overlay").hidden = true;
         button.disabled = false;
         donationSubmitting = false;
         document.getElementById("donor-window")?.removeAttribute("aria-busy");
