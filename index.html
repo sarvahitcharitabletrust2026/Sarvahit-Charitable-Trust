@@ -889,6 +889,32 @@
       margin-bottom: 10px;
     }
 
+    .error-popup-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(17, 26, 28, 0.64);
+    }
+
+    .error-popup-overlay[hidden] { display: none; }
+
+    .error-popup {
+      width: min(440px, 100%);
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-top: 5px solid #b42318;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+    }
+
+    .error-popup h2 { margin: 0 0 10px; color: #9f1d16; font-size: 22px; }
+    .error-popup p { margin: 0 0 20px; line-height: 1.55; overflow-wrap: anywhere; }
+    .error-popup-actions { display: flex; justify-content: flex-end; }
+
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -2106,6 +2132,14 @@
     </div>
   </div>
 
+  <div class="error-popup-overlay" id="error-popup-overlay" hidden>
+    <section class="error-popup" role="alertdialog" aria-modal="true" aria-labelledby="error-popup-title" aria-describedby="error-popup-message">
+      <h2 id="error-popup-title">Something went wrong</h2>
+      <p id="error-popup-message"></p>
+      <div class="error-popup-actions"><button class="btn btn-primary" id="error-popup-close" type="button">OK</button></div>
+    </section>
+  </div>
+
   <div class="modal-overlay" id="volunteer-window" hidden role="dialog" aria-modal="true" aria-labelledby="volunteer-title">
     <div class="modal-window">
       <div class="modal-head">
@@ -2479,6 +2513,36 @@
       document.getElementById("donor-details-panel").hidden = step !== 1;
       document.getElementById("donor-payment-panel").hidden = step !== 2;
       document.getElementById("donor-certificate-panel").hidden = step !== 3;
+    }
+
+    function showErrorPopup(message, title = "Something went wrong") {
+      const overlay = document.getElementById("error-popup-overlay");
+      document.getElementById("error-popup-title").textContent = title;
+      document.getElementById("error-popup-message").textContent = message;
+      overlay.hidden = false;
+      document.getElementById("error-popup-close").focus();
+    }
+
+    function closeErrorPopup() {
+      document.getElementById("error-popup-overlay").hidden = true;
+    }
+
+    function readableSubmissionError(error) {
+      const rawMessage = String(error?.message || "").trim();
+      if (!rawMessage || rawMessage.startsWith("<")) {
+        return "Payment details could not be submitted. Check your internet connection and try again.";
+      }
+      if (rawMessage.startsWith("Google Drive upload failed:")) {
+        return "The payment screenshot could not be uploaded to Google Drive. Check your internet connection and try again.";
+      }
+      try {
+        const details = JSON.parse(rawMessage);
+        const reason = details.message || details.error_description || details.error;
+        if (reason) return `Payment details could not be submitted: ${reason}`;
+      } catch (parseError) {
+        // Use the plain-text service message below.
+      }
+      return `Payment details could not be submitted: ${rawMessage}`;
     }
 
     let socialPhotoViewer = null;
@@ -3220,6 +3284,8 @@
       button.addEventListener("click", closeModals);
     });
 
+    document.getElementById("error-popup-close")?.addEventListener("click", closeErrorPopup);
+
     document.querySelectorAll("[data-copy-upi]").forEach((button) => {
       button.addEventListener("click", async () => {
         const upi = document.querySelector(".upi-value")?.textContent.trim() || "Sarvahitcharitabletrust@upi";
@@ -3245,6 +3311,10 @@
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
+        if (!document.getElementById("error-popup-overlay").hidden) {
+          closeErrorPopup();
+          return;
+        }
         closeModals();
       }
     });
@@ -3316,11 +3386,13 @@
       if (!activeDonation || !screenshot) {
         status.textContent = "Please attach your payment screenshot before confirmation.";
         status.style.display = "block";
+        showErrorPopup(status.textContent, "Payment screenshot required");
         return;
       }
       if (screenshot.size > 8 * 1024 * 1024) {
         status.textContent = "Please select a screenshot smaller than 8 MB.";
         status.style.display = "block";
+        showErrorPopup(status.textContent, "Screenshot is too large");
         return;
       }
 
@@ -3341,9 +3413,8 @@
       } catch (error) {
         console.error("Donation submission failed.", error);
         status.style.display = "block";
-        status.textContent = String(error?.message || "").includes("Google Drive")
-          ? "The payment screenshot could not be saved to Google Drive. Please try again."
-          : "Payment details could not be submitted. Please try again.";
+        status.textContent = readableSubmissionError(error);
+        showErrorPopup(status.textContent, "Payment submission failed");
       } finally {
         document.getElementById("donation-loading-overlay").hidden = true;
         button.disabled = false;
@@ -3357,7 +3428,9 @@
       downloadCertificate().catch((error) => {
         console.error("Certificate generation failed.", error);
         const message = document.querySelector("#donor-certificate-panel .certificate-ready p");
-        if (message) message.textContent = "The certificate could not be created. Please try again.";
+        const errorMessage = "The certificate could not be created. Check your internet connection and try again.";
+        if (message) message.textContent = errorMessage;
+        showErrorPopup(errorMessage, "Certificate could not be created");
       });
     });
 
