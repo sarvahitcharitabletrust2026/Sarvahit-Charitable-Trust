@@ -232,8 +232,8 @@
 
     .volunteer-list {
       display: grid;
-      gap: 12px;
-      margin-top: 16px;
+      gap: 6px;
+      margin-top: 12px;
       max-height: var(--list-visible-height, none);
       overflow-y: auto;
       padding-right: 6px;
@@ -242,20 +242,33 @@
 
     .volunteer-card {
       display: grid;
-      gap: 8px;
+      gap: 4px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 14px;
+      padding: 8px 12px;
       background: #fff;
       color: var(--muted);
     }
 
     .volunteer-card-header {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
+
+    .review-list-rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: auto;
+      color: #d99a00;
+      font-size: 19px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .review-list-rating .is-empty { color: #c8c8c8; }
 
     .entry-name {
       padding: 0;
@@ -998,6 +1011,7 @@
               <article class="volunteer-card">
                 <div class="volunteer-card-header">
                   <button class="entry-name" type="button" data-open-review="${index}">${escapeHtml(review.name)}</button>
+                  <span class="review-list-rating" role="img" aria-label="${Math.max(0, Math.min(5, Number(review.rating) || 0))} out of 5 stars">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= Number(review.rating) ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}</span>
                   <button class="btn btn-danger" type="button" data-delete-review="${index}">Delete</button>
                 </div>
               </article>
