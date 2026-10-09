@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sankalp Charitable Trust</title>
+  <meta name="description" content="Sankalp Charitable Trust - social work, education support, food donation, health help, and community welfare." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #5b6770;
+      --paper: #fbfaf7;
+      --panel: #ffffff;
+      --green: #126a51;
+      --green-dark: #0c4b3b;
+      --gold: #d89a2b;
+      --rose: #b94b5f;
+      --line: #e6e0d6;
+      --shadow: 0 18px 50px rgba(20, 30, 36, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Hind", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      background: var(--green-dark);
+      color: #fff;
+      font-size: 14px;
+      padding: 8px 20px;
+    }
+
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(251, 250, 247, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: "Poppins", system-ui, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--green), var(--gold));
+      font-size: 23px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .brand small {
+      display: block;
+      font-family: "Hind", system-ui, sans-serif;
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: #263238;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown summary {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .dropdown summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .dropdown summary::after {
+      content: "v";
+      color: var(--green);
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      min-width: 190px;
+      padding: 8px;
+      display: grid;
+      gap: 4px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      z-index: 30;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 6px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .dropdown-menu a:hover,
+    .dropdown-menu a:focus {
+      background: #eef5ef;
+      color: var(--green-dark);
+      outline: none;
+    }
+
+    .social-links {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .social-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: inline-grid;
+      place-items: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--green-dark);
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .topbar .social-icon {
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+
+    .social-icon:hover,
+    .social-icon:focus {
+      background: var(--green);
+      color: #fff;
+      outline: none;
+    }
+
+    .btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(18, 106, 81, 0.24);
+    }
+
+    .btn-light {
+      background: #fff;
+      color: var(--green-dark);
+      border-color: rgba(255, 255, 255, 0.55);
+    }
+
+    .hero {
+      min-height: calc(100vh - 104px);
+      display: grid;
+      align-items: end;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(10, 34, 29, 0.88), rgba(10, 34, 29, 0.62) 46%, rgba(10, 34, 29, 0.22)),
+        url("https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1800&q=82") center/cover;
+      color: #fff;
+    }
+
+    .hero-inner {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: 84px 20px 70px;
+    }
+
+    .hero-content {
+      max-width: 720px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffe3a3;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: clamp(42px, 7vw, 78px);
+      line-height: 1.04;
+      margin: 0 0 18px;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      font-size: 22px;
+      max-width: 640px;
+      margin: 0 0 28px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    section {
+      padding: 70px 20px;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .section-head {
+      max-width: 720px;
+      margin-bottom: 34px;
+    }
+
+    .section-head h2 {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.12;
+      margin: 0 0 10px;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: -46px;
+      position: relative;
+      z-index: 4;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 30px;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .work-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      min-height: 220px;
+      box-shadow: 0 12px 34px rgba(20, 30, 36, 0.07);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #e8f4ee;
+      color: var(--green);
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .work-card h3,
+    .donation-box h3,
+    .contact-box h3 {
+      font-family: "Poppins", system-ui, sans-serif;
+      margin: 0 0 8px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .work-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .donation-band {
+      background: #eef5ef;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .donation-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .donation-note {
+      background: var(--green-dark);
+      color: #fff;
+      border-radius: 8px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 360px;
+    }
+
+    .donation-note h2 {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.12;
+      margin: 0 0 14px;
+      letter-spacing: 0;
+    }
+
+    .donation-note p {
+      color: rgba(255, 255, 255, 0.86);
+      margin: 0 0 20px;
+      font-size: 19px;
+    }
+
+    .donation-box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .bank-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0 20px;
+      overflow-wrap: anywhere;
+    }
+
+    .bank-table th,
+    .bank-table td {
+      text-align: left;
+      padding: 14px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .bank-table th {
+      width: 38%;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .bank-table td {
+      font-weight: 700;
+    }
+
+    .upi {
+      background: #fff6df;
+      border: 1px solid #efd293;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-weight: 700;
+      color: #6d4811;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 1fr;
+      gap: 14px;
+    }
+
+    .gallery figure {
+      margin: 0;
+      min-height: 240px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      background: #ddd;
+    }
+
+    .gallery figure:first-child {
+      grid-row: span 2;
+      min-height: 494px;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery figcaption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 18px;
+      color: #fff;
+      font-weight: 700;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
+    }
+
+    .contact-band {
+      background: #fff;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .contact-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      background: #fff;
+    }
+
+    .contact-box p {
+      margin: 0;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    footer {
+      background: #111a1c;
+      color: rgba(255, 255, 255, 0.78);
+      padding: 28px 20px;
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .dropdown-menu {
+        position: fixed;
+        top: auto;
+        left: 20px;
+        right: 20px;
+        min-width: auto;
+      }
+
+      .stats,
+      .work-grid,
+      .donation-layout,
+      .contact-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .donation-layout {
+        gap: 18px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .gallery figure:first-child {
+        grid-row: auto;
+        grid-column: span 2;
+        min-height: 320px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      body {
+        font-size: 16px;
+      }
+
+      .topbar {
+        font-size: 13px;
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .brand {
+        align-items: flex-start;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+      }
+
+      .nav-links {
+        gap: 12px;
+        font-size: 15px;
+      }
+
+      .hero {
+        min-height: 620px;
+        background-position: center;
+      }
+
+      .hero-inner {
+        padding: 74px 18px 54px;
+      }
+
+      .hero p {
+        font-size: 18px;
+      }
+
+      section {
+        padding: 54px 18px;
+      }
+
+      .stats,
+      .work-grid,
+      .donation-layout,
+      .contact-grid,
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        margin-top: 0;
+        padding-top: 20px;
+      }
+
+      .gallery figure:first-child {
+        grid-column: auto;
+      }
+
+      .gallery figure,
+      .gallery figure:first-child {
+        min-height: 260px;
+      }
+
+      .bank-table th,
+      .bank-table td {
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+      }
+
+      .bank-table th {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <span>Sankalp Charitable Trust | Help today. Hope for tomorrow.</span>
+      <div class="social-links" aria-label="Social media links">
+        <a class="social-icon" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">f</a>
+        <a class="social-icon" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">IG</a>
+        <a class="social-icon" href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">in</a>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#home" aria-label="Sankalp Charitable Trust home">
+        <span class="brand-mark">M</span>
+        <span>
+          Sankalp Charitable Trust
+          <small>Seva, shiksha aur samaj kalyan</small>
+        </span>
+      </a>
+      <div class="nav-links">
+        <a href="#home">About</a>
+        <a href="#work">Work</a>
+        <details class="dropdown" id="get-involved-dropdown">
+          <summary>Get Involved</summary>
+          <div class="dropdown-menu">
+            <a href="payment-method.html">Donation</a>
+            <a href="volunteer.html">Be a Volunteer</a>
+          </div>
+        </details>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+        <a class="btn btn-primary" href="payment-method.html">Donate Now</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="home">
+    <section class="hero" aria-label="Sankalp Charitable Trust introduction">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="eyebrow">Registered charitable work for people in need</div>
+          <h1>Sankalp Charitable Trust</h1>
+          <p>We work to provide food, education, medical assistance, and community support to needy families, children, elderly people, and the underprivileged sections of society.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="payment-method.html">Donation Details</a>
+            <a class="btn btn-light" href="#work">Our Social Work</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="stats" aria-label="Trust impact highlights">
+        <div class="stat"><strong>0+</strong>Food packets distributed</div>
+        <div class="stat"><strong>0+</strong>Students supported</div>
+        <div class="stat"><strong>0+</strong>Medical help cases</div>
+        <div class="stat"><strong id="volunteer-count">0</strong>Volunteers joined trust</div>
+      </div>
+    </div>
+
+    <section id="work">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Our Charitable Activities</h2>
+          <p>The Trust is committed to providing practical support that reaches those in need directly, respectfully, and in a timely manner.</p>
+        </div>
+        <div class="work-grid">
+          <article class="work-card">
+            <div class="icon">🍲</div>
+            <h3>Food Donation</h3>
+            <p>Distribution of ration kits, cooked meals, and emergency food assistance to underprivileged and needy communities.</p>
+          </article>
+          <article class="work-card">
+            <div class="icon">📚</div>
+            <h3>Education Support</h3>
+            <p>Supporting students with school fees, books, uniforms, and other essential educational resources.</p>
+          </article>
+          <article class="work-card">
+            <div class="icon">⚕</div>
+            <h3>Medical Help</h3>
+            <p>Supporting healthcare needs through basic treatment, medicines, health camps, and emergency medical assistance.</p>
+          </article>
+          <article class="work-card">
+            <div class="icon">🤝</div>
+            <h3>Community Welfare</h3>
+            <p>Conducting community support programs for elderly people, women, and families.</p>
+          </article>
+          <article class="work-card">
+            <div class="icon">🧥</div>
+            <h3>Clothes Distribution</h3>
+            <p>Providing seasonal clothing, blankets, and other basic necessities to those in need.</p>
+          </article>
+          <article class="work-card">
+            <div class="icon">🌱</div>
+            <h3>Awareness Drives</h3>
+            <p>Promoting cleanliness, health awareness, and responsible community engagement through various campaigns and initiatives.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="donation-band" id="donate">
+      <div class="wrap donation-layout">
+        <div class="donation-note">
+          <div>
+            <h2>Every donation helps meet the needs of vulnerable individuals and families.</h2>
+            <p>Once you have made your donation, kindly send the payment screenshot through WhatsApp or email. For a donation receipt, please provide your name, contact number, and address.</p>
+          </div>
+          <a class="btn btn-light" href="tel:+919665335057">Call for Donation</a>
+        </div>
+        <div class="donation-box">
+          <h3>Bank Account Details</h3>
+          <table class="bank-table" aria-label="Donation bank account details">
+            <tr>
+              <th>Account Name</th>
+              <td>Sankalp Charitable Trust</td>
+            </tr>
+            <tr>
+              <th>Account Number</th>
+              <td>123456789</td>
+            </tr>
+            <tr>
+              <th>Bank Name</th>
+              <td>Satat Bank Of India</td>
+            </tr>
+            <tr>
+              <th>IFSC Code</th>
+              <td>SBIN0000000</td>
+            </tr>
+            <tr>
+              <th>Branch</th>
+              <td>Chinchwadgaon</td>
+            </tr>
+          </table>
+          <div class="upi">UPI ID: Sankalpcharitabletrust@upi</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Photos from Our Community Service Programs</h2>
+          <p>This section can be updated with photographs from your real social service initiatives. Sample images are currently displayed for demonstration purposes.</p>
+        </div>
+        <div class="gallery">
+          <figure>
+            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1000&q=82" alt="Volunteers distributing donation supplies" />
+            <figcaption>Food and ration support</figcaption>
+          </figure>
+          <figure>
+            <img src="https://images.unsplash.com/photo-1497486751825-1233686d5d80?auto=format&fit=crop&w=800&q=82" alt="Children studying in a classroom" />
+            <figcaption>Education support</figcaption>
+          </figure>
+          <figure>
+            <img src="https://images.unsplash.com/photo-1576765607924-10f3c46f9366?auto=format&fit=crop&w=800&q=82" alt="Medical support activity" />
+            <figcaption>Health assistance</figcaption>
+          </figure>
+          <figure>
+            <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=800&q=82" alt="Volunteers working together" />
+            <figcaption>Community welfare</figcaption>
+          </figure>
+          <figure>
+            <img src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=800&q=82" alt="Children receiving support" />
+            <figcaption>Care for children</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-band" id="contact">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Contact Our Team</h2>
+          <p>Get in touch with the Trust for volunteering, donation receipts, or to request assistance and support.</p>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-box">
+            <h3>Phone</h3>
+            <p><a href="tel:+919665335057">+91 9665335057</a></p>
+          </div>
+          <div class="contact-box">
+            <h3>Email</h3>
+            <p><a href="mailto:sankalpcharitabletrust.org">sankalpcharitabletrust.org</a></p>
+          </div>
+          <div class="contact-box">
+            <h3>Address</h3>
+            <p>Ravet, Pune, maharastra, 411033</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© 2026 Sankalp Charitable Trust. All rights reserved.</span>
+      <span>Made for social work, donation and community support.</span>
+    </div>
+  </footer>
+  <script>
+    const volunteerCount = document.getElementById("volunteer-count");
+    if (volunteerCount) {
+      const volunteers = JSON.parse(localStorage.getItem("trustVolunteers") || "[]");
+      volunteerCount.textContent = volunteers.length;
+    }
+  </script>
+</body>
+</html>

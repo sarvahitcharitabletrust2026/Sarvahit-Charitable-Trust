@@ -398,11 +398,6 @@
       padding: 70px 20px;
     }
 
-    #home,
-    section[id] {
-      scroll-margin-top: var(--anchor-scroll-offset, 6rem);
-    }
-
     .wrap {
       max-width: 1180px;
       margin: 0 auto;
@@ -701,94 +696,22 @@
     }
 
     .review-card {
-      display: flex;
-      flex-direction: column;
-      height: 285px;
-      overflow: hidden;
       background: #fff;
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 18px;
+      padding: 24px;
       box-shadow: 0 12px 34px rgba(20, 30, 36, 0.07);
     }
 
     .review-card p {
-      display: -webkit-box;
-      flex: 1;
-      margin: 10px 0;
-      padding: 12px 10px;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      overflow: hidden;
+      margin: 0 0 14px;
       color: var(--muted);
-      overflow-wrap: anywhere;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 4;
     }
 
     .review-card strong {
       color: var(--green-dark);
       font-family: "Poppins", system-ui, sans-serif;
     }
-
-    .review-name-button {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cfe4d8;
-      border-radius: 6px;
-      background: #edf7ef;
-      color: var(--green-dark);
-      font: inherit;
-      font-weight: 800;
-      text-align: left;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .review-name-button:hover,
-    .review-name-button:focus-visible { background: #dcefe3; outline: 2px solid var(--green); outline-offset: 2px; }
-
-    .public-review-dialog {
-      width: min(560px, calc(100% - 32px));
-      max-height: min(80vh, 720px);
-      overflow: auto;
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      color: var(--ink);
-      background: #fff;
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
-    }
-
-    .public-review-dialog::backdrop { background: rgba(17, 26, 28, 0.68); }
-    .public-review-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
-    .public-review-dialog-header h3 { margin: 0; color: var(--green-dark); }
-    .public-review-dialog-close { border: 0; background: transparent; color: var(--muted); font-size: 28px; cursor: pointer; }
-    .public-review-dialog-text { line-height: 1.7; overflow-wrap: anywhere; }
-
-    .review-rating {
-      margin: auto 0 0;
-      padding-top: 8px;
-      color: #d99a00;
-      font-size: 20px;
-      letter-spacing: 2px;
-    }
-
-    .review-rating .is-empty { color: #c8c8c8; }
-
-    .review-rating-label {
-      margin-left: 8px;
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: 0;
-    }
-
-    .review-rating-picker { display: flex; gap: 5px; margin: 2px 0 4px; }
-    .review-rating-picker button { border: 0; padding: 0; background: transparent; color: #c8c8c8; font-size: 28px; cursor: pointer; }
-    .review-rating-picker button.is-selected, .review-rating-picker button:hover, .review-rating-picker button:focus-visible { color: #d99a00; }
-    .review-reactions { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
-    .review-reaction { border: 1px solid var(--line); border-radius: 18px; padding: 5px 9px; background: #fff; cursor: pointer; }
-    .review-reaction.is-selected { border-color: var(--green); background: #edf7ef; }
 
     .review-form-box {
       background: #fff;
@@ -890,63 +813,6 @@
       text-align: center;
     }
 
-    .donation-status.is-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .donation-spinner {
-      width: 22px;
-      height: 22px;
-      flex: 0 0 22px;
-      border: 3px solid currentColor;
-      border-right-color: transparent;
-      border-radius: 50%;
-      animation: donation-spin 0.8s linear infinite;
-    }
-
-    .donation-loading-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 300;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background: rgba(17, 26, 28, 0.76);
-      color: #fff;
-    }
-
-    .donation-loading-overlay[hidden] {
-      display: none;
-    }
-
-    .donation-loading-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      font-size: 20px;
-      font-weight: 800;
-      text-align: center;
-    }
-
-    .donation-loading-content .donation-spinner {
-      width: 44px;
-      height: 44px;
-      flex-basis: 44px;
-      border-width: 5px;
-    }
-
-    @keyframes donation-spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .donation-spinner { animation: none; }
-    }
-
     .certificate-ready {
       padding: 28px 18px;
       border: 2px solid var(--gold);
@@ -960,32 +826,6 @@
       font-size: 28px;
       margin-bottom: 10px;
     }
-
-    .error-popup-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 400;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      background: rgba(17, 26, 28, 0.64);
-    }
-
-    .error-popup-overlay[hidden] { display: none; }
-
-    .error-popup {
-      width: min(440px, 100%);
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-top: 5px solid #b42318;
-      border-radius: 10px;
-      background: #fff;
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
-    }
-
-    .error-popup h2 { margin: 0 0 10px; color: #9f1d16; font-size: 22px; }
-    .error-popup p { margin: 0 0 20px; line-height: 1.55; overflow-wrap: anywhere; }
-    .error-popup-actions { display: flex; justify-content: flex-end; }
 
     .modal-overlay {
       position: fixed;
@@ -1172,113 +1012,22 @@
 
     .drive-gallery {
       width: 100%;
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 24px 18px;
-      align-items: start;
-    }
-
-    .drive-gallery-card {
-      min-width: 0;
-      position: relative;
+      min-height: 420px;
       overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #fff;
-      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
     }
 
-    .drive-gallery-stage {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1.35 / 1;
-      background: #eef1ee;
-      overflow: hidden;
-      cursor: default;
-    }
-
-    .drive-gallery-image {
-      width: 100%;
-      height: 100%;
+    .drive-gallery-frame {
       display: block;
-      object-fit: cover;
-      user-select: none;
-      -webkit-user-drag: none;
-      transition: transform 0.18s ease;
-    }
-
-    .drive-gallery-stage:hover .drive-gallery-image {
-      transform: scale(1.015);
-    }
-
-    .drive-gallery-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 38px;
-      height: 38px;
-      padding: 0;
+      width: 100%;
+      height: min(78vh, 900px);
+      min-height: 560px;
       border: 0;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.96);
-      color: #173d2c;
-      font-size: 29px;
-      font-weight: 400;
-      line-height: 1;
-      cursor: pointer;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
-      z-index: 3;
-    }
-
-    .drive-gallery-arrow.prev {
-      left: 8px;
-    }
-
-    .drive-gallery-arrow.next {
-      right: 8px;
-    }
-
-    .drive-gallery-arrow:hover,
-    .drive-gallery-arrow:focus-visible {
-      background: #fff;
-      outline: 2px solid var(--gold);
-      outline-offset: 2px;
-    }
-
-    .drive-gallery-arrow:disabled {
-      opacity: 0.38;
-      cursor: default;
-      outline: none;
-    }
-
-    .drive-gallery-info {
-      padding: 10px 11px 12px;
-      text-align: center;
-      background: #fff;
-    }
-
-    .drive-gallery-title {
-      margin: 0 0 3px;
-      color: var(--green-dark);
-      font-size: 0.95rem;
-      line-height: 1.25;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .drive-gallery-count {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.78rem;
+      border-radius: 10px;
+      background: #f7f8f6;
     }
 
     .drive-gallery-message {
-      min-height: 160px;
-      grid-column: 1 / -1;
+      min-height: 200px;
       display: grid;
       place-items: center;
       padding: 28px;
@@ -1286,174 +1035,6 @@
       border-radius: 10px;
       color: var(--muted);
       text-align: center;
-    }
-
-    .drive-gallery-fallback {
-      grid-column: 1 / -1;
-      display: block;
-      padding: 16px 18px;
-      border-radius: 10px;
-      background: #f7f8f6;
-      color: var(--muted);
-      font-size: 0.92rem;
-      text-decoration: none;
-    }
-
-    /* Full-screen in-page photo viewer */
-    .drive-photo-viewer {
-      width: min(96vw, 1500px);
-      height: min(94vh, 1000px);
-      max-width: none;
-      max-height: none;
-      padding: 0;
-      border: 0;
-      border-radius: 16px;
-      background: #0b0d0c;
-      color: #fff;
-      overflow: hidden;
-    }
-
-    .drive-photo-viewer::backdrop {
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(3px);
-    }
-
-    .drive-photo-viewer-shell {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: grid;
-      grid-template-rows: 1fr auto;
-      min-height: 0;
-    }
-
-    .drive-photo-viewer-stage {
-      position: relative;
-      min-height: 0;
-      display: grid;
-      place-items: center;
-      padding: 58px 76px 18px;
-    }
-
-    .drive-photo-viewer-image {
-      display: block;
-      width: auto;
-      height: auto;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      user-select: none;
-      -webkit-user-drag: none;
-      border-radius: 6px;
-      box-shadow: 0 12px 45px rgba(0, 0, 0, 0.35);
-    }
-
-    .drive-photo-viewer-close,
-    .drive-photo-viewer-arrow {
-      position: absolute;
-      z-index: 4;
-      display: grid;
-      place-items: center;
-      border: 0;
-      cursor: pointer;
-      color: #fff;
-      background: rgba(0, 0, 0, 0.52);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
-      transition: background 0.16s ease, transform 0.16s ease;
-    }
-
-    .drive-photo-viewer-close:hover,
-    .drive-photo-viewer-close:focus-visible,
-    .drive-photo-viewer-arrow:hover,
-    .drive-photo-viewer-arrow:focus-visible {
-      background: rgba(255, 255, 255, 0.18);
-      outline: 2px solid rgba(255, 255, 255, 0.8);
-      outline-offset: 2px;
-    }
-
-    .drive-photo-viewer-close {
-      top: 14px;
-      right: 14px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      font-size: 29px;
-      line-height: 1;
-    }
-
-    .drive-photo-viewer-arrow {
-      top: 50%;
-      transform: translateY(-50%);
-      width: 50px;
-      height: 64px;
-      border-radius: 14px;
-      font-size: 43px;
-      line-height: 1;
-    }
-
-    .drive-photo-viewer-arrow.prev {
-      left: 14px;
-    }
-
-    .drive-photo-viewer-arrow.next {
-      right: 14px;
-    }
-
-    .drive-photo-viewer-arrow:disabled {
-      opacity: 0.3;
-      cursor: default;
-      outline: none;
-    }
-
-    .drive-photo-viewer-info {
-      min-width: 0;
-      padding: 11px 20px 15px;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.58);
-      border-top: 1px solid rgba(255, 255, 255, 0.09);
-    }
-
-    .drive-photo-viewer-title {
-      margin: 0 0 3px;
-      color: #fff;
-      font-size: 0.98rem;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .drive-photo-viewer-count {
-      margin: 0;
-      color: rgba(255, 255, 255, 0.72);
-      font-size: 0.82rem;
-    }
-
-    @media (max-width: 620px) {
-      .drive-photo-viewer {
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0;
-      }
-
-      .drive-photo-viewer-stage {
-        padding: 58px 48px 12px;
-      }
-
-      .drive-photo-viewer-arrow {
-        width: 42px;
-        height: 54px;
-        font-size: 35px;
-        border-radius: 12px;
-      }
-
-      .drive-photo-viewer-arrow.prev {
-        left: 7px;
-      }
-
-      .drive-photo-viewer-arrow.next {
-        right: 7px;
-      }
     }
 
     .gallery figure {
@@ -1684,30 +1265,14 @@
       }
     }
 
-    @media (max-width: 1050px) and (min-width: 621px) {
-      .drive-gallery {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
     @media (max-width: 620px) {
       .drive-gallery {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px 12px;
+        min-height: 360px;
       }
 
-      .drive-gallery-arrow {
-        width: 34px;
-        height: 34px;
-        font-size: 25px;
-      }
-
-      .drive-gallery-arrow.prev {
-        left: 6px;
-      }
-
-      .drive-gallery-arrow.next {
-        right: 6px;
+      .drive-gallery-frame {
+        height: 560px;
+        min-height: 560px;
       }
 
       body {
@@ -1830,10 +1395,9 @@
       <span>Sarvahit Charitable Trust | Help today. Hope for tomorrow.</span>
       <div class="topbar-actions">
         <div class="social-links" aria-label="Social media links">
-          <a class="social-icon" href="https://x.com/SarvahitCTrust" target="_blank" rel="noopener noreferrer" aria-label="X" title="X"><img src="assets/twitter-logo.png" alt="" /></a>
           <a class="social-icon" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><img src="https://marketplace.canva.com/KrzKM/MAGzNqKrzKM/1/tl/canva-facebook-logo-MAGzNqKrzKM.png" alt="" /></a>
           <a class="social-icon" href="https://www.instagram.com/sarvahitcharitabletrust2024/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><img src="https://marketplace.canva.com/0Q87E/MAGzNm0Q87E/1/tl/canva-instagram-icon-MAGzNm0Q87E.png" alt="" /></a>
-          <a class="social-icon" href="https://www.linkedin.com/in/sarvahit-charitable-trust-06a594442/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><img src="https://marketplace.canva.com/NA4A8/MAGzNvNA4A8/1/tl/canva-linkedin-icon-MAGzNvNA4A8.png" alt="" /></a>
+          <a class="social-icon" href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><img src="https://marketplace.canva.com/NA4A8/MAGzNvNA4A8/1/tl/canva-linkedin-icon-MAGzNvNA4A8.png" alt="" /></a>
           <a class="social-icon" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><img src="https://marketplace.canva.com/KE6ns/MAElfQKE6ns/1/tl/canva-youtube-logo-MAElfQKE6ns.png" alt="" /></a>
         </div>
         <select class="language-select" id="language-select" aria-label="Select language">
@@ -1848,7 +1412,7 @@
   <header>
     <nav class="nav" aria-label="Main navigation">
       <a class="brand" href="#home" aria-label="Sarvahit Charitable Trust home">
-        <img class="nav-logo" src="https://drive.google.com/thumbnail?id=1I_lCkSE4CkeuXxuXMg8KVJZI_jCKUKDu&amp;sz=w512" alt="Sarvahit Charitable Trust logo" onerror="this.onerror=null;this.src='assets/SarvahitCharitableTrust_Logo.png'" />
+        <img class="nav-logo" src="assets/SarvahitCharitableTrust_Logo.png" alt="Sarvahit Charitable Trust logo" />
         <span>
           Sarvahit Charitable Trust
           <small>Working for the Welfare of Everyone</small>
@@ -2006,10 +1570,10 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Photos from Our Community Service Programs</h2>
-          <p>Each work-wise folder is shown as a card. Use the arrows to browse its photos, or double-click a photo to open it in Google Drive.</p>
+          <p>Photos added to our social activities folder appear here automatically.</p>
         </div>
         <div class="drive-gallery" id="social-activity-gallery" aria-live="polite">
-          <p class="drive-gallery-message">Loading community service photos...</p>
+          <p class="drive-gallery-message">Social activity photos will appear here.</p>
         </div>
       </div>
     </section>
@@ -2041,7 +1605,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Trusted Person Review</h2>
-          <p>Visitors can share their name and review for the trust. Select a reviewer’s name to read their review and see its rating.</p>
+          <p>Visitors can share their name and review for the trust. Admin can remove unsuitable reviews from the admin page.</p>
         </div>
         <div class="review-layout">
           <div class="review-form-box">
@@ -2056,13 +1620,6 @@
                   Your Review
                   <textarea name="review" required></textarea>
                 </label>
-                <fieldset class="full" style="border:0;padding:0;margin:0">
-                  <legend style="font-weight:700;margin-bottom:6px">Your Rating (required)</legend>
-                  <div class="review-rating-picker" id="review-rating-picker" role="radiogroup" aria-label="Rate your experience from one to five stars">
-                    <button type="button" data-rating="1" role="radio" aria-label="1 star" aria-checked="false">★</button><button type="button" data-rating="2" role="radio" aria-label="2 stars" aria-checked="false">★</button><button type="button" data-rating="3" role="radio" aria-label="3 stars" aria-checked="false">★</button><button type="button" data-rating="4" role="radio" aria-label="4 stars" aria-checked="false">★</button><button type="button" data-rating="5" role="radio" aria-label="5 stars" aria-checked="false">★</button>
-                  </div>
-                  <input type="hidden" name="rating" required />
-                </fieldset>
                 <div class="full">
                   <button class="btn btn-primary" type="submit">Submit Review</button>
                 </div>
@@ -2105,15 +1662,6 @@
     </section>
   </main>
 
-  <dialog class="public-review-dialog" id="public-review-dialog" aria-labelledby="public-review-name">
-    <div class="public-review-dialog-header">
-      <h3 id="public-review-name"></h3>
-      <button class="public-review-dialog-close" id="public-review-close" type="button" aria-label="Close review">&times;</button>
-    </div>
-    <p class="public-review-dialog-text" id="public-review-text"></p>
-    <div id="public-review-rating"></div>
-  </dialog>
-
   <div class="modal-overlay" id="donor-window" hidden role="dialog" aria-modal="true" aria-labelledby="donor-title">
     <div class="modal-window">
       <div class="modal-head">
@@ -2135,8 +1683,8 @@
                 <input name="name" autocomplete="name" pattern="[A-Za-z ]+" data-letters-only required />
               </label>
               <label>
-                PAN Card Number
-                <input name="panCardNumber" autocomplete="off" inputmode="text" autocapitalize="characters" pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]" maxlength="10" minlength="10" title="Enter a valid 10-character PAN number (for example, ABCDE1234F)." required />
+                Name as per PAN Card (optional)
+                <input name="panCardName" autocomplete="name" maxlength="120" />
               </label>
               <label>
                 Mobile Number
@@ -2200,7 +1748,7 @@
             <button class="btn btn-light" type="button" id="edit-donor-details">Edit Donor Details</button>
             <button class="btn btn-primary" type="button" id="confirm-donation">Confirm Payment</button>
           </div>
-          <div class="donation-status" id="donation-status" role="status" aria-live="polite"></div>
+          <div class="donation-status" id="donation-status"></div>
         </section>
 
         <section class="donation-panel" id="donor-certificate-panel" hidden>
@@ -2212,21 +1760,6 @@
         </section>
       </div>
     </div>
-  </div>
-
-  <div class="donation-loading-overlay" id="donation-loading-overlay" hidden role="status" aria-live="polite">
-    <div class="donation-loading-content">
-      <span class="donation-spinner" aria-hidden="true"></span>
-      <span>Submitting payment details. Please wait...</span>
-    </div>
-  </div>
-
-  <div class="error-popup-overlay" id="error-popup-overlay" hidden>
-    <section class="error-popup" role="alertdialog" aria-modal="true" aria-labelledby="error-popup-title" aria-describedby="error-popup-message">
-      <h2 id="error-popup-title">Something went wrong</h2>
-      <p id="error-popup-message"></p>
-      <div class="error-popup-actions"><button class="btn btn-primary" id="error-popup-close" type="button">OK</button></div>
-    </section>
   </div>
 
   <div class="modal-overlay" id="volunteer-window" hidden role="dialog" aria-modal="true" aria-labelledby="volunteer-title">
@@ -2324,25 +1857,20 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
-    const SUPABASE_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
+    const SUPABASE_URL = "https://adbwqjzlqkaatvhzpudk.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_Ei3Ef2mTTpPeOG7P87gTug_Bky1IF5A";
     const SUPABASE_TABLE = "volunteer_registrations";
     const SUPABASE_REVIEW_TABLE = "trusted_reviews";
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
     const SUPABASE_DONATION_TABLE = "donation_records";
     const PAYMENT_BUCKET = "payment-screenshots";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwp8h5CgczzmMbGaOJckPQ-9In_hqnEjYZrmhfFqpSEJhCSnRNngeLrGnA-tc9QU_qO/exec";
-    const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
-    // Paste your deployed Google Apps Script Web App URL here.
-    // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwe150i-u7iDEDpx01_qCUR5bcBQHt2ilTyOlq3xIdZydWw0VCZ361xGxiKrqEPgUdv2A/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "";
+    const GOOGLE_DRIVE_GALLERY_URL = "";
+    const GOOGLE_DRIVE_PARENT_FOLDER_ID = "1jzejKzt8VYQzXAXURxSBr7_fLSqfwpV6";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
     const TRUST_REVIEWS_KEY = "trustReviews";
-    const TRUST_REACTIONS_KEY = "trustReviewReactions";
-    const TRUST_VOTER_KEY = "trustReviewVoter";
-    const SUPABASE_REACTIONS_TABLE = "trusted_review_reactions";
     const TRUST_LANGUAGE_KEY = "trustLanguage";
     let allReviews = [];
     let activeReviewIndex = 0;
@@ -2377,6 +1905,7 @@
         workTitle: "Our Charitable Activities",
         workText: "The Trust is committed to providing practical support that reaches those in need directly, respectfully, and in a timely manner.",
         galleryTitle: "Photos from Our Community Service Programs",
+        galleryText: "Photos added to our social activities folder appear here automatically.",
         reviewsTitle: "Trusted Person Review",
         reviewsText: "Visitors can share their name and review for the trust. Admin can remove unsuitable reviews from the admin page.",
         giveReview: "Give Your Review",
@@ -2607,343 +2136,15 @@
       document.getElementById("donor-certificate-panel").hidden = step !== 3;
     }
 
-    function showErrorPopup(message, title = "Something went wrong") {
-      const overlay = document.getElementById("error-popup-overlay");
-      document.getElementById("error-popup-title").textContent = title;
-      document.getElementById("error-popup-message").textContent = message;
-      overlay.hidden = false;
-      document.getElementById("error-popup-close").focus();
-    }
-
-    function closeErrorPopup() {
-      document.getElementById("error-popup-overlay").hidden = true;
-    }
-
-    function readableSubmissionError(error) {
-      const rawMessage = String(error?.message || "").trim();
-      if (!rawMessage || rawMessage.startsWith("<")) {
-        return "Payment details could not be submitted. Check your internet connection and try again.";
-      }
-      if (rawMessage.startsWith("Google Drive upload failed:")) {
-        return "The payment screenshot could not be uploaded to Google Drive. Check your internet connection and try again.";
-      }
-      try {
-        const details = JSON.parse(rawMessage);
-        const reason = details.message || details.error_description || details.error;
-        if (reason) return `Payment details could not be submitted: ${reason}`;
-      } catch (parseError) {
-        // Use the plain-text service message below.
-      }
-      return `Payment details could not be submitted: ${rawMessage}`;
-    }
-
-    let socialPhotoViewer = null;
-    let socialPhotoViewerState = null;
-
-    function getSocialPhotoViewer() {
-      if (socialPhotoViewer) return socialPhotoViewer;
-
-      const dialog = document.createElement("dialog");
-      dialog.id = "drive-photo-viewer";
-      dialog.className = "drive-photo-viewer";
-      dialog.setAttribute("aria-label", "Community service photo viewer");
-
-      const shell = document.createElement("div");
-      shell.className = "drive-photo-viewer-shell";
-
-      const stage = document.createElement("div");
-      stage.className = "drive-photo-viewer-stage";
-
-      const close = document.createElement("button");
-      close.type = "button";
-      close.className = "drive-photo-viewer-close";
-      close.setAttribute("aria-label", "Close photo viewer");
-      close.textContent = "×";
-
-      const previous = document.createElement("button");
-      previous.type = "button";
-      previous.className = "drive-photo-viewer-arrow prev";
-      previous.setAttribute("aria-label", "Previous photo");
-      previous.textContent = "‹";
-
-      const next = document.createElement("button");
-      next.type = "button";
-      next.className = "drive-photo-viewer-arrow next";
-      next.setAttribute("aria-label", "Next photo");
-      next.textContent = "›";
-
-      const image = document.createElement("img");
-      image.className = "drive-photo-viewer-image";
-      image.alt = "Community service photo";
-      image.draggable = false;
-
-      const info = document.createElement("div");
-      info.className = "drive-photo-viewer-info";
-
-      const title = document.createElement("p");
-      title.className = "drive-photo-viewer-title";
-
-      const count = document.createElement("p");
-      count.className = "drive-photo-viewer-count";
-
-      info.append(title, count);
-      stage.append(image, previous, next, close);
-      shell.append(stage, info);
-      dialog.appendChild(shell);
-      document.body.appendChild(dialog);
-
-      function changeViewerPhoto(direction) {
-        if (!socialPhotoViewerState) return;
-        const { images } = socialPhotoViewerState;
-        if (!images.length) return;
-        socialPhotoViewerState.activeIndex =
-          (socialPhotoViewerState.activeIndex + direction + images.length) % images.length;
-        showViewerPhoto();
-      }
-
-      function showViewerPhoto() {
-        if (!socialPhotoViewerState) return;
-        const { folderName, images, activeIndex } = socialPhotoViewerState;
-        const current = images[activeIndex];
-        if (!current) return;
-
-        const fullImageUrl = current.imageUrl || current.thumbnailUrl || "";
-        const fallbackImageUrl = current.thumbnailUrl || current.imageUrl || "";
-        image.onerror = function () {
-          if (fallbackImageUrl && image.src !== fallbackImageUrl) {
-            image.src = fallbackImageUrl;
-          }
-        };
-        image.src = fullImageUrl;
-        image.alt = current.name
-          ? folderName + " — " + current.name
-          : folderName + " community service photo";
-        title.textContent = folderName;
-        count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
-        previous.disabled = images.length < 2;
-        next.disabled = images.length < 2;
-      }
-
-      close.addEventListener("click", () => dialog.close());
-
-      previous.addEventListener("click", (event) => {
-        event.stopPropagation();
-        changeViewerPhoto(-1);
-      });
-
-      next.addEventListener("click", (event) => {
-        event.stopPropagation();
-        changeViewerPhoto(1);
-      });
-
-      dialog.addEventListener("click", (event) => {
-        if (event.target === dialog) {
-          dialog.close();
-        }
-      });
-
-      dialog.addEventListener("keydown", (event) => {
-        if (!dialog.open) return;
-        if (event.key === "ArrowLeft") {
-          event.preventDefault();
-          changeViewerPhoto(-1);
-        } else if (event.key === "ArrowRight") {
-          event.preventDefault();
-          changeViewerPhoto(1);
-        }
-      });
-
-      // Mobile-friendly swipe navigation.
-      let touchStartX = null;
-      stage.addEventListener("touchstart", (event) => {
-        touchStartX = event.changedTouches[0]?.clientX ?? null;
-      }, { passive: true });
-
-      stage.addEventListener("touchend", (event) => {
-        if (touchStartX === null) return;
-        const touchEndX = event.changedTouches[0]?.clientX ?? touchStartX;
-        const deltaX = touchEndX - touchStartX;
-        touchStartX = null;
-        if (Math.abs(deltaX) < 45) return;
-        changeViewerPhoto(deltaX > 0 ? -1 : 1);
-      }, { passive: true });
-
-      socialPhotoViewer = {
-        dialog,
-        showViewerPhoto
-      };
-      return socialPhotoViewer;
-    }
-
-    function openSocialPhotoViewer(folderName, images, activeIndex) {
-      const viewer = getSocialPhotoViewer();
-      socialPhotoViewerState = {
-        folderName,
-        images,
-        activeIndex
-      };
-      viewer.showViewerPhoto();
-      if (!viewer.dialog.open) {
-        viewer.dialog.showModal();
-      }
-    }
-
     function loadSocialActivityGallery() {
       const gallery = document.getElementById("social-activity-gallery");
-      if (!gallery) return;
-
-      // The Apps Script endpoint is intentionally optional. Until it is deployed,
-      // keep the existing Drive folder view as a fallback.
-      if (!GOOGLE_DRIVE_GALLERY_API_URL) {
-        if (GOOGLE_DRIVE_GALLERY_URL) {
-          const link = document.createElement("a");
-          link.className = "drive-gallery-fallback";
-          link.href = GOOGLE_DRIVE_GALLERY_URL;
-          link.target = "_blank";
-          link.rel = "noopener";
-          link.textContent = "Gallery API is not connected yet. Open the work-wise Drive folders.";
-          gallery.replaceChildren(link);
-        }
-        return;
-      }
-
-      const callbackName = "sarvahitDriveGallery_" + Date.now();
-      const script = document.createElement("script");
-
-      window[callbackName] = function (payload) {
-        try {
-          renderSocialActivityGallery(gallery, payload);
-        } finally {
-          delete window[callbackName];
-          script.remove();
-        }
-      };
-
-      script.onerror = function () {
-        delete window[callbackName];
-        script.remove();
-        gallery.replaceChildren(
-          Object.assign(document.createElement("p"), {
-            className: "drive-gallery-message",
-            textContent: "Unable to load photos right now. Please try again later."
-          })
-        );
-      };
-
-      const separator = GOOGLE_DRIVE_GALLERY_API_URL.includes("?") ? "&" : "?";
-      script.src =
-        GOOGLE_DRIVE_GALLERY_API_URL +
-        separator +
-        "folderId=" + encodeURIComponent("1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv") +
-        "&callback=" + encodeURIComponent(callbackName);
-
-      document.head.appendChild(script);
-    }
-
-    function renderSocialActivityGallery(gallery, payload) {
-      const folders = Array.isArray(payload?.folders) ? payload.folders : [];
-
-      if (!folders.length) {
-        gallery.replaceChildren(
-          Object.assign(document.createElement("p"), {
-            className: "drive-gallery-message",
-            textContent: "No work-wise folders with photos were found."
-          })
-        );
-        return;
-      }
-
-      gallery.replaceChildren();
-
-      folders.forEach((folder) => {
-        const images = Array.isArray(folder.images) ? folder.images : [];
-        if (!images.length) return;
-
-        let activeIndex = 0;
-
-        const card = document.createElement("article");
-        card.className = "drive-gallery-card";
-        card.setAttribute("aria-label", folder.name + " photo gallery");
-
-        const stage = document.createElement("div");
-        stage.className = "drive-gallery-stage";
-
-        const image = document.createElement("img");
-        image.className = "drive-gallery-image";
-        image.loading = "lazy";
-        image.alt = folder.name + " community service photo";
-        image.title = "Double-click to enlarge this photo";
-
-        const previous = document.createElement("button");
-        previous.type = "button";
-        previous.className = "drive-gallery-arrow prev";
-        previous.setAttribute("aria-label", "Previous photo");
-        previous.textContent = "‹";
-
-        const next = document.createElement("button");
-        next.type = "button";
-        next.className = "drive-gallery-arrow next";
-        next.setAttribute("aria-label", "Next photo");
-        next.textContent = "›";
-
-        const info = document.createElement("div");
-        info.className = "drive-gallery-info";
-
-        const title = document.createElement("h3");
-        title.className = "drive-gallery-title";
-        title.textContent = folder.name;
-
-        const count = document.createElement("p");
-        count.className = "drive-gallery-count";
-
-        function showImage() {
-          const current = images[activeIndex];
-          image.src = current.thumbnailUrl || current.imageUrl || "";
-          image.alt = current.name
-            ? folder.name + " — " + current.name
-            : folder.name + " community service photo";
-          image.title = current.name
-            ? current.name + " — double-click to enlarge this photo"
-            : "Double-click to enlarge this photo";
-          count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
-          previous.disabled = images.length < 2;
-          next.disabled = images.length < 2;
-        }
-
-        previous.addEventListener("click", (event) => {
-          event.stopPropagation();
-          activeIndex = (activeIndex - 1 + images.length) % images.length;
-          showImage();
-        });
-
-        next.addEventListener("click", (event) => {
-          event.stopPropagation();
-          activeIndex = (activeIndex + 1) % images.length;
-          showImage();
-        });
-
-        image.addEventListener("dblclick", (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          openSocialPhotoViewer(folder.name, images, activeIndex);
-        });
-
-        stage.append(image, previous, next);
-        info.append(title, count);
-        card.append(stage, info);
-        gallery.appendChild(card);
-
-        showImage();
-      });
-
-      if (!gallery.children.length) {
-        gallery.replaceChildren(
-          Object.assign(document.createElement("p"), {
-            className: "drive-gallery-message",
-            textContent: "The work-wise folders were found, but they contain no images."
-          })
-        );
-      }
+      if (!gallery || !GOOGLE_DRIVE_GALLERY_URL) return;
+      const frame = document.createElement("iframe");
+      frame.className = "drive-gallery-frame";
+      frame.title = "Sarvahit Charitable Trust social activity photos";
+      frame.loading = "lazy";
+      frame.src = GOOGLE_DRIVE_GALLERY_URL;
+      gallery.replaceChildren(frame);
     }
 
     loadSocialActivityGallery();
@@ -2957,50 +2158,50 @@
       });
     }
 
-    async function uploadToGoogleDrive(file, certificateId, fullName) {
+    async function uploadToGoogleDrive(file, certificateId, year) {
       if (!GOOGLE_DRIVE_UPLOAD_URL) return null;
       const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
-      await fetch(GOOGLE_DRIVE_UPLOAD_URL, {
+      const response = await fetch(GOOGLE_DRIVE_UPLOAD_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
-          certificateId,
-          fullName,
-          fileName: `${certificateId} - ${fullName}.${extension}`,
+          parentFolderId: GOOGLE_DRIVE_PARENT_FOLDER_ID,
+          year,
+          fileName: `${certificateId}.${extension}`,
           mimeType: file.type || "image/jpeg",
           base64: await fileToBase64(file)
         })
       });
-      // Apps Script does not expose CORS headers, so no-cors returns an opaque
-      // response whose status and file URL cannot be read from this website.
-      return null;
+      if (!response.ok) throw new Error("Google Drive upload failed.");
+      const result = await response.json();
+      return result.fileUrl || null;
     }
 
-    async function uploadPaymentScreenshot(file, certificateId, fullName) {
+    async function uploadPaymentScreenshot(file, certificateId) {
+      if (!supabaseEnabled()) {
+        return { path: `local/${certificateId}-${file.name}`, driveUrl: null };
+      }
       const year = String(new Date().getFullYear());
       const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
       const path = `${year}/${certificateId}.${extension}`;
-      if (supabaseEnabled()) {
-        const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${PAYMENT_BUCKET}/${path}`, {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-            "Content-Type": file.type || "image/jpeg",
-            "x-upsert": "true"
-          },
-          body: file
-        });
-        if (!response.ok) {
-          throw new Error(await response.text());
-        }
+      const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${PAYMENT_BUCKET}/${path}`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": file.type || "image/jpeg",
+          "x-upsert": "false"
+        },
+        body: file
+      });
+      if (!response.ok) {
+        throw new Error(await response.text());
       }
-      let driveUrl;
+      let driveUrl = null;
       try {
-        driveUrl = await uploadToGoogleDrive(file, certificateId, fullName);
+        driveUrl = await uploadToGoogleDrive(file, certificateId, year);
       } catch (error) {
-        throw new Error(`Google Drive upload failed: ${error.message || "Please try again."}`);
+        console.warn("Google Drive upload is not active; screenshot remains safely stored in Supabase.");
       }
       return { path, driveUrl };
     }
@@ -3016,7 +2217,7 @@
         method: "POST",
         body: JSON.stringify({
           donor_name: donation.name,
-          pan_card_number: donation.panCardNumber,
+          pan_card_name: donation.panCardName || null,
           email: donation.email,
           phone: donation.phone,
           city: donation.city,
@@ -3034,56 +2235,31 @@
       });
     }
 
-    async function ensureJsPdf() {
-      if (window.jspdf?.jsPDF) return window.jspdf;
-      const fallbackSources = [
-        "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
-        "https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"
-      ];
-      for (const src of fallbackSources) {
-        try {
-          await new Promise((resolve, reject) => {
-            const script = document.createElement("script");
-            script.src = src;
-            script.onload = resolve;
-            script.onerror = () => {
-              script.remove();
-              reject(new Error("PDF library failed to load."));
-            };
-            document.head.appendChild(script);
-          });
-          if (window.jspdf?.jsPDF) return window.jspdf;
-        } catch (error) {
-          // Continue to the next public CDN.
-        }
-      }
-      throw new Error("PDF library is unavailable.");
-    }
-
     async function downloadCertificate() {
-      if (!activeDonation) throw new Error("Donation details are unavailable.");
-      const { jsPDF } = await ensureJsPdf();
+      if (!activeDonation || !window.jspdf) return;
+      const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
       const center = pageWidth / 2;
-      const loadCertificateImage = async (path, fallbackPath) => {
-        let response = await fetch(path);
-        if (!response.ok && fallbackPath) response = await fetch(fallbackPath);
-        if (!response.ok) throw new Error("Certificate images could not be loaded.");
-        const blob = await response.blob();
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-      };
-      const logoData = await loadCertificateImage(
-        "/outputs/assets/certificate-logo-transparent.png",
-        "/outputs/assets/SarvahitCharitableTrust_Logo.png"
-      );
-      const watermarkData = await loadCertificateImage("/outputs/assets/certificate-watermark.png").catch(() => null);
+      const logoResponse = await fetch("assets/certificate-logo-transparent.png");
+      if (!logoResponse.ok) throw new Error("Certificate logo could not be loaded.");
+      const logoBlob = await logoResponse.blob();
+      const logoData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(logoBlob);
+      });
+      const watermarkResponse = await fetch("assets/certificate-watermark.png");
+      if (!watermarkResponse.ok) throw new Error("Certificate watermark could not be loaded.");
+      const watermarkBlob = await watermarkResponse.blob();
+      const watermarkData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(watermarkBlob);
+      });
       const date = new Intl.DateTimeFormat("en-IN", {
         day: "2-digit",
         month: "long",
@@ -3098,7 +2274,7 @@
       doc.setDrawColor(196, 145, 45);
       doc.setLineWidth(0.8);
       doc.rect(15, 15, pageWidth - 30, pageHeight - 30);
-      if (watermarkData) doc.addImage(watermarkData, "PNG", center - 65, 61, 130, 130);
+      doc.addImage(watermarkData, "PNG", center - 65, 61, 130, 130);
       doc.addImage(logoData, "PNG", center - 13, 17, 26, 26);
 
       doc.setTextColor(28, 92, 55);
@@ -3115,26 +2291,24 @@
       doc.setTextColor(28, 92, 55);
       doc.setFont("times", "bolditalic");
       doc.setFontSize(28);
-      const certificateName = activeDonation.name;
+      const certificateName = activeDonation.panCardName?.trim() || activeDonation.name;
       doc.text(certificateName, center, 106, { align: "center", maxWidth: 220 });
       doc.setDrawColor(196, 145, 45);
       doc.line(72, 112, pageWidth - 72, 112);
       doc.setTextColor(70, 76, 72);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(13);
-      doc.text("With sincere gratitude for your generous support.", center, 126, { align: "center" });
-      doc.setFont("helvetica", "bold");
-      doc.text(`Donation Amount: INR ${Number(activeDonation.amount).toLocaleString("en-IN")}`, center, 138, { align: "center", maxWidth: 225 });
-      doc.setFont("helvetica", "normal");
-      doc.text(`Towards ${activeDonation.purpose}.`, center, 149, { align: "center", maxWidth: 225 });
-      doc.text("Your support strengthens our mission to serve people and communities in need.", center, 160, { align: "center" });
+      doc.text(
+        `With sincere gratitude for the generous donation of INR ${Number(activeDonation.amount).toLocaleString("en-IN")} towards ${activeDonation.purpose}.`,
+        center,
+        129,
+        { align: "center", maxWidth: 225 }
+      );
+      doc.text("Your support strengthens our mission to serve people and communities in need.", center, 143, { align: "center" });
       doc.setFontSize(11);
       doc.text(`Date: ${date}`, 34, 175);
       doc.text(`Certificate ID: ${activeDonation.certificateId}`, center, 175, { align: "center" });
       doc.text("Authorized by Sarvahit Charitable Trust", pageWidth - 34, 175, { align: "right" });
-      doc.setFont("helvetica", "bold");
-      doc.text(`PAN: ${activeDonation.panCardNumber}`, 34, 190);
-      doc.setFont("helvetica", "normal");
       doc.setTextColor(28, 92, 55);
       doc.text("sarvahitcharitabletrust2026@gmail.com", center, 190, { align: "center" });
 
@@ -3172,8 +2346,6 @@
         id: row.id,
         name: row.name,
         review: row.review,
-        rating: Number(row.rating) || 0,
-        reactions: row.reactions || {},
         createdAt: row.created_at
       }));
     }
@@ -3184,7 +2356,6 @@
         reviews.unshift({
           name: data.name,
           review: data.review,
-          rating: Number(data.rating),
           createdAt: new Date().toISOString()
         });
         saveReviews(reviews);
@@ -3194,8 +2365,7 @@
         method: "POST",
         body: JSON.stringify({
           name: data.name,
-          review: data.review,
-          rating: Number(data.rating)
+          review: data.review
         })
       });
     }
@@ -3213,36 +2383,12 @@
       for (let i = 0; i < count; i += 1) {
         visibleReviews.push(allReviews[(activeReviewIndex + i) % allReviews.length]);
       }
-      let reactionRows = [];
-      let voterId = localStorage.getItem(TRUST_VOTER_KEY);
-      if (!voterId) { voterId = crypto.randomUUID(); localStorage.setItem(TRUST_VOTER_KEY, voterId); }
-      if (supabaseEnabled()) {
-        try { reactionRows = await supabaseRequest(`${SUPABASE_REACTIONS_TABLE}?select=review_id,reaction,voter_id`); } catch (_) { reactionRows = []; }
-      }
-      const reactionCounts = {};
-      reactionRows.forEach((row) => { reactionCounts[row.review_id] ||= { up: 0, heart: 0, down: 0, mine: "" }; reactionCounts[row.review_id][row.reaction] += 1; if (row.voter_id === voterId) reactionCounts[row.review_id].mine = row.reaction; });
-      const localReactions = JSON.parse(localStorage.getItem(TRUST_REACTIONS_KEY) || "{}");
-      list.innerHTML = visibleReviews.map((item, visibleIndex) => {
-        const reviewKey = String(item.id || item.createdAt || `${item.name}-${item.review}`);
-        const reactions = reactionCounts[item.id] || localReactions[reviewKey] || { up: 0, heart: 0, down: 0, mine: "" };
-        return `
+      list.innerHTML = visibleReviews.map((item) => `
         <article class="review-card">
-          <button class="review-name-button" type="button" data-open-public-review="${(activeReviewIndex + visibleIndex) % allReviews.length}">${escapeHtml(item.name)}</button>
           <p>${escapeHtml(item.review)}</p>
-          <div class="review-rating" aria-label="${Number(item.rating) > 0 ? `Rated ${Math.min(5, Number(item.rating))} out of 5 stars` : "Not rated yet"}">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= Number(item.rating) ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}${Number(item.rating) > 0 ? `<span class="review-rating-label">${Math.min(5, Number(item.rating))} / 5</span>` : ""}</div>
-          <div class="review-reactions" data-review-reactions="${escapeHtml(reviewKey)}">${[["up", "👍"], ["heart", "❤️"], ["down", "👎"]].map(([kind, symbol]) => `<button class="review-reaction${reactions.mine === kind ? " is-selected" : ""}" type="button" data-reaction="${kind}" data-review-id="${escapeHtml(String(item.id || ""))}" data-review-key="${escapeHtml(reviewKey)}" aria-label="${symbol} ${kind === "up" ? "Thumbs up" : kind === "down" ? "Thumbs down" : "Heart"}">${symbol} ${reactions[kind] || 0}</button>`).join("")}</div>
+          <strong>${escapeHtml(item.name)}</strong>
         </article>
-      `; }).join("");
-    }
-
-    function openPublicReview(review) {
-      const rating = Math.max(0, Math.min(5, Number(review.rating) || 0));
-      document.getElementById("public-review-name").textContent = review.name;
-      document.getElementById("public-review-text").textContent = review.review;
-      document.getElementById("public-review-rating").innerHTML = rating
-        ? `<div class="review-rating" aria-label="Rated ${rating} out of 5 stars">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= rating ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}<span class="review-rating-label">${rating} / 5</span></div>`
-        : '<p class="review-rating-label">This review has not been rated yet.</p>';
-      document.getElementById("public-review-dialog").showModal();
+      `).join("");
     }
 
     async function shiftReviews(direction) {
@@ -3253,47 +2399,6 @@
       activeReviewIndex = (activeReviewIndex + direction + allReviews.length) % allReviews.length;
       await renderReviews();
     }
-
-    document.getElementById("review-list")?.addEventListener("click", (event) => {
-      const reactionButton = event.target.closest("[data-reaction]");
-      if (reactionButton) { castReviewReaction(reactionButton); return; }
-      const nameButton = event.target.closest("[data-open-public-review]");
-      if (!nameButton) return;
-      const review = allReviews[Number(nameButton.dataset.openPublicReview)];
-      if (review) openPublicReview(review);
-    });
-
-    async function castReviewReaction(button) {
-      const kind = button.dataset.reaction;
-      if (supabaseEnabled() && button.dataset.reviewId) {
-        const voterId = localStorage.getItem(TRUST_VOTER_KEY) || crypto.randomUUID();
-        localStorage.setItem(TRUST_VOTER_KEY, voterId);
-        try {
-          const filter = `review_id=eq.${encodeURIComponent(button.dataset.reviewId)}&voter_id=eq.${encodeURIComponent(voterId)}`;
-          const prior = await supabaseRequest(`${SUPABASE_REACTIONS_TABLE}?select=id,reaction&${filter}`);
-          if (prior.length) await supabaseRequest(`${SUPABASE_REACTIONS_TABLE}?${filter}`, { method: "DELETE" });
-          if (!prior.length || prior[0].reaction !== kind) await supabaseRequest(SUPABASE_REACTIONS_TABLE, { method: "POST", body: JSON.stringify({ review_id: button.dataset.reviewId, voter_id: voterId, reaction: kind }) });
-        } catch (error) { console.error("Review reaction failed.", error); }
-      } else {
-        const stored = JSON.parse(localStorage.getItem(TRUST_REACTIONS_KEY) || "{}");
-        const state = stored[button.dataset.reviewKey] || { up: 0, heart: 0, down: 0, mine: "" };
-        if (state.mine) state[state.mine] = Math.max(0, state[state.mine] - 1);
-        if (state.mine !== kind) { state[kind] += 1; state.mine = kind; } else state.mine = "";
-        stored[button.dataset.reviewKey] = state; localStorage.setItem(TRUST_REACTIONS_KEY, JSON.stringify(stored));
-      }
-      await renderReviews();
-    }
-
-    document.getElementById("review-rating-picker")?.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-rating]"); if (!button) return;
-      const rating = Number(button.dataset.rating);
-      document.querySelector("#review-form input[name='rating']").value = rating;
-      document.querySelectorAll("#review-rating-picker [data-rating]").forEach((star) => { const selected = Number(star.dataset.rating) <= rating; star.classList.toggle("is-selected", selected); star.setAttribute("aria-checked", String(Number(star.dataset.rating) === rating)); });
-    });
-
-    document.getElementById("public-review-close")?.addEventListener("click", () => {
-      document.getElementById("public-review-dialog").close();
-    });
 
     function escapeHtml(value) {
       return String(value || "").replace(/[&<>"']/g, (char) => ({
@@ -3375,10 +2480,7 @@
       });
     }
 
-    let donationSubmitting = false;
-
     function closeModals() {
-      if (donationSubmitting) return;
       document.querySelectorAll(".modal-overlay").forEach((modal) => {
         modal.hidden = true;
       });
@@ -3417,22 +2519,6 @@
       });
     });
 
-    const stickyHeader = document.querySelector("header");
-    if (stickyHeader) {
-      const updateAnchorScrollOffset = () => {
-        document.documentElement.style.setProperty(
-          "--anchor-scroll-offset",
-          `${stickyHeader.getBoundingClientRect().height}px`
-        );
-      };
-      updateAnchorScrollOffset();
-      if ("ResizeObserver" in window) {
-        new ResizeObserver(updateAnchorScrollOffset).observe(stickyHeader);
-      } else {
-        window.addEventListener("resize", updateAnchorScrollOffset);
-      }
-    }
-
     const getInvolvedDropdown = document.getElementById("get-involved-dropdown");
     getInvolvedDropdown?.addEventListener("mouseenter", () => {
       getInvolvedDropdown.setAttribute("open", "");
@@ -3444,8 +2530,6 @@
     document.querySelectorAll("[data-close-modal]").forEach((button) => {
       button.addEventListener("click", closeModals);
     });
-
-    document.getElementById("error-popup-close")?.addEventListener("click", closeErrorPopup);
 
     document.querySelectorAll("[data-copy-upi]").forEach((button) => {
       button.addEventListener("click", async () => {
@@ -3472,10 +2556,6 @@
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
-        if (!document.getElementById("error-popup-overlay").hidden) {
-          closeErrorPopup();
-          return;
-        }
         closeModals();
       }
     });
@@ -3503,31 +2583,12 @@
       }
     });
 
-    document.querySelector('input[name="panCardNumber"]')?.addEventListener("input", (event) => {
-      const input = event.currentTarget;
-      const raw = input.value.toUpperCase();
-      const rawCaret = input.selectionStart ?? raw.length;
-      let pan = "";
-      let caret = 0;
-      for (let index = 0; index < raw.length && pan.length < 10; index += 1) {
-        const character = raw[index];
-        const slot = pan.length;
-        const allowed = slot < 5 || slot === 9
-          ? /^[A-Z]$/.test(character)
-          : /^[0-9]$/.test(character);
-        if (allowed) pan += character;
-        if (index < rawCaret) caret = pan.length;
-      }
-      input.value = pan;
-      input.setSelectionRange(caret, caret);
-    });
-
     document.getElementById("donor-form")?.addEventListener("submit", (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
       activeDonation = {
         ...data,
-        panCardNumber: String(data.panCardNumber || "").trim().toUpperCase(),
+        panCardName: String(data.panCardName || "").trim(),
         amount: Number(data.amount),
         certificateId: `SCT-${Date.now().toString(36).toUpperCase()}`
       };
@@ -3547,23 +2608,19 @@
       if (!activeDonation || !screenshot) {
         status.textContent = "Please attach your payment screenshot before confirmation.";
         status.style.display = "block";
-        showErrorPopup(status.textContent, "Payment screenshot required");
         return;
       }
       if (screenshot.size > 8 * 1024 * 1024) {
         status.textContent = "Please select a screenshot smaller than 8 MB.";
         status.style.display = "block";
-        showErrorPopup(status.textContent, "Screenshot is too large");
         return;
       }
 
       button.disabled = true;
-      donationSubmitting = true;
-      document.getElementById("donor-window")?.setAttribute("aria-busy", "true");
-      document.querySelector('#donor-window [data-close-modal]')?.setAttribute("disabled", "");
-      document.getElementById("donation-loading-overlay").hidden = false;
+      status.textContent = "Submitting payment details. Please wait...";
+      status.style.display = "block";
       try {
-        const screenshotUpload = await uploadPaymentScreenshot(screenshot, activeDonation.certificateId, activeDonation.name);
+        const screenshotUpload = await uploadPaymentScreenshot(screenshot, activeDonation.certificateId);
         activeDonation.screenshotPath = screenshotUpload.path;
         activeDonation.driveFileUrl = screenshotUpload.driveUrl;
         activeDonation.screenshotFileName = screenshot.name;
@@ -3572,26 +2629,16 @@
         status.style.display = "none";
         setDonationStep(3);
       } catch (error) {
-        console.error("Donation submission failed.", error);
-        status.style.display = "block";
-        status.textContent = readableSubmissionError(error);
-        showErrorPopup(status.textContent, "Payment submission failed");
+        status.textContent = "Payment details could not be submitted. Please check Supabase setup and try again.";
       } finally {
-        document.getElementById("donation-loading-overlay").hidden = true;
         button.disabled = false;
-        donationSubmitting = false;
-        document.getElementById("donor-window")?.removeAttribute("aria-busy");
-        document.querySelector('#donor-window [data-close-modal]')?.removeAttribute("disabled");
       }
     });
 
     document.getElementById("download-certificate")?.addEventListener("click", () => {
-      downloadCertificate().catch((error) => {
-        console.error("Certificate generation failed.", error);
+      downloadCertificate().catch(() => {
         const message = document.querySelector("#donor-certificate-panel .certificate-ready p");
-        const errorMessage = "The certificate could not be created. Check your internet connection and try again.";
-        if (message) message.textContent = errorMessage;
-        showErrorPopup(errorMessage, "Certificate could not be created");
+        if (message) message.textContent = "The certificate could not be created. Please try again.";
       });
     });
 
@@ -3600,7 +2647,6 @@
       const form = event.currentTarget;
       const data = Object.fromEntries(new FormData(form).entries());
       const message = document.getElementById("review-message");
-      if (!data.rating) { message.textContent = "Please select a star rating."; message.style.display = "block"; return; }
       try {
         await addReview(data);
         form.reset();
