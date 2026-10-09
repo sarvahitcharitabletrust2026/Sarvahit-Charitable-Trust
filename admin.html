@@ -257,19 +257,6 @@
       gap: 12px;
     }
 
-    .review-list-rating {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      margin-left: auto;
-      color: #d99a00;
-      font-size: 19px;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .review-list-rating .is-empty { color: #c8c8c8; }
-
     .entry-name {
       padding: 0;
       border: 0;
@@ -591,7 +578,7 @@
 
         <section class="panel">
           <h2>Trusted Person Reviews</h2>
-          <p>Only names are listed here. Click a name to read the review and choose a 1–5 star rating. Delete any unsuitable review.</p>
+          <p>Only names are listed here. Click a name to read the visitor’s review. Delete any unsuitable review.</p>
           <button class="btn btn-primary" type="button" id="refresh-reviews">Refresh Reviews</button>
           <div class="volunteer-list" id="review-list"></div>
         </section>
@@ -941,43 +928,10 @@
       `);
     }
 
-    function showReviewDetails(review, index) {
-      const rating = Math.max(0, Math.min(5, Number(review.rating) || 0));
-      const stars = [1, 2, 3, 4, 5].map((value) => `
-        <button class="rating-star${value <= rating ? " is-selected" : ""}" type="button" data-review-rating="${value}" aria-label="Rate ${value} out of 5 stars" aria-pressed="${value === rating}">★</button>
-      `).join("");
+    function showReviewDetails(review) {
       showEntryDetails(review.name, `
         <div class="entry-review-text">${escapeHtml(review.review)}</div>
-        <div class="review-rating-editor" aria-label="Rate this review from one to five stars">${stars}</div>
-        <p class="rating-save-status" id="rating-save-status">${rating ? `Current rating: ${rating} out of 5` : "Choose a star rating for this review."}</p>
       `);
-      entryDialog.dataset.reviewIndex = String(index);
-    }
-
-    async function saveReviewRating(review, index, rating) {
-      const status = document.getElementById("rating-save-status");
-      if (status) status.textContent = "Saving rating…";
-      try {
-        if (supabaseEnabled()) {
-          await supabaseRequest(`${SUPABASE_REVIEW_TABLE}?id=eq.${encodeURIComponent(review.id)}`, {
-            method: "PATCH",
-            body: JSON.stringify({ rating })
-          });
-        } else {
-          const reviews = getReviews();
-          reviews[index] = { ...reviews[index], rating };
-          saveReviews(reviews);
-        }
-        review.rating = rating;
-        await renderReviews();
-        showReviewDetails(review, index);
-        const savedStatus = document.getElementById("rating-save-status");
-        if (savedStatus) savedStatus.textContent = `Saved: ${rating} out of 5 stars. This rating now appears on the website.`;
-      } catch (error) {
-        console.error("Review rating update failed.", error);
-        const errorStatus = document.getElementById("rating-save-status");
-        if (errorStatus) errorStatus.textContent = "Could not save the rating. Apply the review-rating database update, then try again.";
-      }
     }
 
     async function renderVolunteers() {
@@ -1011,7 +965,6 @@
               <article class="volunteer-card">
                 <div class="volunteer-card-header">
                   <button class="entry-name" type="button" data-open-review="${index}">${escapeHtml(review.name)}</button>
-                  <span class="review-list-rating" role="img" aria-label="${Math.max(0, Math.min(5, Number(review.rating) || 0))} out of 5 stars">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= Number(review.rating) ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}</span>
                   <button class="btn btn-danger" type="button" data-delete-review="${index}">Delete</button>
                 </div>
               </article>
@@ -1102,12 +1055,6 @@
     });
 
     document.getElementById("entry-detail-dialog").addEventListener("click", async (event) => {
-      if (event.target.closest("[data-review-rating]")) {
-        const button = event.target.closest("[data-review-rating]");
-        const index = Number(entryDialog.dataset.reviewIndex);
-        const reviews = await loadReviews();
-        await saveReviewRating(reviews[index], index, Number(button.dataset.reviewRating));
-      }
     });
 
     document.querySelector("[data-close-entry-dialog]").addEventListener("click", () => entryDialog.close());

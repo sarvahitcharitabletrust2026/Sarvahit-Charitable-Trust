@@ -783,6 +783,13 @@
       letter-spacing: 0;
     }
 
+    .review-rating-picker { display: flex; gap: 5px; margin: 2px 0 4px; }
+    .review-rating-picker button { border: 0; padding: 0; background: transparent; color: #c8c8c8; font-size: 28px; cursor: pointer; }
+    .review-rating-picker button.is-selected, .review-rating-picker button:hover, .review-rating-picker button:focus-visible { color: #d99a00; }
+    .review-reactions { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+    .review-reaction { border: 1px solid var(--line); border-radius: 18px; padding: 5px 9px; background: #fff; cursor: pointer; }
+    .review-reaction.is-selected { border-color: var(--green); background: #edf7ef; }
+
     .review-form-box {
       background: #fff;
       border: 1px solid var(--line);
@@ -1823,6 +1830,7 @@
       <span>Sarvahit Charitable Trust | Help today. Hope for tomorrow.</span>
       <div class="topbar-actions">
         <div class="social-links" aria-label="Social media links">
+          <a class="social-icon" href="https://x.com/SarvahitCTrust" target="_blank" rel="noopener noreferrer" aria-label="X" title="X"><img src="assets/twitter-logo.png" alt="" /></a>
           <a class="social-icon" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><img src="https://marketplace.canva.com/KrzKM/MAGzNqKrzKM/1/tl/canva-facebook-logo-MAGzNqKrzKM.png" alt="" /></a>
           <a class="social-icon" href="https://www.instagram.com/sarvahitcharitabletrust2024/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><img src="https://marketplace.canva.com/0Q87E/MAGzNm0Q87E/1/tl/canva-instagram-icon-MAGzNm0Q87E.png" alt="" /></a>
           <a class="social-icon" href="https://www.linkedin.com/in/sarvahit-charitable-trust-06a594442/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><img src="https://marketplace.canva.com/NA4A8/MAGzNvNA4A8/1/tl/canva-linkedin-icon-MAGzNvNA4A8.png" alt="" /></a>
@@ -2048,6 +2056,13 @@
                   Your Review
                   <textarea name="review" required></textarea>
                 </label>
+                <fieldset class="full" style="border:0;padding:0;margin:0">
+                  <legend style="font-weight:700;margin-bottom:6px">Your Rating (required)</legend>
+                  <div class="review-rating-picker" id="review-rating-picker" role="radiogroup" aria-label="Rate your experience from one to five stars">
+                    <button type="button" data-rating="1" role="radio" aria-label="1 star" aria-checked="false">★</button><button type="button" data-rating="2" role="radio" aria-label="2 stars" aria-checked="false">★</button><button type="button" data-rating="3" role="radio" aria-label="3 stars" aria-checked="false">★</button><button type="button" data-rating="4" role="radio" aria-label="4 stars" aria-checked="false">★</button><button type="button" data-rating="5" role="radio" aria-label="5 stars" aria-checked="false">★</button>
+                  </div>
+                  <input type="hidden" name="rating" required />
+                </fieldset>
                 <div class="full">
                   <button class="btn btn-primary" type="submit">Submit Review</button>
                 </div>
@@ -2325,6 +2340,9 @@
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
     const TRUST_REVIEWS_KEY = "trustReviews";
+    const TRUST_REACTIONS_KEY = "trustReviewReactions";
+    const TRUST_VOTER_KEY = "trustReviewVoter";
+    const SUPABASE_REACTIONS_TABLE = "trusted_review_reactions";
     const TRUST_LANGUAGE_KEY = "trustLanguage";
     let allReviews = [];
     let activeReviewIndex = 0;
@@ -3155,6 +3173,7 @@
         name: row.name,
         review: row.review,
         rating: Number(row.rating) || 0,
+        reactions: row.reactions || {},
         createdAt: row.created_at
       }));
     }
@@ -3165,7 +3184,7 @@
         reviews.unshift({
           name: data.name,
           review: data.review,
-          rating: 0,
+          rating: Number(data.rating),
           createdAt: new Date().toISOString()
         });
         saveReviews(reviews);
@@ -3175,7 +3194,8 @@
         method: "POST",
         body: JSON.stringify({
           name: data.name,
-          review: data.review
+          review: data.review,
+          rating: Number(data.rating)
         })
       });
     }
@@ -3193,13 +3213,26 @@
       for (let i = 0; i < count; i += 1) {
         visibleReviews.push(allReviews[(activeReviewIndex + i) % allReviews.length]);
       }
-      list.innerHTML = visibleReviews.map((item, visibleIndex) => `
+      let reactionRows = [];
+      let voterId = localStorage.getItem(TRUST_VOTER_KEY);
+      if (!voterId) { voterId = crypto.randomUUID(); localStorage.setItem(TRUST_VOTER_KEY, voterId); }
+      if (supabaseEnabled()) {
+        try { reactionRows = await supabaseRequest(`${SUPABASE_REACTIONS_TABLE}?select=review_id,reaction,voter_id`); } catch (_) { reactionRows = []; }
+      }
+      const reactionCounts = {};
+      reactionRows.forEach((row) => { reactionCounts[row.review_id] ||= { up: 0, heart: 0, down: 0, mine: "" }; reactionCounts[row.review_id][row.reaction] += 1; if (row.voter_id === voterId) reactionCounts[row.review_id].mine = row.reaction; });
+      const localReactions = JSON.parse(localStorage.getItem(TRUST_REACTIONS_KEY) || "{}");
+      list.innerHTML = visibleReviews.map((item, visibleIndex) => {
+        const reviewKey = String(item.id || item.createdAt || `${item.name}-${item.review}`);
+        const reactions = reactionCounts[item.id] || localReactions[reviewKey] || { up: 0, heart: 0, down: 0, mine: "" };
+        return `
         <article class="review-card">
           <button class="review-name-button" type="button" data-open-public-review="${(activeReviewIndex + visibleIndex) % allReviews.length}">${escapeHtml(item.name)}</button>
           <p>${escapeHtml(item.review)}</p>
           <div class="review-rating" aria-label="${Number(item.rating) > 0 ? `Rated ${Math.min(5, Number(item.rating))} out of 5 stars` : "Not rated yet"}">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= Number(item.rating) ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}${Number(item.rating) > 0 ? `<span class="review-rating-label">${Math.min(5, Number(item.rating))} / 5</span>` : ""}</div>
+          <div class="review-reactions" data-review-reactions="${escapeHtml(reviewKey)}">${[["up", "👍"], ["heart", "❤️"], ["down", "👎"]].map(([kind, symbol]) => `<button class="review-reaction${reactions.mine === kind ? " is-selected" : ""}" type="button" data-reaction="${kind}" data-review-id="${escapeHtml(String(item.id || ""))}" data-review-key="${escapeHtml(reviewKey)}" aria-label="${symbol} ${kind === "up" ? "Thumbs up" : kind === "down" ? "Thumbs down" : "Heart"}">${symbol} ${reactions[kind] || 0}</button>`).join("")}</div>
         </article>
-      `).join("");
+      `; }).join("");
     }
 
     function openPublicReview(review) {
@@ -3222,10 +3255,40 @@
     }
 
     document.getElementById("review-list")?.addEventListener("click", (event) => {
+      const reactionButton = event.target.closest("[data-reaction]");
+      if (reactionButton) { castReviewReaction(reactionButton); return; }
       const nameButton = event.target.closest("[data-open-public-review]");
       if (!nameButton) return;
       const review = allReviews[Number(nameButton.dataset.openPublicReview)];
       if (review) openPublicReview(review);
+    });
+
+    async function castReviewReaction(button) {
+      const kind = button.dataset.reaction;
+      if (supabaseEnabled() && button.dataset.reviewId) {
+        const voterId = localStorage.getItem(TRUST_VOTER_KEY) || crypto.randomUUID();
+        localStorage.setItem(TRUST_VOTER_KEY, voterId);
+        try {
+          const filter = `review_id=eq.${encodeURIComponent(button.dataset.reviewId)}&voter_id=eq.${encodeURIComponent(voterId)}`;
+          const prior = await supabaseRequest(`${SUPABASE_REACTIONS_TABLE}?select=id,reaction&${filter}`);
+          if (prior.length) await supabaseRequest(`${SUPABASE_REACTIONS_TABLE}?${filter}`, { method: "DELETE" });
+          if (!prior.length || prior[0].reaction !== kind) await supabaseRequest(SUPABASE_REACTIONS_TABLE, { method: "POST", body: JSON.stringify({ review_id: button.dataset.reviewId, voter_id: voterId, reaction: kind }) });
+        } catch (error) { console.error("Review reaction failed.", error); }
+      } else {
+        const stored = JSON.parse(localStorage.getItem(TRUST_REACTIONS_KEY) || "{}");
+        const state = stored[button.dataset.reviewKey] || { up: 0, heart: 0, down: 0, mine: "" };
+        if (state.mine) state[state.mine] = Math.max(0, state[state.mine] - 1);
+        if (state.mine !== kind) { state[kind] += 1; state.mine = kind; } else state.mine = "";
+        stored[button.dataset.reviewKey] = state; localStorage.setItem(TRUST_REACTIONS_KEY, JSON.stringify(stored));
+      }
+      await renderReviews();
+    }
+
+    document.getElementById("review-rating-picker")?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-rating]"); if (!button) return;
+      const rating = Number(button.dataset.rating);
+      document.querySelector("#review-form input[name='rating']").value = rating;
+      document.querySelectorAll("#review-rating-picker [data-rating]").forEach((star) => { const selected = Number(star.dataset.rating) <= rating; star.classList.toggle("is-selected", selected); star.setAttribute("aria-checked", String(Number(star.dataset.rating) === rating)); });
     });
 
     document.getElementById("public-review-close")?.addEventListener("click", () => {
@@ -3537,6 +3600,7 @@
       const form = event.currentTarget;
       const data = Object.fromEntries(new FormData(form).entries());
       const message = document.getElementById("review-message");
+      if (!data.rating) { message.textContent = "Please select a star rating."; message.style.display = "block"; return; }
       try {
         await addReview(data);
         form.reset();
