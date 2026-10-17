@@ -1215,18 +1215,36 @@
       gap: 14px;
     }
 
+    .drive-gallery-carousel {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) 42px;
+      align-items: center;
+      gap: 12px;
+    }
+
     .drive-gallery {
       width: 100%;
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 24px 18px;
-      align-items: start;
+      min-width: 0;
+      display: flex;
+      gap: 18px;
+      align-items: stretch;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+    }
+
+    .drive-gallery::-webkit-scrollbar {
+      display: none;
     }
 
     .drive-gallery-card {
+      flex: 0 0 calc((100% - 72px) / 5);
       min-width: 0;
       position: relative;
       overflow: hidden;
+      scroll-snap-align: start;
       border: 1px solid var(--line);
       border-radius: 14px;
       background: #fff;
@@ -1298,6 +1316,34 @@
       outline: none;
     }
 
+    .drive-gallery-page-arrow {
+      width: 42px;
+      height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      color: var(--green-dark);
+      font-size: 34px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 5px 16px rgba(20, 30, 36, 0.12);
+      transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .drive-gallery-page-arrow:hover:not(:disabled),
+    .drive-gallery-page-arrow:focus-visible {
+      background: #eaf4ed;
+      transform: translateY(-2px);
+      outline: 2px solid var(--green);
+      outline-offset: 2px;
+    }
+
+    .drive-gallery-page-arrow:disabled {
+      opacity: 0.35;
+      cursor: default;
+      box-shadow: none;
+    }
+
     .drive-gallery-info {
       padding: 10px 11px 12px;
       text-align: center;
@@ -1322,8 +1368,8 @@
     }
 
     .drive-gallery-message {
+      flex: 0 0 100%;
       min-height: 160px;
-      grid-column: 1 / -1;
       display: grid;
       place-items: center;
       padding: 28px;
@@ -1334,7 +1380,7 @@
     }
 
     .drive-gallery-fallback {
-      grid-column: 1 / -1;
+      flex: 0 0 100%;
       display: block;
       padding: 16px 18px;
       border-radius: 10px;
@@ -1732,15 +1778,39 @@
     }
 
     @media (max-width: 1050px) and (min-width: 621px) {
-      .drive-gallery {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+      .drive-gallery-card {
+        flex-basis: calc((100% - 36px) / 3);
       }
     }
 
     @media (max-width: 620px) {
+      .drive-gallery-carousel {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
       .drive-gallery {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px 12px;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        gap: 12px;
+      }
+
+      .drive-gallery-card {
+        flex-basis: calc((100% - 12px) / 2);
+      }
+
+      .drive-gallery-page-arrow {
+        grid-row: 2;
+      }
+
+      .drive-gallery-page-prev {
+        grid-column: 1;
+        justify-self: end;
+      }
+
+      .drive-gallery-page-next {
+        grid-column: 2;
+        justify-self: start;
       }
 
       .drive-gallery-arrow {
@@ -1791,6 +1861,15 @@
       .nav-links {
         gap: 12px;
         font-size: 15px;
+        width: 100%;
+        min-width: 0;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: visible;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
       }
 
       .nav-links > a,
@@ -2069,8 +2148,12 @@
           <h2>Photos from Our Community Service Programs</h2>
           <p>Each work-wise folder is shown as a card. Use the arrows to browse its photos, or double-click a photo to open it in Google Drive.</p>
         </div>
-        <div class="drive-gallery" id="social-activity-gallery" aria-live="polite">
-          <p class="drive-gallery-message">Loading community service photos...</p>
+        <div class="drive-gallery-carousel" aria-label="Community service photo folders">
+          <button class="drive-gallery-page-arrow drive-gallery-page-prev" id="social-activity-prev" type="button" aria-label="Previous folders" disabled>‹</button>
+          <div class="drive-gallery" id="social-activity-gallery" aria-live="polite">
+            <p class="drive-gallery-message">Loading community service photos...</p>
+          </div>
+          <button class="drive-gallery-page-arrow drive-gallery-page-next" id="social-activity-next" type="button" aria-label="Next folders" disabled>›</button>
         </div>
       </div>
     </section>
@@ -3003,7 +3086,31 @@
           })
         );
       }
+
+      updateSocialActivityNavigation();
     }
+
+    const socialActivityGallery = document.getElementById("social-activity-gallery");
+    const socialActivityPrevious = document.getElementById("social-activity-prev");
+    const socialActivityNext = document.getElementById("social-activity-next");
+
+    function updateSocialActivityNavigation() {
+      if (!socialActivityGallery || !socialActivityPrevious || !socialActivityNext) return;
+      const maxScroll = socialActivityGallery.scrollWidth - socialActivityGallery.clientWidth;
+      socialActivityPrevious.disabled = maxScroll <= 2 || socialActivityGallery.scrollLeft <= 2;
+      socialActivityNext.disabled = maxScroll <= 2 || socialActivityGallery.scrollLeft >= maxScroll - 2;
+    }
+
+    socialActivityPrevious?.addEventListener("click", () => {
+      socialActivityGallery.scrollBy({ left: -socialActivityGallery.clientWidth, behavior: "smooth" });
+    });
+
+    socialActivityNext?.addEventListener("click", () => {
+      socialActivityGallery.scrollBy({ left: socialActivityGallery.clientWidth, behavior: "smooth" });
+    });
+
+    socialActivityGallery?.addEventListener("scroll", updateSocialActivityNavigation, { passive: true });
+    window.addEventListener("resize", updateSocialActivityNavigation);
 
     loadSocialActivityGallery();
 
