@@ -350,9 +350,11 @@
     }
 
     .hero {
-      min-height: calc(100vh - 104px);
+      height: calc(100vh - 112px);
+      height: calc(100svh - 112px);
+      min-height: 0;
       display: grid;
-      align-items: start;
+      align-items: center;
       position: relative;
       overflow: hidden;
       background:
@@ -362,13 +364,17 @@
     }
 
     .hero-inner {
-      width: min(1180px, 100%);
+      width: min(1408px, 100%);
       margin: 0 auto;
-      padding: 26px 20px 44px;
+      padding: 14px 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(390px, 0.42fr);
+      align-items: center;
+      gap: clamp(24px, 4vw, 64px);
     }
 
     .hero-content {
-      max-width: 720px;
+      max-width: 820px;
     }
 
     .hero-logo {
@@ -398,7 +404,7 @@
 
     .hero h1 {
       font-family: "Poppins", system-ui, sans-serif;
-      font-size: clamp(42px, 7vw, 78px);
+      font-size: clamp(46px, 5.2vw, 76px);
       line-height: 1.04;
       margin: 0 0 18px;
       letter-spacing: 0;
@@ -416,6 +422,70 @@
       flex-wrap: wrap;
       gap: 12px;
     }
+
+    .hero-highlights {
+      display: grid;
+      gap: 6px;
+      max-width: 430px;
+      justify-self: end;
+      width: 100%;
+    }
+
+    .hero-highlight {
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 17px 19px;
+      border: 1px solid rgba(255,255,255,.27);
+      border-radius: 16px;
+      background: rgba(255,255,255,.13);
+      color: #fff;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 14px 35px rgba(0,0,0,.14);
+    }
+
+    .hero-highlight-icon {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,.17);
+      font-size: 23px;
+    }
+
+    .hero-highlight strong,
+    .hero-highlight span { display: block; }
+    .hero-highlight strong { font: 700 16px "Poppins", sans-serif; }
+    .hero-highlight span { color: rgba(255,255,255,.83); font-size: 14px; }
+    .hero-highlight-cta {
+      min-height: 48px;
+      justify-content: center;
+      border: 0;
+      background: var(--green);
+      font-weight: 700;
+      padding: 8px 12px;
+      font-size: 14px;
+      box-shadow: 0 14px 32px rgba(5, 35, 28, .28);
+    }
+
+    .hero-finance-grid { display: grid; gap: 6px; }
+    .hero-finance-item { min-height: 54px; display: flex; align-items: center; gap: 10px; min-width: 0; padding: 5px 10px; border: 1px solid rgba(255,255,255,.3); border-radius: 13px; background: rgba(255,255,255,.15); color: #fff; backdrop-filter: blur(9px); box-shadow: 0 12px 28px rgba(0,0,0,.14); }
+    .hero-finance-icon { width: 32px; height: 32px; flex: 0 0 32px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 16px; }
+    .hero-finance-copy { min-width: 0; }
+    .hero-finance-item:nth-child(2) { color: #9f4038; }
+    .hero-finance-item:nth-child(2) .hero-finance-icon { color: #fff; }
+    .hero-finance-copy span { display: block; color: #fff; font: 700 14px/1.15 "Poppins", sans-serif; }
+    .hero-finance-item strong { display: block; margin-top: 2px; color: #fff; font: 700 clamp(18px, 1.5vw, 21px)/1.1 "Poppins", sans-serif; overflow-wrap: anywhere; text-shadow: 0 1px 8px rgba(0,0,0,.25); }
+    .hero-finance-item:nth-child(1) { border-color: rgba(160,235,199,.52); }
+    .hero-finance-item:nth-child(2) { border-color: rgba(255,190,180,.5); }
+    .hero-finance-item:nth-child(3) { border-color: rgba(255,225,160,.52); }
+    .hero-finance-item:nth-child(4) { border-color: rgba(205,225,255,.5); }
+    .hero-finance-periods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+    .hero-finance-periods label { display: block; padding: 4px 8px 5px; border: 1px solid rgba(255,255,255,.3); border-radius: 11px; background: rgba(255,255,255,.15); color: #fff; font-size: 11px; font-weight: 700; backdrop-filter: blur(9px); }
+    .hero-finance-periods select { width: 100%; min-height: 26px; margin-top: 2px; padding: 2px 5px; border: 0; border-radius: 5px; background: #fff; color: #263238; font: inherit; }
 
     section {
       padding: 70px 20px;
@@ -468,7 +538,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      margin-top: -46px;
+      margin-top: 0;
       position: relative;
       z-index: 4;
     }
@@ -557,6 +627,139 @@
       background: #eef5ef;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
+    }
+
+    .finance-transparency {
+      background: var(--paper);
+      border-block: 1px solid var(--line);
+    }
+
+    .finance-heading {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      margin-bottom: 26px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .finance-heading-logo {
+      width: 62px;
+      height: 62px;
+      flex: 0 0 auto;
+      object-fit: contain;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .finance-heading h2 {
+      margin: 0;
+      color: var(--green-dark);
+      font: 700 clamp(24px, 3vw, 34px)/1.2 "Poppins", system-ui, sans-serif;
+    }
+
+    .finance-heading p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .finance-controls {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .finance-controls label {
+      display: grid;
+      gap: 4px;
+      color: var(--green-dark);
+      font-weight: 600;
+    }
+
+    .finance-controls select {
+      min-height: 44px;
+      min-width: 155px;
+      padding: 8px 34px 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .finance-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .finance-card {
+      min-height: 190px;
+      padding: 22px 24px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+    }
+
+    .finance-card-icon {
+      display: block;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 10px;
+    }
+
+    .finance-card h3 {
+      margin: 0 0 8px;
+      font: 600 18px/1.3 "Poppins", system-ui, sans-serif;
+    }
+
+    .finance-card strong {
+      display: block;
+      font: 600 clamp(28px, 4vw, 40px)/1.2 "Poppins", system-ui, sans-serif;
+      overflow-wrap: anywhere;
+    }
+
+    .finance-card small {
+      display: block;
+      margin-top: 8px;
+      font-size: 15px;
+    }
+
+    .finance-card-donations { background: #e8f4ee; color: var(--green); border-color: #d7e9dc; }
+    .finance-card-spent { background: #f8e9e5; color: #9f4038; border-color: #efd5cf; }
+    .finance-card-opening { background: #eef3ec; color: var(--green-dark); border-color: #dce6d7; }
+    .finance-card-closing { background: #fff4dc; color: #8a5a13; border-color: #f1dfb5; }
+
+    .finance-detail-panel {
+      padding: 22px 24px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      box-shadow: 0 8px 24px rgba(20, 30, 36, 0.06);
+    }
+
+    .finance-detail-panel h3 {
+      margin: 0 0 12px;
+      color: var(--green-dark);
+      font: 600 20px "Poppins", system-ui, sans-serif;
+    }
+
+    .finance-detail-panel p { margin: 12px 0 0; color: var(--muted); }
+    #finance-categories ul { margin: 0; padding-left: 22px; }
+    #finance-categories li { padding: 3px 0; }
+
+    @media (max-width: 640px) {
+      .finance-summary-grid { grid-template-columns: 1fr; gap: 12px; }
+      .finance-card { min-height: 160px; }
+      .finance-heading { align-items: flex-start; }
+      .finance-heading-logo { width: 52px; height: 52px; }
+      .finance-controls { align-items: stretch; }
+      .finance-controls label, .finance-controls select { width: 100%; }
     }
 
     .donation-layout {
@@ -1240,7 +1443,7 @@
     }
 
     .drive-gallery-card {
-      flex: 0 0 calc((100% - 72px) / 5);
+      flex: 0 0 calc((100% - 36px) / 3);
       min-width: 0;
       position: relative;
       overflow: hidden;
@@ -1879,12 +2082,20 @@
 
       .hero {
         min-height: 620px;
+        height: auto;
         background-position: center;
       }
 
       .hero-inner {
-        padding: 26px 18px 54px;
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 80px 18px 54px;
       }
+
+      .hero-highlights { grid-template-columns: 1fr; max-width: none; justify-self: stretch; }
+      .hero-highlight { min-height: 76px; padding: 12px; gap: 10px; }
+      .hero-highlight-icon { width: 38px; height: 38px; flex-basis: 38px; font-size: 19px; }
+      .hero-highlight-cta { grid-column: 1 / -1; }
 
       .hero p {
         font-size: 18px;
@@ -2026,6 +2237,19 @@
             <a class="btn btn-light" href="#work">Our Social Work</a>
           </div>
         </div>
+        <aside class="hero-highlights" aria-label="Financial transparency and our work">
+          <div class="hero-finance-periods" aria-label="Select reporting period">
+              <label>Year<select id="hero-finance-year" aria-label="Select year"></select></label>
+              <label>Month<select id="hero-finance-month" aria-label="Select month"></select></label>
+          </div>
+          <div class="hero-finance-grid">
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true">♥</span><div class="hero-finance-copy"><span>Total Donations</span><strong data-finance-mirror="finance-income">₹0.00</strong></div></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true">▣</span><div class="hero-finance-copy"><span>Total Spent</span><strong data-finance-mirror="finance-expenses">₹0.00</strong></div></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true">♡</span><div class="hero-finance-copy"><span>Available Balance</span><strong data-finance-mirror="finance-closing">₹0.00</strong></div></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true">✦</span><div class="hero-finance-copy"><span>People Supported</span><strong id="hero-people-supported">0+</strong></div></div>
+          </div>
+          <a class="hero-highlight hero-highlight-cta" href="#donor-window" data-open-modal="donor-window">Join us in making a difference&nbsp; →</a>
+        </aside>
       </div>
     </section>
 
@@ -2095,6 +2319,47 @@
             <h3>Awareness Drives</h3>
             <p>Promoting cleanliness, health awareness, and responsible community engagement through various campaigns and initiatives.</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="transparency" class="finance-transparency" aria-labelledby="transparency-title" style="display:none">
+      <div class="wrap">
+        <div class="finance-heading">
+          <img class="finance-heading-logo" src="assets/SarvahitCharitableTrust_Logo.png" alt="" />
+          <div>
+            <h2 id="transparency-title">Sarvahit Charitable Trust</h2>
+            <p>Donation &amp; Financial Transparency</p>
+          </div>
+        </div>
+        <p class="section-head" style="max-width:none;margin:0 0 18px;color:var(--muted)">Published, approved totals only. Donor details and payment proofs are kept private.</p>
+        <div class="finance-controls">
+          <label>Period <select id="finance-period"><option value="year">Financial year (April–March)</option><option value="month">Month</option></select></label>
+          <label>Financial year <select id="finance-year"></select></label>
+          <label id="finance-month-wrap" hidden>Month <select id="finance-month"></select></label>
+          <button class="btn btn-primary" type="button" id="finance-refresh">Refresh</button>
+        </div>
+        <div class="finance-summary-grid">
+          <article class="finance-card finance-card-donations">
+            <svg class="finance-card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 27s-10-6.2-10-13a5.7 5.7 0 0 1 10-3.7A5.7 5.7 0 0 1 26 14c0 6.8-10 13-10 13Z"/><path d="M3 24h5l3-4h5l3 3h5l5-5"/></svg>
+            <h3>Total Donations</h3><strong id="finance-income">₹0.00</strong><small>Published donations</small>
+          </article>
+          <article class="finance-card finance-card-spent">
+            <svg class="finance-card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="24" height="19" rx="3"/><path d="M4 12h21a3 3 0 0 1 3 3v4H20a3 3 0 0 1 0-6h8M22 17h.01"/><path d="M8 8V5h16"/></svg>
+            <h3>Total Spent</h3><strong id="finance-expenses">₹0.00</strong><small>Published expenses</small>
+          </article>
+          <article class="finance-card finance-card-opening">
+            <svg class="finance-card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13c0-4 5-7 12-7s11 3 11 7v9c0 3-5 5-11 5S5 25 5 22v-9Z"/><path d="M5 13c0 3 5 5 12 5s11-2 11-5M10 8 8 5M23 8l2-3M13 21h.01M22 21h.01M25 15h5v5h-5"/></svg>
+            <h3>Opening Balance</h3><strong id="finance-opening">₹0.00</strong><small>At the start of this period</small>
+          </article>
+          <article class="finance-card finance-card-closing">
+            <svg class="finance-card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 27S5 20 5 12a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 8-11 15-11 15Z"/><path d="m11 16 3 3 7-7"/></svg>
+            <h3>Available Balance</h3><strong id="finance-closing">₹0.00</strong><small>Closing balance</small>
+          </article>
+        </div>
+        <div class="finance-detail-panel"><h3>Spending by Category</h3><div id="finance-categories">No published expense data for this period.</div>
+          <p id="finance-funds-note" style="margin-top:16px;color:#52645a">Restricted and unrestricted funds are tracked separately by the Trust. Figures include published records only.</p>
+          <p id="finance-status" role="status" aria-live="polite">Loading published summaries…</p>
         </div>
       </div>
     </section>
@@ -2473,7 +2738,6 @@
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
     const SUPABASE_DONATION_TABLE = "donation_records";
     const PAYMENT_BUCKET = "payment-screenshots";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwp8h5CgczzmMbGaOJckPQ-9In_hqnEjYZrmhfFqpSEJhCSnRNngeLrGnA-tc9QU_qO/exec";
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
@@ -2485,10 +2749,12 @@
     const TRUST_REACTIONS_KEY = "trustReviewReactions";
     const TRUST_VOTER_KEY = "trustReviewVoter";
     const SUPABASE_REACTIONS_TABLE = "trusted_review_reactions";
+    const TRUST_FINANCE_VIEW = "trust_finance_public_summary";
     const TRUST_LANGUAGE_KEY = "trustLanguage";
     let allReviews = [];
     let activeReviewIndex = 0;
     let activeDonation = null;
+    let publicFinanceRows = [];
 
     const translations = {
       en: {
@@ -2496,6 +2762,7 @@
         navHome: "Home",
         navAbout: "About",
         navWork: "Work",
+        navTransparency: "Transparency",
         navGetInvolved: "Get Involved",
         navDonation: "Donation",
         navVolunteer: "Be a Volunteer",
@@ -2533,6 +2800,7 @@
         navHome: "मुख्यपृष्ठ",
         navAbout: "माहिती",
         navWork: "कार्य",
+        navTransparency: "पारदर्शकता",
         navGetInvolved: "सहभाग",
         navDonation: "देणगी",
         navVolunteer: "स्वयंसेवक व्हा",
@@ -2570,6 +2838,7 @@
         navHome: "होम",
         navAbout: "परिचय",
         navWork: "कार्य",
+        navTransparency: "पारदर्शिता",
         navGetInvolved: "जुड़ें",
         navDonation: "दान",
         navVolunteer: "स्वयंसेवक बनें",
@@ -2630,6 +2899,88 @@
 
       return response.json();
     }
+
+    const financeCurrency = (value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 2 }).format(Number(value || 0));
+    const financeMonthNames = Array.from({ length: 12 }, (_, month) => new Intl.DateTimeFormat("en-IN", { month: "long" }).format(new Date(2024, month, 1)));
+    async function loadPublicFinance() {
+      const status = document.getElementById("finance-status");
+      try {
+        if (!supabaseEnabled()) throw new Error("Transparency summaries are not configured yet.");
+        publicFinanceRows = await supabaseRequest(`${TRUST_FINANCE_VIEW}?select=month_start,calendar_year,financial_year_start,entry_type,fund_type,category,total_amount&order=month_start.asc`);
+        const yearSelect = document.getElementById("finance-year");
+        const knownYears = [...new Set(publicFinanceRows.map((row) => Number(row.financial_year_start)))].filter(Number.isFinite).sort((a, b) => b - a);
+        const currentFY = new Date().getMonth() >= 3 ? new Date().getFullYear() : new Date().getFullYear() - 1;
+        if (!knownYears.includes(currentFY)) knownYears.unshift(currentFY);
+        yearSelect.innerHTML = knownYears.map((year) => `<option value="${year}">${year}–${String(year + 1).slice(-2)}</option>`).join("");
+        const monthSelect = document.getElementById("finance-month");
+        monthSelect.innerHTML = financeMonthNames.map((name, month) => `<option value="${month}">${name}</option>`).join("");
+        monthSelect.value = String(new Date().getMonth());
+        const heroYear = document.getElementById("hero-finance-year");
+        const heroMonth = document.getElementById("hero-finance-month");
+        heroYear.innerHTML = yearSelect.innerHTML;
+        heroMonth.innerHTML = monthSelect.innerHTML;
+        heroYear.value = yearSelect.value;
+        heroMonth.value = monthSelect.value;
+        status.textContent = publicFinanceRows.length ? "Showing approved and published financial records." : "No financial records have been published yet. Totals are INR 0.00.";
+        renderPublicFinance();
+      } catch (error) {
+        status.textContent = "Transparency summary is temporarily unavailable. Please try again later.";
+      }
+    }
+    function renderPublicFinance() {
+      const mode = document.getElementById("finance-period").value;
+      const startYear = Number(document.getElementById("finance-year").value);
+      const month = Number(document.getElementById("finance-month").value);
+      const monthYear = month < 3 ? startYear + 1 : startYear;
+      const start = mode === "month" ? new Date(monthYear, month, 1) : new Date(startYear, 3, 1);
+      const end = mode === "month" ? new Date(monthYear, month + 1, 1) : new Date(startYear + 1, 3, 1);
+      const asOf = (row) => new Date(`${row.month_start}T00:00:00`);
+      const total = (rows, type) => rows.filter((row) => row.entry_type === type).reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+      const periodRows = publicFinanceRows.filter((row) => asOf(row) >= start && asOf(row) < end);
+      const priorRows = publicFinanceRows.filter((row) => asOf(row) < start);
+      const income = total(periodRows, "donation");
+      const expenses = total(periodRows, "expense");
+      const opening = total(priorRows, "opening_balance") + total(priorRows, "donation") - total(priorRows, "expense");
+      document.getElementById("finance-income").textContent = financeCurrency(income);
+      document.getElementById("finance-expenses").textContent = financeCurrency(expenses);
+      document.getElementById("finance-opening").textContent = financeCurrency(opening);
+      const periodOpeningAdjustments = total(periodRows, "opening_balance");
+      document.getElementById("finance-closing").textContent = financeCurrency(opening + income - expenses + periodOpeningAdjustments);
+      document.querySelectorAll("[data-finance-mirror]").forEach((mirror) => {
+        const source = document.getElementById(mirror.dataset.financeMirror);
+        if (source) mirror.textContent = source.textContent;
+      });
+      const byCategory = new Map();
+      for (const row of periodRows.filter((item) => item.entry_type === "expense")) byCategory.set(row.category, (byCategory.get(row.category) || 0) + Number(row.total_amount || 0));
+      const categories = [...byCategory.entries()].sort((a, b) => b[1] - a[1]);
+      document.getElementById("finance-categories").innerHTML = categories.length ? `<ul>${categories.map(([name, amount]) => `<li>${escapeHtml(name)}: ${financeCurrency(amount)}</li>`).join("")}</ul>` : "No published expense data for this period.";
+      const restrictedIncome = total(periodRows.filter((row) => row.fund_type === "restricted"), "donation");
+      const unrestrictedIncome = total(periodRows.filter((row) => row.fund_type === "unrestricted"), "donation");
+      const restrictedOutflow = total(periodRows.filter((row) => row.fund_type === "restricted"), "expense");
+      const unrestrictedOutflow = total(periodRows.filter((row) => row.fund_type === "unrestricted"), "expense");
+      const restrictedPrior = total(priorRows.filter((row) => row.fund_type === "restricted"), "opening_balance") + total(priorRows.filter((row) => row.fund_type === "restricted"), "donation") - total(priorRows.filter((row) => row.fund_type === "restricted"), "expense");
+      const unrestrictedPrior = total(priorRows.filter((row) => row.fund_type === "unrestricted"), "opening_balance") + total(priorRows.filter((row) => row.fund_type === "unrestricted"), "donation") - total(priorRows.filter((row) => row.fund_type === "unrestricted"), "expense");
+      document.getElementById("finance-funds-note").textContent = `Restricted funds: opening ${financeCurrency(restrictedPrior)}, donations ${financeCurrency(restrictedIncome)}, expenses ${financeCurrency(restrictedOutflow)}, closing ${financeCurrency(restrictedPrior + restrictedIncome - restrictedOutflow + total(periodRows.filter((row) => row.fund_type === "restricted"), "opening_balance"))}. Unrestricted funds: opening ${financeCurrency(unrestrictedPrior)}, donations ${financeCurrency(unrestrictedIncome)}, expenses ${financeCurrency(unrestrictedOutflow)}, closing ${financeCurrency(unrestrictedPrior + unrestrictedIncome - unrestrictedOutflow + total(periodRows.filter((row) => row.fund_type === "unrestricted"), "opening_balance"))}. Restricted funds are tracked separately and their use follows the donor's stated purpose.`;
+    }
+    document.getElementById("finance-period")?.addEventListener("change", (event) => {
+      document.getElementById("finance-month-wrap").hidden = event.target.value !== "month";
+      renderPublicFinance();
+    });
+    document.getElementById("finance-year")?.addEventListener("change", renderPublicFinance);
+    document.getElementById("finance-month")?.addEventListener("change", renderPublicFinance);
+    document.getElementById("finance-refresh")?.addEventListener("click", loadPublicFinance);
+    document.getElementById("hero-finance-year")?.addEventListener("change", (event) => {
+      const yearSelect = document.getElementById("finance-year");
+      yearSelect.value = event.target.value;
+      renderPublicFinance();
+    });
+    document.getElementById("hero-finance-month")?.addEventListener("change", (event) => {
+      const period = document.getElementById("finance-period");
+      period.value = "month";
+      document.getElementById("finance-month-wrap").hidden = false;
+      document.getElementById("finance-month").value = event.target.value;
+      renderPublicFinance();
+    });
 
     function getVolunteers() {
       return JSON.parse(localStorage.getItem("trustVolunteers") || "[]");
@@ -2719,6 +3070,8 @@
       const medicalCount = document.getElementById("medical-count");
       if (foodCount) foodCount.textContent = `${stats.foodPackets || 0}+`;
       if (studentCount) studentCount.textContent = `${stats.studentsSupported || 0}+`;
+      const heroPeople = document.getElementById("hero-people-supported");
+      if (heroPeople) heroPeople.textContent = `${stats.studentsSupported || 0}+`;
       if (medicalCount) medicalCount.textContent = `${stats.medicalCases || 0}+`;
     }
 
@@ -3113,35 +3466,7 @@
     window.addEventListener("resize", updateSocialActivityNavigation);
 
     loadSocialActivityGallery();
-
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function uploadToGoogleDrive(file, certificateId, fullName) {
-      if (!GOOGLE_DRIVE_UPLOAD_URL) return null;
-      const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
-      await fetch(GOOGLE_DRIVE_UPLOAD_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          certificateId,
-          fullName,
-          fileName: `${certificateId} - ${fullName}.${extension}`,
-          mimeType: file.type || "image/jpeg",
-          base64: await fileToBase64(file)
-        })
-      });
-      // Apps Script does not expose CORS headers, so no-cors returns an opaque
-      // response whose status and file URL cannot be read from this website.
-      return null;
-    }
+    loadPublicFinance();
 
     async function uploadPaymentScreenshot(file, certificateId, fullName) {
       const year = String(new Date().getFullYear());
@@ -3162,13 +3487,8 @@
           throw new Error(await response.text());
         }
       }
-      let driveUrl;
-      try {
-        driveUrl = await uploadToGoogleDrive(file, certificateId, fullName);
-      } catch (error) {
-        throw new Error(`Google Drive upload failed: ${error.message || "Please try again."}`);
-      }
-      return { path, driveUrl };
+      // Payment proofs stay in the private Supabase bucket. Do not copy them to Drive.
+      return { path, driveUrl: null };
     }
 
     async function saveDonation(donation) {
@@ -3499,6 +3819,7 @@
       setText(".nav-links > a[href='#home']", t.navHome);
       setText(".nav-links > a[href='#about']", t.navAbout);
       setText(".nav-links > a[href='#work']", t.navWork);
+      setText(".nav-links > a[href='#transparency']", t.navTransparency);
       setText("#get-involved-dropdown summary", t.navGetInvolved);
       setText(".dropdown-menu a[data-open-modal='donor-window']", t.navDonation);
       setText(".dropdown-menu a[data-open-modal='volunteer-window']", t.navVolunteer);
@@ -3857,6 +4178,8 @@
       const medicalCount = document.getElementById("medical-count");
       if (foodCount) foodCount.textContent = `${stats.foodPackets || 0}+`;
       if (studentCount) studentCount.textContent = `${stats.studentsSupported || 0}+`;
+      const heroPeople = document.getElementById("hero-people-supported");
+      if (heroPeople) heroPeople.textContent = `${stats.studentsSupported || 0}+`;
       if (medicalCount) medicalCount.textContent = `${stats.medicalCases || 0}+`;
     });
     loadNotice().catch(() => {
