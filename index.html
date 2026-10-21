@@ -1460,7 +1460,7 @@
       aspect-ratio: 1.35 / 1;
       background: #eef1ee;
       overflow: hidden;
-      cursor: default;
+      cursor: zoom-in;
     }
 
     .drive-gallery-image {
@@ -3367,7 +3367,7 @@
         image.className = "drive-gallery-image";
         image.loading = "lazy";
         image.alt = folder.name + " community service photo";
-        image.title = "Double-click to enlarge this photo";
+        image.title = "Click to enlarge this photo";
 
         const previous = document.createElement("button");
         previous.type = "button";
@@ -3399,7 +3399,7 @@
             : folder.name + " community service photo";
           image.title = current.name
             ? current.name + " — double-click to enlarge this photo"
-            : "Double-click to enlarge this photo";
+          : "Click to enlarge this photo";
           count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
           previous.disabled = images.length < 2;
           next.disabled = images.length < 2;
@@ -3417,7 +3417,7 @@
           showImage();
         });
 
-        image.addEventListener("dblclick", (event) => {
+        image.addEventListener("click", (event) => {
           event.preventDefault();
           event.stopPropagation();
           openSocialPhotoViewer(folder.name, images, activeIndex);
@@ -3454,13 +3454,15 @@
       socialActivityNext.disabled = maxScroll <= 2 || socialActivityGallery.scrollLeft >= maxScroll - 2;
     }
 
-    socialActivityPrevious?.addEventListener("click", () => {
-      socialActivityGallery.scrollBy({ left: -socialActivityGallery.clientWidth, behavior: "smooth" });
-    });
+    function slideSocialGallery(direction) {
+      const firstCard = socialActivityGallery?.querySelector(".drive-gallery-card");
+      if (!socialActivityGallery || !firstCard) return;
+      const gap = Number.parseFloat(getComputedStyle(socialActivityGallery).columnGap) || 0;
+      socialActivityGallery.scrollBy({ left: direction * (firstCard.getBoundingClientRect().width + gap), behavior: "smooth" });
+    }
 
-    socialActivityNext?.addEventListener("click", () => {
-      socialActivityGallery.scrollBy({ left: socialActivityGallery.clientWidth, behavior: "smooth" });
-    });
+    socialActivityPrevious?.addEventListener("click", () => slideSocialGallery(-1));
+    socialActivityNext?.addEventListener("click", () => slideSocialGallery(1));
 
     socialActivityGallery?.addEventListener("scroll", updateSocialActivityNavigation, { passive: true });
     window.addEventListener("resize", updateSocialActivityNavigation);
