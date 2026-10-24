@@ -2752,7 +2752,7 @@
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
     const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbzzV8lkdhVpk15iLRK9CdOykjp8ozdq_PRy_D8KLawPsHzqv5ag6RgXOSu1AZwYLegmHA/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyY6SRjOxB2EBPZIQ7p5yZXwMt0Nky4ej2w9M9Qi_FC2YsYqW0f4CEuQYbprHolwHn1/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxrzLkPLMDtqqymRPZ50fwJX9E2SG2t73StUlzU3x95YQIcphoNx3_mE6mHG5-lxdMJ/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -3528,7 +3528,7 @@
           if (result?.ok) finish(resolve, result);
           else finish(reject, new Error(result?.error || "Google Drive upload failed."));
         };
-        const timer = setTimeout(() => finish(reject, new Error("Google Drive upload timed out. Please try again.")), 90000);
+        const timer = setTimeout(() => finish(reject, new Error("Google Drive did not confirm the upload. Update and redeploy the Google Drive upload web app, with access set to Anyone, then try again.")), 90000);
         window.addEventListener("message", onMessage);
         document.body.append(frame, form);
         form.submit();

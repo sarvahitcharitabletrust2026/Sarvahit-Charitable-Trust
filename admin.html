@@ -750,7 +750,7 @@
           if (result?.ok) finish(resolve, result);
           else finish(reject, new Error(result?.error || "Google Drive upload failed."));
         };
-        const timer = setTimeout(() => finish(reject, new Error("Google Drive upload timed out. Please try again.")), 90000);
+        const timer = setTimeout(() => finish(reject, new Error("Google Drive did not confirm the upload. Update and redeploy the Google Drive upload web app, with access set to Anyone, then try again.")), 90000);
         window.addEventListener("message", onMessage);
         document.body.append(frame, form);
         form.submit();
