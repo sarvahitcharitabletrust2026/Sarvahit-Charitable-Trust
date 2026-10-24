@@ -350,8 +350,8 @@
     }
 
     .hero {
-      height: calc(100vh - 112px);
-      height: calc(100svh - 112px);
+      height: calc(100vh - var(--site-chrome-height, 160px));
+      height: calc(100svh - var(--site-chrome-height, 160px));
       min-height: 0;
       display: grid;
       align-items: center;
@@ -366,11 +366,11 @@
     .hero-inner {
       width: min(1408px, 100%);
       margin: 0 auto;
-      padding: 14px 20px;
+      padding: 12px 20px;
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(390px, 0.42fr);
       align-items: center;
-      gap: clamp(24px, 4vw, 64px);
+      gap: clamp(20px, 3vw, 48px);
     }
 
     .hero-content {
@@ -404,15 +404,15 @@
 
     .hero h1 {
       font-family: "Poppins", system-ui, sans-serif;
-      font-size: clamp(46px, 5.2vw, 76px);
+      font-size: clamp(42px, 4.2vw, 64px);
       line-height: 1.04;
       margin: 0 0 18px;
       letter-spacing: 0;
     }
 
     .hero p {
-      font-size: 22px;
-      max-width: 640px;
+      font-size: 20px;
+      max-width: 700px;
       margin: 0 0 28px;
       color: rgba(255, 255, 255, 0.9);
     }
@@ -425,10 +425,11 @@
 
     .hero-highlights {
       display: grid;
-      gap: 6px;
+      gap: 8px;
       max-width: 430px;
       justify-self: end;
       width: 100%;
+      padding: 8px;
     }
 
     .hero-highlight {
@@ -471,21 +472,21 @@
       box-shadow: 0 14px 32px rgba(5, 35, 28, .28);
     }
 
-    .hero-finance-grid { display: grid; gap: 6px; }
-    .hero-finance-item { min-height: 54px; display: flex; align-items: center; gap: 10px; min-width: 0; padding: 5px 10px; border: 1px solid rgba(255,255,255,.3); border-radius: 13px; background: rgba(255,255,255,.15); color: #fff; backdrop-filter: blur(9px); box-shadow: 0 12px 28px rgba(0,0,0,.14); }
-    .hero-finance-icon { width: 32px; height: 32px; flex: 0 0 32px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 16px; }
+    .hero-finance-grid { display: grid; gap: 7px; }
+    .hero-finance-item { min-height: 68px; display: flex; align-items: center; gap: 12px; min-width: 0; padding: 8px 12px; border: 1px solid rgba(255,255,255,.3); border-radius: 13px; background: rgba(255,255,255,.15); color: #fff; backdrop-filter: blur(9px); box-shadow: 0 12px 28px rgba(0,0,0,.14); }
+    .hero-finance-icon { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 16px; }
     .hero-finance-copy { min-width: 0; }
     .hero-finance-item:nth-child(2) { color: #9f4038; }
     .hero-finance-item:nth-child(2) .hero-finance-icon { color: #fff; }
-    .hero-finance-copy span { display: block; color: #fff; font: 700 14px/1.15 "Poppins", sans-serif; }
-    .hero-finance-item strong { display: block; margin-top: 2px; color: #fff; font: 700 clamp(18px, 1.5vw, 21px)/1.1 "Poppins", sans-serif; overflow-wrap: anywhere; text-shadow: 0 1px 8px rgba(0,0,0,.25); }
+    .hero-finance-copy span { display: block; color: #fff; font: 700 16px/1.2 "Poppins", sans-serif; }
+    .hero-finance-item strong { display: block; margin-top: 3px; color: #fff; font: 700 clamp(21px, 1.7vw, 25px)/1.15 "Poppins", sans-serif; overflow-wrap: anywhere; text-shadow: 0 1px 8px rgba(0,0,0,.25); }
     .hero-finance-item:nth-child(1) { border-color: rgba(160,235,199,.52); }
     .hero-finance-item:nth-child(2) { border-color: rgba(255,190,180,.5); }
     .hero-finance-item:nth-child(3) { border-color: rgba(255,225,160,.52); }
     .hero-finance-item:nth-child(4) { border-color: rgba(205,225,255,.5); }
-    .hero-finance-periods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
-    .hero-finance-periods label { display: block; padding: 4px 8px 5px; border: 1px solid rgba(255,255,255,.3); border-radius: 11px; background: rgba(255,255,255,.15); color: #fff; font-size: 11px; font-weight: 700; backdrop-filter: blur(9px); }
-    .hero-finance-periods select { width: 100%; min-height: 26px; margin-top: 2px; padding: 2px 5px; border: 0; border-radius: 5px; background: #fff; color: #263238; font: inherit; }
+    .hero-finance-periods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .hero-finance-periods label { display: block; padding: 8px 10px 9px; border: 1px solid rgba(255,255,255,.3); border-radius: 11px; background: rgba(255,255,255,.15); color: #fff; font-size: 13px; font-weight: 700; backdrop-filter: blur(9px); }
+    .hero-finance-periods select { width: 100%; min-height: 34px; margin-top: 4px; padding: 4px 7px; border: 0; border-radius: 5px; background: #fff; color: #263238; font: inherit; }
 
     section {
       padding: 70px 20px;
@@ -2731,17 +2732,27 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
+    function updateHeroHeight() {
+      const topbar = document.querySelector(".topbar");
+      const header = document.querySelector("header");
+      const totalHeight = (topbar ? topbar.getBoundingClientRect().height : 0) + (header ? header.getBoundingClientRect().height : 0);
+      document.documentElement.style.setProperty("--site-chrome-height", Math.ceil(totalHeight) + "px");
+    }
+    updateHeroHeight();
+    window.addEventListener("resize", updateHeroHeight, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateHeroHeight);
     const SUPABASE_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
     const SUPABASE_TABLE = "volunteer_registrations";
     const SUPABASE_REVIEW_TABLE = "trusted_reviews";
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
     const SUPABASE_DONATION_TABLE = "donation_records";
+    const TRUST_DONOR_COUNT_FUNCTION = "trust_public_donor_count";
     const PAYMENT_BUCKET = "payment-screenshots";
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwe150i-u7iDEDpx01_qCUR5bcBQHt2ilTyOlq3xIdZydWw0VCZ361xGxiKrqEPgUdv2A/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbxxpIbgNZHKV4q9I_GskR8LEMHSrnne1I4RW4V4RPbvZxcdyZzEhR4t8mtqiunryf0x/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -2923,6 +2934,7 @@
         heroMonth.value = monthSelect.value;
         status.textContent = publicFinanceRows.length ? "Showing approved and published financial records." : "No financial records have been published yet. Totals are INR 0.00.";
         renderPublicFinance();
+        loadPublicDonorCount();
       } catch (error) {
         status.textContent = "Transparency summary is temporarily unavailable. Please try again later.";
       }
@@ -2962,17 +2974,41 @@
       const unrestrictedPrior = total(priorRows.filter((row) => row.fund_type === "unrestricted"), "opening_balance") + total(priorRows.filter((row) => row.fund_type === "unrestricted"), "donation") - total(priorRows.filter((row) => row.fund_type === "unrestricted"), "expense");
       document.getElementById("finance-funds-note").textContent = `Restricted funds: opening ${financeCurrency(restrictedPrior)}, donations ${financeCurrency(restrictedIncome)}, expenses ${financeCurrency(restrictedOutflow)}, closing ${financeCurrency(restrictedPrior + restrictedIncome - restrictedOutflow + total(periodRows.filter((row) => row.fund_type === "restricted"), "opening_balance"))}. Unrestricted funds: opening ${financeCurrency(unrestrictedPrior)}, donations ${financeCurrency(unrestrictedIncome)}, expenses ${financeCurrency(unrestrictedOutflow)}, closing ${financeCurrency(unrestrictedPrior + unrestrictedIncome - unrestrictedOutflow + total(periodRows.filter((row) => row.fund_type === "unrestricted"), "opening_balance"))}. Restricted funds are tracked separately and their use follows the donor's stated purpose.`;
     }
+    async function loadPublicDonorCount() {
+      const output = document.getElementById("hero-people-supported");
+      if (!output) return;
+      if (!supabaseEnabled()) { output.textContent = "—"; return; }
+      try {
+        const mode = document.getElementById("finance-period").value;
+        const startYear = Number(document.getElementById("finance-year").value);
+        const month = Number(document.getElementById("finance-month").value);
+        const monthYear = month < 3 ? startYear + 1 : startYear;
+        const start = mode === "month" ? new Date(monthYear, month, 1) : new Date(startYear, 3, 1);
+        const end = mode === "month" ? new Date(monthYear, month + 1, 1) : new Date(startYear + 1, 3, 1);
+        const localDate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        const result = await supabaseRequest(`rpc/${TRUST_DONOR_COUNT_FUNCTION}`, {
+          method: "POST",
+          body: JSON.stringify({ p_start: localDate(start), p_end: localDate(end) })
+        });
+        const donors = Number(Array.isArray(result) ? result[0]?.trust_public_donor_count : result) || 0;
+        output.textContent = `${donors}+`;
+      } catch (_) {
+        output.textContent = "—";
+      }
+    }
     document.getElementById("finance-period")?.addEventListener("change", (event) => {
       document.getElementById("finance-month-wrap").hidden = event.target.value !== "month";
       renderPublicFinance();
+      loadPublicDonorCount();
     });
-    document.getElementById("finance-year")?.addEventListener("change", renderPublicFinance);
-    document.getElementById("finance-month")?.addEventListener("change", renderPublicFinance);
+    document.getElementById("finance-year")?.addEventListener("change", () => { renderPublicFinance(); loadPublicDonorCount(); });
+    document.getElementById("finance-month")?.addEventListener("change", () => { renderPublicFinance(); loadPublicDonorCount(); });
     document.getElementById("finance-refresh")?.addEventListener("click", loadPublicFinance);
     document.getElementById("hero-finance-year")?.addEventListener("change", (event) => {
       const yearSelect = document.getElementById("finance-year");
       yearSelect.value = event.target.value;
       renderPublicFinance();
+      loadPublicDonorCount();
     });
     document.getElementById("hero-finance-month")?.addEventListener("change", (event) => {
       const period = document.getElementById("finance-period");
@@ -2980,6 +3016,7 @@
       document.getElementById("finance-month-wrap").hidden = false;
       document.getElementById("finance-month").value = event.target.value;
       renderPublicFinance();
+      loadPublicDonorCount();
     });
 
     function getVolunteers() {
@@ -3070,8 +3107,6 @@
       const medicalCount = document.getElementById("medical-count");
       if (foodCount) foodCount.textContent = `${stats.foodPackets || 0}+`;
       if (studentCount) studentCount.textContent = `${stats.studentsSupported || 0}+`;
-      const heroPeople = document.getElementById("hero-people-supported");
-      if (heroPeople) heroPeople.textContent = `${stats.studentsSupported || 0}+`;
       if (medicalCount) medicalCount.textContent = `${stats.medicalCases || 0}+`;
     }
 
@@ -3470,29 +3505,58 @@
     loadSocialActivityGallery();
     loadPublicFinance();
 
+    function sendDriveUpload(payload) {
+      return new Promise((resolve, reject) => {
+        const frame = document.createElement("iframe");
+        const form = document.createElement("form");
+        const name = "trust-drive-upload-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+        frame.name = name; frame.hidden = true; form.hidden = true;
+        form.method = "POST"; form.action = GOOGLE_DRIVE_GALLERY_API_URL; form.target = name;
+        const input = document.createElement("input");
+        input.type = "hidden"; input.name = "uploadPayload"; input.value = JSON.stringify(payload);
+        form.appendChild(input);
+        let finished = false;
+        const cleanup = () => { window.removeEventListener("message", onMessage); clearTimeout(timer); form.remove(); frame.remove(); };
+        const finish = (callback, value) => { if (finished) return; finished = true; cleanup(); callback(value); };
+        const onMessage = (event) => {
+          if (event.source !== frame.contentWindow || event.data?.channel !== "sarvahit-drive-upload") return;
+          const result = event.data.result;
+          if (result?.ok) finish(resolve, result);
+          else finish(reject, new Error(result?.error || "Google Drive upload failed."));
+        };
+        const timer = setTimeout(() => finish(reject, new Error("Google Drive upload timed out. Please try again.")), 90000);
+        window.addEventListener("message", onMessage);
+        document.body.append(frame, form);
+        form.submit();
+      });
+    }
     async function uploadPaymentScreenshot(file, certificateId, fullName) {
-      const year = String(new Date().getFullYear());
+      const now = new Date();
+      const dateParts = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(now).map((part) => [part.type, part.value]));
+      const date = dateParts.year + "-" + dateParts.month + "-" + dateParts.day;
+      const year = dateParts.year;
+      const monthName = new Intl.DateTimeFormat("en", { timeZone: "Asia/Kolkata", month: "long" }).format(now);
       const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
-      const path = `${year}/${certificateId}.${extension}`;
+      const path = year + "/" + certificateId + "." + extension;
       if (supabaseEnabled()) {
-        const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${PAYMENT_BUCKET}/${path}`, {
+        const response = await fetch(SUPABASE_URL + "/storage/v1/object/" + PAYMENT_BUCKET + "/" + path, {
           method: "POST",
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-            "Content-Type": file.type || "image/jpeg",
-            "x-upsert": "true"
-          },
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + SUPABASE_ANON_KEY, "Content-Type": file.type || "image/jpeg", "x-upsert": "true" },
           body: file
         });
-        if (!response.ok) {
-          throw new Error(await response.text());
-        }
+        if (!response.ok) throw new Error(await response.text());
       }
-      // Payment proofs stay in the private Supabase bucket. Do not copy them to Drive.
-      return { path, driveUrl: null };
-    }
+      if (!GOOGLE_DRIVE_GALLERY_API_URL) throw new Error("Google Drive upload failed: Drive upload is not connected.");
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("Could not read the payment screenshot."));
+        reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+        reader.readAsDataURL(file);
+      });
+      const driveResult = await sendDriveUpload({ type: "donation", donationDate: date, certificateId: certificateId, fullName: fullName, fileName: file.name, mimeType: file.type || "image/jpeg", base64: base64 });
 
+      return { path: path, driveUrl: driveResult.fileUrl, driveFileId: driveResult.fileId, year: year, month: monthName, day: date.slice(8, 10) };
+    }
     async function saveDonation(donation) {
       if (!supabaseEnabled()) {
         const donations = JSON.parse(localStorage.getItem("trustDonations") || "[]");
@@ -3515,7 +3579,9 @@
           screenshot_mime_type: donation.screenshotMimeType,
           screenshot_storage: donation.driveFileUrl ? "supabase_and_google_drive" : "supabase",
           drive_file_url: donation.driveFileUrl,
-          drive_folder_year: String(new Date().getFullYear()),
+          drive_folder_year: donation.driveFolderYear || String(new Date().getFullYear()),
+          drive_folder_month: donation.driveFolderMonth || null,
+          drive_folder_day: donation.driveFolderDay || null,
           payment_status: "submitted",
           certificate_id: donation.certificateId
         })
@@ -4055,6 +4121,9 @@
         const screenshotUpload = await uploadPaymentScreenshot(screenshot, activeDonation.certificateId, activeDonation.name);
         activeDonation.screenshotPath = screenshotUpload.path;
         activeDonation.driveFileUrl = screenshotUpload.driveUrl;
+        activeDonation.driveFolderYear = screenshotUpload.year;
+        activeDonation.driveFolderMonth = screenshotUpload.month;
+        activeDonation.driveFolderDay = screenshotUpload.day;
         activeDonation.screenshotFileName = screenshot.name;
         activeDonation.screenshotMimeType = screenshot.type || "image/jpeg";
         await saveDonation(activeDonation);
@@ -4180,8 +4249,6 @@
       const medicalCount = document.getElementById("medical-count");
       if (foodCount) foodCount.textContent = `${stats.foodPackets || 0}+`;
       if (studentCount) studentCount.textContent = `${stats.studentsSupported || 0}+`;
-      const heroPeople = document.getElementById("hero-people-supported");
-      if (heroPeople) heroPeople.textContent = `${stats.studentsSupported || 0}+`;
       if (medicalCount) medicalCount.textContent = `${stats.medicalCases || 0}+`;
     });
     loadNotice().catch(() => {

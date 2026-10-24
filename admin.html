@@ -288,6 +288,12 @@
     }
 
     .entry-dialog::backdrop { background: rgba(17, 26, 28, 0.68); }
+    .finance-dialog { width: min(680px, calc(100% - 32px)); }
+    .finance-dialog .form-grid { gap: 16px; }
+    .finance-dialog .full { grid-column: 1 / -1; }
+    .expense-report-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .expense-report-heading h2 { margin: 0; }
+    @media (max-width: 640px) { .expense-report-heading { align-items: flex-start; flex-direction: column; } }
     .entry-dialog h2 { margin: 0; color: var(--green-dark); }
     .entry-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
     .entry-dialog-close { border: 0; background: transparent; font-size: 28px; cursor: pointer; color: var(--muted); }
@@ -381,6 +387,10 @@
       font-family: "Poppins", system-ui, sans-serif;
       font-size: 25px;
     }
+
+    .finance-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+    .finance-actions .btn { min-height: 34px; padding: 4px 9px; font-size: 14px; }
+    .finance-actions .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
     .table-wrap {
       max-height: 560px;
@@ -534,34 +544,35 @@
           </section>
         </div>
 
-        <section class="panel" id="finance-admin">
-          <h2>Trust Financial Ledger</h2>
-          <p>Only authenticated finance admins can view or manage these records. Drafts are private; publish approved records to include them in public totals.</p>
-          <form id="finance-entry-form">
-            <input type="hidden" name="id" />
-            <div class="form-grid">
-              <label>Entry type<select name="entry_type" required><option value="donation">Donation</option><option value="expense">Expense</option><option value="opening_balance">Opening balance adjustment</option></select></label>
-              <label>Date<input name="entry_date" type="date" required /></label>
-              <label>Amount (INR)<input name="amount" type="number" min="0.01" step="0.01" required /></label>
-              <label>Category<input name="category" required placeholder="e.g. Food distribution" /></label>
-              <label>Fund type<select name="fund_type"><option value="unrestricted">Unrestricted</option><option value="restricted">Restricted</option></select></label>
-              <label>Restricted fund / purpose<input name="fund_name" placeholder="Required for restricted funds" /></label>
-              <label>Reconciliation<select name="reconciliation_status"><option value="unreconciled">Unreconciled</option><option value="matched">Matched to bank statement</option><option value="exception">Needs review</option></select></label>
-              <label>Donor / payee name (private)<input name="donor_name" /></label>
-              <label>Donor email (private)<input name="donor_email" type="email" /></label>
-              <label>Donor phone (private)<input name="donor_phone" /></label>
-              <label>Bank reference (private)<input name="bank_reference" /></label>
-              <label>Receipt / bill file (private, up to 10 MB)<input name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" /></label>
-              <label class="full">Public note<input name="public_note" maxlength="240" placeholder="Optional; visible only after publication" /></label>
-              <div class="full"><button class="btn btn-primary" type="submit">Save as Draft</button> <button class="btn btn-light" type="button" id="finance-cancel-edit">Clear form</button></div>
-            </div>
-          </form>
-          <div class="message" id="finance-admin-message" role="status"></div>
-          <div class="report-filters"><button class="btn btn-light" type="button" id="finance-export">Export financial ledger</button><button class="btn btn-light" type="button" id="finance-audit-refresh">Refresh audit log</button></div>
-          <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Type</th><th>Category / Fund</th><th>Amount</th><th>Status</th><th>Reconciliation</th><th>Proof</th><th>Actions</th></tr></thead><tbody id="finance-entry-list"><tr><td colspan="8">Sign in to load financial records.</td></tr></tbody></table></div>
-          <h3>Audit log</h3><div id="finance-audit-list">Sign in to load audit history.</div>
-        </section>
+        <dialog class="entry-dialog finance-dialog" id="finance-entry-dialog" aria-labelledby="finance-dialog-title">
+          <div class="entry-dialog-header"><div><h2 id="finance-dialog-title">Trust Financial Ledger</h2><p>Only authorized finance admins can add expenses. Records stay private until approved.</p></div><button class="entry-dialog-close" type="button" id="finance-dialog-close" aria-label="Close form">&times;</button></div>
+          <form id="finance-entry-form"><input type="hidden" name="id" /><div class="form-grid">
+            <label>Date<input name="entry_date" type="date" required /></label>
+            <label>Amount (INR)<input name="amount" type="number" min="0.01" step="0.01" required /></label>
+            <label>Category<input name="category" required placeholder="e.g. Food distribution" /></label>
+            <label>Payment type<select name="payment_method"><option value="cash">Cash</option><option value="upi">UPI / Google Pay / PhonePe</option><option value="bank_transfer">Bank transfer / RTGS / NEFT</option><option value="cheque">Cheque</option><option value="other">Other</option></select></label>
+            <label class="full">Receipt / bill file (private, up to 8 MB)<input name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" /></label>
+            <label class="full">Public note<input name="public_note" maxlength="240" placeholder="Optional; visible only after publication" /></label>
+            <div class="full"><button class="btn btn-primary" type="submit">Save as Draft</button> <button class="btn btn-light" type="button" id="finance-cancel-edit">Clear form</button></div>
+          </div></form><div class="message" id="finance-admin-message" role="status"></div>
+        </dialog>
 
+        <section class="panel" id="expense-report">
+          <div class="expense-report-heading"><h2>Expense Report</h2><button class="btn btn-primary" type="button" id="open-finance-ledger">Financial Ledger</button></div>
+          <p>Review recorded expenses by year or month. Only approved expenses are included in the public financial totals.</p>
+          <div class="report-filters">
+            <label>Year<select id="expense-year"><option value="all">All Years</option></select></label>
+            <label>Month<select id="expense-month"><option value="all">All Months</option><option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option></select></label>
+            <button class="btn btn-primary" type="button" id="refresh-expenses">Refresh</button>
+            <button class="btn btn-light" type="button" id="export-expenses">Download Excel</button>
+          </div>
+          <div class="report-summary">
+            <div class="report-stat">Selected Expenses<strong id="expense-selected-total">INR 0.00</strong></div>
+            <div class="report-stat">Year Total<strong id="expense-year-total">INR 0.00</strong></div>
+            <div class="report-stat">Expense Records<strong id="expense-record-count">0</strong></div>
+          </div>
+          <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Category</th><th>Payee</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Receipt / Bill</th><th>Actions</th></tr></thead><tbody id="expense-list"><tr><td colspan="8">Login to load expense data.</td></tr></tbody></table></div>
+        </section>
         <section class="panel">
           <h2>Donation Report</h2>
           <p>View confirmed donor submissions, calculate credited amounts by year or month, and download the filtered report in Excel format.</p>
@@ -634,6 +645,7 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwe150i-u7iDEDpx01_qCUR5bcBQHt2ilTyOlq3xIdZydWw0VCZ361xGxiKrqEPgUdv2A/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let financeEntries = [];
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -671,33 +683,116 @@
       return data.signedURL ? `${SUPABASE_URL}/storage/v1${data.signedURL}` : "";
     }
     async function loadFinanceEntries() {
-      financeEntries = await supabaseRequest(`${FINANCE_TABLE}?select=*&order=entry_date.desc,created_at.desc`);
-      const rows = await Promise.all(financeEntries.map(async (entry) => {
-        const proof = await financeStorageUrl(entry.attachment_path);
-        return `<tr><td>${escapeHtml(entry.entry_date)}</td><td>${escapeHtml(entry.entry_type)}</td><td>${escapeHtml(entry.category)}${entry.fund_type === "restricted" ? `<br>Restricted: ${escapeHtml(entry.fund_name || "Purpose not specified")}` : ""}</td><td>${escapeHtml(formatCurrency(entry.amount))}</td><td>${escapeHtml(entry.workflow_status)}</td><td>${escapeHtml(entry.reconciliation_status)}</td><td>${proof ? `<a href="${escapeHtml(proof)}" target="_blank" rel="noopener">View private proof</a>` : "—"}</td><td><button type="button" data-edit-finance="${entry.id}">Edit</button> <button type="button" data-approve-finance="${entry.id}">Approve</button> <button type="button" data-publish-finance="${entry.id}">Publish</button> <button type="button" data-delete-finance="${entry.id}">Delete</button></td></tr>`;
+      financeEntries = await supabaseRequest(FINANCE_TABLE + "?select=*&order=entry_date.desc,created_at.desc");
+      renderExpenseReport();
+    }
+    function financeActionButtons(entry) {
+      const approve = entry.workflow_status === "published" ? "" : '<button class="btn btn-primary" type="button" data-approve-finance="' + entry.id + '">' + (entry.workflow_status === "approved" ? "Publish" : "Approve &amp; Publish") + '</button>';
+      return '<button class="btn btn-light" type="button" data-edit-finance="' + entry.id + '">Edit</button>' + approve + '<button class="btn btn-danger" type="button" data-delete-finance="' + entry.id + '">Delete</button>';
+    }
+    function financeDate(entry) { return new Date(entry.entry_date + "T00:00:00"); }
+    function selectedExpenses() {
+      const year = document.getElementById("expense-year").value;
+      const month = document.getElementById("expense-month").value;
+      return financeEntries.filter((entry) => {
+        if (entry.entry_type !== "expense") return false;
+        const date = financeDate(entry);
+        return (year === "all" || date.getFullYear() === Number(year)) && (month === "all" || date.getMonth() === Number(month));
+      });
+    }
+    function populateExpenseYears() {
+      const select = document.getElementById("expense-year");
+      const selected = select.value;
+      const years = [...new Set(financeEntries.filter((entry) => entry.entry_type === "expense").map((entry) => financeDate(entry).getFullYear()))].sort((a, b) => b - a);
+      select.innerHTML = '<option value="all">All Years</option>' + years.map((year) => '<option value="' + year + '">' + year + '</option>').join("");
+      if (["all", ...years.map(String)].includes(selected)) select.value = selected;
+    }
+    async function renderExpenseReport() {
+      populateExpenseYears();
+      const filtered = selectedExpenses();
+      const selectedYear = document.getElementById("expense-year").value;
+      const annual = financeEntries.filter((entry) => entry.entry_type === "expense" && (selectedYear === "all" || financeDate(entry).getFullYear() === Number(selectedYear)));
+      document.getElementById("expense-selected-total").textContent = formatCurrency(filtered.reduce((sum, entry) => sum + Number(entry.amount || 0), 0));
+      document.getElementById("expense-year-total").textContent = formatCurrency(annual.reduce((sum, entry) => sum + Number(entry.amount || 0), 0));
+      document.getElementById("expense-record-count").textContent = String(filtered.length);
+      const rows = await Promise.all(filtered.map(async (entry) => {
+        const proof = entry.attachment_drive_url || await financeStorageUrl(entry.attachment_path);
+        return "<tr><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt</a>' : "—") + "</td><td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td></tr>";
       }));
-      document.getElementById("finance-entry-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="8">No financial entries yet. Enter actual records to begin.</td></tr>';
+      document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="8">No expenses found for this period.</td></tr>';
     }
     async function loadFinanceAudit() {
       const audit = await supabaseRequest("trust_finance_audit?select=id,entry_id,action,changed_at,changed_by&order=changed_at.desc&limit=100");
       document.getElementById("finance-audit-list").innerHTML = audit.length ? `<ul>${audit.map((row) => `<li>${escapeHtml(new Date(row.changed_at).toLocaleString("en-IN"))}: ${escapeHtml(row.action)} entry ${escapeHtml(row.entry_id)} (admin ${escapeHtml(row.changed_by)})</li>`).join("")}</ul>` : "No changes recorded yet.";
     }
+    function fileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("Could not read the selected file."));
+        reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+        reader.readAsDataURL(file);
+      });
+    }
+    function sendFinanceDriveUpload(payload) {
+      return new Promise((resolve, reject) => {
+        const frame = document.createElement("iframe");
+        const form = document.createElement("form");
+        const name = "trust-finance-drive-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+        frame.name = name; frame.hidden = true; form.hidden = true;
+        form.method = "POST"; form.action = GOOGLE_DRIVE_UPLOAD_URL; form.target = name;
+        const input = document.createElement("input");
+        input.type = "hidden"; input.name = "uploadPayload"; input.value = JSON.stringify(payload);
+        form.appendChild(input);
+        let finished = false;
+        const cleanup = () => { window.removeEventListener("message", onMessage); clearTimeout(timer); form.remove(); frame.remove(); };
+        const finish = (callback, value) => { if (finished) return; finished = true; cleanup(); callback(value); };
+        const onMessage = (event) => {
+          if (event.source !== frame.contentWindow || event.data?.channel !== "sarvahit-drive-upload") return;
+          const result = event.data.result;
+          if (result?.ok) finish(resolve, result);
+          else finish(reject, new Error(result?.error || "Google Drive upload failed."));
+        };
+        const timer = setTimeout(() => finish(reject, new Error("Google Drive upload timed out. Please try again.")), 90000);
+        window.addEventListener("message", onMessage);
+        document.body.append(frame, form);
+        form.submit();
+      });
+    }
+    async function uploadDriveProof(file, entry) {
+      if (!GOOGLE_DRIVE_UPLOAD_URL) throw new Error("Google Drive upload has not been connected.");
+      const payload = { type: "finance", entryType: entry.entry_type, entryDate: entry.entry_date, fullName: entry.donor_name || entry.category, fileName: file.name, mimeType: file.type || "application/octet-stream", base64: await fileAsBase64(file), accessToken: adminAccessToken };
+      return sendFinanceDriveUpload(payload);
+    }
     async function saveFinanceEntry(event) {
       event.preventDefault();
       const form = event.currentTarget; const data = Object.fromEntries(new FormData(form).entries());
-      if (data.fund_type === "restricted" && !String(data.fund_name).trim()) { alert("Enter the donor restricted purpose or fund name."); return; }
-      const id = data.id || crypto.randomUUID(); const file = form.elements.attachment.files[0]; let attachmentPath = financeEntries.find((item) => item.id === id)?.attachment_path || null;
+      const id = data.id || crypto.randomUUID();
+      const existing = financeEntries.find((item) => item.id === id);
+      const file = form.elements.attachment.files[0];
+      let attachmentPath = existing?.attachment_path || null;
+      let attachmentDriveUrl = existing?.attachment_drive_url || null;
       if (file) {
-        if (!new Set(["application/pdf", "image/jpeg", "image/png", "image/webp"]).has(file.type) || file.size > 10 * 1024 * 1024) throw new Error("Attach a PDF, JPG, PNG or WebP file up to 10 MB.");
-        const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, "_"); attachmentPath = `${id}/${Date.now()}-${safeName}`;
-        const upload = await fetch(`${SUPABASE_URL}/storage/v1/object/${FINANCE_BUCKET}/${attachmentPath}`, { method: "POST", headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${adminAccessToken}`, "Content-Type": file.type || "application/octet-stream" }, body: file });
+        if (!new Set(["application/pdf", "image/jpeg", "image/png", "image/webp"]).has(file.type) || file.size > 8 * 1024 * 1024) throw new Error("Attach a PDF, JPG, PNG or WebP file up to 8 MB.");
+        const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, "_"); attachmentPath = id + "/" + Date.now() + "-" + safeName;
+        const upload = await fetch(SUPABASE_URL + "/storage/v1/object/" + FINANCE_BUCKET + "/" + attachmentPath, { method: "POST", headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + adminAccessToken, "Content-Type": file.type || "application/octet-stream" }, body: file });
         if (!upload.ok) throw new Error(await upload.text());
       }
-      const record = { entry_type: data.entry_type, entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: data.fund_type, fund_name: data.fund_name.trim() || null, public_note: data.public_note.trim() || null, donor_name: data.donor_name.trim() || null, donor_email: data.donor_email.trim() || null, donor_phone: data.donor_phone.trim() || null, bank_reference: data.bank_reference.trim() || null, attachment_path: attachmentPath, reconciliation_status: data.reconciliation_status, workflow_status: "draft" };
-      await supabaseRequest(data.id ? `${FINANCE_TABLE}?id=eq.${encodeURIComponent(data.id)}` : FINANCE_TABLE, { method: data.id ? "PATCH" : "POST", body: JSON.stringify(record) });
+      const record = { entry_type: "expense", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", fund_name: null, public_note: data.public_note.trim() || null, donor_name: null, donor_email: null, donor_phone: null, bank_reference: null, payment_method: data.payment_method, attachment_path: attachmentPath, attachment_drive_url: attachmentDriveUrl, reconciliation_status: existing?.reconciliation_status || "unreconciled", workflow_status: existing?.workflow_status || "draft" };
+      if (file) {
+        const driveFile = await uploadDriveProof(file, record);
+        record.attachment_drive_url = driveFile.fileUrl;
+        record.attachment_drive_file_id = driveFile.fileId;
+      }
+      await supabaseRequest(data.id ? FINANCE_TABLE + "?id=eq." + encodeURIComponent(data.id) : FINANCE_TABLE, { method: data.id ? "PATCH" : "POST", body: JSON.stringify(record) });
       form.reset(); form.elements.id.value = ""; await loadFinanceEntries(); showMessage("finance-admin-message");
     }
-    async function setFinanceStatus(id, values) { await supabaseRequest(`${FINANCE_TABLE}?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(values) }); await loadFinanceEntries(); }
+    async function setFinanceStatus(id, values) { await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(id), { method: "PATCH", body: JSON.stringify(values) }); await loadFinanceEntries(); }
+    async function approveFinanceEntry(entry) {
+      if (entry.workflow_status === "published") return;
+      if (entry.workflow_status !== "approved") await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(entry.id), { method: "PATCH", body: JSON.stringify({ workflow_status: "approved" }) });
+      await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(entry.id), { method: "PATCH", body: JSON.stringify({ workflow_status: "published" }) });
+      await loadFinanceEntries();
+    }
 
     function getLocalVolunteers() {
       return JSON.parse(localStorage.getItem("trustVolunteers") || "[]");
@@ -1070,7 +1165,6 @@
       await renderVolunteers();
       await renderReviews();
       await loadFinanceEntries();
-      await loadFinanceAudit();
     });
     document.getElementById("admin-logout").addEventListener("click", () => {
       adminAccessToken = ""; sessionStorage.removeItem("trustAdminAccessToken");
@@ -1078,31 +1172,45 @@
       document.getElementById("login-panel").style.display = "block";
     });
 
-    document.getElementById("finance-entry-form").addEventListener("submit", async (event) => {
-      try { await saveFinanceEntry(event); } catch (error) { document.getElementById("finance-admin-message").textContent = `Could not save record: ${error.message}`; document.getElementById("finance-admin-message").style.display = "block"; }
-    });
-    document.getElementById("finance-cancel-edit").addEventListener("click", () => document.getElementById("finance-entry-form").reset());
-    document.getElementById("finance-audit-refresh").addEventListener("click", loadFinanceAudit);
-    document.getElementById("finance-entry-list").addEventListener("click", async (event) => {
+    async function handleFinanceActions(event) {
       const button = event.target.closest("button"); if (!button) return;
-      const entry = financeEntries.find((item) => item.id === button.dataset.editFinance || item.id === button.dataset.approveFinance || item.id === button.dataset.publishFinance || item.id === button.dataset.deleteFinance); if (!entry) return;
+      const id = button.dataset.editFinance || button.dataset.approveFinance || button.dataset.deleteFinance;
+      const entry = financeEntries.find((item) => item.id === id); if (!entry) return;
       if (button.dataset.editFinance) {
         const form = document.getElementById("finance-entry-form");
-        for (const key of ["id","entry_type","entry_date","amount","category","fund_type","fund_name","reconciliation_status","donor_name","donor_email","donor_phone","bank_reference","public_note"]) form.elements[key].value = entry[key] ?? "";
-        form.scrollIntoView({ behavior: "smooth", block: "center" }); return;
+        for (const key of ["id","entry_date","amount","category","payment_method","public_note"]) form.elements[key].value = entry[key] ?? "";
+        document.getElementById("finance-entry-dialog").showModal(); return;
       }
-      if (button.dataset.approveFinance) await setFinanceStatus(entry.id, { workflow_status: "approved" });
-      if (button.dataset.publishFinance) {
-        if (entry.workflow_status !== "approved") { alert("Approve the record before publishing it."); return; }
-        await setFinanceStatus(entry.id, { workflow_status: "published" });
+      if (button.dataset.approveFinance) {
+        const prompt = entry.workflow_status === "approved" ? "Publish this approved record on the website?" : "Approve and publish this record on the website?";
+        if (confirm(prompt)) await approveFinanceEntry(entry);
       }
-      if (button.dataset.deleteFinance && confirm("Delete this financial record? The audit log will retain its change history.")) await supabaseRequest(`${FINANCE_TABLE}?id=eq.${encodeURIComponent(entry.id)}`, { method: "DELETE" }).then(loadFinanceEntries);
+      if (button.dataset.deleteFinance && confirm("Delete this financial record? The audit log will retain its change history.")) {
+        await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(entry.id), { method: "DELETE" });
+        await loadFinanceEntries();
+      }
+    }
+    function selectedExpenseExcel() {
+      const entries = selectedExpenses();
+      const rows = entries.map((item) => ({
+        Date: item.entry_date, Category: item.category, Payee: item.donor_name || "",
+        "Payment type": item.payment_method || "", Amount: Number(item.amount || 0),
+        Status: item.workflow_status, Reconciliation: item.reconciliation_status,
+        "Public note": item.public_note || "", "Receipt folder URL": item.attachment_drive_url || ""
+      }));
+      if (!rows.length) return;
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(rows), "Expenses");
+      XLSX.writeFile(workbook, "Sarvahit-Expenses-" + document.getElementById("expense-year").value + "-" + document.getElementById("expense-month").value + ".xlsx");
+    }
+    document.getElementById("expense-list").addEventListener("click", handleFinanceActions);
+    document.getElementById("finance-entry-form").addEventListener("submit", async (event) => {
+      try { await saveFinanceEntry(event); } catch (error) { document.getElementById("finance-admin-message").textContent = "Could not save record: " + error.message; document.getElementById("finance-admin-message").style.display = "block"; }
     });
-    document.getElementById("finance-export").addEventListener("click", () => {
-      if (!financeEntries.length) return;
-      const safeRows = financeEntries.map(({ donor_name, donor_email, donor_phone, bank_reference, attachment_path, ...row }) => row);
-      const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(safeRows), "Ledger"); XLSX.writeFile(workbook, "Sarvahit-Financial-Ledger.xlsx");
-    });
+    const financeDialog = document.getElementById("finance-entry-dialog");
+    document.getElementById("open-finance-ledger").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; financeDialog.showModal(); });
+    document.getElementById("finance-dialog-close").addEventListener("click", () => financeDialog.close());
+    document.getElementById("finance-cancel-edit").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; financeDialog.close(); });
 
     document.getElementById("stats-form").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -1134,6 +1242,10 @@
     document.getElementById("donation-year").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("donation-month").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("export-donations").addEventListener("click", exportDonationExcel);
+    document.getElementById("refresh-expenses").addEventListener("click", loadFinanceEntries);
+    document.getElementById("expense-year").addEventListener("change", renderExpenseReport);
+    document.getElementById("expense-month").addEventListener("change", renderExpenseReport);
+    document.getElementById("export-expenses").addEventListener("click", selectedExpenseExcel);
 
     document.getElementById("volunteer-list").addEventListener("click", async (event) => {
       const nameButton = event.target.closest("[data-open-volunteer]");
