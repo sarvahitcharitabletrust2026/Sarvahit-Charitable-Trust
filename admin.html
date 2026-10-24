@@ -59,6 +59,8 @@
       flex-wrap: wrap;
     }
 
+    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .topbar-actions [hidden] { display: none !important; }
     .admin-brand {
       display: inline-flex;
       align-items: center;
@@ -451,7 +453,7 @@
         <img class="admin-logo" src="https://drive.google.com/thumbnail?id=1I_lCkSE4CkeuXxuXMg8KVJZI_jCKUKDu&amp;sz=w512" alt="Sarvahit Charitable Trust logo" onerror="this.onerror=null;this.src='assets/SarvahitCharitableTrust_Logo.png'" />
         <span>Sarvahit Charitable Trust Admin | sarvahitcharitabletrust2026@gmail.com</span>
       </strong>
-      <a class="btn btn-light" href="index.html">Back to Website</a>
+      <div class="topbar-actions"><button class="btn btn-light" type="button" id="admin-logout" hidden>Sign out</button><a class="btn btn-light" href="index.html">Back to Website</a></div>
     </div>
   </div>
 
@@ -481,7 +483,7 @@
         <div>
           <h1>Admin Dashboard</h1>
           <p>Update home page impact data, notice format, and manage volunteer registrations.</p>
-          <button class="btn btn-light" type="button" id="admin-logout">Sign out</button>
+
         </div>
 
         <div class="grid-2">
@@ -645,7 +647,7 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwe150i-u7iDEDpx01_qCUR5bcBQHt2ilTyOlq3xIdZydWw0VCZ361xGxiKrqEPgUdv2A/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyY6SRjOxB2EBPZIQ7p5yZXwMt0Nky4ej2w9M9Qi_FC2YsYqW0f4CEuQYbprHolwHn1/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let financeEntries = [];
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -721,10 +723,6 @@
       }));
       document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="8">No expenses found for this period.</td></tr>';
     }
-    async function loadFinanceAudit() {
-      const audit = await supabaseRequest("trust_finance_audit?select=id,entry_id,action,changed_at,changed_by&order=changed_at.desc&limit=100");
-      document.getElementById("finance-audit-list").innerHTML = audit.length ? `<ul>${audit.map((row) => `<li>${escapeHtml(new Date(row.changed_at).toLocaleString("en-IN"))}: ${escapeHtml(row.action)} entry ${escapeHtml(row.entry_id)} (admin ${escapeHtml(row.changed_by)})</li>`).join("")}</ul>` : "No changes recorded yet.";
-    }
     function fileAsBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -778,13 +776,24 @@
         if (!upload.ok) throw new Error(await upload.text());
       }
       const record = { entry_type: "expense", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", fund_name: null, public_note: data.public_note.trim() || null, donor_name: null, donor_email: null, donor_phone: null, bank_reference: null, payment_method: data.payment_method, attachment_path: attachmentPath, attachment_drive_url: attachmentDriveUrl, reconciliation_status: existing?.reconciliation_status || "unreconciled", workflow_status: existing?.workflow_status || "draft" };
-      if (file) {
-        const driveFile = await uploadDriveProof(file, record);
-        record.attachment_drive_url = driveFile.fileUrl;
-        record.attachment_drive_file_id = driveFile.fileId;
-      }
       await supabaseRequest(data.id ? FINANCE_TABLE + "?id=eq." + encodeURIComponent(data.id) : FINANCE_TABLE, { method: data.id ? "PATCH" : "POST", body: JSON.stringify(record) });
-      form.reset(); form.elements.id.value = ""; await loadFinanceEntries(); showMessage("finance-admin-message");
+      let driveUploadWarning = "";
+      if (file) {
+        try {
+          const driveFile = await uploadDriveProof(file, record);
+          record.attachment_drive_url = driveFile.fileUrl;
+          record.attachment_drive_file_id = driveFile.fileId;
+          await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(id), { method: "PATCH", body: JSON.stringify({ attachment_drive_url: record.attachment_drive_url, attachment_drive_file_id: record.attachment_drive_file_id }) });
+        } catch (error) {
+          driveUploadWarning = error.message || "Google Drive upload failed.";
+        }
+      }
+      form.reset(); form.elements.id.value = "";
+      let refreshWarning = "";
+      try { await loadFinanceEntries(); } catch (error) { refreshWarning = " The expense saved, but the report could not refresh: " + error.message; }
+      const savedMessage = document.getElementById("finance-admin-message");
+      savedMessage.textContent = driveUploadWarning ? "Expense saved as draft. The receipt is private in Supabase, but its Google Drive copy could not be saved: " + driveUploadWarning + refreshWarning : "Expense saved as draft. Review it below and approve it when ready." + refreshWarning;
+      savedMessage.style.display = "block";
     }
     async function setFinanceStatus(id, values) { await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(id), { method: "PATCH", body: JSON.stringify(values) }); await loadFinanceEntries(); }
     async function approveFinanceEntry(entry) {
@@ -1159,6 +1168,7 @@
       }
       document.getElementById("login-panel").style.display = "none";
       document.getElementById("dashboard").classList.add("is-visible");
+      document.getElementById("admin-logout").hidden = false;
       await loadStatsForm();
       await loadNoticeForm();
       await renderDonationReport(true);
@@ -1169,6 +1179,7 @@
     document.getElementById("admin-logout").addEventListener("click", () => {
       adminAccessToken = ""; sessionStorage.removeItem("trustAdminAccessToken");
       document.getElementById("dashboard").classList.remove("is-visible");
+      document.getElementById("admin-logout").hidden = true;
       document.getElementById("login-panel").style.display = "block";
     });
 
@@ -1205,7 +1216,22 @@
     }
     document.getElementById("expense-list").addEventListener("click", handleFinanceActions);
     document.getElementById("finance-entry-form").addEventListener("submit", async (event) => {
-      try { await saveFinanceEntry(event); } catch (error) { document.getElementById("finance-admin-message").textContent = "Could not save record: " + error.message; document.getElementById("finance-admin-message").style.display = "block"; }
+      const form = event.currentTarget;
+      const submitButton = form.querySelector("[type=submit]");
+      const message = document.getElementById("finance-admin-message");
+      submitButton.disabled = true;
+      submitButton.textContent = "Saving…";
+      message.textContent = "Saving expense…";
+      message.style.display = "block";
+      try {
+        await saveFinanceEntry(event);
+      } catch (error) {
+        message.textContent = "Could not save expense: " + error.message;
+        message.style.display = "block";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Save as Draft";
+      }
     });
     const financeDialog = document.getElementById("finance-entry-dialog");
     document.getElementById("open-finance-ledger").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; financeDialog.showModal(); });

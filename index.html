@@ -2613,8 +2613,8 @@
 
         <section class="donation-panel" id="donor-certificate-panel" hidden>
           <div class="certificate-ready">
-            <h3>Thank You for Your Support</h3>
-            <p>Your payment details have been submitted. Your personalized appreciation certificate is ready.</p>
+            <h3>Payment Submitted</h3>
+            <p>Your payment details have been submitted successfully. Your personalized appreciation certificate is ready.</p>
             <button class="btn btn-primary" type="button" id="download-certificate">Download Certificate PDF</button>
           </div>
         </section>
@@ -2748,11 +2748,11 @@
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
     const SUPABASE_DONATION_TABLE = "donation_records";
     const TRUST_DONOR_COUNT_FUNCTION = "trust_public_donor_count";
-    const PAYMENT_BUCKET = "payment-screenshots";
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbxxpIbgNZHKV4q9I_GskR8LEMHSrnne1I4RW4V4RPbvZxcdyZzEhR4t8mtqiunryf0x/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbzzV8lkdhVpk15iLRK9CdOykjp8ozdq_PRy_D8KLawPsHzqv5ag6RgXOSu1AZwYLegmHA/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyY6SRjOxB2EBPZIQ7p5yZXwMt0Nky4ej2w9M9Qi_FC2YsYqW0f4CEuQYbprHolwHn1/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -3154,6 +3154,9 @@
       if (!rawMessage || rawMessage.startsWith("<")) {
         return "Payment details could not be submitted. Check your internet connection and try again.";
       }
+      if (/row-level security|row level security/i.test(rawMessage)) {
+        return "Supabase blocked the donation record. Run outputs/supabase-all-in-one.sql in Supabase SQL Editor, then retry.";
+      }
       if (rawMessage.startsWith("Google Drive upload failed:")) {
         return "The payment screenshot could not be uploaded to Google Drive. Check your internet connection and try again.";
       }
@@ -3342,6 +3345,7 @@
 
       window[callbackName] = function (payload) {
         try {
+          if (payload?.error) throw new Error(payload.error);
           renderSocialActivityGallery(gallery, payload);
         } finally {
           delete window[callbackName];
@@ -3511,7 +3515,7 @@
         const form = document.createElement("form");
         const name = "trust-drive-upload-" + Date.now() + "-" + Math.random().toString(36).slice(2);
         frame.name = name; frame.hidden = true; form.hidden = true;
-        form.method = "POST"; form.action = GOOGLE_DRIVE_GALLERY_API_URL; form.target = name;
+        form.method = "POST"; form.action = GOOGLE_DRIVE_UPLOAD_URL; form.target = name;
         const input = document.createElement("input");
         input.type = "hidden"; input.name = "uploadPayload"; input.value = JSON.stringify(payload);
         form.appendChild(input);
@@ -3536,17 +3540,8 @@
       const date = dateParts.year + "-" + dateParts.month + "-" + dateParts.day;
       const year = dateParts.year;
       const monthName = new Intl.DateTimeFormat("en", { timeZone: "Asia/Kolkata", month: "long" }).format(now);
-      const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
-      const path = year + "/" + certificateId + "." + extension;
-      if (supabaseEnabled()) {
-        const response = await fetch(SUPABASE_URL + "/storage/v1/object/" + PAYMENT_BUCKET + "/" + path, {
-          method: "POST",
-          headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + SUPABASE_ANON_KEY, "Content-Type": file.type || "image/jpeg", "x-upsert": "true" },
-          body: file
-        });
-        if (!response.ok) throw new Error(await response.text());
-      }
-      if (!GOOGLE_DRIVE_GALLERY_API_URL) throw new Error("Google Drive upload failed: Drive upload is not connected.");
+      // Payment screenshots are stored in the configured Drive folder; avoid a second public Storage upload that can be rejected by bucket RLS.
+      if (!GOOGLE_DRIVE_UPLOAD_URL) throw new Error("Google Drive upload failed: Drive upload is not connected.");
       const base64 = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onerror = () => reject(new Error("Could not read the payment screenshot."));
@@ -3555,7 +3550,7 @@
       });
       const driveResult = await sendDriveUpload({ type: "donation", donationDate: date, certificateId: certificateId, fullName: fullName, fileName: file.name, mimeType: file.type || "image/jpeg", base64: base64 });
 
-      return { path: path, driveUrl: driveResult.fileUrl, driveFileId: driveResult.fileId, year: year, month: monthName, day: date.slice(8, 10) };
+      return { path: "drive/" + driveResult.fileId, driveUrl: driveResult.fileUrl, driveFileId: driveResult.fileId, year: year, month: monthName, day: date.slice(8, 10) };
     }
     async function saveDonation(donation) {
       if (!supabaseEnabled()) {
@@ -3577,7 +3572,7 @@
           screenshot_path: donation.screenshotPath,
           screenshot_file_name: donation.screenshotFileName,
           screenshot_mime_type: donation.screenshotMimeType,
-          screenshot_storage: donation.driveFileUrl ? "supabase_and_google_drive" : "supabase",
+          screenshot_storage: donation.driveFileUrl ? "google_drive" : "supabase",
           drive_file_url: donation.driveFileUrl,
           drive_folder_year: donation.driveFolderYear || String(new Date().getFullYear()),
           drive_folder_month: donation.driveFolderMonth || null,
