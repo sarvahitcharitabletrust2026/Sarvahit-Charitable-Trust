@@ -2757,6 +2757,7 @@
     const SUPABASE_ANON_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
     const SUPABASE_TABLE = "volunteer_registrations";
     const SUPABASE_REVIEW_TABLE = "trusted_reviews";
+    const SUPABASE_PUBLIC_REVIEW_VIEW = "trust_public_reviews";
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
     const SUPABASE_DONATION_TABLE = "donation_records";
     const TRUST_DONOR_COUNT_FUNCTION = "trust_public_donor_count";
@@ -3737,7 +3738,7 @@
 
     async function loadReviews() {
       if (!supabaseEnabled()) return getLocalReviews();
-      const rows = await supabaseRequest(`${SUPABASE_REVIEW_TABLE}?select=*&order=created_at.desc`);
+      const rows = await supabaseRequest(`${SUPABASE_PUBLIC_REVIEW_VIEW}?select=id,name,review,rating,created_at&order=created_at.desc`);
       return rows.map((row) => ({
         id: row.id,
         name: row.name,
@@ -3762,6 +3763,7 @@
       }
       await supabaseRequest(SUPABASE_REVIEW_TABLE, {
         method: "POST",
+        headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
           name: data.name,
           review: data.review,
@@ -4186,7 +4188,7 @@
           message.style.display = "none";
         }, 2400);
       } catch (error) {
-        message.textContent = "Review submit failed. Please check settings and try again.";
+        message.textContent = "Review submit failed: " + (error.message || "Please check settings and try again.");
         message.style.display = "block";
       }
     });
