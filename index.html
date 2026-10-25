@@ -2561,7 +2561,7 @@
               </label>
               <label>
                 Donation Amount
-                <input name="amount" type="number" inputmode="decimal" min="1" step="0.01" required />
+                <input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount required />
               </label>
               <label>
                 Donation Purpose
@@ -2742,6 +2742,17 @@
     updateHeroHeight();
     window.addEventListener("resize", updateHeroHeight, { passive: true });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateHeroHeight);
+    document.addEventListener("input", (event) => {
+      const input = event.target;
+      if (input instanceof HTMLInputElement && input.hasAttribute("data-integer-amount")) {
+        const digits = input.value.replace(/\D/g, "");
+        if (input.value !== digits) input.value = digits;
+      }
+    });
+    document.addEventListener("wheel", (event) => {
+      const input = event.target;
+      if (input instanceof HTMLInputElement && input.type === "number" && document.activeElement === input) event.preventDefault();
+    }, { passive: false });
     const SUPABASE_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
     const SUPABASE_TABLE = "volunteer_registrations";
@@ -2752,8 +2763,8 @@
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbyA2JoxsCSUB9SArpPrxi4k5L63-ZFkhw-NJ_9inNGSo_VkjfSYkTqMIX7brItL7svHTg/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzL7DwrSDdWlzkUBSUKw38wO5KM0VTMnPqdUi9SJQ_8_P7DtmUyb2VKQ0tGHyi7v9EC/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbxEBhzeHSDxMWQ2s7OQeVjosh7ZdzP3ZxZyAexm5hTX7tgMY6NMGJ8X-9Jva6Q-lS1pJw/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzWuzXY3c4_eriCjpX-R8cBNFGF1DQ4v3ZYoM_szoSXnWmxOFI0kbqn8b7kSuv5slj8/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -2909,7 +2920,8 @@
         return null;
       }
 
-      return response.json();
+      const responseText = await response.text();
+      return responseText ? JSON.parse(responseText) : null;
     }
 
     const financeCurrency = (value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 2 }).format(Number(value || 0));
@@ -3156,7 +3168,7 @@
         return "Payment details could not be submitted. Check your internet connection and try again.";
       }
       if (/row-level security|row level security/i.test(rawMessage)) {
-        return "Supabase blocked the donation record. Run outputs/supabase-all-in-one.sql in Supabase SQL Editor, then retry.";
+        return "Supabase denied the donation insert. The site sends donations to project oqumyvitsaflllgihlgi; check its public donation INSERT policy and make sure this updated website is deployed.";
       }
       if (rawMessage.startsWith("Google Drive upload failed:")) {
         return "The payment screenshot could not be uploaded to Google Drive. Check your internet connection and try again.";
@@ -3564,6 +3576,7 @@
       }
       await supabaseRequest(SUPABASE_DONATION_TABLE, {
         method: "POST",
+        headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
           donor_name: donation.name,
           pan_card_number: donation.panCardNumber,
