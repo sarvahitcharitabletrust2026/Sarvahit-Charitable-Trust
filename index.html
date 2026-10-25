@@ -3071,6 +3071,7 @@
 
       await supabaseRequest(SUPABASE_TABLE, {
         method: "POST",
+        headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
           name: data.name,
           phone: data.phone,
@@ -3096,10 +3097,14 @@
     }
 
     async function updateVolunteerCount() {
-      const volunteers = await loadVolunteers();
-      if (volunteerCount) {
-        volunteerCount.textContent = volunteers.length;
+      if (!volunteerCount) return;
+      if (!supabaseEnabled()) {
+        volunteerCount.textContent = getVolunteers().length;
+        return;
       }
+      const result = await supabaseRequest("rpc/trust_public_volunteer_count", { method: "POST", body: "{}" });
+      const count = Number(Array.isArray(result) ? result[0]?.trust_public_volunteer_count : result) || 0;
+      volunteerCount.textContent = String(count);
     }
 
     async function loadImpactStats() {
@@ -4062,9 +4067,9 @@
         setTimeout(() => {
           saveMessage.style.display = "none";
         }, 3000);
-        await updateVolunteerCount();
+        updateVolunteerCount().catch(() => {});
       } catch (error) {
-        saveMessage.textContent = "Volunteer registration failed. Please check Supabase settings and try again.";
+        saveMessage.textContent = "Volunteer registration failed: " + (error.message || "Please check Supabase settings and try again.");
         saveMessage.style.display = "block";
       }
     });

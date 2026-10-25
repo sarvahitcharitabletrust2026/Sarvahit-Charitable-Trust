@@ -390,8 +390,8 @@
       font-size: 25px;
     }
 
-    .finance-actions { display: flex; flex-wrap: wrap; gap: 6px; }
-    .finance-actions .btn { min-height: 34px; padding: 4px 9px; font-size: 14px; }
+    .finance-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+    .finance-actions .btn { min-height: 28px; padding: 3px 7px; font-size: 12px; }
     .finance-actions .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
     .table-wrap {
@@ -411,12 +411,13 @@
 
     .donation-table th,
     .donation-table td {
-      height: 50px;
-      padding: 11px 12px;
+      height: 42px;
+      padding: 7px 9px;
       border-bottom: 1px solid var(--line);
       text-align: left;
-      vertical-align: top;
+      vertical-align: middle;
       white-space: nowrap;
+      font-size: 15px;
     }
 
     .donation-table th {
@@ -573,7 +574,7 @@
             <div class="report-stat">Year Total<strong id="expense-year-total">INR 0.00</strong></div>
             <div class="report-stat">Expense Records<strong id="expense-record-count">0</strong></div>
           </div>
-          <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Category</th><th>Payee</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Receipt / Bill</th><th>Actions</th></tr></thead><tbody id="expense-list"><tr><td colspan="8">Login to load expense data.</td></tr></tbody></table></div>
+          <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Time</th><th>Category</th><th>Payee</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Receipt / Bill</th><th>Actions</th></tr></thead><tbody id="expense-list"><tr><td colspan="9">Login to load expense data.</td></tr></tbody></table></div>
         </section>
         <section class="panel">
           <div class="expense-report-heading"><h2>Donation Report</h2><button class="btn btn-primary" type="button" id="open-cash-donation">Add Cash Donation</button></div>
@@ -601,12 +602,12 @@
           <div class="report-summary">
             <div class="report-stat">Published Total<strong id="donation-selected-total">INR 0</strong></div>
             <div class="report-stat">Year Published Total<strong id="donation-year-total">INR 0</strong></div>
-            <div class="report-stat">Donations<strong id="donation-record-count">0</strong></div>
+            <div class="report-stat">Published Donations<strong id="donation-record-count">0</strong></div>
           </div>
           <div class="table-wrap">
             <table class="donation-table">
-              <thead><tr><th>Date</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Certificate</th><th>Screenshot</th><th>Actions</th></tr></thead>
-              <tbody id="donation-list"><tr><td colspan="13">Login to load donation data.</td></tr></tbody>
+              <thead><tr><th>Date</th><th>Time</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Certificate</th><th>Screenshot</th><th>Actions</th></tr></thead>
+              <tbody id="donation-list"><tr><td colspan="14">Login to load donation data.</td></tr></tbody>
             </table>
           </div>
         </section>
@@ -744,9 +745,10 @@
       document.getElementById("expense-record-count").textContent = String(filtered.length);
       const rows = await Promise.all(filtered.map(async (entry) => {
         const proof = entry.attachment_drive_url || await financeStorageUrl(entry.attachment_path);
-        return "<tr><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt</a>' : "—") + "</td><td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td></tr>";
+        const time = entry.created_at ? new Date(entry.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—";
+        return "<tr><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(time) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt</a>' : "—") + "</td><td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td></tr>";
       }));
-      document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="8">No expenses found for this period.</td></tr>';
+      document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="9">No expenses found for this period.</td></tr>';
     }
     function fileAsBase64(file) {
       return new Promise((resolve, reject) => {
@@ -893,7 +895,7 @@
         supabaseRequest(`${SUPABASE_DONATION_TABLE}?select=*&order=created_at.desc`),
         supabaseRequest(`${FINANCE_TABLE}?select=*&entry_type=eq.donation&order=entry_date.desc,created_at.desc`)
       ]);
-      return [...ledger.map((entry) => ({ ...entry, created_at: entry.entry_date + "T12:00:00", donor_name: entry.donor_name, phone: entry.donor_phone, purpose: entry.category, payment_status: entry.workflow_status, certificate_id: "Manual" })), ...submitted].sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt));
+      return [...ledger.map((entry) => ({ ...entry, created_at: entry.entry_date + "T12:00:00", recorded_at: entry.created_at, donor_name: entry.donor_name, phone: entry.donor_phone, purpose: entry.category, payment_status: entry.workflow_status, certificate_id: "Manual" })), ...submitted].sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt));
     }
 
     async function getScreenshotUrl(donation) {
@@ -939,7 +941,7 @@
 
     async function renderDonationReport(reload = false) {
       const list = document.getElementById("donation-list");
-      list.innerHTML = '<tr><td colspan="13">Loading donation data...</td></tr>';
+      list.innerHTML = '<tr><td colspan="14">Loading donation data...</td></tr>';
       try {
         if (reload || !allDonations.length) {
           allDonations = await loadDonations();
@@ -955,13 +957,14 @@
         const yearTotal = yearRecords.filter(isPublished).reduce((sum, item) => sum + Number(item.amount || 0), 0);
         document.getElementById("donation-selected-total").textContent = formatCurrency(selectedTotal);
         document.getElementById("donation-year-total").textContent = formatCurrency(yearTotal);
-        document.getElementById("donation-record-count").textContent = String(filtered.length);
+        document.getElementById("donation-record-count").textContent = String(filtered.filter(isPublished).length);
 
         const rows = await Promise.all(filtered.map(async (donation) => {
           const date = new Date(donation.created_at || donation.createdAt);
           const screenshotUrl = await getScreenshotUrl(donation);
           return `<tr>
             <td>${escapeHtml(date.toLocaleDateString("en-IN"))}</td>
+            <td>${escapeHtml((donation.recorded_at || donation.created_at) ? new Date(donation.recorded_at || donation.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—")}</td>
             <td>${escapeHtml(donation.donor_name || donation.name)}</td>
             <td>${escapeHtml(donation.pan_card_number || donation.panCardNumber || "")}</td>
             <td>${escapeHtml(donation.phone)}</td>
@@ -971,14 +974,15 @@
             <td>${escapeHtml(String(donation.payment_method || (donation.entry_type === "donation" ? "manual" : "online")).replaceAll("_", " ").toUpperCase())}</td>
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>
             <td>${escapeHtml(donation.entry_type === "donation" ? (donation.workflow_status || "draft") : (donation.payment_status || "submitted"))}</td>
+
             <td>${escapeHtml(donation.certificate_id || donation.certificateId)}</td>
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
             <td><div class="finance-actions">${donation.entry_type !== "donation" && donation.payment_status === "submitted" ? `<button class="btn btn-primary" type="button" data-publish-donation="${escapeHtml(donation.id || "")}">Verify &amp; Publish</button>` : ""}<button class="btn btn-danger" type="button" data-delete-donation="${escapeHtml(donation.id || donation.certificate_id || donation.certificateId || "")}" data-donation-source="${donation.entry_type === "donation" ? "ledger" : "online"}">Delete</button></div></td>
           </tr>`;
         }));
-        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="13">No donation found for selected period.</td></tr>';
+        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="14">No donation found for selected period.</td></tr>';
       } catch (error) {
-        list.innerHTML = '<tr><td colspan="13">Could not load donation data. Check that the finance setup is current and sign in with a finance admin account.</td></tr>';
+        list.innerHTML = '<tr><td colspan="14">Could not load donation data. Check that the finance setup is current and sign in with a finance admin account.</td></tr>';
       }
     }
 
@@ -986,6 +990,7 @@
       const donations = selectedDonations();
       const rows = donations.map((item) => ({
         Date: new Date(item.created_at || item.createdAt).toLocaleDateString("en-IN"),
+        Time: new Date(item.recorded_at || item.created_at || item.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
         "Donor Name": item.donor_name || item.name || "",
         "PAN Card Number": item.pan_card_number || item.panCardNumber || "",
         Mobile: item.phone || "",
@@ -1240,7 +1245,7 @@
     function selectedExpenseExcel() {
       const entries = selectedExpenses();
       const rows = entries.map((item) => ({
-        Date: item.entry_date, Category: item.category, Payee: item.donor_name || "",
+        Date: item.entry_date, Time: item.created_at ? new Date(item.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "", Category: item.category, Payee: item.donor_name || "",
         "Payment type": item.payment_method || "", Amount: Number(item.amount || 0),
         Status: item.workflow_status, Reconciliation: item.reconciliation_status,
         "Public note": item.public_note || "", "Receipt folder URL": item.attachment_drive_url || ""
