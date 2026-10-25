@@ -576,7 +576,7 @@
           <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Category</th><th>Payee</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Receipt / Bill</th><th>Actions</th></tr></thead><tbody id="expense-list"><tr><td colspan="8">Login to load expense data.</td></tr></tbody></table></div>
         </section>
         <section class="panel">
-          <h2>Donation Report</h2>
+          <div class="expense-report-heading"><h2>Donation Report</h2><button class="btn btn-primary" type="button" id="open-cash-donation">Add Cash Donation</button></div>
           <p>View confirmed donor submissions, calculate credited amounts by year or month, and download the filtered report in Excel format.</p>
           <div class="report-filters">
             <label>
@@ -605,8 +605,8 @@
           </div>
           <div class="table-wrap">
             <table class="donation-table">
-              <thead><tr><th>Date</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Amount</th><th>Certificate</th><th>Screenshot</th></tr></thead>
-              <tbody id="donation-list"><tr><td colspan="10">Login to load donation data.</td></tr></tbody>
+              <thead><tr><th>Date</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Payment type</th><th>Amount</th><th>Certificate</th><th>Screenshot</th></tr></thead>
+              <tbody id="donation-list"><tr><td colspan="11">Login to load donation data.</td></tr></tbody>
             </table>
           </div>
         </section>
@@ -626,6 +626,20 @@
         </section>
       </section>
     </div>
+
+    <dialog class="entry-dialog finance-dialog" id="cash-donation-dialog" aria-labelledby="cash-donation-title">
+      <div class="entry-dialog-header"><div><h2 id="cash-donation-title">Add Donation</h2><p>Record a donation received by the trust.</p></div><button class="entry-dialog-close" type="button" id="cash-donation-close" aria-label="Close form">&times;</button></div>
+      <form id="cash-donation-form"><div class="form-grid">
+        <label>Date<input name="entry_date" type="date" required /></label>
+        <label>Amount (INR)<input name="amount" type="number" min="0.01" step="0.01" required /></label>
+        <label>Donor name<input name="donor_name" required /></label>
+        <label>Mobile number<input name="donor_phone" type="tel" /></label>
+        <label>Payment type<select name="payment_method"><option value="cash">Cash</option><option value="upi">UPI / Online</option><option value="rtgs">RTGS</option><option value="neft">NEFT</option><option value="bank_transfer">Bank transfer</option><option value="cheque">Cheque</option><option value="other">Other</option></select></label>
+        <label>Purpose<input name="category" required placeholder="e.g. General Donation" /></label>
+        <label class="full">Bank reference / note<input name="bank_reference" maxlength="160" /></label>
+        <div class="full"><button class="btn btn-primary" type="submit">Save Donation</button> <button class="btn btn-light" type="button" id="cash-donation-cancel">Cancel</button></div>
+      </div></form><div class="message" id="cash-donation-message" role="status"></div>
+    </dialog>
   </main>
 
   <dialog class="entry-dialog" id="entry-detail-dialog" aria-labelledby="entry-detail-title">
@@ -647,7 +661,7 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyY6SRjOxB2EBPZIQ7p5yZXwMt0Nky4ej2w9M9Qi_FC2YsYqW0f4CEuQYbprHolwHn1/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzL7DwrSDdWlzkUBSUKw38wO5KM0VTMnPqdUi9SJQ_8_P7DtmUyb2VKQ0tGHyi7v9EC/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let financeEntries = [];
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -736,6 +750,8 @@
         const frame = document.createElement("iframe");
         const form = document.createElement("form");
         const name = "trust-finance-drive-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+        const requestId = crypto.randomUUID();
+        payload.requestId = requestId;
         frame.name = name; frame.hidden = true; form.hidden = true;
         form.method = "POST"; form.action = GOOGLE_DRIVE_UPLOAD_URL; form.target = name;
         const input = document.createElement("input");
@@ -745,12 +761,12 @@
         const cleanup = () => { window.removeEventListener("message", onMessage); clearTimeout(timer); form.remove(); frame.remove(); };
         const finish = (callback, value) => { if (finished) return; finished = true; cleanup(); callback(value); };
         const onMessage = (event) => {
-          if (event.source !== frame.contentWindow || event.data?.channel !== "sarvahit-drive-upload") return;
+          if (event.data?.channel !== "sarvahit-drive-upload" || event.data?.requestId !== requestId) return;
           const result = event.data.result;
           if (result?.ok) finish(resolve, result);
           else finish(reject, new Error(result?.error || "Google Drive upload failed."));
         };
-        const timer = setTimeout(() => finish(reject, new Error("Google Drive did not confirm the upload. Update and redeploy the Google Drive upload web app, with access set to Anyone, then try again.")), 90000);
+        const timer = setTimeout(() => finish(reject, new Error("Google Drive upload did not return a confirmation. Check the Apps Script deployment and try again.")), 90000);
         window.addEventListener("message", onMessage);
         document.body.append(frame, form);
         form.submit();
@@ -862,7 +878,11 @@
       if (!supabaseEnabled()) {
         return JSON.parse(localStorage.getItem("trustDonations") || "[]");
       }
-      return supabaseRequest(`${SUPABASE_DONATION_TABLE}?select=*&order=created_at.desc`);
+      const [submitted, ledger] = await Promise.all([
+        supabaseRequest(`${SUPABASE_DONATION_TABLE}?select=*&order=created_at.desc`),
+        supabaseRequest(`${FINANCE_TABLE}?select=*&entry_type=eq.donation&order=entry_date.desc,created_at.desc`)
+      ]);
+      return [...ledger.map((entry) => ({ ...entry, created_at: entry.entry_date + "T12:00:00", donor_name: entry.donor_name, phone: entry.donor_phone, purpose: entry.category, payment_status: entry.workflow_status, certificate_id: "Manual" })), ...submitted];
     }
 
     async function getScreenshotUrl(donation) {
@@ -908,7 +928,7 @@
 
     async function renderDonationReport(reload = false) {
       const list = document.getElementById("donation-list");
-      list.innerHTML = '<tr><td colspan="10">Loading donation data...</td></tr>';
+      list.innerHTML = '<tr><td colspan="11">Loading donation data...</td></tr>';
       try {
         if (reload || !allDonations.length) {
           allDonations = await loadDonations();
@@ -936,14 +956,15 @@
             <td>${escapeHtml(donation.email)}</td>
             <td>${escapeHtml(donation.city)}</td>
             <td>${escapeHtml(donation.purpose)}</td>
+            <td>${escapeHtml(String(donation.payment_method || (donation.entry_type === "donation" ? "manual" : "online")).replaceAll("_", " ").toUpperCase())}</td>
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>
             <td>${escapeHtml(donation.certificate_id || donation.certificateId)}</td>
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
           </tr>`;
         }));
-        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="10">No donation found for selected period.</td></tr>';
+        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="11">No donation found for selected period.</td></tr>';
       } catch (error) {
-        list.innerHTML = '<tr><td colspan="10">Could not load donation data. Run the updated Supabase setup SQL.</td></tr>';
+        list.innerHTML = '<tr><td colspan="11">Could not load donation data. Check that the finance setup is current and sign in with a finance admin account.</td></tr>';
       }
     }
 
@@ -957,6 +978,7 @@
         Email: item.email || "",
         City: item.city || "",
         Purpose: item.purpose || "",
+        "Payment type": item.payment_method || "online",
         Amount: Number(item.amount || 0),
         "Payment Status": item.payment_status || "submitted",
         "Certificate ID": item.certificate_id || item.certificateId || "",
@@ -1268,6 +1290,28 @@
     document.getElementById("donation-year").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("donation-month").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("export-donations").addEventListener("click", exportDonationExcel);
+    const cashDonationDialog = document.getElementById("cash-donation-dialog");
+    document.getElementById("open-cash-donation").addEventListener("click", () => { const form = document.getElementById("cash-donation-form"); form.reset(); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); cashDonationDialog.showModal(); });
+    document.getElementById("cash-donation-close").addEventListener("click", () => cashDonationDialog.close());
+    document.getElementById("cash-donation-cancel").addEventListener("click", () => cashDonationDialog.close());
+    document.getElementById("cash-donation-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget; const button = form.querySelector("[type=submit]"); const message = document.getElementById("cash-donation-message");
+      button.disabled = true; message.textContent = "Saving donation…"; message.style.display = "block";
+      try {
+        const data = Object.fromEntries(new FormData(form).entries());
+        const record = { entry_type: "donation", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", public_note: null, donor_name: data.donor_name.trim(), donor_phone: data.donor_phone.trim() || null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, reconciliation_status: "unreconciled", workflow_status: "approved" };
+        const inserted = await supabaseRequest(FINANCE_TABLE, { method: "POST", body: JSON.stringify(record) });
+        let publicationError = "";
+        try {
+          const id = inserted?.[0]?.id;
+          if (!id) throw new Error("The donation was saved but its record ID was not returned.");
+          await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(id), { method: "PATCH", body: JSON.stringify({ workflow_status: "published" }) });
+        } catch (error) { publicationError = error.message || "Publication failed."; }
+        await renderDonationReport(true); await loadFinanceEntries(); form.reset(); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); message.textContent = publicationError ? "Donation saved as approved and added to the report, but could not be published: " + publicationError : "Donation saved, approved, and added to the donation report.";
+      } catch (error) { message.textContent = "Could not save donation: " + error.message; }
+      finally { button.disabled = false; }
+    });
     document.getElementById("refresh-expenses").addEventListener("click", loadFinanceEntries);
     document.getElementById("expense-year").addEventListener("change", renderExpenseReport);
     document.getElementById("expense-month").addEventListener("change", renderExpenseReport);

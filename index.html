@@ -474,7 +474,8 @@
 
     .hero-finance-grid { display: grid; gap: 7px; }
     .hero-finance-item { min-height: 68px; display: flex; align-items: center; gap: 12px; min-width: 0; padding: 8px 12px; border: 1px solid rgba(255,255,255,.3); border-radius: 13px; background: rgba(255,255,255,.15); color: #fff; backdrop-filter: blur(9px); box-shadow: 0 12px 28px rgba(0,0,0,.14); }
-    .hero-finance-icon { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 16px; }
+    .hero-finance-icon { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); }
+    .hero-finance-icon svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .hero-finance-copy { min-width: 0; }
     .hero-finance-item:nth-child(2) { color: #9f4038; }
     .hero-finance-item:nth-child(2) .hero-finance-icon { color: #fff; }
@@ -2244,10 +2245,10 @@
               <label>Month<select id="hero-finance-month" aria-label="Select month"></select></label>
           </div>
           <div class="hero-finance-grid">
-            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true">♥</span><div class="hero-finance-copy"><span>Total Donations</span><strong data-finance-mirror="finance-income">₹0.00</strong></div></div>
-            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true">▣</span><div class="hero-finance-copy"><span>Total Spent</span><strong data-finance-mirror="finance-expenses">₹0.00</strong></div></div>
-            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true">♡</span><div class="hero-finance-copy"><span>Available Balance</span><strong data-finance-mirror="finance-closing">₹0.00</strong></div></div>
-            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true">✦</span><div class="hero-finance-copy"><span>People Supported</span><strong id="hero-people-supported">0+</strong></div></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/><path d="M8 12h2l1.5-2 2.2 4 1.3-2H18"/></svg></span><div class="hero-finance-copy"><span>Total Donations</span><strong data-finance-mirror="finance-income">₹0.00</strong></div></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 15h2"/><path d="M6 6V4a2 2 0 0 1 2-2h11"/></svg></span><div class="hero-finance-copy"><span>Total Spent</span><strong data-finance-mirror="finance-expenses">₹0.00</strong></div></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 8h-1.2a3 3 0 0 0-2.8-2H8a5 5 0 0 0-5 5v4a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-1h1a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2Z"/><path d="M7 5V4a2 2 0 0 1 2-2h6M8 11h.01M7 19v2m9-2v2"/></svg></span><div class="hero-finance-copy"><span>Available Balance</span><strong data-finance-mirror="finance-closing">₹0.00</strong></div></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><div class="hero-finance-copy"><span>People Supported</span><strong id="hero-people-supported">0+</strong></div></div>
           </div>
           <a class="hero-highlight hero-highlight-cta" href="#donor-window" data-open-modal="donor-window">Join us in making a difference&nbsp; →</a>
         </aside>
@@ -2751,8 +2752,8 @@
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbzzV8lkdhVpk15iLRK9CdOykjp8ozdq_PRy_D8KLawPsHzqv5ag6RgXOSu1AZwYLegmHA/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxrzLkPLMDtqqymRPZ50fwJX9E2SG2t73StUlzU3x95YQIcphoNx3_mE6mHG5-lxdMJ/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbyA2JoxsCSUB9SArpPrxi4k5L63-ZFkhw-NJ_9inNGSo_VkjfSYkTqMIX7brItL7svHTg/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzL7DwrSDdWlzkUBSUKw38wO5KM0VTMnPqdUi9SJQ_8_P7DtmUyb2VKQ0tGHyi7v9EC/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -3514,6 +3515,8 @@
         const frame = document.createElement("iframe");
         const form = document.createElement("form");
         const name = "trust-drive-upload-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+        const requestId = crypto.randomUUID();
+        payload.requestId = requestId;
         frame.name = name; frame.hidden = true; form.hidden = true;
         form.method = "POST"; form.action = GOOGLE_DRIVE_UPLOAD_URL; form.target = name;
         const input = document.createElement("input");
@@ -3523,12 +3526,12 @@
         const cleanup = () => { window.removeEventListener("message", onMessage); clearTimeout(timer); form.remove(); frame.remove(); };
         const finish = (callback, value) => { if (finished) return; finished = true; cleanup(); callback(value); };
         const onMessage = (event) => {
-          if (event.source !== frame.contentWindow || event.data?.channel !== "sarvahit-drive-upload") return;
+          if (event.data?.channel !== "sarvahit-drive-upload" || event.data?.requestId !== requestId) return;
           const result = event.data.result;
           if (result?.ok) finish(resolve, result);
           else finish(reject, new Error(result?.error || "Google Drive upload failed."));
         };
-        const timer = setTimeout(() => finish(reject, new Error("Google Drive did not confirm the upload. Update and redeploy the Google Drive upload web app, with access set to Anyone, then try again.")), 90000);
+        const timer = setTimeout(() => finish(reject, new Error("Google Drive upload did not return a confirmation. Check the Apps Script deployment and try again.")), 90000);
         window.addEventListener("message", onMessage);
         document.body.append(frame, form);
         form.submit();
