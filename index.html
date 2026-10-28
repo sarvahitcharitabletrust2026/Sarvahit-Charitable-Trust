@@ -1211,6 +1211,14 @@
       margin-bottom: 10px;
     }
 
+    .certificate-delivery { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 24px; margin: 18px auto; padding: 14px; border: 1px solid var(--line); border-radius: 8px; text-align: left; }
+    .certificate-delivery legend { padding: 0 8px; font-weight: 700; color: var(--green-dark); }
+    .certificate-delivery label { display: flex; align-items: center; gap: 8px; }
+    .certificate-delivery button { flex-basis: 100%; justify-self: center; }
+    .error-popup.is-success { border-top-color: var(--green); }
+    .error-popup.is-success h2 { color: var(--green-dark); }
+    .certificate-delivery button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
     .error-popup-overlay {
       position: fixed;
       inset: 0;
@@ -2614,9 +2622,14 @@
 
         <section class="donation-panel" id="donor-certificate-panel" hidden>
           <div class="certificate-ready">
-            <h3>Payment Submitted</h3>
-            <p>Your payment details have been submitted successfully. Your personalized appreciation certificate is ready.</p>
-            <button class="btn btn-primary" type="button" id="download-certificate">Download Certificate PDF</button>
+            <h3>Choose Certificate Delivery</h3>
+            <p>Select where you would like to receive your certificate.</p>
+            <fieldset class="certificate-delivery"><legend>Choose one or both options</legend>
+              <label><input type="checkbox" name="certificate-delivery" value="email"> Email</label>
+              <label><input type="checkbox" name="certificate-delivery" value="whatsapp"> WhatsApp</label>
+              <button class="btn btn-primary" type="button" id="submit-certificate-preference" disabled>Submit</button>
+              <p id="certificate-delivery-status" role="status" aria-live="polite"></p>
+            </fieldset>
           </div>
         </section>
       </div>
@@ -2765,7 +2778,7 @@
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
     const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbxEBhzeHSDxMWQ2s7OQeVjosh7ZdzP3ZxZyAexm5hTX7tgMY6NMGJ8X-9Jva6Q-lS1pJw/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzWuzXY3c4_eriCjpX-R8cBNFGF1DQ4v3ZYoM_szoSXnWmxOFI0kbqn8b7kSuv5slj8/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwHg975FiSIDoDSl6yN8TkxmuEwES3e4YesMtT5PSQWQUfXTegBCwNycWjxFJChmj54/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -2929,6 +2942,8 @@
     const financeMonthNames = Array.from({ length: 12 }, (_, month) => new Intl.DateTimeFormat("en-IN", { month: "long" }).format(new Date(2024, month, 1)));
     async function loadPublicFinance() {
       const status = document.getElementById("finance-status");
+      const priorYear = document.getElementById("finance-year").value;
+      const priorMonth = document.getElementById("finance-month").value;
       try {
         if (!supabaseEnabled()) throw new Error("Transparency summaries are not configured yet.");
         publicFinanceRows = await supabaseRequest(`${TRUST_FINANCE_VIEW}?select=month_start,calendar_year,financial_year_start,entry_type,fund_type,category,total_amount&order=month_start.asc`);
@@ -2939,7 +2954,8 @@
         yearSelect.innerHTML = knownYears.map((year) => `<option value="${year}">${year}–${String(year + 1).slice(-2)}</option>`).join("");
         const monthSelect = document.getElementById("finance-month");
         monthSelect.innerHTML = financeMonthNames.map((name, month) => `<option value="${month}">${name}</option>`).join("");
-        monthSelect.value = String(new Date().getMonth());
+        monthSelect.value = [...monthSelect.options].some((option) => option.value === priorMonth) ? priorMonth : String(new Date().getMonth());
+        if ([...yearSelect.options].some((option) => option.value === priorYear)) yearSelect.value = priorYear;
         const heroYear = document.getElementById("hero-finance-year");
         const heroMonth = document.getElementById("hero-finance-month");
         heroYear.innerHTML = yearSelect.innerHTML;
@@ -3157,6 +3173,7 @@
     }
 
     function showErrorPopup(message, title = "Something went wrong") {
+      document.querySelector("#error-popup-overlay .error-popup")?.classList.remove("is-success");
       const overlay = document.getElementById("error-popup-overlay");
       document.getElementById("error-popup-title").textContent = title;
       document.getElementById("error-popup-message").textContent = message;
@@ -3164,8 +3181,21 @@
       document.getElementById("error-popup-close").focus();
     }
 
+    function showThankYouPopup() {
+      const popup = document.querySelector("#error-popup-overlay .error-popup");
+      popup?.classList.add("is-success");
+      document.getElementById("error-popup-title").textContent = "Thank You For Supporting";
+      document.getElementById("error-popup-message").textContent = "Your certificate will be sent after the Trust verifies your donation.";
+      document.getElementById("error-popup-overlay").hidden = false;
+      document.getElementById("error-popup-close").focus();
+    }
+
     function closeErrorPopup() {
+      const popup = document.querySelector("#error-popup-overlay .error-popup");
+      const wasSuccess = popup?.classList.contains("is-success");
       document.getElementById("error-popup-overlay").hidden = true;
+      popup?.classList.remove("is-success");
+      if (wasSuccess) closeModals();
     }
 
     function readableSubmissionError(error) {
@@ -3527,6 +3557,12 @@
 
     loadSocialActivityGallery();
     loadPublicFinance();
+    window.setInterval(loadPublicFinance, 20000);
+    window.setInterval(() => {
+      if (document.hidden) return;
+      loadImpactStats().catch(() => {});
+      loadNotice().catch(() => {});
+    }, 20000);
 
     function sendDriveUpload(payload) {
       return new Promise((resolve, reject) => {
@@ -3600,7 +3636,8 @@
           drive_folder_month: donation.driveFolderMonth || null,
           drive_folder_day: donation.driveFolderDay || null,
           payment_status: "submitted",
-          certificate_id: donation.certificateId
+          certificate_id: donation.certificateId,
+          certificate_delivery: donation.certificateDelivery || []
         })
       });
     }
@@ -3951,7 +3988,8 @@
     let donationSubmitting = false;
 
     function closeModals() {
-      if (donationSubmitting) return;
+      const successPopupOpen = !document.getElementById("error-popup-overlay").hidden && document.querySelector("#error-popup-overlay .error-popup.is-success");
+      if (donationSubmitting || successPopupOpen) return;
       document.querySelectorAll(".modal-overlay").forEach((modal) => {
         modal.hidden = true;
       });
@@ -3968,6 +4006,9 @@
         document.getElementById("donor-form")?.reset();
         document.getElementById("payment-screenshot").value = "";
         document.getElementById("donation-status").style.display = "none";
+        document.querySelectorAll('input[name="certificate-delivery"]').forEach((choice) => { choice.checked = false; });
+        document.getElementById("submit-certificate-preference").disabled = true;
+        document.getElementById("certificate-delivery-status").textContent = "";
         setDonationStep(1);
       }
       modal.hidden = false;
@@ -4046,7 +4087,8 @@
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         if (!document.getElementById("error-popup-overlay").hidden) {
-          closeErrorPopup();
+          const successPopup = document.querySelector("#error-popup-overlay .error-popup.is-success");
+          if (!successPopup) closeErrorPopup();
           return;
         }
         closeModals();
@@ -4144,7 +4186,8 @@
         activeDonation.driveFolderDay = screenshotUpload.day;
         activeDonation.screenshotFileName = screenshot.name;
         activeDonation.screenshotMimeType = screenshot.type || "image/jpeg";
-        await saveDonation(activeDonation);
+
+
         status.style.display = "none";
         setDonationStep(3);
       } catch (error) {
@@ -4161,14 +4204,37 @@
       }
     });
 
-    document.getElementById("download-certificate")?.addEventListener("click", () => {
-      downloadCertificate().catch((error) => {
-        console.error("Certificate generation failed.", error);
-        const message = document.querySelector("#donor-certificate-panel .certificate-ready p");
-        const errorMessage = "The certificate could not be created. Check your internet connection and try again.";
-        if (message) message.textContent = errorMessage;
-        showErrorPopup(errorMessage, "Certificate could not be created");
-      });
+    const certificateDeliveryChoices = [...document.querySelectorAll('input[name="certificate-delivery"]')];
+    const certificateDeliverySubmit = document.getElementById("submit-certificate-preference");
+    certificateDeliveryChoices.forEach((choice) => choice.addEventListener("change", () => {
+      certificateDeliverySubmit.disabled = !certificateDeliveryChoices.some((item) => item.checked);
+    }));
+    certificateDeliverySubmit?.addEventListener("click", async () => {
+      const selected = certificateDeliveryChoices.filter((item) => item.checked).map((item) => item.value);
+      const status = document.getElementById("certificate-delivery-status");
+      const loadingOverlay = document.getElementById("donation-loading-overlay");
+      const donorWindow = document.getElementById("donor-window");
+      const closeButton = document.querySelector('#donor-window [data-close-modal]');
+      if (!selected.length || !activeDonation || donationSubmitting) return;
+      certificateDeliverySubmit.disabled = true;
+      donationSubmitting = true;
+      donorWindow?.setAttribute("aria-busy", "true");
+      closeButton?.setAttribute("disabled", "");
+      loadingOverlay.hidden = false;
+      try {
+        activeDonation.certificateDelivery = selected;
+        await saveDonation(activeDonation);
+        donationSubmitting = false;
+        showThankYouPopup();
+      } catch (error) {
+        status.textContent = readableSubmissionError(error);
+        certificateDeliverySubmit.disabled = false;
+      } finally {
+        loadingOverlay.hidden = true;
+        donationSubmitting = false;
+        donorWindow?.removeAttribute("aria-busy");
+        closeButton?.removeAttribute("disabled");
+      }
     });
 
     document.getElementById("review-form")?.addEventListener("submit", async (event) => {

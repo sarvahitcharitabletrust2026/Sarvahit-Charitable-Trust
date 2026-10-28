@@ -427,6 +427,7 @@
       background: #eef4ef;
       color: var(--green-dark);
     }
+    .form-grid label[hidden] { display: none; }
 
     .donation-table th:not(:last-child),
     .donation-table td:not(:last-child) {
@@ -554,6 +555,7 @@
             <label>Amount (INR)<input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount required /></label>
             <label>Category<input name="category" required placeholder="e.g. Food distribution" /></label>
             <label>Payment type<select name="payment_method"><option value="cash">Cash</option><option value="upi">UPI / Google Pay / PhonePe</option><option value="bank_transfer">Bank transfer / RTGS / NEFT</option><option value="cheque">Cheque</option><option value="other">Other</option></select></label>
+            <label class="full" id="finance-reference-row">Bank reference / transaction ID<input name="bank_reference" maxlength="160" placeholder="Cheque number, UPI transaction ID, or bank reference" /></label>
             <label class="full">Receipt / bill file (private, up to 8 MB)<input name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" /></label>
             <label class="full">Public note<input name="public_note" maxlength="240" placeholder="Optional; visible only after publication" /></label>
             <div class="full"><button class="btn btn-primary" type="submit">Save as Draft</button> <button class="btn btn-light" type="button" id="finance-cancel-edit">Clear form</button></div>
@@ -633,11 +635,12 @@
       <form id="cash-donation-form"><div class="form-grid">
         <label>Date<input name="entry_date" type="date" required /></label>
         <label>Amount (INR)<input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount required /></label>
-        <label>Donor name<input name="donor_name" required /></label>
-        <label>Mobile number<input name="donor_phone" type="tel" /></label>
+        <label>Donor name<input name="donor_name" required autocomplete="name" placeholder="Letters only" /></label>
+        <label>Mobile number<input name="donor_phone" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter a 10-digit mobile number." placeholder="10-digit mobile number" /></label>
         <label>Payment type<select name="payment_method"><option value="cash">Cash</option><option value="upi">UPI / Online</option><option value="rtgs">RTGS</option><option value="neft">NEFT</option><option value="bank_transfer">Bank transfer</option><option value="cheque">Cheque</option><option value="other">Other</option></select></label>
-        <label>Purpose<input name="category" required placeholder="e.g. General Donation" /></label>
-        <label class="full">Bank reference / note<input name="bank_reference" maxlength="160" /></label>
+        <label class="full" id="cash-reference-row">Bank reference / transaction ID<input name="bank_reference" maxlength="160" placeholder="Cheque number, UPI transaction ID, or bank reference" /></label>
+        <label>Purpose<input name="category" required placeholder="Letters only" /></label>
+        
         <div class="full"><button class="btn btn-primary" type="submit">Save Donation</button> <button class="btn btn-light" type="button" id="cash-donation-cancel">Cancel</button></div>
       </div></form><div class="message" id="cash-donation-message" role="status"></div>
     </dialog>
@@ -680,6 +683,9 @@
     const TRUST_NOTICE_KEY = "trustNotice";
     const TRUST_REVIEWS_KEY = "trustReviews";
     let allDonations = [];
+    const donationRowStyle = document.createElement("style");
+    donationRowStyle.textContent = ".donation-new-online td{font-weight:700;background:#fff9e8}.donation-new-online{border-left:4px solid #d89a2b}";
+    document.head.appendChild(donationRowStyle);
 
     function supabaseEnabled() {
       return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -804,7 +810,7 @@
         const upload = await fetch(SUPABASE_URL + "/storage/v1/object/" + FINANCE_BUCKET + "/" + attachmentPath, { method: "POST", headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + adminAccessToken, "Content-Type": file.type || "application/octet-stream" }, body: file });
         if (!upload.ok) throw new Error(await upload.text());
       }
-      const record = { entry_type: "expense", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", fund_name: null, public_note: data.public_note.trim() || null, donor_name: null, donor_email: null, donor_phone: null, bank_reference: null, payment_method: data.payment_method, attachment_path: attachmentPath, attachment_drive_url: attachmentDriveUrl, reconciliation_status: existing?.reconciliation_status || "unreconciled", workflow_status: existing?.workflow_status || "draft" };
+      const record = { entry_type: "expense", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", fund_name: null, public_note: data.public_note.trim() || null, donor_name: null, donor_email: null, donor_phone: null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, attachment_path: attachmentPath, attachment_drive_url: attachmentDriveUrl, reconciliation_status: existing?.reconciliation_status || "unreconciled", workflow_status: existing?.workflow_status || "draft" };
       await supabaseRequest(data.id ? FINANCE_TABLE + "?id=eq." + encodeURIComponent(data.id) : FINANCE_TABLE, { method: data.id ? "PATCH" : "POST", body: JSON.stringify(record) });
       let driveUploadWarning = "";
       if (file) {
@@ -962,7 +968,8 @@
         const rows = await Promise.all(filtered.map(async (donation) => {
           const date = new Date(donation.created_at || donation.createdAt);
           const screenshotUrl = await getScreenshotUrl(donation);
-          return `<tr>
+          const isNewOnline = donation.entry_type !== "donation" && donation.payment_status === "submitted";
+          return `<tr class="${isNewOnline ? "donation-new-online" : ""}">
             <td>${escapeHtml(date.toLocaleDateString("en-IN"))}</td>
             <td>${escapeHtml((donation.recorded_at || donation.created_at) ? new Date(donation.recorded_at || donation.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—")}</td>
             <td>${escapeHtml(donation.donor_name || donation.name)}</td>
@@ -975,7 +982,7 @@
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>
             <td>${escapeHtml(donation.entry_type === "donation" ? (donation.workflow_status || "draft") : (donation.payment_status || "submitted"))}</td>
 
-            <td>${escapeHtml(donation.certificate_id || donation.certificateId)}</td>
+            <td>${escapeHtml(donation.certificate_id || donation.certificateId)}${donation.entry_type !== "donation" && donation.certificate_delivery?.length ? `<br><small>Send via: ${escapeHtml(donation.certificate_delivery.join(" + "))}</small>` : ""}</td>
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
             <td><div class="finance-actions">${donation.entry_type !== "donation" && donation.payment_status === "submitted" ? `<button class="btn btn-primary" type="button" data-publish-donation="${escapeHtml(donation.id || "")}">Verify &amp; Publish</button>` : ""}<button class="btn btn-danger" type="button" data-delete-donation="${escapeHtml(donation.id || donation.certificate_id || donation.certificateId || "")}" data-donation-source="${donation.entry_type === "donation" ? "ledger" : "online"}">Delete</button></div></td>
           </tr>`;
@@ -1002,7 +1009,7 @@
         "Payment Status": item.payment_status || "submitted",
         "Certificate ID": item.certificate_id || item.certificateId || "",
         "Screenshot Path": item.screenshot_path || item.screenshotPath || "",
-        "Google Drive URL": item.drive_file_url || ""
+        "Google Drive URL": item.drive_file_url || "", "Bank reference / transaction ID": item.bank_reference || ""
       }));
       if (!rows.length) return;
       const workbook = XLSX.utils.book_new();
@@ -1230,7 +1237,8 @@
       const entry = financeEntries.find((item) => item.id === id); if (!entry) return;
       if (button.dataset.editFinance) {
         const form = document.getElementById("finance-entry-form");
-        for (const key of ["id","entry_date","amount","category","payment_method","public_note"]) form.elements[key].value = entry[key] ?? "";
+        for (const key of ["id","entry_date","amount","category","payment_method","bank_reference","public_note"]) form.elements[key].value = entry[key] ?? "";
+        updateFinanceReferenceVisibility();
         document.getElementById("finance-entry-dialog").showModal(); return;
       }
       if (button.dataset.approveFinance) {
@@ -1246,7 +1254,7 @@
       const entries = selectedExpenses();
       const rows = entries.map((item) => ({
         Date: item.entry_date, Time: item.created_at ? new Date(item.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "", Category: item.category, Payee: item.donor_name || "",
-        "Payment type": item.payment_method || "", Amount: Number(item.amount || 0),
+        "Payment type": item.payment_method || "", "Bank reference / transaction ID": item.bank_reference || "", Amount: Number(item.amount || 0),
         Status: item.workflow_status, Reconciliation: item.reconciliation_status,
         "Public note": item.public_note || "", "Receipt folder URL": item.attachment_drive_url || ""
       }));
@@ -1275,9 +1283,9 @@
       }
     });
     const financeDialog = document.getElementById("finance-entry-dialog");
-    document.getElementById("open-finance-ledger").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; financeDialog.showModal(); });
+    document.getElementById("open-finance-ledger").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); financeDialog.showModal(); });
     document.getElementById("finance-dialog-close").addEventListener("click", () => financeDialog.close());
-    document.getElementById("finance-cancel-edit").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; financeDialog.close(); });
+    document.getElementById("finance-cancel-edit").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); document.getElementById("finance-admin-message").textContent = ""; });
 
     document.getElementById("stats-form").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -1306,6 +1314,7 @@
     document.getElementById("refresh-volunteers").addEventListener("click", renderVolunteers);
     document.getElementById("refresh-reviews").addEventListener("click", renderReviews);
     document.getElementById("refresh-donations").addEventListener("click", () => renderDonationReport(true));
+    window.setInterval(() => { if (!document.hidden) renderDonationReport(true); }, 20000);
     document.getElementById("donation-year").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("donation-month").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("export-donations").addEventListener("click", exportDonationExcel);
@@ -1345,8 +1354,43 @@
         button.disabled = false;
       }
     });
+    const financePaymentType = document.querySelector('#finance-entry-form [name="payment_method"]');
+    const financeReferenceRow = document.getElementById("finance-reference-row");
+    const updateFinanceReferenceVisibility = () => {
+      const show = ["upi", "bank_transfer", "cheque"].includes(financePaymentType.value);
+      financeReferenceRow.hidden = !show;
+      const input = financeReferenceRow.querySelector("input");
+      if (!show) input.value = "";
+      else input.placeholder = financePaymentType.value === "cheque" ? "Cheque number" : financePaymentType.value === "upi" ? "PhonePe / Google Pay transaction ID" : "Bank reference / transaction ID";
+    };
+    financePaymentType.addEventListener("change", updateFinanceReferenceVisibility);
+    updateFinanceReferenceVisibility();
+    const donorNameInput = document.querySelector('#cash-donation-form [name="donor_name"]');
+    const donationPurposeInput = document.querySelector('#cash-donation-form [name="category"]');
+    const financeCategoryInput = document.querySelector('#finance-entry-form [name="category"]');
+    const keepLettersAndSpaces = (input) => {
+      input.value = input.value.replace(/[^\p{L}\p{M}\s]/gu, "");
+      input.setCustomValidity("");
+    };
+    [donorNameInput, financeCategoryInput].forEach((input) => input.addEventListener("input", () => keepLettersAndSpaces(input)));
+    donationPurposeInput.addEventListener("input", () => donationPurposeInput.setCustomValidity(donationPurposeInput.value && !/^[\p{L}\p{M} ]+$/u.test(donationPurposeInput.value) ? "Please enter letters and spaces only." : ""));
+    const donorPhoneInput = document.querySelector('#cash-donation-form [name="donor_phone"]');
+    donorPhoneInput.addEventListener("input", () => {
+      donorPhoneInput.value = donorPhoneInput.value.replace(/\D/g, "").slice(0, 10);
+      donorPhoneInput.setCustomValidity(donorPhoneInput.value && donorPhoneInput.value.length !== 10 ? "Enter exactly 10 digits." : "");
+    });
+    const cashDonationPaymentType = document.querySelector('#cash-donation-form [name="payment_method"]');
+    const cashReferenceRow = document.getElementById("cash-reference-row");
+    const updateCashReferenceVisibility = () => {
+      const show = ["upi", "rtgs", "neft", "bank_transfer", "cheque"].includes(cashDonationPaymentType.value);
+      cashReferenceRow.hidden = !show;
+      if (!show) cashReferenceRow.querySelector("input").value = "";
+      else cashReferenceRow.querySelector("input").placeholder = cashDonationPaymentType.value === "cheque" ? "Cheque number" : cashDonationPaymentType.value === "upi" ? "PhonePe / Google Pay transaction ID" : "Bank reference / transaction ID";
+    };
+    cashDonationPaymentType.addEventListener("change", updateCashReferenceVisibility);
+    updateCashReferenceVisibility();
     const cashDonationDialog = document.getElementById("cash-donation-dialog");
-    document.getElementById("open-cash-donation").addEventListener("click", () => { const form = document.getElementById("cash-donation-form"); form.reset(); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); cashDonationDialog.showModal(); });
+    document.getElementById("open-cash-donation").addEventListener("click", () => { const form = document.getElementById("cash-donation-form"); form.reset(); donorNameInput.setCustomValidity(""); financeCategoryInput.setCustomValidity(""); donationPurposeInput.setCustomValidity(""); donorPhoneInput.setCustomValidity(""); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); updateCashReferenceVisibility(); cashDonationDialog.showModal(); });
     document.getElementById("cash-donation-close").addEventListener("click", () => cashDonationDialog.close());
     document.getElementById("cash-donation-cancel").addEventListener("click", () => cashDonationDialog.close());
     document.getElementById("cash-donation-form").addEventListener("submit", async (event) => {
