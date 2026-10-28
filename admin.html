@@ -676,7 +676,7 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzWuzXY3c4_eriCjpX-R8cBNFGF1DQ4v3ZYoM_szoSXnWmxOFI0kbqn8b7kSuv5slj8/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyv-RFd7izL7-zMML_fZyCw0H4adiHW13JnD1FkXY1pr8EOpFbSXD3-eqtMYfgCBD8W/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let financeEntries = [];
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -790,6 +790,22 @@
         document.body.append(frame, form);
         form.submit();
       });
+    }
+    async function sendDonationCertificate(record) {
+      const channels = Array.isArray(record.certificate_delivery) ? record.certificate_delivery : [];
+      if (!channels.length) return {};
+      let delivery = {};
+      try {
+        const response = await sendFinanceDriveUpload({ type: "certificate", donationId: record.id, accessToken: adminAccessToken });
+        delivery = response.delivery || {};
+      } catch (error) {
+        const failure = String(error.message || "Certificate delivery request failed.");
+        delivery = Object.fromEntries(channels.map((channel) => [channel, "failed: " + failure]));
+      }
+      await supabaseRequest(`${SUPABASE_DONATION_TABLE}?id=eq.${encodeURIComponent(record.id)}`, {
+        method: "PATCH", body: JSON.stringify({ certificate_delivery_status: delivery })
+      });
+      return delivery;
     }
     async function uploadDriveProof(file, entry) {
       if (!GOOGLE_DRIVE_UPLOAD_URL) throw new Error("Google Drive upload has not been connected.");
@@ -982,9 +998,9 @@
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>
             <td>${escapeHtml(donation.entry_type === "donation" ? (donation.workflow_status || "draft") : (donation.payment_status || "submitted"))}</td>
 
-            <td>${escapeHtml(donation.certificate_id || donation.certificateId)}${donation.entry_type !== "donation" && donation.certificate_delivery?.length ? `<br><small>Send via: ${escapeHtml(donation.certificate_delivery.join(" + "))}</small>` : ""}</td>
+            <td>${escapeHtml(donation.certificate_id || donation.certificateId)}${donation.entry_type !== "donation" && donation.certificate_delivery?.length ? `<br><small>Send via: ${escapeHtml(donation.certificate_delivery.join(" + "))}</small>` : ""}${donation.certificate_delivery_status ? `<br><small>Delivery: ${escapeHtml(Object.entries(donation.certificate_delivery_status).map(([channel, state]) => channel + " " + state).join("; "))}</small>` : ""}</td>
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
-            <td><div class="finance-actions">${donation.entry_type !== "donation" && donation.payment_status === "submitted" ? `<button class="btn btn-primary" type="button" data-publish-donation="${escapeHtml(donation.id || "")}">Verify &amp; Publish</button>` : ""}<button class="btn btn-danger" type="button" data-delete-donation="${escapeHtml(donation.id || donation.certificate_id || donation.certificateId || "")}" data-donation-source="${donation.entry_type === "donation" ? "ledger" : "online"}">Delete</button></div></td>
+            <td><div class="finance-actions">${donation.entry_type !== "donation" && donation.payment_status === "submitted" ? `<button class="btn btn-primary" type="button" data-publish-donation="${escapeHtml(donation.id || "")}">Verify &amp; Publish</button>` : ""}${donation.entry_type !== "donation" && donation.payment_status === "published" && donation.certificate_delivery?.length && !donation.certificate_delivery.every((channel) => ["sent", "already sent"].includes(donation.certificate_delivery_status?.[channel])) ? `<button class="btn btn-primary" type="button" data-send-certificate="${escapeHtml(donation.id || "")}">Send Certificate</button>` : ""}<button class="btn btn-danger" type="button" data-delete-donation="${escapeHtml(donation.id || donation.certificate_id || donation.certificateId || "")}" data-donation-source="${donation.entry_type === "donation" ? "ledger" : "online"}">Delete</button></div></td>
           </tr>`;
         }));
         list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="14">No donation found for selected period.</td></tr>';
@@ -1325,10 +1341,30 @@
         const record = allDonations.find((item) => item.id === id && item.entry_type !== "donation");
         if (!record || !confirm("Verify this donation and publish it in the public totals?")) return;
         publishButton.disabled = true;
+        let published = false;
         try {
           await supabaseRequest(`${SUPABASE_DONATION_TABLE}?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ payment_status: "published" }) });
+          published = true;
+          if (record.certificate_delivery?.length) {
+            const delivery = await sendDonationCertificate(record);
+            const failures = Object.entries(delivery).filter(([, state]) => String(state).startsWith("failed"));
+            if (failures.length) alert("Donation published. Certificate delivery needs attention: " + failures.map(([channel, state]) => channel + ": " + state).join("; "));
+          }
           await renderDonationReport(true);
-        } catch (error) { alert("Could not publish donation: " + error.message); publishButton.disabled = false; }
+        } catch (error) { alert((published ? "Donation was published, but certificate delivery status could not be saved: " : "Could not publish donation: ") + error.message); await renderDonationReport(true); }
+        return;
+      }
+      const sendButton = event.target.closest("[data-send-certificate]");
+      if (sendButton) {
+        const record = allDonations.find((item) => item.id === sendButton.dataset.sendCertificate);
+        if (!record) return;
+        sendButton.disabled = true;
+        try {
+          const delivery = await sendDonationCertificate(record);
+          const failures = Object.entries(delivery).filter(([, state]) => String(state).startsWith("failed"));
+          if (failures.length) alert("Certificate delivery needs attention: " + failures.map(([channel, state]) => channel + ": " + state).join("; "));
+          await renderDonationReport(true);
+        } catch (error) { alert("Could not save certificate delivery status: " + error.message); sendButton.disabled = false; }
         return;
       }
       const button = event.target.closest("[data-delete-donation]");
