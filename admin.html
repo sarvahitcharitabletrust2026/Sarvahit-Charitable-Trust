@@ -428,8 +428,9 @@
       color: var(--green-dark);
     }
     .donation-table th:nth-child(12) { width: 160px; min-width: 160px; white-space: nowrap; }
-    .donation-table td:nth-child(12) { width: 220px; min-width: 180px; max-width: 220px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; vertical-align: top; }
-    .donation-table td:nth-child(12) small { display: block; margin-top: 4px; white-space: normal; overflow-wrap: anywhere; }
+    .donation-table td:nth-child(12) { width: 220px; min-width: 180px; max-width: 220px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; vertical-align: middle; }
+    .donation-certificate-cell { max-height: 70px; overflow-y: auto; overflow-x: hidden; padding-right: 4px; font-size: 13px; line-height: 1.35; scrollbar-width: thin; overscroll-behavior: contain; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+    .donation-certificate-cell small { display: block; margin-top: 4px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
     .form-grid label[hidden] { display: none; }
 
     .donation-table th:not(:last-child),
@@ -683,7 +684,7 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycby-3YfHz19ji0Z3bbrmjrTij77JxhJm-Mxd6RCPbYheWLyQ6R5c5RWdfkN3zKhb6iDC/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxhorXZQkcaOmgrak6y74AogB_yahInRmAU1s-Gv5axvrX3E9WhNDwlcufFnEE3FOw9/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let financeEntries = [];
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -1054,7 +1055,7 @@
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>
             <td>${escapeHtml(donation.entry_type === "donation" ? (donation.workflow_status || "draft") : (donation.payment_status || "submitted"))}</td>
 
-            <td>${escapeHtml(donation.certificate_id || donation.certificateId)}${donation.entry_type !== "donation" && donation.certificate_delivery?.length ? `<br><small>Send via: ${escapeHtml(donation.certificate_delivery.join(" + "))}</small>` : ""}${donation.certificate_delivery_status ? `<br><small>Delivery: ${escapeHtml(Object.entries(donation.certificate_delivery_status).map(([channel, state]) => channel + " " + state).join("; "))}</small>` : ""}</td>
+            <td><div class="donation-certificate-cell">${escapeHtml(donation.certificate_id || donation.certificateId)}${donation.entry_type !== "donation" && donation.certificate_delivery?.length ? `<small>Send via: ${escapeHtml(donation.certificate_delivery.join(" + "))}</small>` : ""}${donation.certificate_delivery_status ? `<small>Delivery: ${escapeHtml(Object.entries(donation.certificate_delivery_status).map(([channel, state]) => channel + " " + state).join("; "))}</small>` : ""}</div></td>
             <td>${escapeHtml(appreciationStatus)}${donation.appreciation_certificate_url ? `<br><a href="${escapeHtml(donation.appreciation_certificate_url)}" target="_blank" rel="noopener">View</a>` : ""}</td>
             <td>${eightyGEligible ? `<button class="btn btn-light" type="button" data-open-80g="${escapeHtml(donation.id || "")}">${escapeHtml(eightyGStatus)}</button>${donation.eighty_g_certificate_url ? `<br><a href="${escapeHtml(donation.eighty_g_certificate_url)}" target="_blank" rel="noopener">View</a>` : ""}` : escapeHtml(eightyGStatus)}</td>
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
