@@ -1,40 +1,22 @@
-const DEFAULT_PARENT_FOLDER_ID = "1APZJvDJR4d9LGoVGXrMuPlQvO8A1-M0F";
+const DONATION_RECEIPTS_FOLDER_ID = "1APZJvDJR4d9LGoVGXrMuPlQvO8A1-M0F";
+const FINANCE_RECEIPTS_FOLDER_ID = "1Fpwk5MeviQfyCpxYg05dDyAlNjwTyq02";
+const SUPABASE_PROJECT_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
 const SOCIAL_ACTIVITY_FOLDER_ID = "1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv";
+const G80G_CERTIFICATE_FOLDER_ID = "1co07taPYW8aB7xsWvWwwdj6awXly99l3";
 const DRIVE_TIME_ZONE = "Asia/Kolkata";
 
 function doGet() {
   try {
     const folder = DriveApp.getFolderById(SOCIAL_ACTIVITY_FOLDER_ID);
-    const files = listActivityImages_(folder).sort((a, b) => b.getLastUpdated() - a.getLastUpdated());
-    const cards = files.map((file) => {
-      let thumbnail = null;
-      try {
-        thumbnail = file.getThumbnail();
-      } catch (thumbnailError) {
-        thumbnail = null;
-      }
-      const image = thumbnail || file.getBlob();
-      const mimeType = image.getContentType() || file.getMimeType();
-      const data = Utilities.base64Encode(image.getBytes());
-      return `<figure><img src="data:${escapeHtml_(mimeType)};base64,${data}" alt="${escapeHtml_(file.getName())}" loading="lazy"><figcaption>${escapeHtml_(file.getName())}</figcaption></figure>`;
-    }).join("");
-    const content = cards || '<p class="empty">No activity photos have been added yet.</p>';
-    const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
-      *{box-sizing:border-box}body{margin:0;padding:12px;background:#f7f8f6;color:#263238;font:15px Arial,sans-serif}
-      main{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px}
-      figure{margin:0;overflow:hidden;border-radius:10px;background:#fff;box-shadow:0 2px 12px #163c2c18}
-      img{display:block;width:100%;height:260px;object-fit:cover;background:#e8ede9}
-      figcaption{padding:10px 12px;font-size:13px;overflow-wrap:anywhere}
-      .empty{grid-column:1/-1;padding:28px;text-align:center;color:#69766e}
-    </style></head><body><main>${content}</main></body></html>`;
-    return HtmlService.createHtmlOutput(html)
-      .setTitle("Sarvahit Trust Activity Photos")
-      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    const folders = listActivityFolders_(folder);
+    if (!folders.length) {
+      const rootImages = listActivityImages_(folder);
+      if (rootImages.length) folders.push({ name: "Community Service Programs", images: rootImages });
+    }
+    return galleryMessage_({ channel: "sarvahit-community-gallery", folders: folders });
   } catch (error) {
-    const html = '<p style="font:16px Arial,sans-serif;color:#5b5147;text-align:center;padding:24px">Activity photos are temporarily unavailable.</p>';
-    return HtmlService.createHtmlOutput(html)
-      .setTitle("Sarvahit Trust Activity Photos")
-      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    return galleryMessage_({ channel: "sarvahit-community-gallery", error: String(error && error.message ? error.message : error) });
   }
 }
 
@@ -43,11 +25,37 @@ function listActivityImages_(folder) {
   const files = folder.getFiles();
   while (files.hasNext()) {
     const file = files.next();
-    if (file.getMimeType().toLowerCase().startsWith("image/")) images.push(file);
+    if (file.getMimeType().toLowerCase().startsWith("image/")) {
+      const id = file.getId();
+      images.push({
+        name: file.getName(),
+        imageUrl: "https://drive.google.com/uc?export=view&id=" + encodeURIComponent(id),
+        thumbnailUrl: "https://drive.google.com/thumbnail?id=" + encodeURIComponent(id) + "&sz=w1200"
+      });
+    }
   }
-  const folders = folder.getFolders();
-  while (folders.hasNext()) images.push(...listActivityImages_(folders.next()));
+  const childFolders = folder.getFolders();
+  while (childFolders.hasNext()) images.push(...listActivityImages_(childFolders.next()));
   return images;
+}
+
+function listActivityFolders_(parent) {
+  const result = [];
+  const folders = parent.getFolders();
+  while (folders.hasNext()) {
+    const folder = folders.next();
+    const images = listActivityImages_(folder);
+    if (images.length) result.push({ name: folder.getName(), images: images });
+  }
+  return result;
+}
+
+function galleryMessage_(payload) {
+  const safePayload = JSON.stringify(payload).replace(/</g, "\\u003c");
+  const html = "<!doctype html><html><head><meta charset=\"utf-8\"></head><body><script>window.parent.postMessage(" + safePayload + ", \"*\");</script></body></html>";
+  return HtmlService.createHtmlOutput(html)
+    .setTitle("Sarvahit Trust Activity Photos")
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function escapeHtml_(value) {
@@ -61,34 +69,209 @@ function escapeHtml_(value) {
 }
 
 function doPost(event) {
+  let requestId = "";
+  const formTransport = Boolean(event && event.parameter && event.parameter.uploadPayload);
   try {
-    const data = JSON.parse(event.postData.contents);
-    const parent = DriveApp.getFolderById(DEFAULT_PARENT_FOLDER_ID);
-    const now = new Date();
-    const year = Utilities.formatDate(now, DRIVE_TIME_ZONE, "yyyy");
-    const monthNumber = Utilities.formatDate(now, DRIVE_TIME_ZONE, "MM");
-    const day = Utilities.formatDate(now, DRIVE_TIME_ZONE, "dd");
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const month = `${monthNumber}-${monthNames[Number(monthNumber) - 1]}`;
+    const rawPayload = formTransport ? event.parameter.uploadPayload : (event.postData.contents || "{}");
+    const data = JSON.parse(rawPayload);
+    requestId = String(data.requestId || "");
+    const isFinance = data.type === "finance";
+    const isCertificate = data.type === "certificate";
+    const is80GCertificate = data.type === "80g_certificate";
+    if (!isFinance && !isCertificate && !is80GCertificate && data.type !== "donation") throw new Error("Unsupported upload type.");
+    if (isFinance || isCertificate || is80GCertificate) verifyFinanceAdmin_(data.accessToken);
+    if (isCertificate) return uploadResponse_({ ok: true, delivery: sendDonationCertificate_(data.donationId, data.accessToken) }, formTransport, requestId);
+    if (is80GCertificate) return uploadResponse_({ ok: true, ...saveAndSend80GCertificate_(data) }, formTransport, requestId);
+
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+    const mimeType = String(data.mimeType || "application/octet-stream");
+    if (!allowedTypes.includes(mimeType)) throw new Error("Only PDF, JPG, PNG or WebP files can be uploaded.");
+    if (!data.base64) throw new Error("The selected file is empty.");
+    const bytes = Utilities.base64Decode(data.base64);
+    if (bytes.length > 8 * 1024 * 1024) throw new Error("The file must be 8 MB or smaller.");
+
+    const parentId = isFinance ? FINANCE_RECEIPTS_FOLDER_ID : DONATION_RECEIPTS_FOLDER_ID;
+    const parent = DriveApp.getFolderById(parentId);
+    const suppliedDate = String(data.entryDate || data.donationDate || "");
+    const dateMatch = suppliedDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const savedDate = dateMatch ? new Date(Date.UTC(Number(dateMatch[1]), Number(dateMatch[2]) - 1, Number(dateMatch[3]), 12)) : new Date();
+    const year = Utilities.formatDate(savedDate, DRIVE_TIME_ZONE, "yyyy");
+    const month = Utilities.formatDate(savedDate, DRIVE_TIME_ZONE, "MMMM");
+    const day = Utilities.formatDate(savedDate, DRIVE_TIME_ZONE, "dd");
     const yearFolder = getOrCreateFolder_(parent, year);
     const monthFolder = getOrCreateFolder_(yearFolder, month);
     const dateFolder = getOrCreateFolder_(monthFolder, day);
-    const bytes = Utilities.base64Decode(data.base64);
-    const certificateId = sanitizeFileNamePart_(data.certificateId || "Certificate");
-    const fullName = sanitizeFileNamePart_(data.fullName || "Donor");
-    const extension = String(data.fileName || "payment-screenshot.jpg").match(/\.([A-Za-z0-9]+)$/);
-    const safeName = `${certificateId} - ${fullName}.${extension ? extension[1] : "jpg"}`;
-    const blob = Utilities.newBlob(bytes, data.mimeType || "image/jpeg", safeName);
-    const file = dateFolder.createFile(blob);
 
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: true, fileId: file.getId(), fileUrl: file.getUrl(), year, month, day, fileName: safeName }))
-      .setMimeType(ContentService.MimeType.JSON);
+    const certificateId = sanitizeFileNamePart_(data.certificateId || (isFinance ? "Expense" : "Donation"));
+    const fullName = sanitizeFileNamePart_(data.fullName || data.category || "Record");
+    const extension = String(data.fileName || "attachment").match(/\.([A-Za-z0-9]+)$/);
+    const suffix = Utilities.formatDate(new Date(), DRIVE_TIME_ZONE, "HHmmss");
+    const safeName = certificateId + " - " + fullName + " - " + suffix + "." + (extension ? extension[1] : "bin");
+    const file = dateFolder.createFile(Utilities.newBlob(bytes, mimeType, safeName));
+    return uploadResponse_({ ok: true, fileId: file.getId(), fileUrl: file.getUrl(), year: year, month: month, day: day, fileName: safeName }, formTransport, requestId);
   } catch (error) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: false, error: String(error) }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return uploadResponse_({ ok: false, error: String(error && error.message ? error.message : error) }, formTransport, requestId);
   }
+}
+
+function saveAndSend80GCertificate_(data) {
+  if (!data.donationId || !data.base64) throw new Error("Donation and certificate file are required.");
+  const bytes = Utilities.base64Decode(data.base64);
+  if (bytes.length > 8 * 1024 * 1024) throw new Error("The certificate must be 8 MB or smaller.");
+  const mimeType = String(data.mimeType || "application/pdf");
+  if (mimeType !== "application/pdf") throw new Error("Upload the 80G certificate as a PDF.");
+  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/donation_records?id=eq." + encodeURIComponent(data.donationId) + "&select=id,donor_name,email,phone,amount,purpose,certificate_id,certificate_delivery,payment_status,created_at", {
+    method: "get", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + data.accessToken }, muteHttpExceptions: true
+  });
+  if (response.getResponseCode() !== 200) throw new Error("Could not load donation: " + response.getContentText());
+  const donation = (JSON.parse(response.getContentText() || "[]"))[0];
+  if (!donation || donation.payment_status !== "published" || Number(donation.amount) <= 4999) throw new Error("80G certificates are available only for published donations above INR 4,999.");
+  const now = new Date();
+  const year = Utilities.formatDate(now, DRIVE_TIME_ZONE, "yyyy");
+  const month = Utilities.formatDate(now, DRIVE_TIME_ZONE, "MMMM");
+  const day = Utilities.formatDate(now, DRIVE_TIME_ZONE, "dd");
+  const parent = DriveApp.getFolderById(G80G_CERTIFICATE_FOLDER_ID);
+  const dateFolder = getOrCreateFolder_(getOrCreateFolder_(getOrCreateFolder_(parent, year), month), day);
+  const safeName = "Sarvahit-80G-" + sanitizeFileNamePart_(donation.certificate_id || donation.id) + " - " + sanitizeFileNamePart_(donation.donor_name || "Donor") + "." + (mimeType === "application/pdf" ? "pdf" : mimeType === "image/png" ? "png" : "jpg");
+  const blob = Utilities.newBlob(bytes, mimeType, safeName);
+  const file = dateFolder.createFile(blob);
+  const channels = Array.isArray(data.channels) ? data.channels : [];
+  const delivery = {};
+  if (channels.includes("email")) {
+    try {
+      const recipient = String(donation.email || "").trim();
+      if (!recipient) throw new Error("Donor email address is missing.");
+      GmailApp.sendEmail(recipient, "Your 80G certificate from Sarvahit Charitable Trust", "Thank you for supporting Sarvahit Charitable Trust. Your 80G certificate is attached.", { name: "Sarvahit Charitable Trust", attachments: [blob.copyBlob()] });
+      delivery.email = "sent";
+    } catch (error) { delivery.email = "failed: " + String(error.message || error); }
+  }
+  if (channels.includes("whatsapp")) {
+    try { sendWhatsAppCertificate_(donation, blob, safeName); delivery.whatsapp = "sent"; }
+    catch (error) { delivery.whatsapp = "failed: " + String(error.message || error); }
+  }
+  return { fileId: file.getId(), fileUrl: file.getUrl(), year: year, month: month, day: day, delivery: delivery };
+}
+
+function uploadResponse_(result, formTransport, requestId) {
+  if (!formTransport) {
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+  }
+  const message = JSON.stringify({ channel: "sarvahit-drive-upload", requestId: requestId, result: result }).replace(/</g, "\\u003c");
+  const html = "<!doctype html><html><head><meta charset=\"utf-8\"></head><body><script>window.top.postMessage(" + message + ", \"*\");</script></body></html>";
+  return HtmlService.createHtmlOutput(html).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function authorizeExternalRequest() {
+  UrlFetchApp.fetch("https://www.google.com");
+}
+function verifyFinanceAdmin_(accessToken) {
+  if (!accessToken) throw new Error("Please sign in to upload an expense receipt.");
+  const options = {
+    method: "get",
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + accessToken },
+    muteHttpExceptions: true
+  };
+  const userResponse = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/auth/v1/user", options);
+  if (userResponse.getResponseCode() !== 200) throw new Error("Admin session expired. Sign in again.");
+  const adminOptions = {
+    method: "post",
+    contentType: "application/json",
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + accessToken },
+    payload: "{}",
+    muteHttpExceptions: true
+  };
+  const adminResponse = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/rpc/is_trust_finance_admin", adminOptions);
+  if (adminResponse.getResponseCode() !== 200 || adminResponse.getContentText() !== "true") {
+    throw new Error("This account is not authorized to upload finance receipts.");
+  }
+}
+
+function sendDonationCertificate_(donationId, accessToken) {
+  if (!donationId) throw new Error("Donation record ID is missing.");
+  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/donation_records?id=eq." + encodeURIComponent(donationId) + "&select=id,donor_name,email,phone,amount,purpose,certificate_id,certificate_delivery,payment_status,created_at", {
+    method: "get",
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + accessToken },
+    muteHttpExceptions: true
+  });
+  if (response.getResponseCode() !== 200) throw new Error("Could not load the published donation: " + response.getContentText());
+  const rows = JSON.parse(response.getContentText() || "[]");
+  const donation = rows[0];
+  if (!donation || donation.payment_status !== "published") throw new Error("Only a published donation can receive its certificate.");
+  const channels = Array.isArray(donation.certificate_delivery) ? donation.certificate_delivery : [];
+  if (!channels.length) return { email: "not selected", whatsapp: "not selected" };
+
+  const certificateId = String(donation.certificate_id || "");
+  const safeName = sanitizeFileNamePart_(donation.donor_name || "Donor");
+  const fileName = "Sarvahit-Certificate-" + sanitizeFileNamePart_(certificateId || donation.id) + ".pdf";
+  const html = "<!doctype html><html><head><meta charset=\"utf-8\"><style>body{font-family:Georgia,serif;color:#154c3b;text-align:center;padding:54px;border:10px double #c99b42}h1{font-size:34px;margin:35px 0;color:#154c3b}p{font-size:17px;color:#333}.name{font-size:30px;font-weight:bold;margin:28px 0}.meta{margin-top:30px;font:14px Arial;color:#46534b}</style></head><body><h2>SARVAHIT CHARITABLE TRUST</h2><h1>Certificate of Appreciation</h1><p>This certificate is presented with gratitude to</p><div class=\"name\">" + escapeHtml_(donation.donor_name || "Donor") + "</div><p>for supporting " + escapeHtml_(donation.purpose || "the Trust") + " with a donation of INR " + Number(donation.amount || 0).toLocaleString("en-IN") + ".</p><div class=\"meta\">Certificate ID: " + escapeHtml_(certificateId) + "<br>" + Utilities.formatDate(new Date(donation.created_at || new Date()), DRIVE_TIME_ZONE, "dd MMMM yyyy") + "</div></body></html>";
+  const pdf = HtmlService.createHtmlOutput(html).getBlob().getAs(MimeType.PDF).setName(fileName);
+  const properties = PropertiesService.getScriptProperties();
+  const result = {};
+
+  if (channels.includes("email")) {
+    const key = "certificate_email_sent_" + donation.id;
+    if (properties.getProperty(key)) result.email = "already sent";
+    else {
+      try {
+        const recipient = String(donation.email || "").trim();
+        if (!recipient) throw new Error("Donor email address is missing.");
+        const trustEmail = "sarvahitcharitabletrust2026@gmail.com";
+        const aliases = GmailApp.getAliases().map(function (alias) { return alias.toLowerCase(); });
+        const options = { name: "Sarvahit Charitable Trust", attachments: [pdf.copyBlob()] };
+        if (aliases.indexOf(trustEmail) !== -1) options.from = trustEmail;
+        GmailApp.sendEmail(recipient, "Your Sarvahit Charitable Trust certificate", "Thank you for supporting Sarvahit Charitable Trust. Your certificate is attached.", options);
+        properties.setProperty(key, new Date().toISOString());
+        result.email = "sent";
+      } catch (error) { result.email = "failed: " + String(error && error.message ? error.message : error); }
+    }
+  }
+
+  if (channels.includes("whatsapp")) {
+    const key = "certificate_whatsapp_sent_" + donation.id;
+    if (properties.getProperty(key)) result.whatsapp = "already sent";
+    else {
+      try {
+        sendWhatsAppCertificate_(donation, pdf, fileName);
+        properties.setProperty(key, new Date().toISOString());
+        result.whatsapp = "sent";
+      } catch (error) { result.whatsapp = "failed: " + String(error && error.message ? error.message : error); }
+    }
+  }
+  return result;
+}
+
+function sendWhatsAppCertificate_(donation, pdf, fileName) {
+  const properties = PropertiesService.getScriptProperties();
+  const token = properties.getProperty("WHATSAPP_ACCESS_TOKEN");
+  const phoneNumberId = properties.getProperty("WHATSAPP_PHONE_NUMBER_ID");
+  const templateName = properties.getProperty("WHATSAPP_CERTIFICATE_TEMPLATE");
+  const senderPhone = String(properties.getProperty("WHATSAPP_SENDER_PHONE") || "").replace(/\D/g, "");
+  const apiVersion = properties.getProperty("WHATSAPP_GRAPH_API_VERSION") || "v26.0";
+  const language = properties.getProperty("WHATSAPP_TEMPLATE_LANGUAGE") || "en";
+  if (!token || !phoneNumberId || !templateName || senderPhone !== "919665335057") throw new Error("Configure the WhatsApp Cloud API token, phone number ID, approved certificate template, and Trust sender number 919665335057 in Apps Script project properties.");
+  let recipient = String(donation.phone || "").replace(/\D/g, "");
+  if (recipient.length === 10) recipient = "91" + recipient;
+  else if (recipient.length === 11 && recipient.charAt(0) === "0") recipient = "91" + recipient.slice(1);
+  if (!/^91[0-9]{10}$/.test(recipient)) throw new Error("Donor mobile number must be a valid 10-digit Indian number.");
+
+  const mediaResponse = UrlFetchApp.fetch("https://graph.facebook.com/" + apiVersion + "/" + encodeURIComponent(phoneNumberId) + "/media", {
+    method: "post",
+    headers: { Authorization: "Bearer " + token },
+    payload: { messaging_product: "whatsapp", type: "application/pdf", file: pdf.copyBlob().setName(fileName) },
+    muteHttpExceptions: true
+  });
+  const mediaBody = JSON.parse(mediaResponse.getContentText() || "{}");
+  if (mediaResponse.getResponseCode() < 200 || mediaResponse.getResponseCode() >= 300 || !mediaBody.id) throw new Error("WhatsApp certificate upload failed: " + (mediaBody.error && mediaBody.error.message || mediaResponse.getContentText()));
+
+  const messageResponse = UrlFetchApp.fetch("https://graph.facebook.com/" + apiVersion + "/" + encodeURIComponent(phoneNumberId) + "/messages", {
+    method: "post",
+    contentType: "application/json",
+    headers: { Authorization: "Bearer " + token },
+    payload: JSON.stringify({ messaging_product: "whatsapp", to: recipient, type: "template", template: { name: templateName, language: { code: language }, components: [{ type: "header", parameters: [{ type: "document", document: { id: mediaBody.id, filename: fileName } }] }] } }),
+    muteHttpExceptions: true
+  });
+  const messageBody = JSON.parse(messageResponse.getContentText() || "{}");
+  if (messageResponse.getResponseCode() < 200 || messageResponse.getResponseCode() >= 300 || !messageBody.messages || !messageBody.messages.length) throw new Error("WhatsApp message failed: " + (messageBody.error && messageBody.error.message || messageResponse.getContentText()));
 }
 
 function getOrCreateFolder_(parent, name) {

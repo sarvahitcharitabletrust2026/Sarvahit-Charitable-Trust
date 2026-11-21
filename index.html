@@ -1435,6 +1435,28 @@
       gap: 12px;
     }
 
+    .drive-gallery-carousel.drive-gallery-embedded {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .drive-gallery-embedded > .drive-gallery-page-arrow {
+      display: none;
+    }
+
+    .drive-gallery-embedded .drive-gallery {
+      display: block;
+      overflow: hidden;
+    }
+
+    .drive-gallery-frame {
+      display: block;
+      width: 100%;
+      height: min(78vh, 820px);
+      min-height: 480px;
+      border: 0;
+      border-radius: 14px;
+      background: #f7f8f6;
+    }
     .drive-gallery {
       width: 100%;
       min-width: 0;
@@ -2002,6 +2024,10 @@
         gap: 12px;
       }
 
+      .drive-gallery-carousel.drive-gallery-embedded {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
       .drive-gallery {
         grid-column: 1 / -1;
         grid-row: 1;
@@ -2192,7 +2218,7 @@
       <div class="topbar-actions">
         <div class="social-links" aria-label="Social media links">
           <a class="social-icon" href="https://x.com/SarvahitCTrust" target="_blank" rel="noopener noreferrer" aria-label="X" title="X"><img src="https://drive.google.com/thumbnail?id=1WGuivnrnzxWePxklQhXCib0z1b9dGav7&amp;sz=w128" alt="" /></a>
-          <a class="social-icon" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><img src="https://marketplace.canva.com/KrzKM/MAGzNqKrzKM/1/tl/canva-facebook-logo-MAGzNqKrzKM.png" alt="" /></a>
+          <a class="social-icon" href="https://www.facebook.com/profile.php?id=61596207564292" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook"><img src="https://marketplace.canva.com/KrzKM/MAGzNqKrzKM/1/tl/canva-facebook-logo-MAGzNqKrzKM.png" alt="" /></a>
           <a class="social-icon" href="https://www.instagram.com/sarvahitcharitabletrust2024/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><img src="https://drive.google.com/thumbnail?id=14S_3eYZ1qJytAdMEnOBLGuU5WErgxqpC&amp;sz=w128" alt="" /></a>
           <a class="social-icon" href="https://www.linkedin.com/in/sarvahit-charitable-trust-06a594442/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><img src="https://drive.google.com/thumbnail?id=1eKGqokVhqD06X8XIXjoJ1qTOtVACT4ze&amp;sz=w128" alt="" /></a>
           <a class="social-icon" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><img src="https://marketplace.canva.com/KE6ns/MAElfQKE6ns/1/tl/canva-youtube-logo-MAElfQKE6ns.png" alt="" /></a>
@@ -2255,7 +2281,6 @@
           <div class="hero-finance-grid">
             <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/><path d="M8 12h2l1.5-2 2.2 4 1.3-2H18"/></svg></span><div class="hero-finance-copy"><span>Total Donations</span><strong data-finance-mirror="finance-income">₹0.00</strong></div></div>
             <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 15h2"/><path d="M6 6V4a2 2 0 0 1 2-2h11"/></svg></span><div class="hero-finance-copy"><span>Total Spent</span><strong data-finance-mirror="finance-expenses">₹0.00</strong></div></div>
-            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 8h-1.2a3 3 0 0 0-2.8-2H8a5 5 0 0 0-5 5v4a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-1h1a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2Z"/><path d="M7 5V4a2 2 0 0 1 2-2h6M8 11h.01M7 19v2m9-2v2"/></svg></span><div class="hero-finance-copy"><span>Available Balance</span><strong data-finance-mirror="finance-closing">₹0.00</strong></div></div>
             <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><div class="hero-finance-copy"><span>People Supported</span><strong id="hero-people-supported">0+</strong></div></div>
           </div>
           <a class="hero-highlight hero-highlight-cta" href="#donor-window" data-open-modal="donor-window">Join us in making a difference&nbsp; →</a>
@@ -2421,7 +2446,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Photos from Our Community Service Programs</h2>
-          <p>Each work-wise folder is shown as a card. Use the arrows to browse its photos, or double-click a photo to open it in Google Drive.</p>
+          <p>Browse photos from our community service programs below.</p>
         </div>
         <div class="drive-gallery-carousel" aria-label="Community service photo folders">
           <button class="drive-gallery-page-arrow drive-gallery-page-prev" id="social-activity-prev" type="button" aria-label="Previous folders" disabled>‹</button>
@@ -2777,8 +2802,8 @@
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbw5yFEoURlpIL-vOA45TkLasKcNfhslE1ew0-mkrPCC_PDqRj_RvOADMSV_rVwfO2YT/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwjGDCGqsBEWPvyqUREBrQtA1EQ1gikQUcEyRbFaRT11cMNXROsMMC6YH5J3wwZVwrk/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbyWAXPytcKc1tKJPKULm9WHO18A01b4B_vuQmQ_x2GL8v3eEaulo8dAythf48aFXWNQrQ/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycby-3YfHz19ji0Z3bbrmjrTij77JxhJm-Mxd6RCPbYheWLyQ6R5c5RWdfkN3zKhb6iDC/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -3374,53 +3399,45 @@
       const gallery = document.getElementById("social-activity-gallery");
       if (!gallery) return;
 
-      // The Apps Script endpoint is intentionally optional. Until it is deployed,
-      // keep the existing Drive folder view as a fallback.
-      if (!GOOGLE_DRIVE_GALLERY_API_URL) {
-        if (GOOGLE_DRIVE_GALLERY_URL) {
-          const link = document.createElement("a");
-          link.className = "drive-gallery-fallback";
-          link.href = GOOGLE_DRIVE_GALLERY_URL;
-          link.target = "_blank";
-          link.rel = "noopener";
-          link.textContent = "Gallery API is not connected yet. Open the work-wise Drive folders.";
-          gallery.replaceChildren(link);
-        }
+      if (GOOGLE_DRIVE_GALLERY_API_URL) {
+        const frame = document.createElement("iframe");
+        frame.className = "drive-gallery-frame";
+        frame.title = "Sarvahit Trust community service photos";
+        frame.style.display = "none";
+        frame.setAttribute("aria-hidden", "true");
+        frame.referrerPolicy = "no-referrer";
+        let finished = false;
+        const cleanup = () => { window.removeEventListener("message", onMessage); clearTimeout(timer); frame.remove(); };
+        const onMessage = (event) => {
+          if (event.source !== frame.contentWindow || event.data?.channel !== "sarvahit-community-gallery") return;
+          finished = true;
+          cleanup();
+          if (event.data.error) {
+            gallery.innerHTML = '<p class="drive-gallery-message">Photos are temporarily unavailable. Please try again later.</p>';
+            return;
+          }
+          renderSocialActivityGallery(gallery, event.data);
+        };
+        const timer = window.setTimeout(() => {
+          if (finished) return;
+          cleanup();
+          gallery.innerHTML = '<p class="drive-gallery-message">Photos are temporarily unavailable. Please try again later.</p>';
+        }, 25000);
+        window.addEventListener("message", onMessage);
+        frame.src = GOOGLE_DRIVE_GALLERY_API_URL;
+        document.body.appendChild(frame);
         return;
       }
 
-      const callbackName = "sarvahitDriveGallery_" + Date.now();
-      const script = document.createElement("script");
-
-      window[callbackName] = function (payload) {
-        try {
-          if (payload?.error) throw new Error(payload.error);
-          renderSocialActivityGallery(gallery, payload);
-        } finally {
-          delete window[callbackName];
-          script.remove();
-        }
-      };
-
-      script.onerror = function () {
-        delete window[callbackName];
-        script.remove();
-        gallery.replaceChildren(
-          Object.assign(document.createElement("p"), {
-            className: "drive-gallery-message",
-            textContent: "Unable to load photos right now. Please try again later."
-          })
-        );
-      };
-
-      const separator = GOOGLE_DRIVE_GALLERY_API_URL.includes("?") ? "&" : "?";
-      script.src =
-        GOOGLE_DRIVE_GALLERY_API_URL +
-        separator +
-        "folderId=" + encodeURIComponent("1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv") +
-        "&callback=" + encodeURIComponent(callbackName);
-
-      document.head.appendChild(script);
+      if (GOOGLE_DRIVE_GALLERY_URL) {
+        const link = document.createElement("a");
+        link.className = "drive-gallery-fallback";
+        link.href = GOOGLE_DRIVE_GALLERY_URL;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = "Open the community service photos in Google Drive.";
+        gallery.replaceChildren(link);
+      }
     }
 
     function renderSocialActivityGallery(gallery, payload) {
