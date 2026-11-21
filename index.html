@@ -2802,7 +2802,7 @@
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbxU1fXKkIwEAnP14c4KxCCGKz7lzxpRVCtwr9tynlceXbbH2sdih-mP-uzO7GhTscDEqw/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbzg2G2_V3fCkkZKS2KsJplZWU9pkHoNDjFjOHOPhotU4TTqHyB9G89VDkReRhJUWZIe-Q/exec";
     const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwbtfBCCpbMAlpC1iOPmgEgTU4E82A1esEGKoTX7pJT3JGr35V4PZWHL4pSTTTaUWiC/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -3406,10 +3406,14 @@
         frame.style.display = "none";
         frame.setAttribute("aria-hidden", "true");
         frame.referrerPolicy = "no-referrer";
+        const requestId = crypto.randomUUID();
         let finished = false;
         const cleanup = () => { window.removeEventListener("message", onMessage); clearTimeout(timer); frame.remove(); };
         const onMessage = (event) => {
-          if (event.source !== frame.contentWindow || event.data?.channel !== "sarvahit-community-gallery") return;
+          const trustedOrigin = event.origin === "https://script.google.com"
+            || event.origin === "https://script.googleusercontent.com"
+            || event.origin.endsWith(".script.googleusercontent.com");
+          if (!trustedOrigin || event.data?.channel !== "sarvahit-community-gallery" || event.data?.requestId !== requestId) return;
           finished = true;
           cleanup();
           if (event.data.error) {
@@ -3424,7 +3428,9 @@
           gallery.innerHTML = '<p class="drive-gallery-message">Photos are temporarily unavailable. Please try again later.</p>';
         }, 25000);
         window.addEventListener("message", onMessage);
-        frame.src = GOOGLE_DRIVE_GALLERY_API_URL;
+        const galleryUrl = new URL(GOOGLE_DRIVE_GALLERY_API_URL);
+        galleryUrl.searchParams.set("galleryRequestId", requestId);
+        frame.src = galleryUrl.toString();
         document.body.appendChild(frame);
         return;
       }
