@@ -1490,9 +1490,13 @@
       position: relative;
       width: 100%;
       aspect-ratio: 1.35 / 1;
+      display: block;
+      padding: 0;
+      border: 0;
       background: #eef1ee;
       overflow: hidden;
-      cursor: default;
+      cursor: zoom-in;
+      text-align: left;
     }
 
     .drive-gallery-image {
@@ -1503,6 +1507,12 @@
       user-select: none;
       -webkit-user-drag: none;
       transition: transform 0.18s ease;
+    }
+
+    .drive-gallery-image.is-unavailable {
+      object-fit: contain;
+      padding: 24px;
+      color: var(--muted);
     }
 
     .drive-gallery-stage:hover .drive-gallery-image {
@@ -2802,7 +2812,7 @@
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbxU1fXKkIwEAnP14c4KxCCGKz7lzxpRVCtwr9tynlceXbbH2sdih-mP-uzO7GhTscDEqw/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbz2VgwCwQ7SGC1OGzhPu46yFyjnirqqMrT6m6zmnTsjyAd1uFoZVX9PpMCXx_XRxaOS/exec";
     const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwaOgZ1uFQTjvik7WaOybAMdhNUqp0awv2bCP5zkvr4F5yx5-zLZqY28MPH3CXcG3O_/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -3417,7 +3427,7 @@
           finished = true;
           cleanup();
           if (event.data.error) {
-            gallery.innerHTML = '<p class="drive-gallery-message">Photos are temporarily unavailable. Please try again later.</p>';
+            showSocialGalleryFallback(gallery);
             return;
           }
           renderSocialActivityGallery(gallery, event.data);
@@ -3425,7 +3435,7 @@
         const timer = window.setTimeout(() => {
           if (finished) return;
           cleanup();
-          gallery.innerHTML = '<p class="drive-gallery-message">Photos are temporarily unavailable. Please try again later.</p>';
+          showSocialGalleryFallback(gallery);
         }, 25000);
         window.addEventListener("message", onMessage);
         const galleryUrl = new URL(GOOGLE_DRIVE_GALLERY_API_URL);
@@ -3446,6 +3456,17 @@
       }
     }
 
+    function showSocialGalleryFallback(gallery) {
+      const link = document.createElement("a");
+      link.className = "drive-gallery-fallback";
+      link.href = GOOGLE_DRIVE_GALLERY_URL;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = "Photos could not be loaded from Drive. Open the community service photo folder to view them.";
+      gallery.replaceChildren(link);
+      updateSocialActivityNavigation();
+    }
+
     function renderSocialActivityGallery(gallery, payload) {
       const folders = Array.isArray(payload?.folders) ? payload.folders : [];
 
@@ -3461,85 +3482,42 @@
 
       gallery.replaceChildren();
 
-      folders.forEach((folder) => {
-        const images = Array.isArray(folder.images) ? folder.images : [];
-        if (!images.length) return;
-
-        let activeIndex = 0;
-
+      const allImages = folders.flatMap((folder) => (Array.isArray(folder.images) ? folder.images : [])
+        .map((image) => ({ ...image, folderName: folder.name || "Community Service Programs" })));
+      allImages.forEach((photo, index) => {
         const card = document.createElement("article");
         card.className = "drive-gallery-card";
-        card.setAttribute("aria-label", folder.name + " photo gallery");
+        card.setAttribute("aria-label", photo.name || (photo.folderName + " photo " + (index + 1)));
 
-        const stage = document.createElement("div");
+        const stage = document.createElement("button");
+        stage.type = "button";
         stage.className = "drive-gallery-stage";
+        stage.setAttribute("aria-label", "Open photo " + (photo.name || (index + 1)) + " full size");
 
         const image = document.createElement("img");
         image.className = "drive-gallery-image";
-        image.loading = "lazy";
-        image.alt = folder.name + " community service photo";
-        image.title = "Click to enlarge this photo";
-
-        const previous = document.createElement("button");
-        previous.type = "button";
-        previous.className = "drive-gallery-arrow prev";
-        previous.setAttribute("aria-label", "Previous photo");
-        previous.textContent = "‹";
-
-        const next = document.createElement("button");
-        next.type = "button";
-        next.className = "drive-gallery-arrow next";
-        next.setAttribute("aria-label", "Next photo");
-        next.textContent = "›";
+        image.loading = index < 3 ? "eager" : "lazy";
+        image.src = photo.thumbnailUrl || photo.imageUrl || "";
+        image.alt = photo.name || (photo.folderName + " community service photo");
+        image.title = "Click to view full size";
+        image.onerror = () => {
+          image.alt = "Photo temporarily unavailable: " + (photo.name || "community service photo");
+          image.classList.add("is-unavailable");
+        };
+        stage.addEventListener("click", () => openSocialPhotoViewer(photo.folderName, allImages, index));
+        stage.appendChild(image);
 
         const info = document.createElement("div");
         info.className = "drive-gallery-info";
-
         const title = document.createElement("h3");
         title.className = "drive-gallery-title";
-        title.textContent = folder.name;
-
+        title.textContent = photo.name || photo.folderName;
         const count = document.createElement("p");
         count.className = "drive-gallery-count";
-
-        function showImage() {
-          const current = images[activeIndex];
-          image.src = current.thumbnailUrl || current.imageUrl || "";
-          image.alt = current.name
-            ? folder.name + " — " + current.name
-            : folder.name + " community service photo";
-          image.title = current.name
-            ? current.name + " — double-click to enlarge this photo"
-          : "Click to enlarge this photo";
-          count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
-          previous.disabled = images.length < 2;
-          next.disabled = images.length < 2;
-        }
-
-        previous.addEventListener("click", (event) => {
-          event.stopPropagation();
-          activeIndex = (activeIndex - 1 + images.length) % images.length;
-          showImage();
-        });
-
-        next.addEventListener("click", (event) => {
-          event.stopPropagation();
-          activeIndex = (activeIndex + 1) % images.length;
-          showImage();
-        });
-
-        image.addEventListener("click", (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          openSocialPhotoViewer(folder.name, images, activeIndex);
-        });
-
-        stage.append(image, previous, next);
+        count.textContent = (index + 1) + " / " + allImages.length + " photos";
         info.append(title, count);
         card.append(stage, info);
         gallery.appendChild(card);
-
-        showImage();
       });
 
       if (!gallery.children.length) {
@@ -3566,10 +3544,8 @@
     }
 
     function slideSocialGallery(direction) {
-      const firstCard = socialActivityGallery?.querySelector(".drive-gallery-card");
-      if (!socialActivityGallery || !firstCard) return;
-      const gap = Number.parseFloat(getComputedStyle(socialActivityGallery).columnGap) || 0;
-      socialActivityGallery.scrollBy({ left: direction * (firstCard.getBoundingClientRect().width + gap), behavior: "smooth" });
+      if (!socialActivityGallery) return;
+      socialActivityGallery.scrollBy({ left: direction * socialActivityGallery.clientWidth, behavior: "smooth" });
     }
 
     socialActivityPrevious?.addEventListener("click", () => slideSocialGallery(-1));
