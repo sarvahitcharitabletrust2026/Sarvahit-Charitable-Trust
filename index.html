@@ -1495,7 +1495,7 @@
       border: 0;
       background: #eef1ee;
       overflow: hidden;
-      cursor: zoom-in;
+      cursor: default;
       text-align: left;
     }
 
@@ -1517,48 +1517,6 @@
 
     .drive-gallery-stage:hover .drive-gallery-image {
       transform: scale(1.015);
-    }
-
-    .drive-gallery-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 38px;
-      height: 38px;
-      padding: 0;
-      border: 0;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.96);
-      color: #173d2c;
-      font-size: 29px;
-      font-weight: 400;
-      line-height: 1;
-      cursor: pointer;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
-      z-index: 3;
-    }
-
-    .drive-gallery-arrow.prev {
-      left: 8px;
-    }
-
-    .drive-gallery-arrow.next {
-      right: 8px;
-    }
-
-    .drive-gallery-arrow:hover,
-    .drive-gallery-arrow:focus-visible {
-      background: #fff;
-      outline: 2px solid var(--gold);
-      outline-offset: 2px;
-    }
-
-    .drive-gallery-arrow:disabled {
-      opacity: 0.38;
-      cursor: default;
-      outline: none;
     }
 
     .drive-gallery-page-arrow {
@@ -1831,17 +1789,30 @@
     }
 
     .blog-gallery {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      min-width: 0;
+      display: flex;
       gap: 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+    }
+
+    .blog-gallery::-webkit-scrollbar {
+      display: none;
     }
 
     .blog-item {
+      flex: 0 0 calc((100% - 28px) / 3);
+      min-width: 0;
       position: relative;
       min-height: 260px;
       overflow: hidden;
       border-radius: 8px;
       background: #14231c;
+      scroll-snap-align: start;
     }
 
     .blog-item img {
@@ -1880,6 +1851,24 @@
       background: #e62117;
       color: #fff;
       font-size: 17px;
+    }
+
+    .youtube-gallery-message {
+      flex: 0 0 100%;
+      min-height: 160px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .youtube-gallery-message a {
+      color: var(--green-dark);
+      font-weight: 700;
+      text-decoration: underline;
     }
 
     .gallery-modal-window {
@@ -2011,8 +2000,8 @@
         grid-template-columns: 1fr 1fr;
       }
 
-      .blog-gallery {
-        grid-template-columns: 1fr 1fr;
+      .blog-item {
+        flex-basis: calc((100% - 14px) / 2);
       }
 
       .gallery figure:first-child {
@@ -2032,6 +2021,23 @@
       .drive-gallery-carousel {
         grid-template-columns: 1fr 1fr;
         gap: 12px;
+      }
+
+      .youtube-gallery-carousel .blog-gallery {
+        grid-column: 1 / -1;
+        grid-row: 1;
+      }
+
+      .youtube-gallery-carousel #youtube-prev {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: end;
+      }
+
+      .youtube-gallery-carousel #youtube-next {
+        grid-column: 2;
+        grid-row: 2;
+        justify-self: start;
       }
 
       .drive-gallery-carousel.drive-gallery-embedded {
@@ -2060,20 +2066,6 @@
       .drive-gallery-page-next {
         grid-column: 2;
         justify-self: start;
-      }
-
-      .drive-gallery-arrow {
-        width: 34px;
-        height: 34px;
-        font-size: 25px;
-      }
-
-      .drive-gallery-arrow.prev {
-        left: 6px;
-      }
-
-      .drive-gallery-arrow.next {
-        right: 6px;
       }
 
       body {
@@ -2215,8 +2207,8 @@
         height: 128px;
       }
 
-      .blog-gallery {
-        grid-template-columns: 1fr;
+      .blog-item {
+        flex-basis: 100%;
       }
     }
   </style>
@@ -2474,19 +2466,12 @@
           <h2>Sarvahit Trust Blog and Video Updates</h2>
           <p>Watch our social work, donation activities, community programs, and latest trust updates on YouTube.</p>
         </div>
-        <div class="blog-gallery">
-          <a class="blog-item" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener">
-            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=900&q=82" alt="Sarvahit Trust food distribution video" />
-            <span class="blog-overlay"><span class="youtube-symbol">&#9654;</span>Food Distribution Updates</span>
-          </a>
-          <a class="blog-item" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener">
-            <img src="https://images.unsplash.com/photo-1497486751825-1233686d5d80?auto=format&fit=crop&w=900&q=82" alt="Sarvahit Trust education support video" />
-            <span class="blog-overlay"><span class="youtube-symbol">&#9654;</span>Education Support Videos</span>
-          </a>
-          <a class="blog-item" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener">
-            <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=900&q=82" alt="Sarvahit Trust community work video" />
-            <span class="blog-overlay"><span class="youtube-symbol">&#9654;</span>Community Program Videos</span>
-          </a>
+        <div class="drive-gallery-carousel youtube-gallery-carousel" aria-label="Sarvahit Trust YouTube videos">
+          <button class="drive-gallery-page-arrow" id="youtube-prev" type="button" aria-label="Previous videos" disabled>‹</button>
+          <div class="blog-gallery" id="youtube-gallery" aria-live="polite">
+            <p class="youtube-gallery-message">Loading latest YouTube videos...</p>
+          </div>
+          <button class="drive-gallery-page-arrow" id="youtube-next" type="button" aria-label="Next videos" disabled>›</button>
         </div>
       </div>
     </section>
@@ -2604,7 +2589,7 @@
               </label>
               <label>
                 Donation Amount
-                <input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount required />
+                <input name="amount" type="number" inputmode="numeric" min="100" step="1" data-integer-amount required />
               </label>
               <label>
                 Donation Purpose
@@ -2812,8 +2797,8 @@
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbz2VgwCwQ7SGC1OGzhPu46yFyjnirqqMrT6m6zmnTsjyAd1uFoZVX9PpMCXx_XRxaOS/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwaOgZ1uFQTjvik7WaOybAMdhNUqp0awv2bCP5zkvr4F5yx5-zLZqY28MPH3CXcG3O_/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwKeXj_0emcCdoNLmSFZXqQQ6R0jxex091OqGpwTliNBvtuqzGuZjZU_8BDrIR-1hx5qQ/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyz20dnwm8_y-L0us-gfITHTKrLrw35UwW6lcjgEnCbeOB0Cw4auH28YpzaSyyjYvM9/exec";
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -3313,8 +3298,9 @@
         if (!socialPhotoViewerState) return;
         const { images } = socialPhotoViewerState;
         if (!images.length) return;
-        socialPhotoViewerState.activeIndex =
-          (socialPhotoViewerState.activeIndex + direction + images.length) % images.length;
+        const nextIndex = socialPhotoViewerState.activeIndex + direction;
+        if (nextIndex < 0 || nextIndex >= images.length) return;
+        socialPhotoViewerState.activeIndex = nextIndex;
         showViewerPhoto();
       }
 
@@ -3337,8 +3323,8 @@
           : folderName + " community service photo";
         title.textContent = folderName;
         count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
-        previous.disabled = images.length < 2;
-        next.disabled = images.length < 2;
+        previous.disabled = activeIndex <= 0;
+        next.disabled = activeIndex >= images.length - 1;
       }
 
       close.addEventListener("click", () => dialog.close());
@@ -3405,43 +3391,166 @@
       }
     }
 
+    const youtubeGallery = document.getElementById("youtube-gallery");
+    const youtubePrevious = document.getElementById("youtube-prev");
+    const youtubeNext = document.getElementById("youtube-next");
+    const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/channel/UCArUc8vHzOs3uQyhDwbl5eA/videos";
+
+    function updateYoutubeNavigation() {
+      if (!youtubeGallery || !youtubePrevious || !youtubeNext) return;
+      const maxScroll = youtubeGallery.scrollWidth - youtubeGallery.clientWidth;
+      youtubePrevious.disabled = maxScroll <= 2 || youtubeGallery.scrollLeft <= 2;
+      youtubeNext.disabled = maxScroll <= 2 || youtubeGallery.scrollLeft >= maxScroll - 2;
+    }
+
+    function slideYoutubeGallery(direction) {
+      if (!youtubeGallery) return;
+      youtubeGallery.scrollBy({ left: direction * youtubeGallery.clientWidth, behavior: "smooth" });
+    }
+
+    function showYoutubeGalleryFallback(message) {
+      if (!youtubeGallery) return;
+      const notice = document.createElement("p");
+      notice.className = "youtube-gallery-message";
+      notice.append(document.createTextNode(message + " "));
+      const link = document.createElement("a");
+      link.href = YOUTUBE_CHANNEL_URL;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "Open the YouTube channel";
+      notice.appendChild(link);
+      youtubeGallery.replaceChildren(notice);
+      updateYoutubeNavigation();
+    }
+
+    function renderYoutubeGallery(payload) {
+      const videos = Array.isArray(payload?.videos) ? payload.videos : [];
+      if (!videos.length) {
+        showYoutubeGalleryFallback("No public videos were found yet.");
+        return;
+      }
+
+      youtubeGallery.replaceChildren();
+      videos.forEach((video) => {
+        if (!video.id || !video.url) return;
+        const card = document.createElement("a");
+        card.className = "blog-item";
+        card.href = video.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+        card.setAttribute("aria-label", "Watch " + (video.title || "Sarvahit Trust video") + " on YouTube");
+
+        const thumbnail = document.createElement("img");
+        thumbnail.src = video.thumbnailUrl || ("https://i.ytimg.com/vi/" + encodeURIComponent(video.id) + "/hqdefault.jpg");
+        thumbnail.alt = video.title || "Sarvahit Trust video";
+        thumbnail.loading = "lazy";
+
+        const overlay = document.createElement("span");
+        overlay.className = "blog-overlay";
+        const play = document.createElement("span");
+        play.className = "youtube-symbol";
+        play.setAttribute("aria-hidden", "true");
+        play.textContent = "▶";
+        const title = document.createElement("span");
+        title.textContent = video.title || "Sarvahit Trust video";
+        overlay.append(play, title);
+        card.append(thumbnail, overlay);
+        youtubeGallery.appendChild(card);
+      });
+
+      if (!youtubeGallery.children.length) {
+        showYoutubeGalleryFallback("No public videos were found yet.");
+        return;
+      }
+      updateYoutubeNavigation();
+    }
+
+    function loadYoutubeVideos() {
+      if (!youtubeGallery || !GOOGLE_DRIVE_GALLERY_API_URL) return;
+      const requestId = crypto.randomUUID();
+      const callbackName = "__sarvahitVideos_" + requestId.replace(/-/g, "");
+      const script = document.createElement("script");
+      let finished = false;
+      const cleanup = () => {
+        clearTimeout(timer);
+        script.remove();
+        delete window[callbackName];
+      };
+      window[callbackName] = (payload) => {
+        if (finished || payload?.channel !== "sarvahit-youtube-videos" || payload?.requestId !== requestId) return;
+        finished = true;
+        cleanup();
+        if (payload.error) showYoutubeGalleryFallback("YouTube videos could not be loaded right now.");
+        else renderYoutubeGallery(payload);
+      };
+      const timer = window.setTimeout(() => {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        showYoutubeGalleryFallback("YouTube videos could not be loaded right now.");
+      }, 20000);
+      const feedUrl = new URL(GOOGLE_DRIVE_GALLERY_API_URL);
+      feedUrl.searchParams.set("feed", "videos");
+      feedUrl.searchParams.set("galleryRequestId", requestId);
+      feedUrl.searchParams.set("callback", callbackName);
+      script.src = feedUrl.toString();
+      script.async = true;
+      script.onerror = () => {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        showYoutubeGalleryFallback("YouTube videos could not be loaded right now.");
+      };
+      document.head.appendChild(script);
+    }
+
+    youtubePrevious?.addEventListener("click", () => slideYoutubeGallery(-1));
+    youtubeNext?.addEventListener("click", () => slideYoutubeGallery(1));
+    youtubeGallery?.addEventListener("scroll", updateYoutubeNavigation, { passive: true });
+    window.addEventListener("resize", updateYoutubeNavigation);
+
     function loadSocialActivityGallery() {
       const gallery = document.getElementById("social-activity-gallery");
       if (!gallery) return;
 
       if (GOOGLE_DRIVE_GALLERY_API_URL) {
-        const frame = document.createElement("iframe");
-        frame.className = "drive-gallery-frame";
-        frame.title = "Sarvahit Trust community service photos";
-        frame.style.display = "none";
-        frame.setAttribute("aria-hidden", "true");
-        frame.referrerPolicy = "no-referrer";
         const requestId = crypto.randomUUID();
         let finished = false;
-        const cleanup = () => { window.removeEventListener("message", onMessage); clearTimeout(timer); frame.remove(); };
-        const onMessage = (event) => {
-          const trustedOrigin = event.origin === "https://script.google.com"
-            || event.origin === "https://script.googleusercontent.com"
-            || event.origin.endsWith(".script.googleusercontent.com");
-          if (!trustedOrigin || event.data?.channel !== "sarvahit-community-gallery" || event.data?.requestId !== requestId) return;
+        const callbackName = "__sarvahitGallery_" + requestId.replace(/-/g, "");
+        const script = document.createElement("script");
+        const cleanup = () => {
+          clearTimeout(timer);
+          script.remove();
+          delete window[callbackName];
+        };
+        window[callbackName] = (payload) => {
+          if (finished || payload?.channel !== "sarvahit-community-gallery" || payload?.requestId !== requestId) return;
           finished = true;
           cleanup();
-          if (event.data.error) {
+          if (payload.error) {
             showSocialGalleryFallback(gallery);
             return;
           }
-          renderSocialActivityGallery(gallery, event.data);
+          renderSocialActivityGallery(gallery, payload);
         };
         const timer = window.setTimeout(() => {
           if (finished) return;
+          finished = true;
           cleanup();
           showSocialGalleryFallback(gallery);
-        }, 25000);
-        window.addEventListener("message", onMessage);
+        }, 20000);
         const galleryUrl = new URL(GOOGLE_DRIVE_GALLERY_API_URL);
         galleryUrl.searchParams.set("galleryRequestId", requestId);
-        frame.src = galleryUrl.toString();
-        document.body.appendChild(frame);
+        galleryUrl.searchParams.set("callback", callbackName);
+        script.src = galleryUrl.toString();
+        script.async = true;
+        script.onerror = () => {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          showSocialGalleryFallback(gallery);
+        };
+        document.head.appendChild(script);
         return;
       }
 
@@ -3482,39 +3591,51 @@
 
       gallery.replaceChildren();
 
-      const allImages = folders.flatMap((folder) => (Array.isArray(folder.images) ? folder.images : [])
-        .map((image) => ({ ...image, folderName: folder.name || "Community Service Programs" })));
-      allImages.forEach((photo, index) => {
+      folders.forEach((folder, index) => {
+        const folderName = folder.name || "Community Service Programs";
+        const folderImages = Array.isArray(folder.images) ? folder.images : [];
+        if (!folderImages.length) return;
+        let activeIndex = 0;
+        const currentPhoto = () => folderImages[activeIndex];
         const card = document.createElement("article");
         card.className = "drive-gallery-card";
-        card.setAttribute("aria-label", photo.name || (photo.folderName + " photo " + (index + 1)));
+        card.setAttribute("aria-label", folderName + " photo folder");
 
-        const stage = document.createElement("button");
-        stage.type = "button";
+        const stage = document.createElement("div");
         stage.className = "drive-gallery-stage";
-        stage.setAttribute("aria-label", "Open photo " + (photo.name || (index + 1)) + " full size");
+        stage.setAttribute("role", "button");
+        stage.tabIndex = 0;
+        stage.setAttribute("aria-label", "Open " + folderName + " photos full size");
 
         const image = document.createElement("img");
         image.className = "drive-gallery-image";
         image.loading = index < 3 ? "eager" : "lazy";
-        image.src = photo.thumbnailUrl || photo.imageUrl || "";
-        image.alt = photo.name || (photo.folderName + " community service photo");
         image.title = "Click to view full size";
         image.onerror = () => {
-          image.alt = "Photo temporarily unavailable: " + (photo.name || "community service photo");
+          image.alt = "Photo temporarily unavailable in " + folderName;
           image.classList.add("is-unavailable");
         };
-        stage.addEventListener("click", () => openSocialPhotoViewer(photo.folderName, allImages, index));
+
+        const photo = currentPhoto();
+        image.src = photo.thumbnailUrl || photo.imageUrl || "";
+        image.alt = photo.name || (folderName + " community service photo");
+        stage.setAttribute("aria-label", "Open " + folderName + " photos full size");
+        stage.addEventListener("click", () => openSocialPhotoViewer(folderName, folderImages, activeIndex));
+        stage.addEventListener("keydown", (event) => {
+          if (event.target !== stage || (event.key !== "Enter" && event.key !== " ")) return;
+          event.preventDefault();
+          openSocialPhotoViewer(folderName, folderImages, activeIndex);
+        });
         stage.appendChild(image);
 
         const info = document.createElement("div");
         info.className = "drive-gallery-info";
         const title = document.createElement("h3");
         title.className = "drive-gallery-title";
-        title.textContent = photo.name || photo.folderName;
+        title.textContent = folderName;
         const count = document.createElement("p");
         count.className = "drive-gallery-count";
-        count.textContent = (index + 1) + " / " + allImages.length + " photos";
+        count.textContent = folderImages.length + (folderImages.length === 1 ? " photo" : " photos");
         info.append(title, count);
         card.append(stage, info);
         gallery.appendChild(card);
@@ -3555,6 +3676,7 @@
     window.addEventListener("resize", updateSocialActivityNavigation);
 
     loadSocialActivityGallery();
+    loadYoutubeVideos();
     loadPublicFinance();
     window.setInterval(loadPublicFinance, 20000);
     window.setInterval(() => {

@@ -4,6 +4,8 @@ const SUPABASE_PROJECT_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
 const SOCIAL_ACTIVITY_FOLDER_ID = "1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv";
 const G80G_CERTIFICATE_FOLDER_ID = "1co07taPYW8aB7xsWvWwwdj6awXly99l3";
+const WHATSAPP_CONFIGURED_PHONE_NUMBER_ID = "1476938778837574";
+const WHATSAPP_CONFIGURED_SENDER_PHONE = "918459860170";
 const DRIVE_TIME_ZONE = "Asia/Kolkata";
 
 function doGet() {
@@ -120,28 +122,54 @@ function saveAndSend80GCertificate_(data) {
   if (bytes.length > 8 * 1024 * 1024) throw new Error("The certificate must be 8 MB or smaller.");
   const mimeType = String(data.mimeType || "application/pdf");
   if (mimeType !== "application/pdf") throw new Error("Upload the 80G certificate as a PDF.");
-  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/donation_records?id=eq." + encodeURIComponent(data.donationId) + "&select=id,donor_name,email,phone,amount,purpose,certificate_id,certificate_delivery,payment_status,created_at", {
+  const isLedgerDonation = data.sourceType === "ledger";
+  const table = isLedgerDonation ? "trust_financial_entries" : "donation_records";
+  const fields = isLedgerDonation
+    ? "id,entry_type,donor_name,donor_email,donor_phone,amount,category,workflow_status,entry_date,created_at"
+    : "id,donor_name,pan_card_number,email,phone,amount,purpose,certificate_id,certificate_delivery,certificate_delivery_status,payment_status,created_at";
+  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/" + table + "?id=eq." + encodeURIComponent(data.donationId) + "&select=" + fields, {
     method: "get", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + data.accessToken }, muteHttpExceptions: true
   });
   if (response.getResponseCode() !== 200) throw new Error("Could not load donation: " + response.getContentText());
   const donation = (JSON.parse(response.getContentText() || "[]"))[0];
-  if (!donation || donation.payment_status !== "published" || Number(donation.amount) <= 4999) throw new Error("80G certificates are available only for published donations above INR 4,999.");
+  if (isLedgerDonation) {
+    if (!donation || donation.entry_type !== "donation" || donation.workflow_status !== "published" || Number(donation.amount) < 4999) {
+      throw new Error("80G certificates are available only for published ledger donations of INR 4,999 or more.");
+    }
+    donation.email = String(donation.donor_email || "").trim();
+    donation.phone = donation.donor_phone || "";
+    donation.purpose = donation.category || "Donation";
+    donation.pan_card_number = "";
+    donation.certificate_id = "Manual-" + donation.id;
+    if (!donation.email) throw new Error("Add a donor email address before sending the 80G certificate.");
+  } else {
+    if (!donation || donation.payment_status !== "published" || Number(donation.amount) < 4999) throw new Error("80G certificates are available only for published donations of INR 4,999 or more.");
+    const appreciationChannels = Array.isArray(donation.certificate_delivery) ? donation.certificate_delivery : [];
+    const appreciationStatus = donation.certificate_delivery_status || {};
+    if (!appreciationChannels.length || !appreciationChannels.every((channel) => ["sent", "already sent"].includes(String(appreciationStatus[channel] || "").toLowerCase()))) {
+      throw new Error("Send the Appreciation Certificate through the donor's selected channels before sending the 80G certificate.");
+    }
+    if (!appreciationChannels.some((channel) => channel === "email" || channel === "whatsapp")) throw new Error("The donor did not select an email or WhatsApp delivery option.");
+  }
+  const channels = isLedgerDonation ? ["email"] : donation.certificate_delivery;
   const now = new Date();
   const year = Utilities.formatDate(now, DRIVE_TIME_ZONE, "yyyy");
   const month = Utilities.formatDate(now, DRIVE_TIME_ZONE, "MMMM");
   const day = Utilities.formatDate(now, DRIVE_TIME_ZONE, "dd");
   const parent = DriveApp.getFolderById(G80G_CERTIFICATE_FOLDER_ID);
   const dateFolder = getOrCreateFolder_(getOrCreateFolder_(getOrCreateFolder_(parent, year), month), day);
-  const safeName = "Sarvahit-80G-" + sanitizeFileNamePart_(donation.certificate_id || donation.id) + " - " + sanitizeFileNamePart_(donation.donor_name || "Donor") + "." + (mimeType === "application/pdf" ? "pdf" : mimeType === "image/png" ? "png" : "jpg");
+  const donorFolderName = sanitizeFileNamePart_(donation.donor_name || "Donor") + " (" + sanitizeFileNamePart_(donation.pan_card_number || "PAN not provided") + ")";
+  const donorFolder = getOrCreateFolder_(dateFolder, donorFolderName);
+  const requestedFileName = sanitizeFileNamePart_(data.fileName || "80G-Certificate.pdf");
+  const safeName = requestedFileName.toLowerCase().endsWith(".pdf") ? requestedFileName : requestedFileName + ".pdf";
   const blob = Utilities.newBlob(bytes, mimeType, safeName);
-  const file = dateFolder.createFile(blob);
-  const channels = Array.isArray(data.channels) ? data.channels : [];
+  const file = donorFolder.createFile(blob);
   const delivery = {};
   if (channels.includes("email")) {
     try {
       const recipient = String(donation.email || "").trim();
       if (!recipient) throw new Error("Donor email address is missing.");
-      GmailApp.sendEmail(recipient, "Your 80G certificate from Sarvahit Charitable Trust", "Thank you for supporting Sarvahit Charitable Trust. Your 80G certificate is attached.", { name: "Sarvahit Charitable Trust", attachments: [blob.copyBlob()] });
+      MailApp.sendEmail(recipient, "Your 80G certificate from Sarvahit Charitable Trust", "Thank you for supporting Sarvahit Charitable Trust. Your 80G certificate is attached.", { name: "Sarvahit Charitable Trust", attachments: [blob.copyBlob()] });
       delivery.email = "sent";
     } catch (error) { delivery.email = "failed: " + String(error.message || error); }
   }
@@ -163,6 +191,9 @@ function uploadResponse_(result, formTransport, requestId) {
 
 function authorizeExternalRequest() {
   UrlFetchApp.fetch("https://www.google.com");
+}
+function authorizeCertificateEmail() {
+  return MailApp.getRemainingDailyQuota();
 }
 function verifyFinanceAdmin_(accessToken) {
   if (!accessToken) throw new Error("Please sign in to upload an expense receipt.");
@@ -188,7 +219,7 @@ function verifyFinanceAdmin_(accessToken) {
 
 function sendDonationCertificate_(donationId, accessToken) {
   if (!donationId) throw new Error("Donation record ID is missing.");
-  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/donation_records?id=eq." + encodeURIComponent(donationId) + "&select=id,donor_name,email,phone,amount,purpose,certificate_id,certificate_delivery,payment_status,created_at", {
+  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/donation_records?id=eq." + encodeURIComponent(donationId) + "&select=id,donor_name,pan_card_number,email,phone,amount,purpose,certificate_id,certificate_delivery,payment_status,created_at", {
     method: "get",
     headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + accessToken },
     muteHttpExceptions: true
@@ -203,7 +234,19 @@ function sendDonationCertificate_(donationId, accessToken) {
   const certificateId = String(donation.certificate_id || "");
   const safeName = sanitizeFileNamePart_(donation.donor_name || "Donor");
   const fileName = "Sarvahit-Certificate-" + sanitizeFileNamePart_(certificateId || donation.id) + ".pdf";
-  const html = "<!doctype html><html><head><meta charset=\"utf-8\"><style>body{font-family:Georgia,serif;color:#154c3b;text-align:center;padding:54px;border:10px double #c99b42}h1{font-size:34px;margin:35px 0;color:#154c3b}p{font-size:17px;color:#333}.name{font-size:30px;font-weight:bold;margin:28px 0}.meta{margin-top:30px;font:14px Arial;color:#46534b}</style></head><body><h2>SARVAHIT CHARITABLE TRUST</h2><h1>Certificate of Appreciation</h1><p>This certificate is presented with gratitude to</p><div class=\"name\">" + escapeHtml_(donation.donor_name || "Donor") + "</div><p>for supporting " + escapeHtml_(donation.purpose || "the Trust") + " with a donation of INR " + Number(donation.amount || 0).toLocaleString("en-IN") + ".</p><div class=\"meta\">Certificate ID: " + escapeHtml_(certificateId) + "<br>" + Utilities.formatDate(new Date(donation.created_at || new Date()), DRIVE_TIME_ZONE, "dd MMMM yyyy") + "</div></body></html>";
+  const logoBlob = DriveApp.getFileById("1I_lCkSE4CkeuXxuXMg8KVJZI_jCKUKDu").getBlob();
+  const logoData = "data:" + (logoBlob.getContentType() || "image/png") + ";base64," + Utilities.base64Encode(logoBlob.getBytes());
+  const certificateDate = Utilities.formatDate(new Date(donation.created_at || new Date()), DRIVE_TIME_ZONE, "dd MMMM yyyy");
+  const donorNameText = String(donation.donor_name || "Donor");
+  const donorName = escapeHtml_(donorNameText);
+  const donorNameFontSize = Math.max(16, Math.min(28, Math.floor(28 * 42 / Math.max(42, donorNameText.length))));
+  const purpose = escapeHtml_(donation.purpose || "our charitable work");
+  const amount = Number(donation.amount || 0).toLocaleString("en-IN");
+  const pan = escapeHtml_(donation.pan_card_number || "Not provided");
+  const html = "<!doctype html><html><head><meta charset=\"utf-8\"><style>"
+    + "@page{size:A4 landscape;margin:0}*{box-sizing:border-box}html,body{width:297mm;height:210mm;margin:0;padding:0}body{position:relative;overflow:hidden;background:#fffaf4;color:#4b504c;font-family:Arial,sans-serif;text-align:center;page-break-after:avoid;page-break-inside:avoid}"
+    + ".frame{position:absolute;inset:10mm;border:2.2mm solid #1c5c37;pointer-events:none}.frame:after{content:'';position:absolute;inset:4mm;border:.8mm solid #c4912d}.watermark{position:absolute;width:130mm;height:130mm;object-fit:contain;left:50%;top:61mm;transform:translateX(-50%);opacity:.24;z-index:0}.logo{position:absolute;top:17mm;left:50%;transform:translateX(-50%);width:26mm;height:26mm;object-fit:contain}.trust-title{position:absolute;top:41mm;left:15mm;right:15mm;margin:0;color:#1c5c37;font:700 24pt Arial,sans-serif;letter-spacing:.5pt}.certificate-title{position:absolute;top:58mm;left:16mm;right:16mm;margin:0;color:#c4912d;font:700 29pt Arial,sans-serif;letter-spacing:.6pt}.presented{position:absolute;top:80mm;left:15mm;right:15mm;margin:0;font:14pt Arial,sans-serif}.donor-name{position:absolute;top:96mm;left:28mm;right:28mm;overflow:hidden;color:#1c5c37;font:italic 700 " + donorNameFontSize + "pt Georgia,serif;line-height:1.05;white-space:nowrap}.name-rule{position:absolute;top:112mm;left:72mm;right:72mm;border-top:.6mm solid #c4912d}.thanks,.amount,.purpose,.mission{position:absolute;left:15mm;right:15mm;margin:0;font-family:Arial,sans-serif}.thanks{top:121mm;font-size:13pt}.amount{top:133mm;font-size:13pt;font-weight:700}.purpose{top:144mm;font-size:13pt}.mission{top:156mm;font-size:12pt}.meta{position:absolute;top:170mm;left:30mm;right:30mm;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;gap:4mm;color:#46504a;font:10.5pt Arial,sans-serif;white-space:nowrap}.date{position:absolute;top:169mm;left:30mm;width:30%;text-align:left;color:#46504a;font:10.5pt Arial,sans-serif;white-space:nowrap}.pan{position:absolute;top:183mm;left:30mm;width:30%;text-align:left;color:#46504a;font:700 11pt Arial,sans-serif;white-space:nowrap}.email{position:absolute;top:183mm;left:50%;right:auto;transform:translateX(-50%);text-align:center;color:#1c5c37;font:11pt Arial,sans-serif;white-space:nowrap}"
+    + "</style></head><body><div class=\"frame\"></div><img class=\"watermark\" src=\"" + logoData + "\"><img class=\"logo\" src=\"" + logoData + "\"><h2 class=\"trust-title\">SARVAHIT CHARITABLE TRUST</h2><h1 class=\"certificate-title\">CERTIFICATE OF APPRECIATION</h1><p class=\"presented\">This certificate is proudly presented to</p><div class=\"donor-name\">" + donorName + "</div><div class=\"name-rule\"></div><p class=\"thanks\">With sincere gratitude for your generous support.</p><p class=\"amount\">Donation Amount: INR " + amount + "</p><p class=\"purpose\">Towards " + purpose + ".</p><p class=\"mission\">Your support strengthens our mission to serve people and communities in need.</p><div class=\"meta\"><span></span><span>Certificate ID: " + escapeHtml_(certificateId) + "</span><span>Authorized by Sarvahit Charitable Trust</span></div><div class=\"date\">Date: " + escapeHtml_(certificateDate) + "</div><div class=\"pan\">PAN: " + pan + "</div><div class=\"email\">sarvahitcharitabletrust2026@gmail.com</div></body></html>";
   const pdf = HtmlService.createHtmlOutput(html).getBlob().getAs(MimeType.PDF).setName(fileName);
   const properties = PropertiesService.getScriptProperties();
   const result = {};
@@ -215,11 +258,7 @@ function sendDonationCertificate_(donationId, accessToken) {
       try {
         const recipient = String(donation.email || "").trim();
         if (!recipient) throw new Error("Donor email address is missing.");
-        const trustEmail = "sarvahitcharitabletrust2026@gmail.com";
-        const aliases = GmailApp.getAliases().map(function (alias) { return alias.toLowerCase(); });
-        const options = { name: "Sarvahit Charitable Trust", attachments: [pdf.copyBlob()] };
-        if (aliases.indexOf(trustEmail) !== -1) options.from = trustEmail;
-        GmailApp.sendEmail(recipient, "Your Sarvahit Charitable Trust certificate", "Thank you for supporting Sarvahit Charitable Trust. Your certificate is attached.", options);
+        MailApp.sendEmail(recipient, "Your Sarvahit Charitable Trust certificate", "Thank you for supporting Sarvahit Charitable Trust. Your certificate is attached.", { name: "Sarvahit Charitable Trust", attachments: [pdf.copyBlob()] });
         properties.setProperty(key, new Date().toISOString());
         result.email = "sent";
       } catch (error) { result.email = "failed: " + String(error && error.message ? error.message : error); }
@@ -243,12 +282,12 @@ function sendDonationCertificate_(donationId, accessToken) {
 function sendWhatsAppCertificate_(donation, pdf, fileName) {
   const properties = PropertiesService.getScriptProperties();
   const token = properties.getProperty("WHATSAPP_ACCESS_TOKEN");
-  const phoneNumberId = properties.getProperty("WHATSAPP_PHONE_NUMBER_ID");
+  const phoneNumberId = WHATSAPP_CONFIGURED_PHONE_NUMBER_ID;
   const templateName = properties.getProperty("WHATSAPP_CERTIFICATE_TEMPLATE");
-  const senderPhone = String(properties.getProperty("WHATSAPP_SENDER_PHONE") || "").replace(/\D/g, "");
+  const senderPhone = WHATSAPP_CONFIGURED_SENDER_PHONE;
   const apiVersion = properties.getProperty("WHATSAPP_GRAPH_API_VERSION") || "v26.0";
   const language = properties.getProperty("WHATSAPP_TEMPLATE_LANGUAGE") || "en";
-  if (!token || !phoneNumberId || !templateName || senderPhone !== "919665335057") throw new Error("Configure the WhatsApp Cloud API token, phone number ID, approved certificate template, and Trust sender number 919665335057 in Apps Script project properties.");
+  if (!token || !templateName || senderPhone !== WHATSAPP_CONFIGURED_SENDER_PHONE) throw new Error("Configure the WhatsApp Cloud API access token and approved certificate template in Apps Script project properties.");
   let recipient = String(donation.phone || "").replace(/\D/g, "");
   if (recipient.length === 10) recipient = "91" + recipient;
   else if (recipient.length === 11 && recipient.charAt(0) === "0") recipient = "91" + recipient.slice(1);

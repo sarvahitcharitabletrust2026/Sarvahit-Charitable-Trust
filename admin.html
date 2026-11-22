@@ -293,6 +293,13 @@
     .finance-dialog { width: min(680px, calc(100% - 32px)); }
     .finance-dialog .form-grid { gap: 16px; }
     .finance-dialog .full { grid-column: 1 / -1; }
+    .certificate-donor-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; margin: 0 0 16px; padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: #f7f8f6; }
+    .certificate-donor-details div { min-width: 0; }
+    .certificate-donor-details dt { color: var(--muted); font-size: 0.82rem; font-weight: 700; }
+    .certificate-donor-details dd { margin: 2px 0 0; overflow-wrap: anywhere; font-weight: 700; }
+    .button-spinner { display: inline-block; width: 16px; height: 16px; margin-right: 8px; vertical-align: -3px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: button-spin 0.7s linear infinite; }
+    .button-spinner[hidden] { display: none; }
+    @keyframes button-spin { to { transform: rotate(360deg); } }
     .expense-report-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
     .expense-report-heading h2 { margin: 0; }
     @media (max-width: 640px) { .expense-report-heading { align-items: flex-start; flex-direction: column; } }
@@ -427,6 +434,13 @@
       background: #eef4ef;
       color: var(--green-dark);
     }
+    .donation-report-table thead th:nth-child(4),
+    .donation-report-table thead th:nth-child(9),
+    .donation-report-table thead th:nth-child(13),
+    .donation-report-table thead th:nth-child(14),
+    .donation-report-table thead th:nth-child(15) { text-align: center; }
+    .donation-report-table th:nth-child(13) { width: 138px; min-width: 138px; max-width: 138px; padding: 5px 4px; white-space: normal; font-size: 11.5px; line-height: 1.05; }
+    .donation-report-table td:nth-child(13) { width: 138px; min-width: 138px; max-width: 138px; text-align: center; }
     .donation-table th:nth-child(12) { width: 160px; min-width: 160px; white-space: nowrap; }
     .donation-table td:nth-child(12) { width: 220px; min-width: 180px; max-width: 220px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; vertical-align: middle; }
     .donation-certificate-cell { max-height: 70px; overflow-y: auto; overflow-x: hidden; padding-right: 4px; font-size: 13px; line-height: 1.35; scrollbar-width: thin; overscroll-behavior: contain; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
@@ -611,7 +625,7 @@
             <div class="report-stat">Published Donations<strong id="donation-record-count">0</strong></div>
           </div>
           <div class="table-wrap">
-            <table class="donation-table">
+            <table class="donation-table donation-report-table">
               <thead><tr><th>Date</th><th>Time</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Certificate</th><th>Appreciation Certificate</th><th>80G Certificate</th><th>Screenshot</th><th>Actions</th></tr></thead>
               <tbody id="donation-list"><tr><td colspan="16">Login to load donation data.</td></tr></tbody>
             </table>
@@ -638,9 +652,10 @@
       <div class="entry-dialog-header"><div><h2 id="cash-donation-title">Add Donation</h2><p>Record a donation received by the trust.</p></div><button class="entry-dialog-close" type="button" id="cash-donation-close" aria-label="Close form">&times;</button></div>
       <form id="cash-donation-form"><div class="form-grid">
         <label>Date<input name="entry_date" type="date" required /></label>
-        <label>Amount (INR)<input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount required /></label>
+        <label>Amount (INR)<input name="amount" type="number" inputmode="numeric" min="100" step="1" data-integer-amount required /></label>
         <label>Donor name<input name="donor_name" required autocomplete="name" placeholder="Letters only" /></label>
         <label>Mobile number<input name="donor_phone" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter a 10-digit mobile number." placeholder="10-digit mobile number" /></label>
+        <label>Email ID<input name="donor_email" type="email" autocomplete="email" placeholder="Required for donations of INR 4,999 or more" /></label>
         <label>Payment type<select name="payment_method"><option value="cash">Cash</option><option value="upi">UPI / Online</option><option value="rtgs">RTGS</option><option value="neft">NEFT</option><option value="bank_transfer">Bank transfer</option><option value="cheque">Cheque</option><option value="other">Other</option></select></label>
         <label class="full" id="cash-reference-row">Bank reference / transaction ID<input name="bank_reference" maxlength="160" placeholder="Cheque number, UPI transaction ID, or bank reference" /></label>
         <label>Purpose<input name="category" required placeholder="Letters only" /></label>
@@ -659,7 +674,9 @@
   </dialog>
     <dialog class="entry-dialog finance-dialog" id="80g-certificate-dialog" aria-labelledby="80g-certificate-title">
       <div class="entry-dialog-header"><div><h2 id="80g-certificate-title">Send 80G Certificate</h2><p id="80g-donor-name"></p></div><button class="entry-dialog-close" type="button" data-close-80g aria-label="Close certificate form">&times;</button></div>
-      <form id="80g-certificate-form"><label>Upload certificate (PDF)<input name="certificate" type="file" accept="application/pdf" required /></label><p id="80g-delivery-channels"></p><div class="form-grid"><button class="btn btn-primary" type="submit">Send</button><button class="btn btn-light" type="button" data-close-80g>Cancel</button></div></form><div class="message" id="80g-message" role="status"></div>
+      <dl class="certificate-donor-details"><div><dt>Donor name</dt><dd id="80g-donor-name-detail">—</dd></div><div><dt>PAN</dt><dd id="80g-donor-pan">—</dd></div><div><dt>Mobile number</dt><dd id="80g-donor-mobile">—</dd></div><div><dt>Donation amount</dt><dd id="80g-donation-amount">—</dd></div></dl>
+      <p id="80g-delivery-channels"></p>
+      <form id="80g-certificate-form"><label>Upload certificate (PDF)<input name="certificate" type="file" accept="application/pdf" required /></label><div class="form-grid"><button class="btn btn-primary" type="submit"><span class="button-spinner" hidden aria-hidden="true"></span><span class="button-label">Send</span></button><button class="btn btn-light" type="button" data-close-80g>Cancel</button></div></form><div class="message" id="80g-message" role="status" aria-live="polite"></div>
     </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -684,7 +701,7 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwaOgZ1uFQTjvik7WaOybAMdhNUqp0awv2bCP5zkvr4F5yx5-zLZqY28MPH3CXcG3O_/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyz20dnwm8_y-L0us-gfITHTKrLrw35UwW6lcjgEnCbeOB0Cw4auH28YpzaSyyjYvM9/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let financeEntries = [];
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -829,14 +846,27 @@
         } catch (error) { alert("Could not cancel donation: " + error.message); cancelButton.disabled = false; }
         return;
       }
-      const open80G = event.target.closest("[data-open-80g]");
+      const open80G = event.target.closest("[data-open-eighty-g]");
       if (open80G) {
-        active80GDonation = allDonations.find((item) => item.id === open80G.dataset.open80g);
+        active80GDonation = allDonations.find((item) => item.id === open80G.dataset.openEightyG);
         if (!active80GDonation) return;
         document.getElementById("80g-donor-name").textContent = (active80GDonation.donor_name || "Donor") + " · " + formatCurrency(active80GDonation.amount);
-        const channels = Array.isArray(active80GDonation.certificate_delivery) ? active80GDonation.certificate_delivery : [];
-        document.getElementById("80g-delivery-channels").textContent = "Delivery: " + (channels.length ? channels.join(" + ") : "No email or WhatsApp option selected by donor.");
-        document.getElementById("80g-message").textContent = "";
+        document.getElementById("80g-donor-name-detail").textContent = active80GDonation.donor_name || "—";
+        document.getElementById("80g-donor-pan").textContent = active80GDonation.pan_card_number || active80GDonation.panCardNumber || "Not provided";
+        document.getElementById("80g-donor-mobile").textContent = active80GDonation.phone || "Not provided";
+        document.getElementById("80g-donation-amount").textContent = formatCurrency(active80GDonation.amount);
+        const channels = active80GDonation.donation_source === "ledger"
+          ? (active80GDonation.email ? ["email"] : [])
+          : Array.isArray(active80GDonation.certificate_delivery) ? active80GDonation.certificate_delivery : [];
+        const channelTargets = channels.map((channel) => channel === "email"
+          ? "Email (" + (active80GDonation.email || "address unavailable") + ")"
+          : channel === "whatsapp"
+            ? "WhatsApp (" + (active80GDonation.phone || "number unavailable") + ")"
+            : channel).join(" + ");
+        document.getElementById("80g-delivery-channels").textContent = "Send to donor-selected channel(s): " + (channelTargets || "none selected");
+        const message = document.getElementById("80g-message");
+        message.textContent = "";
+        message.style.display = "none";
         document.getElementById("80g-certificate-form").reset();
         eightyGDialog.showModal();
       }
@@ -848,18 +878,62 @@
       const file = form.elements.certificate.files[0];
       const message = document.getElementById("80g-message");
       const submit = form.querySelector('[type="submit"]');
+      const submitLabel = submit.querySelector(".button-label");
+      const spinner = submit.querySelector(".button-spinner");
+      const closeControls = [...eightyGDialog.querySelectorAll("[data-close-80g]")];
       if (!active80GDonation || !file) return;
-      if (file.type !== "application/pdf" || file.size > 8 * 1024 * 1024) { message.textContent = "Choose a PDF certificate up to 8 MB."; return; }
-      submit.disabled = true; message.textContent = "Uploading certificate and sending to the selected channels…";
+      if (file.type !== "application/pdf" || file.size > 8 * 1024 * 1024) {
+        message.className = "message error";
+        message.style.display = "block";
+        message.textContent = "Choose a PDF certificate up to 8 MB.";
+        return;
+      }
+      submit.disabled = true;
+      submit.setAttribute("aria-busy", "true");
+      submitLabel.textContent = "Sending…";
+      spinner.hidden = false;
+      closeControls.forEach((button) => { button.disabled = true; });
+      message.className = "message";
+      message.style.display = "block";
+      message.textContent = "Uploading the 80G certificate and sending it to the selected channels…";
       try {
-        const result = await sendFinanceDriveUpload({ type: "80g_certificate", donationId: active80GDonation.id, fullName: active80GDonation.donor_name || "Donor", certificateId: active80GDonation.certificate_id || active80GDonation.id, fileName: file.name, mimeType: file.type, base64: await fileAsBase64(file), channels: active80GDonation.certificate_delivery || [], accessToken: adminAccessToken });
+        const result = await sendFinanceDriveUpload({ type: "80g_certificate", sourceType: active80GDonation.donation_source || "online", donationId: active80GDonation.id, fullName: active80GDonation.donor_name || "Donor", certificateId: active80GDonation.certificate_id || active80GDonation.id, fileName: file.name, mimeType: file.type, base64: await fileAsBase64(file), channels: active80GDonation.donation_source === "ledger" ? ["email"] : active80GDonation.certificate_delivery || [], accessToken: adminAccessToken });
         const deliveryFailures = Object.entries(result.delivery || {}).filter(([, state]) => String(state).startsWith("failed"));
-        const deliveryStatus = deliveryFailures.length ? "Pending" : "Send";
-        await supabaseRequest(`${SUPABASE_DONATION_TABLE}?id=eq.${encodeURIComponent(active80GDonation.id)}`, { method: "PATCH", body: JSON.stringify({ eighty_g_certificate_status: deliveryStatus, eighty_g_certificate_url: result.fileUrl }) });
-        message.textContent = deliveryFailures.length ? "Certificate saved to Drive, but delivery failed: " + deliveryFailures.map(([channel, state]) => channel + ": " + state).join("; ") : "80G certificate uploaded and sent. " + (result.fileUrl || "");
+        const deliveryStatus = deliveryFailures.length ? "Pending" : "Done";
+        const statusTable = active80GDonation.donation_source === "ledger" ? FINANCE_TABLE : SUPABASE_DONATION_TABLE;
+        await supabaseRequest(`${statusTable}?id=eq.${encodeURIComponent(active80GDonation.id)}`, { method: "PATCH", body: JSON.stringify({ eighty_g_certificate_status: deliveryStatus, eighty_g_certificate_url: result.fileUrl }) });
+        if (deliveryFailures.length) {
+          message.className = "message error";
+          message.textContent = "80G certificate for " + (active80GDonation.donor_name || "the donor") + " was saved to Drive, but delivery failed: " + deliveryFailures.map(([channel, state]) => channel + ": " + state).join("; ");
+        } else {
+          const donorName = active80GDonation.donor_name || "the donor";
+          message.className = "message";
+          message.textContent = "80G certificate successfully sent to " + donorName + ".";
+          form.reset();
+          document.getElementById("80g-donor-name").textContent = "";
+          document.getElementById("80g-donor-name-detail").textContent = "—";
+          document.getElementById("80g-donor-pan").textContent = "—";
+          document.getElementById("80g-donor-mobile").textContent = "—";
+          document.getElementById("80g-donation-amount").textContent = "—";
+          document.getElementById("80g-delivery-channels").textContent = "";
+          active80GDonation = null;
+          window.setTimeout(() => {
+            if (!eightyGDialog.open) return;
+            eightyGDialog.close();
+            message.style.display = "none";
+          }, 2600);
+        }
         await renderDonationReport(true);
-      } catch (error) { message.textContent = "Could not send the 80G certificate: " + error.message; }
-      finally { submit.disabled = false; }
+      } catch (error) {
+        message.className = "message error";
+        message.textContent = "Could not send the 80G certificate: " + error.message;
+      } finally {
+        submit.disabled = false;
+        submit.removeAttribute("aria-busy");
+        submitLabel.textContent = "Send";
+        spinner.hidden = true;
+        closeControls.forEach((button) => { button.disabled = false; });
+      }
     });
     async function uploadDriveProof(file, entry) {
       if (!GOOGLE_DRIVE_UPLOAD_URL) throw new Error("Google Drive upload has not been connected.");
@@ -971,7 +1045,10 @@
         supabaseRequest(`${SUPABASE_DONATION_TABLE}?select=*&order=created_at.desc`),
         supabaseRequest(`${FINANCE_TABLE}?select=*&entry_type=eq.donation&order=entry_date.desc,created_at.desc`)
       ]);
-      return [...ledger.map((entry) => ({ ...entry, created_at: entry.entry_date + "T12:00:00", recorded_at: entry.created_at, donor_name: entry.donor_name, phone: entry.donor_phone, purpose: entry.category, payment_status: entry.workflow_status, certificate_id: "Manual" })), ...submitted].sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt));
+      return [
+        ...ledger.map((entry) => ({ ...entry, donation_source: "ledger", created_at: entry.entry_date + "T12:00:00", recorded_at: entry.created_at, donor_name: entry.donor_name, email: entry.donor_email, phone: entry.donor_phone, purpose: entry.category, payment_status: entry.workflow_status, certificate_id: "Manual" })),
+        ...submitted.map((entry) => ({ ...entry, donation_source: "online" }))
+      ].sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt));
     }
 
     async function getScreenshotUrl(donation) {
@@ -1025,7 +1102,7 @@
         }
         const filtered = selectedDonations();
         const selectedYear = document.getElementById("donation-year").value;
-        const isPublished = (item) => (item.entry_type === "donation" ? item.workflow_status : item.payment_status) === "published";
+        const isPublished = (item) => (item.donation_source === "ledger" ? item.workflow_status : item.payment_status) === "published";
         const selectedTotal = filtered.filter(isPublished).reduce((sum, item) => sum + Number(item.amount || 0), 0);
         const yearRecords = selectedYear === "all"
           ? allDonations
@@ -1038,10 +1115,22 @@
         const rows = await Promise.all(filtered.map(async (donation) => {
           const date = new Date(donation.created_at || donation.createdAt);
           const screenshotUrl = await getScreenshotUrl(donation);
-          const isNewOnline = donation.entry_type !== "donation" && donation.payment_status === "submitted";
-          const appreciationStatus = donation.payment_status === "published" ? "Send" : "Pending";
-          const eightyGEligible = donation.entry_type !== "donation" && Number(donation.amount || 0) > 4999 && donation.payment_status === "published";
-          const eightyGStatus = donation.entry_type !== "donation" && Number(donation.amount || 0) > 4999 ? (donation.eighty_g_certificate_status || "Pending") : "—";
+          const isManualDonation = donation.donation_source === "ledger";
+          const isPublishedDonation = isManualDonation ? donation.workflow_status === "published" : donation.payment_status === "published";
+          const isNewOnline = !isManualDonation && donation.payment_status === "submitted";
+          const appreciationChannels = Array.isArray(donation.certificate_delivery) ? donation.certificate_delivery : [];
+          const appreciationDelivery = donation.certificate_delivery_status || {};
+          const appreciationSent = !isManualDonation && donation.payment_status === "published"
+            && appreciationChannels.length > 0
+            && appreciationChannels.every((channel) => ["sent", "already sent"].includes(String(appreciationDelivery[channel] || "").toLowerCase()));
+          const appreciationStatus = isManualDonation ? "Manual" : appreciationSent ? "Done" : "Pending";
+          const eightyGAmountEligible = Number(donation.amount || 0) >= 4999;
+          const eightyGEligible = eightyGAmountEligible && isPublishedDonation
+            && (isManualDonation ? Boolean(donation.email) : appreciationSent);
+          const saved80GStatus = String(donation.eighty_g_certificate_status || "");
+          const eightyGStatus = eightyGEligible
+            ? (["done", "send", "sent"].includes(saved80GStatus.toLowerCase()) ? "Done" : saved80GStatus || "Pending")
+            : "—";
           return `<tr class="${isNewOnline ? "donation-new-online" : ""}">
             <td>${escapeHtml(date.toLocaleDateString("en-IN"))}</td>
             <td>${escapeHtml((donation.recorded_at || donation.created_at) ? new Date(donation.recorded_at || donation.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—")}</td>
@@ -1053,11 +1142,11 @@
             <td>${escapeHtml(donation.purpose)}</td>
             <td>${escapeHtml(String(donation.payment_method || (donation.entry_type === "donation" ? "manual" : "online")).replaceAll("_", " ").toUpperCase())}</td>
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>
-            <td>${escapeHtml(donation.entry_type === "donation" ? (donation.workflow_status || "draft") : (donation.payment_status || "submitted"))}</td>
+            <td>${escapeHtml(isManualDonation ? (donation.workflow_status || "draft") : (donation.payment_status || "submitted"))}</td>
 
             <td><div class="donation-certificate-cell">${escapeHtml(donation.certificate_id || donation.certificateId)}${donation.entry_type !== "donation" && donation.certificate_delivery?.length ? `<small>Send via: ${escapeHtml(donation.certificate_delivery.join(" + "))}</small>` : ""}${donation.certificate_delivery_status ? `<small>Delivery: ${escapeHtml(Object.entries(donation.certificate_delivery_status).map(([channel, state]) => channel + " " + state).join("; "))}</small>` : ""}</div></td>
             <td>${escapeHtml(appreciationStatus)}${donation.appreciation_certificate_url ? `<br><a href="${escapeHtml(donation.appreciation_certificate_url)}" target="_blank" rel="noopener">View</a>` : ""}</td>
-            <td>${eightyGEligible ? `<button class="btn btn-light" type="button" data-open-80g="${escapeHtml(donation.id || "")}">${escapeHtml(eightyGStatus)}</button>${donation.eighty_g_certificate_url ? `<br><a href="${escapeHtml(donation.eighty_g_certificate_url)}" target="_blank" rel="noopener">View</a>` : ""}` : escapeHtml(eightyGStatus)}</td>
+            <td>${eightyGEligible ? `${eightyGStatus === "Done" ? (donation.eighty_g_certificate_url ? `<a href="${escapeHtml(donation.eighty_g_certificate_url)}" target="_blank" rel="noopener">Done</a>` : escapeHtml(eightyGStatus)) : `<button class="btn btn-light" type="button" data-open-eighty-g="${escapeHtml(donation.id || "")}">${escapeHtml(eightyGStatus)}</button>`}` : escapeHtml(eightyGStatus)}</td>
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
             <td><div class="finance-actions">${donation.entry_type !== "donation" && donation.payment_status === "submitted" ? `<button class="btn btn-primary" type="button" data-publish-donation="${escapeHtml(donation.id || "")}">Verify &amp; Publish</button><button class="btn btn-danger" type="button" data-cancel-donation="${escapeHtml(donation.id || "")}">Cancel</button>` : ""}${donation.entry_type !== "donation" && donation.payment_status === "published" && donation.certificate_delivery?.length && !donation.certificate_delivery.every((channel) => ["sent", "already sent"].includes(donation.certificate_delivery_status?.[channel])) ? `<button class="btn btn-primary" type="button" data-send-certificate="${escapeHtml(donation.id || "")}">Send Certificate</button>` : ""}<button class="btn btn-danger" type="button" data-delete-donation="${escapeHtml(donation.id || donation.certificate_id || donation.certificateId || "")}" data-donation-source="${donation.entry_type === "donation" ? "ledger" : "online"}">Delete</button></div></td>
           </tr>`;
@@ -1462,6 +1551,12 @@
     updateFinanceReferenceVisibility();
     const donorNameInput = document.querySelector('#cash-donation-form [name="donor_name"]');
     const donationPurposeInput = document.querySelector('#cash-donation-form [name="category"]');
+    const donorEmailInput = document.querySelector('#cash-donation-form [name="donor_email"]');
+    const cashDonationAmountInput = document.querySelector('#cash-donation-form [name="amount"]');
+    const updateCashDonationEmailRequirement = () => {
+      donorEmailInput.required = Number(cashDonationAmountInput.value) >= 4999;
+    };
+    cashDonationAmountInput.addEventListener("input", updateCashDonationEmailRequirement);
     const financeCategoryInput = document.querySelector('#finance-entry-form [name="category"]');
     const keepLettersAndSpaces = (input) => {
       input.value = input.value.replace(/[^\p{L}\p{M}\s]/gu, "");
@@ -1485,7 +1580,7 @@
     cashDonationPaymentType.addEventListener("change", updateCashReferenceVisibility);
     updateCashReferenceVisibility();
     const cashDonationDialog = document.getElementById("cash-donation-dialog");
-    document.getElementById("open-cash-donation").addEventListener("click", () => { const form = document.getElementById("cash-donation-form"); form.reset(); donorNameInput.setCustomValidity(""); financeCategoryInput.setCustomValidity(""); donationPurposeInput.setCustomValidity(""); donorPhoneInput.setCustomValidity(""); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); updateCashReferenceVisibility(); cashDonationDialog.showModal(); });
+    document.getElementById("open-cash-donation").addEventListener("click", () => { const form = document.getElementById("cash-donation-form"); form.reset(); donorNameInput.setCustomValidity(""); financeCategoryInput.setCustomValidity(""); donationPurposeInput.setCustomValidity(""); donorPhoneInput.setCustomValidity(""); updateCashDonationEmailRequirement(); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); updateCashReferenceVisibility(); cashDonationDialog.showModal(); });
     document.getElementById("cash-donation-close").addEventListener("click", () => cashDonationDialog.close());
     document.getElementById("cash-donation-cancel").addEventListener("click", () => cashDonationDialog.close());
     document.getElementById("cash-donation-form").addEventListener("submit", async (event) => {
@@ -1494,7 +1589,7 @@
       button.disabled = true; message.textContent = "Saving donation…"; message.style.display = "block";
       try {
         const data = Object.fromEntries(new FormData(form).entries());
-        const record = { entry_type: "donation", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", public_note: null, donor_name: data.donor_name.trim(), donor_phone: data.donor_phone.trim() || null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, reconciliation_status: "unreconciled", workflow_status: "approved" };
+        const record = { entry_type: "donation", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", public_note: null, donor_name: data.donor_name.trim(), donor_email: data.donor_email.trim() || null, donor_phone: data.donor_phone.trim() || null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, reconciliation_status: "unreconciled", workflow_status: "approved" };
         const inserted = await supabaseRequest(FINANCE_TABLE, { method: "POST", body: JSON.stringify(record) });
         let publicationError = "";
         try {
