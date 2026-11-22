@@ -22,7 +22,9 @@ function doGet(event) {
     folders.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" }));
     return galleryMessage_({ channel: "sarvahit-community-gallery", requestId: requestId, folders: folders }, callback);
   } catch (error) {
-    return galleryMessage_({ channel: "sarvahit-community-gallery", requestId: requestId, error: String(error && error.message ? error.message : error) }, callback);
+    const failedFeed = event && event.parameter && event.parameter.feed;
+    const channel = failedFeed === "videos" ? "sarvahit-youtube-videos" : "sarvahit-community-gallery";
+    return galleryMessage_({ channel: channel, requestId: requestId, error: String(error && error.message ? error.message : error) }, callback);
   }
 }
 

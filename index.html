@@ -497,15 +497,37 @@
     #work,
     #gallery,
     #blog,
+    #team,
     #reviews {
       border-block: 1px solid var(--line);
     }
 
-    #about,
-    #gallery,
-    #reviews {
-      background: #f1f6f2;
-    }
+    #about { background: #fff; }
+    #work { background: #f1f6f2; }
+    #donate { background: #fff; }
+    #gallery { background: #f1f6f2; }
+    #blog { background: #fff; }
+    #team { background: #f1f6f2; padding-block: 82px; }
+    #reviews { background: #fff; padding-block: 82px; }
+    #contact { background: #f1f6f2; }
+
+    #team .section-head { max-width: none; margin: 0 0 36px; text-align: left; }
+    #team .section-head h2 { color: var(--green-dark); font-size: clamp(24px,3vw,34px); letter-spacing: .08em; }
+    #team .section-head p { margin-top: 8px; color: var(--green); font: 700 clamp(28px,4vw,44px)/1.15 "Poppins",sans-serif; }
+    .founder-card { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: center; margin-bottom: 34px; padding: 26px; border: 1px solid #d8e5dc; border-radius: 20px; background: linear-gradient(120deg,#fff,#edf6ef); box-shadow: 0 14px 34px rgba(20,50,35,.08); }
+    .team-photo { box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; border: 3px solid #fff; border-radius: 16px; background: linear-gradient(145deg,#d9eadc,#f5e9cb); color: var(--green-dark); font: 700 50px/1 "Poppins",sans-serif; }
+    .team-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .founder-card .team-photo { border: 4px solid #fff; border-radius: 50%; outline: 3px solid var(--green); box-shadow: 0 8px 24px rgba(12,75,59,.18); }
+    .team-role { display: inline-block; margin-bottom: 8px; color: #8d6a22; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .founder-card h3 { margin: 0 0 8px; color: var(--green-dark); font: 700 clamp(24px,3vw,34px)/1.15 "Poppins",sans-serif; }
+    .founder-card p { margin: 0; color: var(--muted); }
+    .team-subhead { margin: 0 0 18px; color: var(--green-dark); font: 700 23px "Poppins",sans-serif; text-align: center; }
+    .team-grid { display: flex; gap: 16px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
+    .team-grid::-webkit-scrollbar { display: none; }
+    .team-card { flex: 0 0 calc((100% - 64px) / 5); min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 8px 22px rgba(20,30,36,.05); scroll-snap-align: start; }
+    .team-card .team-photo { margin-bottom: 12px; aspect-ratio: 1.12; border-radius: 11px; font-size: 36px; }
+    .team-card h4 { margin: 0 0 3px; color: var(--green-dark); font: 700 16px/1.3 "Poppins",sans-serif; }
+    .team-card p { margin: 0; color: var(--muted); font-size: 13px; }
 
     #home,
     section[id] {
@@ -1985,6 +2007,7 @@
 
       .stats,
       .work-grid,
+      .team-grid,
       .donation-layout,
       .contact-grid,
       .review-layout,
@@ -2015,9 +2038,17 @@
       .drive-gallery-card {
         flex-basis: calc((100% - 36px) / 3);
       }
+      .team-card { flex-basis: calc((100% - 32px) / 3); }
     }
 
     @media (max-width: 620px) {
+      .founder-card { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .founder-card .team-photo { width: 170px; }
+      .team-carousel { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .team-carousel .team-grid { grid-column: 1 / -1; grid-row: 1; }
+      .team-carousel #team-prev { grid-column: 1; grid-row: 2; justify-self: end; }
+      .team-carousel #team-next { grid-column: 2; grid-row: 2; justify-self: start; }
+      .team-card { flex-basis: calc((100% - 16px) / 2); }
       .drive-gallery-carousel {
         grid-template-columns: 1fr 1fr;
         gap: 12px;
@@ -2476,6 +2507,40 @@
       </div>
     </section>
 
+    <section id="team">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>SARVAHIT CHARITABLE TRUST</h2>
+          <p>Our Leadership &amp; Team</p>
+        </div>
+        <article class="founder-card">
+          <div class="team-photo" data-team-photo="0" aria-label="Founder photo placeholder">HW</div>
+          <div>
+            <span class="team-role">Founder &amp; President</span>
+            <h3>Mr.Harshal Prakash Wani</h3>
+            <p>Guiding Sarvahit Trust’s mission to serve people and strengthen communities.</p>
+          </div>
+        </article>
+        <h3 class="team-subhead">Core Team Members</h3>
+        <div class="drive-gallery-carousel team-carousel" aria-label="Trustees and office bearers">
+          <button class="drive-gallery-page-arrow" id="team-prev" type="button" aria-label="Previous trustees" disabled>‹</button>
+          <div class="team-grid" id="team-grid" aria-label="Ten trust leadership profiles">
+          <article class="team-card"><div class="team-photo" data-team-photo="1" aria-label="Secretary photo placeholder">S</div><h4>Name to be added</h4><p>Secretary</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="2" aria-label="Treasurer photo placeholder">T</div><h4>Name to be added</h4><p>Treasurer</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="3" aria-label="Trustee photo placeholder">T1</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="4" aria-label="Trustee photo placeholder">T2</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="5" aria-label="Trustee photo placeholder">T3</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="6" aria-label="Trustee photo placeholder">T4</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="7" aria-label="Trustee photo placeholder">T5</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="8" aria-label="Trustee photo placeholder">T6</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="9" aria-label="Trustee photo placeholder">T7</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="10" aria-label="Trustee photo placeholder">T8</div><h4>Name to be added</h4><p>Trustee</p></article>
+          </div>
+          <button class="drive-gallery-page-arrow" id="team-next" type="button" aria-label="Next trustees" disabled>›</button>
+        </div>
+      </div>
+    </section>
+
     <section id="reviews">
       <div class="wrap">
         <div class="section-head">
@@ -2797,8 +2862,9 @@
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwKeXj_0emcCdoNLmSFZXqQQ6R0jxex091OqGpwTliNBvtuqzGuZjZU_8BDrIR-1hx5qQ/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyz20dnwm8_y-L0us-gfITHTKrLrw35UwW6lcjgEnCbeOB0Cw4auH28YpzaSyyjYvM9/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwsYD3cnq8ShfUZDPhV5hd5w2FUoDXALI3tBE7x8LpWJbP2cXrBnUL9UwcyQsYENdB48Q/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzfeWU8pAKVHxgKWK17-KXYgQCJAAeGdqBEiXfTxhmQ-vKE6WgOxImQJLVaf-1AbTY/exec";
+    const GOOGLE_DRIVE_TEAM_API_URL = GOOGLE_DRIVE_UPLOAD_URL;
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -3565,6 +3631,67 @@
       }
     }
 
+    function loadTeamPhotos() {
+      if (!GOOGLE_DRIVE_TEAM_API_URL) return;
+      const photoSlots = Array.from(document.querySelectorAll("[data-team-photo]"));
+      if (!photoSlots.length) return;
+      const requestId = crypto.randomUUID();
+      const callbackName = "__sarvahitTeamPhotos_" + requestId.replace(/-/g, "");
+      const script = document.createElement("script");
+      let finished = false;
+      const cleanup = () => { clearTimeout(timer); script.remove(); delete window[callbackName]; };
+      window[callbackName] = (payload) => {
+        if (finished || payload?.channel !== "sarvahit-team-photos" || payload?.requestId !== requestId) return;
+        finished = true;
+        cleanup();
+        const members = Array.isArray(payload.members) ? payload.members : [];
+        photoSlots.forEach((slot, index) => {
+          const member = members[index];
+          if (!member) return;
+          const card = slot.closest(index === 0 ? ".founder-card" : ".team-card");
+          const nameElement = card?.querySelector(index === 0 ? "h3" : "h4");
+          const designationElement = index === 0 ? card?.querySelector(".team-role") : card?.querySelector("p");
+          if (nameElement && member.name) nameElement.textContent = index === 0 ? "Mr. " + member.name : member.name;
+          if (designationElement && member.designation) designationElement.textContent = member.designation;
+          const imageUrl = member.thumbnailUrl || member.imageUrl;
+          if (!imageUrl) return;
+          const image = document.createElement("img");
+          image.src = imageUrl;
+          image.alt = member.name ? member.name + " — " + (member.designation || "Sarvahit Trust team member") : "Sarvahit Trust team member";
+          image.loading = index < 3 ? "eager" : "lazy";
+          image.onerror = () => image.remove();
+          slot.replaceChildren(image);
+        });
+      };
+      const timer = window.setTimeout(() => { if (!finished) { finished = true; cleanup(); } }, 20000);
+      const feedUrl = new URL(GOOGLE_DRIVE_TEAM_API_URL);
+      feedUrl.searchParams.set("feed", "team");
+      feedUrl.searchParams.set("galleryRequestId", requestId);
+      feedUrl.searchParams.set("callback", callbackName);
+      script.src = feedUrl.toString();
+      script.async = true;
+      script.onerror = () => { if (!finished) { finished = true; cleanup(); } };
+      document.head.appendChild(script);
+    }
+
+    const teamGrid = document.getElementById("team-grid");
+    const teamPrevious = document.getElementById("team-prev");
+    const teamNext = document.getElementById("team-next");
+    function updateTeamNavigation() {
+      if (!teamGrid || !teamPrevious || !teamNext) return;
+      const maxScroll = teamGrid.scrollWidth - teamGrid.clientWidth;
+      teamPrevious.disabled = maxScroll <= 2 || teamGrid.scrollLeft <= 2;
+      teamNext.disabled = maxScroll <= 2 || teamGrid.scrollLeft >= maxScroll - 2;
+    }
+    function slideTeam(direction) {
+      if (teamGrid) teamGrid.scrollBy({ left: direction * teamGrid.clientWidth, behavior: "smooth" });
+    }
+    teamPrevious?.addEventListener("click", () => slideTeam(-1));
+    teamNext?.addEventListener("click", () => slideTeam(1));
+    teamGrid?.addEventListener("scroll", updateTeamNavigation, { passive: true });
+    window.addEventListener("resize", updateTeamNavigation);
+    updateTeamNavigation();
+
     function showSocialGalleryFallback(gallery) {
       const link = document.createElement("a");
       link.className = "drive-gallery-fallback";
@@ -3676,6 +3803,7 @@
     window.addEventListener("resize", updateSocialActivityNavigation);
 
     loadSocialActivityGallery();
+    loadTeamPhotos();
     loadYoutubeVideos();
     loadPublicFinance();
     window.setInterval(loadPublicFinance, 20000);

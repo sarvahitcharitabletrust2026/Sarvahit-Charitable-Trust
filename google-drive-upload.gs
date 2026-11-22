@@ -3,12 +3,20 @@ const FINANCE_RECEIPTS_FOLDER_ID = "1Fpwk5MeviQfyCpxYg05dDyAlNjwTyq02";
 const SUPABASE_PROJECT_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
 const SOCIAL_ACTIVITY_FOLDER_ID = "1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv";
+const TEAM_PHOTOS_FOLDER_ID = "1ZpSmCwF6E8m6Nl82DWjm1sYqKZtZXZlB";
+const TEAM_DUMMY_PHOTO_ID = "1aqi-PePkPXxsiTtBfDP92nyRUzoOeJ5h";
 const G80G_CERTIFICATE_FOLDER_ID = "1co07taPYW8aB7xsWvWwwdj6awXly99l3";
 const WHATSAPP_CONFIGURED_PHONE_NUMBER_ID = "1476938778837574";
 const WHATSAPP_CONFIGURED_SENDER_PHONE = "918459860170";
 const DRIVE_TIME_ZONE = "Asia/Kolkata";
 
-function doGet() {
+function doGet(event) {
+  if (event && event.parameter && event.parameter.feed === "team") {
+    const requestId = String(event.parameter.galleryRequestId || "");
+    const callback = String(event.parameter.callback || "");
+    try { return teamFeedMessage_({ channel: "sarvahit-team-photos", requestId: requestId, members: listTeamMembers_() }, callback); }
+    catch (error) { return teamFeedMessage_({ channel: "sarvahit-team-photos", requestId: requestId, error: String(error && error.message ? error.message : error) }, callback); }
+  }
   try {
     const folder = DriveApp.getFolderById(SOCIAL_ACTIVITY_FOLDER_ID);
     const folders = listActivityFolders_(folder);
@@ -20,6 +28,13 @@ function doGet() {
   } catch (error) {
     return galleryMessage_({ channel: "sarvahit-community-gallery", error: String(error && error.message ? error.message : error) });
   }
+}
+
+function teamFeedMessage_(payload, callback) {
+  const safePayload = JSON.stringify(payload).replace(/</g, "\\u003c");
+  if (/^[A-Za-z_$][\w$]*$/.test(callback)) return ContentService.createTextOutput(callback + "(" + safePayload + ");").setMimeType(ContentService.MimeType.JAVASCRIPT);
+  const html = "<!doctype html><html><head><meta charset=\"utf-8\"></head><body><script>window.top.postMessage(" + safePayload + ", \"*\");</script></body></html>";
+  return HtmlService.createHtmlOutput(html).setTitle("Sarvahit Trust Team").setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function listActivityImages_(folder) {
@@ -38,6 +53,7 @@ function listActivityImages_(folder) {
   }
   const childFolders = folder.getFolders();
   while (childFolders.hasNext()) images.push(...listActivityImages_(childFolders.next()));
+  images.sort(function (a, b) { return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" }); });
   return images;
 }
 
@@ -80,8 +96,11 @@ function doPost(event) {
     const isFinance = data.type === "finance";
     const isCertificate = data.type === "certificate";
     const is80GCertificate = data.type === "80g_certificate";
-    if (!isFinance && !isCertificate && !is80GCertificate && data.type !== "donation") throw new Error("Unsupported upload type.");
-    if (isFinance || isCertificate || is80GCertificate) verifyFinanceAdmin_(data.accessToken);
+    const isTeamRequest = data.type === "team_list" || data.type === "team_save";
+    if (!isFinance && !isCertificate && !is80GCertificate && !isTeamRequest && data.type !== "donation") throw new Error("Unsupported upload type.");
+    if (isFinance || isCertificate || is80GCertificate || isTeamRequest) verifyFinanceAdmin_(data.accessToken);
+    if (data.type === "team_list") return uploadResponse_({ ok: true, members: listTeamMembers_(data.accessToken) }, formTransport, requestId);
+    if (data.type === "team_save") return uploadResponse_({ ok: true, member: saveTeamMember_(data) }, formTransport, requestId);
     if (isCertificate) return uploadResponse_({ ok: true, delivery: sendDonationCertificate_(data.donationId, data.accessToken) }, formTransport, requestId);
     if (is80GCertificate) return uploadResponse_({ ok: true, ...saveAndSend80GCertificate_(data) }, formTransport, requestId);
 
@@ -114,6 +133,119 @@ function doPost(event) {
   } catch (error) {
     return uploadResponse_({ ok: false, error: String(error && error.message ? error.message : error) }, formTransport, requestId);
   }
+}
+
+function defaultTeamMembers_() {
+  const designations = ["Founder & President", "Secretary", "Treasurer", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee"];
+  return designations.map(function (designation, index) {
+    return { designation: designation, name: index === 0 ? "Harshal Prakash Wani" : "", photoId: "", photoName: "" };
+  });
+}
+
+function readTeamMembers_(accessToken) {
+  const folder = DriveApp.getFolderById(TEAM_PHOTOS_FOLDER_ID);
+  const members = defaultTeamMembers_();
+  const token = accessToken || SUPABASE_PUBLISHABLE_KEY;
+  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/trust_team_members?select=member_position,designation,name,photo_file_id,photo_file_name&order=member_position.asc", {
+    method: "get",
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + token },
+    muteHttpExceptions: true
+  });
+  if (response.getResponseCode() !== 200) throw new Error("Could not load team profiles from Supabase: " + response.getContentText());
+  const rows = JSON.parse(response.getContentText() || "[]");
+  rows.forEach(function (row) {
+    const index = Number(row.member_position);
+    if (!Number.isInteger(index) || index < 0 || index > 10) return;
+    members[index] = { designation: String(row.designation || members[index].designation), name: String(row.name || ""), photoId: String(row.photo_file_id || ""), photoName: String(row.photo_file_name || "") };
+  });
+  if (!rows.length) {
+    const photos = listActivityImages_(folder);
+    photos.slice(0, members.length).forEach(function (photo, index) {
+      const match = String(photo.imageUrl || "").match(/[?&]id=([^&]+)/);
+      if (match) { members[index].photoId = decodeURIComponent(match[1]); members[index].photoName = photo.name || ""; }
+    });
+    if (accessToken) saveTeamMemberRecords_(members, accessToken);
+  }
+  return members;
+}
+
+function publicTeamMembers_(members) {
+  return members.map(function (member) {
+    const displayPhotoId = member.photoId || TEAM_DUMMY_PHOTO_ID;
+    return {
+      designation: member.designation,
+      name: member.name,
+      photoId: member.photoId,
+      photoName: member.photoName,
+      photoIsDummy: !member.photoId,
+      imageUrl: "https://drive.google.com/uc?export=view&id=" + encodeURIComponent(displayPhotoId),
+      thumbnailUrl: "https://drive.google.com/thumbnail?id=" + encodeURIComponent(displayPhotoId) + "&sz=w1200"
+    };
+  });
+}
+
+function listTeamMembers_(accessToken) {
+  return publicTeamMembers_(readTeamMembers_(accessToken));
+}
+
+function saveTeamMember_(data) {
+  const index = Number(data.memberIndex);
+  if (!Number.isInteger(index) || index < 0 || index > 10) throw new Error("Choose a valid team profile.");
+  const designation = String(data.designation || "").trim();
+  const name = String(data.name || "").trim();
+  if (!designation || designation.length > 80 || !name || name.length > 100) throw new Error("Enter a designation (up to 80 characters) and name (up to 100 characters).");
+  const members = readTeamMembers_(data.accessToken);
+  const member = members[index];
+  const folder = DriveApp.getFolderById(TEAM_PHOTOS_FOLDER_ID);
+  const oldPhotoId = member.photoId;
+  let newPhoto = null;
+
+  if (data.removePhoto) {
+    member.photoId = "";
+    member.photoName = "";
+  } else if (data.base64) {
+    const mimeType = String(data.mimeType || "");
+    if (!["image/jpeg", "image/png", "image/webp"].includes(mimeType)) throw new Error("Only JPG, PNG, or WebP team photos are allowed.");
+    const bytes = Utilities.base64Decode(data.base64);
+    if (!bytes.length || bytes.length > 8 * 1024 * 1024) throw new Error("Each team photo must be 8 MB or smaller.");
+    const extension = String(data.fileName || "photo.jpg").match(/\.([A-Za-z0-9]+)$/);
+    const safeName = "team-" + String(index + 1).padStart(2, "0") + "-" + sanitizeFileNamePart_(name) + "." + (extension ? extension[1].toLowerCase() : "jpg");
+    newPhoto = folder.createFile(Utilities.newBlob(bytes, mimeType, safeName));
+    try { newPhoto.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); }
+    catch (error) { newPhoto.setTrashed(true); throw new Error("Could not make the new photo visible to the website: " + String(error.message || error)); }
+    member.photoId = newPhoto.getId();
+    member.photoName = newPhoto.getName();
+  }
+
+  member.designation = designation;
+  member.name = name;
+  try {
+    saveTeamMemberRecord_(member, index, data.accessToken);
+  } catch (error) {
+    if (newPhoto) newPhoto.setTrashed(true);
+    throw error;
+  }
+  if ((data.removePhoto || newPhoto) && oldPhotoId && oldPhotoId !== member.photoId) DriveApp.getFileById(oldPhotoId).setTrashed(true);
+  return publicTeamMembers_(members)[index];
+}
+
+function saveTeamMemberRecord_(member, index, accessToken) {
+  saveTeamMemberRecords_([member], accessToken, [index]);
+}
+
+function saveTeamMemberRecords_(members, accessToken, positions) {
+  const records = members.map(function (member, offset) {
+    const index = positions ? positions[offset] : offset;
+    return { member_position: index, designation: member.designation, name: member.name || "", photo_file_id: member.photoId || null, photo_file_name: member.photoName || null, updated_at: new Date().toISOString() };
+  });
+  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/trust_team_members?on_conflict=member_position", {
+    method: "post",
+    contentType: "application/json",
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + accessToken, Prefer: "resolution=merge-duplicates,return=representation" },
+    payload: JSON.stringify(records),
+    muteHttpExceptions: true
+  });
+  if (response.getResponseCode() < 200 || response.getResponseCode() >= 300) throw new Error("Could not save team profiles to Supabase: " + response.getContentText());
 }
 
 function saveAndSend80GCertificate_(data) {
