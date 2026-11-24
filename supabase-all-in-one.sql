@@ -2,6 +2,8 @@
 -- Run this complete file once in Supabase SQL Editor. Safe to rerun on the same project.
 -- It includes the setup and all prior migrations in dependency order.
 --
+-- Ensure a Dashboard SQL Editor session is not left in a restricted role.
+reset role;
 
 -- ============================================================================
 -- Included: supabase-setup.sql
@@ -282,7 +284,7 @@ create table if not exists public.trust_financial_entries (
   bank_reference text,
   attachment_path text,
   reconciliation_status text not null default 'unreconciled' check (reconciliation_status in ('unreconciled','matched','exception')),
-  workflow_status text not null default 'draft' check (workflow_status in ('draft','approved','published')),
+  workflow_status text not null default 'draft' check (workflow_status in ('draft','pending','approved','published')),
   created_by uuid not null default auth.uid() references auth.users(id),
   updated_by uuid not null default auth.uid() references auth.users(id),
   created_at timestamptz not null default now(),
@@ -689,22 +691,237 @@ create table if not exists public.trust_team_members (
   member_position integer primary key check (member_position between 0 and 10),
   designation text not null check (length(trim(designation)) between 1 and 80),
   name text not null check (length(trim(name)) <= 100),
+  contact text,
+  email text,
+  pan text,
+  address text,
+  contribution text,
   photo_file_id text,
   photo_file_name text,
   updated_at timestamptz not null default now()
 );
+alter table public.trust_team_members add column if not exists contact text;
+alter table public.trust_team_members add column if not exists email text;
+alter table public.trust_team_members add column if not exists pan text;
+alter table public.trust_team_members add column if not exists address text;
+alter table public.trust_team_members add column if not exists contribution text;
 
 alter table public.trust_team_members enable row level security;
 revoke all on public.trust_team_members from anon, authenticated;
-grant select on public.trust_team_members to anon, authenticated;
+grant select on public.trust_team_members to authenticated;
 grant insert, update, delete on public.trust_team_members to authenticated;
 
 drop policy if exists "public reads trust team profiles" on public.trust_team_members;
-create policy "public reads trust team profiles"
-  on public.trust_team_members for select to anon, authenticated using (true);
+drop policy if exists "finance admins read trust team profiles" on public.trust_team_members;
+create policy "finance admins read trust team profiles"
+  on public.trust_team_members for select to authenticated using (public.is_trust_finance_admin());
 
 drop policy if exists "finance admins manage trust team profiles" on public.trust_team_members;
 create policy "finance admins manage trust team profiles"
   on public.trust_team_members for all to authenticated
   using (public.is_trust_finance_admin())
   with check (public.is_trust_finance_admin());
+
+create or replace view public.trust_team_members_public with (security_barrier = true) as
+select member_position, designation, name, photo_file_id, photo_file_name, updated_at
+from public.trust_team_members;
+revoke all on public.trust_team_members_public from public;
+grant select on public.trust_team_members_public to anon, authenticated;
+
+-- ============================================================================
+-- Included: supabase-trustee-portal-and-partners-migration.sql
+-- ============================================================================
+-- Create each trustee email/password first in Supabase Authentication > Users.
+alter table public.trust_impact_stats add column if not exists awareness_drives integer not null default 0;
+alter table public.trust_impact_stats add column if not exists tree_plantations integer not null default 0;
+alter table public.trust_impact_stats add column if not exists community_welfare integer not null default 0;
+alter table public.trust_financial_entries add column if not exists submitted_by_name text;
+alter table public.donation_records add column if not exists submitted_by_name text;
+
+create table if not exists public.trust_portal_profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  full_name text not null check (length(btrim(full_name)) between 2 and 100),
+  role text not null check (role in ('founder', 'secretary', 'treasurer', 'trustee')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.trust_portal_profiles enable row level security;
+alter table public.trust_portal_profiles drop constraint if exists trust_portal_profiles_role_check;
+alter table public.trust_portal_profiles add constraint trust_portal_profiles_role_check check (role in ('founder', 'secretary', 'treasurer', 'trustee'));
+revoke all on public.trust_portal_profiles from anon, authenticated;
+
+create or replace function public.is_trust_portal_user()
+returns boolean language sql stable security definer set search_path = public
+as $$ select public.is_trust_finance_admin() or exists (select 1 from public.trust_portal_profiles where user_id = auth.uid()); $$;
+revoke all on function public.is_trust_portal_user() from public;
+grant execute on function public.is_trust_portal_user() to authenticated;
+
+create or replace function public.is_trustee()
+returns boolean language sql stable security definer set search_path = public
+as $$ select exists (select 1 from public.trust_portal_profiles where user_id = auth.uid() and role in ('secretary', 'treasurer', 'trustee')); $$;
+revoke all on function public.is_trustee() from public;
+grant execute on function public.is_trustee() to authenticated;
+
+create or replace function public.is_trust_founder()
+returns boolean language sql stable security definer set search_path = public
+as $$ select exists (select 1 from public.trust_portal_profiles where user_id = auth.uid() and role = 'founder'); $$;
+revoke all on function public.is_trust_founder() from public;
+grant execute on function public.is_trust_founder() to authenticated;
+
+create or replace function public.trust_portal_identity()
+returns jsonb language sql stable security definer set search_path = public
+as $$
+  select case when public.is_trust_finance_admin() then jsonb_build_object('role','admin','name',coalesce((select full_name from public.trust_portal_profiles where role = 'founder' order by created_at asc limit 1), auth.jwt() ->> 'email','Admin'))
+    else coalesce((select jsonb_build_object('role', role, 'name', full_name) from public.trust_portal_profiles where user_id = auth.uid()), '{}'::jsonb) end;
+$$;
+revoke all on function public.trust_portal_identity() from public;
+grant execute on function public.trust_portal_identity() to authenticated;
+
+-- Passwords are handled only by Supabase Authentication, never in this table.
+create or replace function public.set_trust_portal_user(p_email text, p_full_name text, p_role text)
+returns void language plpgsql security definer set search_path = public, auth
+as $$
+declare target_id uuid;
+begin
+  if not public.is_trust_finance_admin() then raise exception 'Only a finance admin can manage trustee access'; end if;
+  select id into target_id from auth.users where lower(email) = lower(btrim(p_email));
+  if target_id is null then raise exception 'Create this email in Supabase Authentication first'; end if;
+  if p_role not in ('founder','secretary','treasurer','trustee') then raise exception 'Invalid portal role'; end if;
+  insert into public.trust_portal_profiles(user_id, full_name, role) values (target_id, btrim(p_full_name), p_role)
+  on conflict (user_id) do update set full_name = excluded.full_name, role = excluded.role, updated_at = now();
+end $$;
+revoke all on function public.set_trust_portal_user(text, text, text) from public;
+grant execute on function public.set_trust_portal_user(text, text, text) to authenticated;
+
+alter table public.trust_financial_entries drop constraint if exists trust_financial_entries_workflow_status_check;
+alter table public.trust_financial_entries add constraint trust_financial_entries_workflow_status_check check (workflow_status in ('draft','pending','approved','published'));
+
+create or replace function public.set_finance_submitter()
+returns trigger language plpgsql security definer set search_path = public
+as $$
+begin
+  if tg_op = 'INSERT' then
+    new.submitted_by_name := case
+      when public.is_trust_finance_admin() then 'Admin'
+      else coalesce((select full_name from public.trust_portal_profiles where user_id = auth.uid()), auth.jwt() ->> 'email', 'Trust admin')
+    end;
+  end if;
+  return new;
+end $$;
+drop trigger if exists trust_finance_submitter on public.trust_financial_entries;
+create trigger trust_finance_submitter before insert on public.trust_financial_entries for each row execute function public.set_finance_submitter();
+
+drop policy if exists "trustees read finance entries" on public.trust_financial_entries;
+drop policy if exists "trustees add finance entries" on public.trust_financial_entries;
+create policy "trustees read finance entries" on public.trust_financial_entries for select to authenticated using (public.is_trust_portal_user());
+create policy "trustees add finance entries" on public.trust_financial_entries for insert to authenticated with check (public.is_trust_portal_user());
+drop policy if exists "portal members submit financial entries" on public.trust_financial_entries;
+create policy "portal members submit financial entries" on public.trust_financial_entries for insert to authenticated with check (public.is_trust_portal_user());
+drop policy if exists "portal members upload finance receipts" on storage.objects;
+create policy "portal members upload finance receipts" on storage.objects for insert to authenticated
+  with check (bucket_id = 'trust-finance-private' and public.is_trust_portal_user());
+drop policy if exists "founders manage finance entries" on public.trust_financial_entries;
+drop policy if exists "founders delete finance entries" on public.trust_financial_entries;
+create policy "founders manage finance entries" on public.trust_financial_entries for update to authenticated using (public.is_trust_founder()) with check (public.is_trust_founder());
+create policy "founders delete finance entries" on public.trust_financial_entries for delete to authenticated using (public.is_trust_founder());
+drop policy if exists "trustees read donation records" on public.donation_records;
+create policy "trustees read donation records" on public.donation_records for select to authenticated using (public.is_trust_portal_user());
+drop policy if exists "founders manage donation records" on public.donation_records;
+drop policy if exists "founders delete donation records" on public.donation_records;
+create policy "founders manage donation records" on public.donation_records for update to authenticated using (public.is_trust_founder()) with check (public.is_trust_founder());
+create policy "founders delete donation records" on public.donation_records for delete to authenticated using (public.is_trust_founder());
+drop policy if exists "trustees read volunteers" on public.volunteer_registrations;
+create policy "trustees read volunteers" on public.volunteer_registrations for select to authenticated using (public.is_trust_portal_user());
+
+create table if not exists public.trust_partners (
+  id uuid primary key default gen_random_uuid(),
+  name text not null check (length(btrim(name)) between 1 and 100),
+  logo_url text,
+  website_url text,
+  description text,
+  sort_order bigint not null default 0,
+  is_published boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.trust_partners add column if not exists logo_url text;
+alter table public.trust_partners enable row level security;
+revoke all on public.trust_partners from anon;
+grant select on public.trust_partners to anon, authenticated;
+grant insert, update, delete on public.trust_partners to authenticated;
+drop policy if exists "public reads published partners" on public.trust_partners;
+create policy "public reads published partners" on public.trust_partners for select to anon, authenticated using (is_published or public.is_trust_finance_admin());
+drop policy if exists "admins manage partners" on public.trust_partners;
+create policy "admins manage partners" on public.trust_partners for all to authenticated using (public.is_trust_finance_admin()) with check (public.is_trust_finance_admin());
+
+-- Partner form and portal permissions update
+begin;
+
+alter table public.trust_partners
+  add column if not exists category text,
+  add column if not exists about_organization text,
+  add column if not exists contact_person text,
+  add column if not exists contact_designation text,
+  add column if not exists contact_email text,
+  add column if not exists contact_phone text,
+  add column if not exists full_address text,
+  add column if not exists city text,
+  add column if not exists state text,
+  add column if not exists country text,
+  add column if not exists collaboration_type text,
+  add column if not exists partnership_start_date date,
+  add column if not exists partnership_end_date date,
+  add column if not exists featured boolean not null default false,
+  add column if not exists partner_permission boolean not null default false,
+  add column if not exists supporting_document_name text,
+  add column if not exists supporting_document_data text;
+
+-- Anonymous homepage requests can only read fields used in partner cards.
+revoke select on public.trust_partners from public, anon;
+grant select (name, logo_url, website_url, category, city, sort_order, is_published)
+  on public.trust_partners to anon;
+drop policy if exists "public reads published partners" on public.trust_partners;
+create policy "public reads published partners" on public.trust_partners
+  for select to anon using (is_published);
+drop policy if exists "admins manage partners" on public.trust_partners;
+create policy "admins manage partners" on public.trust_partners for all to authenticated
+  using (public.is_trust_finance_admin() or public.is_trust_founder())
+  with check (public.is_trust_finance_admin() or public.is_trust_founder());
+
+-- Preserve report access and donation submissions for existing portal members.
+create or replace function public.can_submit_trust_expense()
+returns boolean language sql stable security definer set search_path = public
+as $$
+  select public.is_trust_finance_admin() or exists (
+    select 1 from public.trust_portal_profiles
+    where user_id = auth.uid() and role in ('founder', 'secretary', 'treasurer')
+  );
+$$;
+revoke all on function public.can_submit_trust_expense() from public;
+grant execute on function public.can_submit_trust_expense() to authenticated;
+
+drop policy if exists "authorized roles submit expenses" on public.trust_financial_entries;
+create policy "authorized roles submit expenses" on public.trust_financial_entries
+  as restrictive for insert to authenticated
+  with check (entry_type <> 'expense' or public.can_submit_trust_expense());
+
+drop policy if exists "portal members upload finance receipts" on storage.objects;
+create policy "portal members upload finance receipts" on storage.objects for insert to authenticated
+  with check (bucket_id = 'trust-finance-private' and public.can_submit_trust_expense());
+
+drop policy if exists "portal members read expense receipts" on storage.objects;
+create policy "portal members read expense receipts" on storage.objects for select to authenticated
+  using (
+    bucket_id = 'trust-finance-private' and public.is_trust_portal_user()
+    and exists (
+      select 1 from public.trust_financial_entries entry
+      where entry.entry_type = 'expense' and entry.attachment_path = objects.name
+    )
+  );
+
+drop policy if exists "Allow owner panel delete for static site" on public.volunteer_registrations;
+drop policy if exists "only admins delete volunteers" on public.volunteer_registrations;
+create policy "only admins delete volunteers" on public.volunteer_registrations
+  as restrictive for delete to authenticated using (public.is_trust_finance_admin());
+
+commit;

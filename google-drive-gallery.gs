@@ -29,6 +29,8 @@ function doGet(event) {
 }
 
 function listYoutubeVideos_() {
+  const key = PropertiesService.getScriptProperties().getProperty("YOUTUBE_DATA_API_KEY");
+  if (key) return listYoutubeUploads_(key);
   const response = UrlFetchApp.fetch("https://www.youtube.com/feeds/videos.xml?channel_id=" + encodeURIComponent(YOUTUBE_CHANNEL_ID), {
     muteHttpExceptions: true,
     followRedirects: true
@@ -52,6 +54,39 @@ function listYoutubeVideos_() {
       thumbnailUrl: thumbnail && thumbnail.getAttribute("url") ? thumbnail.getAttribute("url").getValue() : "https://i.ytimg.com/vi/" + encodeURIComponent(videoId) + "/hqdefault.jpg"
     };
   }).filter(Boolean);
+}
+
+function listYoutubeUploads_(key) {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get("youtube-public-uploads-v1");
+  if (cached) return JSON.parse(cached);
+  const request = (resource, query) => {
+    const response = UrlFetchApp.fetch("https://www.googleapis.com/youtube/v3/" + resource + "?" + query, {
+      headers: { "X-Goog-Api-Key": key }, muteHttpExceptions: true
+    });
+    if (response.getResponseCode() !== 200) throw new Error("Could not load the YouTube uploads list.");
+    return JSON.parse(response.getContentText());
+  };
+  const channel = request("channels", "part=contentDetails&id=" + encodeURIComponent(YOUTUBE_CHANNEL_ID));
+  const playlist = channel.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+  if (!playlist) throw new Error("The YouTube uploads playlist was not found.");
+  const videos = [];
+  let pageToken = "";
+  do {
+    const page = request("playlistItems", "part=snippet,status&maxResults=50&playlistId=" +
+      encodeURIComponent(playlist) + "&pageToken=" + encodeURIComponent(pageToken));
+    for (const item of page.items || []) {
+      const snippet = item.snippet;
+      const id = snippet?.resourceId?.videoId;
+      if (!id || item.status?.privacyStatus !== "public") continue;
+      videos.push({ id, title: snippet.title, url: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
+        thumbnailUrl: snippet.thumbnails?.medium?.url });
+    }
+    pageToken = page.nextPageToken || "";
+  } while (pageToken);
+  const serialized = JSON.stringify(videos);
+  if (serialized.length < 24000) cache.put("youtube-public-uploads-v1", serialized, 600);
+  return videos;
 }
 
 function listActivityImages_(folder) {

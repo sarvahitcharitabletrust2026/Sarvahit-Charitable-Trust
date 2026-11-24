@@ -93,6 +93,9 @@ function doPost(event) {
     const rawPayload = formTransport ? event.parameter.uploadPayload : (event.postData.contents || "{}");
     const data = JSON.parse(rawPayload);
     requestId = String(data.requestId || "");
+    if (data.type === "partner_files") {
+      return uploadResponse_({ ok: true, files: savePartnerFiles_(data) }, formTransport, requestId);
+    }
     const isFinance = data.type === "finance";
     const isCertificate = data.type === "certificate";
     const is80GCertificate = data.type === "80g_certificate";
@@ -135,10 +138,54 @@ function doPost(event) {
   }
 }
 
+function savePartnerFiles_(data) {
+  if (!data.accessToken) throw new Error("Sign in to upload partner files.");
+  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/rpc/trust_portal_identity", {
+    method: "post", contentType: "application/json", payload: "{}", muteHttpExceptions: true,
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + data.accessToken }
+  });
+  if (response.getResponseCode() !== 200 || !["admin", "founder"].includes(JSON.parse(response.getContentText()).role)) {
+    throw new Error("Only a partner manager can upload partner files.");
+  }
+  const name = String(data.organizationName || "").trim();
+  if (!name || name.length > 100) throw new Error("Enter a valid organization name.");
+  if (!Array.isArray(data.attachments) || !data.attachments.length || data.attachments.length > 2 ||
+      new Set(data.attachments.map((item) => item.kind)).size !== data.attachments.length) {
+    throw new Error("Choose a logo, a supporting document, or both.");
+  }
+  const extensions = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+  const uploads = data.attachments.map((item) => {
+    const isLogo = item.kind === "logo";
+    const extension = isLogo ? extensions[item.mimeType] : item.kind === "document" && item.mimeType === "application/pdf" ? "pdf" : "";
+    const limit = isLogo ? 512 * 1024 : 5 * 1024 * 1024;
+    if (typeof extension !== "string" || !extension || typeof item.base64 !== "string" || item.base64.length > Math.ceil(limit / 3) * 4) {
+      throw new Error("Invalid partner file type or size.");
+    }
+    const bytes = Utilities.base64Decode(item.base64);
+    if (!bytes.length || bytes.length > limit) throw new Error("Invalid partner file size.");
+    const digest = Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, bytes)).slice(0, 16);
+    const stem = sanitizeFileNamePart_(String(item.fileName || item.kind).replace(/\.[^.]+$/, "")).slice(0, 100);
+    return { bytes: bytes, mimeType: item.mimeType, name: item.kind + " - " + stem + " - " + digest + "." + extension };
+  });
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const parent = DriveApp.getFolderById("1u1L0eHAbme_nIqe3nZM6yBRWZAi-U_83");
+    const folder = getOrCreateFolder_(parent, name);
+    return uploads.map((upload) => {
+      const matches = folder.getFilesByName(upload.name);
+      const file = matches.hasNext() ? matches.next() : folder.createFile(Utilities.newBlob(upload.bytes, upload.mimeType, upload.name));
+      return file.getId();
+    });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function defaultTeamMembers_() {
   const designations = ["Founder & President", "Secretary", "Treasurer", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee"];
   return designations.map(function (designation, index) {
-    return { designation: designation, name: index === 0 ? "Harshal Prakash Wani" : "", photoId: "", photoName: "" };
+    return { designation: designation, name: index === 0 ? "Harshal Prakash Wani" : "", contact: "", email: "", pan: "", address: "", contribution: "", photoId: "", photoName: "" };
   });
 }
 
@@ -146,7 +193,9 @@ function readTeamMembers_(accessToken) {
   const folder = DriveApp.getFolderById(TEAM_PHOTOS_FOLDER_ID);
   const members = defaultTeamMembers_();
   const token = accessToken || SUPABASE_PUBLISHABLE_KEY;
-  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/trust_team_members?select=member_position,designation,name,photo_file_id,photo_file_name&order=member_position.asc", {
+  const teamSource = accessToken ? "trust_team_members" : "trust_team_members_public";
+  const fields = accessToken ? "member_position,designation,name,contact,email,pan,address,contribution,photo_file_id,photo_file_name" : "member_position,designation,name,photo_file_id,photo_file_name";
+  const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/" + teamSource + "?select=" + fields + "&order=member_position.asc", {
     method: "get",
     headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + token },
     muteHttpExceptions: true
@@ -156,7 +205,7 @@ function readTeamMembers_(accessToken) {
   rows.forEach(function (row) {
     const index = Number(row.member_position);
     if (!Number.isInteger(index) || index < 0 || index > 10) return;
-    members[index] = { designation: String(row.designation || members[index].designation), name: String(row.name || ""), photoId: String(row.photo_file_id || ""), photoName: String(row.photo_file_name || "") };
+    members[index] = { designation: String(row.designation || members[index].designation), name: String(row.name || ""), contact: String(row.contact || ""), email: String(row.email || ""), pan: String(row.pan || ""), address: String(row.address || ""), contribution: String(row.contribution || ""), photoId: String(row.photo_file_id || ""), photoName: String(row.photo_file_name || "") };
   });
   if (!rows.length) {
     const photos = listActivityImages_(folder);
@@ -175,6 +224,11 @@ function publicTeamMembers_(members) {
     return {
       designation: member.designation,
       name: member.name,
+      contact: member.contact || "",
+      email: member.email || "",
+      pan: member.pan || "",
+      address: member.address || "",
+      contribution: member.contribution || "",
       photoId: member.photoId,
       photoName: member.photoName,
       photoIsDummy: !member.photoId,
@@ -194,6 +248,15 @@ function saveTeamMember_(data) {
   const designation = String(data.designation || "").trim();
   const name = String(data.name || "").trim();
   if (!designation || designation.length > 80 || !name || name.length > 100) throw new Error("Enter a designation (up to 80 characters) and name (up to 100 characters).");
+  if (!/^[A-Za-z ]+$/.test(name)) throw new Error("Name can contain letters and spaces only.");
+  const contact = String(data.contact || "").trim();
+  const email = String(data.email || "").trim();
+  const pan = String(data.pan || "").trim().toUpperCase();
+  const address = String(data.address || "").trim();
+  const contribution = String(data.contribution || "").trim();
+  if (contact && !/^\d{10}$/.test(contact)) throw new Error("Contact must contain exactly 10 digits.");
+  if (pan && !/^[A-Z]{5}\d{4}[A-Z]$/.test(pan)) throw new Error("PAN must use the format ABCDE1234F.");
+  if (contribution && !/^\d+$/.test(contribution)) throw new Error("Contribution can contain numbers only.");
   const members = readTeamMembers_(data.accessToken);
   const member = members[index];
   const folder = DriveApp.getFolderById(TEAM_PHOTOS_FOLDER_ID);
@@ -219,6 +282,11 @@ function saveTeamMember_(data) {
 
   member.designation = designation;
   member.name = name;
+  member.contact = contact;
+  member.email = email;
+  member.pan = pan;
+  member.address = address;
+  member.contribution = contribution;
   try {
     saveTeamMemberRecord_(member, index, data.accessToken);
   } catch (error) {
@@ -236,7 +304,7 @@ function saveTeamMemberRecord_(member, index, accessToken) {
 function saveTeamMemberRecords_(members, accessToken, positions) {
   const records = members.map(function (member, offset) {
     const index = positions ? positions[offset] : offset;
-    return { member_position: index, designation: member.designation, name: member.name || "", photo_file_id: member.photoId || null, photo_file_name: member.photoName || null, updated_at: new Date().toISOString() };
+    return { member_position: index, designation: member.designation, name: member.name || "", contact: member.contact || null, email: member.email || null, pan: member.pan || null, address: member.address || null, contribution: member.contribution || null, photo_file_id: member.photoId || null, photo_file_name: member.photoName || null, updated_at: new Date().toISOString() };
   });
   const response = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/trust_team_members?on_conflict=member_position", {
     method: "post",

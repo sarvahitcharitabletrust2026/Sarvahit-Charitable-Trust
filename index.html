@@ -504,14 +504,14 @@
       border-block: 1px solid var(--line);
     }
 
-    #about { background: #fff; }
-    #work { background: #f1f6f2; }
-    #donate { background: #fff; }
-    #gallery { background: #f1f6f2; }
-    #blog { background: #fff; }
-    #team { background: #f1f6f2; padding-block: 82px; }
-    #reviews { background: #f8fcf9; padding-block: 82px; }
-    #contact { background: #fff; }
+    #about { background: #f7fbf7; }
+    #work { background: #e6f2e9; }
+    #donate { background: #f7fbf7; }
+    #gallery { background: #e6f2e9; }
+    #blog { background: radial-gradient(ellipse at 92% 0%, #f5ead0, transparent 48%), linear-gradient(145deg, #e5f2e9, #faf8ef); }
+    #team { background: #e6f2e9; padding-block: 82px; }
+    #reviews { background: #e6f2e9; padding-block: 82px; }
+    #contact { background: #f7fbf7; }
 
     #team .section-head { max-width: none; margin: 0 0 36px; text-align: left; }
     #team .section-head p { margin-top: 8px; }
@@ -655,7 +655,7 @@
     }
 
     .finance-transparency {
-      background: var(--paper);
+      background: #faf0df;
       border-block: 1px solid var(--line);
     }
 
@@ -905,8 +905,8 @@
     .impact-strip .stat { min-width: 0; padding: 22px 12px; border-right: 1px solid var(--line); text-align: center; color: var(--muted); font-weight: 700; }
     .impact-strip .stat:last-child { border-right: 0; }
     .impact-strip .stat strong { display: block; color: var(--green-dark); font: 800 clamp(24px, 2.5vw, 34px)/1 "Poppins", sans-serif; margin-bottom: 8px; }
-    #team { background: #f8fcf9; }
-    #partners { padding-block: 76px; background: #fff; border-top: 1px solid #c8dfcf; border-bottom: 1px solid #e6e0d6; }
+    
+    #partners { padding-block: 76px; background: #f7fbf7; border-top: 1px solid #c8dfcf; border-bottom: 1px solid #e6e0d6; }
     #partners .section-head { position: relative; max-width: none; margin: 0 0 42px; text-align: left; }
     #partners .section-head::before { content: "WITH US"; display: block; margin-bottom: 8px; color: var(--green); font-size: 12px; font-weight: 800; letter-spacing: .14em; }
     :is(#about, #work, #gallery, #blog, #team, #partners, #reviews, #contact) .section-head h2,
@@ -929,9 +929,9 @@
       .partners-rail:has(.partners-arrow:not([hidden])) { padding-inline: 34px; }
       .partners-rail .partners-arrow { width: 30px; height: 38px; font-size: 26px; }
     }
-    .partner-card { display: grid; place-items: center; min-height: 168px; padding: 18px; text-align: center; border: 1px solid #a8cbb9; border-radius: 14px; background: #f6fbf8; box-shadow: 0 3px 8px rgba(18,106,81,.16); transition: transform .2s ease, box-shadow .2s ease; }
+    .partner-card { display: grid; place-items: center; min-height: 168px; padding: 18px; text-align: center; border: 1px solid #76ac93; border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(18,106,81,.20); transition: transform .2s ease, box-shadow .2s ease; }
     .partner-card:hover, .partner-card:focus-within { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(18,106,81,.12); }
-    .partner-logo { width: 110px; height: 92px; object-fit: contain; margin-bottom: 12px; mix-blend-mode: multiply; }
+    .partner-logo { width: 110px; height: 92px; object-fit: contain; margin-bottom: 12px; }
     .partner-card h3 { margin: 0 0 5px; color: var(--green-dark); font: 700 16px "Poppins", sans-serif; }
     .partner-card p { margin: 0; color: var(--muted); font-size: 13px; }
     .partner-card a { display: inline-block; margin-top: 9px; color: var(--green); font-size: 13px; font-weight: 800; }
@@ -2246,6 +2246,24 @@
         flex-basis: 100%;
       }
     }
+    .video-count-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+    .video-count-row:has(button[hidden]) { display: none; }
+    #youtube-library { width: min(94vw, 1180px); background: linear-gradient(145deg, #e5f2e9, #fcf7ea); border-color: #bdd4c4; border-radius: 20px; }
+    :is(#youtube-library, #youtube-player) .public-review-dialog-header { justify-content: flex-end; margin-bottom: 12px; }
+    :is(#youtube-library, #youtube-player) .public-review-dialog-close { width: 38px; height: 38px; line-height: 1; border: 1px solid #bfd7c8; border-radius: 50%; background: #fff; color: var(--green-dark); }
+    #youtube-library-list { --video-row: clamp(86px, 15vh, 130px); display: grid; grid-template-columns: repeat(min(5, var(--video-count, 5)), minmax(0, 1fr)); grid-auto-rows: var(--video-row); gap: 16px; margin: 0; padding: 6px 12px 6px 6px; list-style: none; max-height: calc(3 * var(--video-row) + 44px); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+    #youtube-library-list button { position: relative; display: block; width: 100%; height: 100%; padding: 4px; background: white; border: 1px solid #9ebfad; border-radius: 12px; box-shadow: 0 2px 5px rgba(18,106,81,.17); cursor: pointer; }
+    #youtube-library-list button:is(:hover, :focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+    #youtube-library-list button::after { content: ""; position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 38px; height: 38px; border-radius: 50%; background: #0c4b3b; opacity: .94; }
+    #youtube-library-list button::before { content: ""; position: absolute; z-index: 1; left: 50%; top: 50%; transform: translate(-35%, -50%); border-block: 7px solid transparent; border-left: 11px solid #fff; }
+    #youtube-library-list img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+    #youtube-player { width: min(94vw, 1000px, max(360px, calc((80dvh - 105px) * 16 / 9))); border-radius: 20px; background: linear-gradient(145deg, #e5f2e9, #fcf7ea); }
+    #youtube-player-frame[hidden], #youtube-player-notice[hidden] { display: none; }
+    #youtube-player-notice { margin: 0; padding: 20px; border: 1px solid #bdd4c4; border-radius: 12px; background: #fff; color: var(--green-dark); }
+    #youtube-player-frame { display: block; width: 100%; aspect-ratio: 16 / 9; min-height: 200px; background: #111; border: 0; border-radius: 8px; }
+    #youtube-gallery button.blog-item { border: 0; padding: 0; text-align: left; cursor: pointer; }
+    @media (max-width: 860px) { #youtube-library-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 540px) { #youtube-library-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 </head>
 <body>
@@ -2505,6 +2523,7 @@
           <h2>Sarvahit Trust Blog and Video Updates</h2>
           <p>Watch our social work, donation activities, community programs, and latest trust updates on YouTube.</p>
         </div>
+        <div class="video-count-row"><button class="btn btn-light" id="youtube-count" type="button" aria-haspopup="dialog" hidden></button></div>
         <div class="drive-gallery-carousel youtube-gallery-carousel" aria-label="Sarvahit Trust YouTube videos">
           <button class="drive-gallery-page-arrow" id="youtube-prev" type="button" aria-label="Previous videos" disabled>‹</button>
           <div class="blog-gallery" id="youtube-gallery" aria-live="polite">
@@ -2623,6 +2642,19 @@
     </section>
   </main>
 
+  <dialog class="public-review-dialog" id="youtube-player" aria-label="Video player">
+    <div class="public-review-dialog-header">
+      <form method="dialog"><button class="public-review-dialog-close" aria-label="Close video">&times;</button></form>
+    </div>
+    <iframe id="youtube-player-frame" title="YouTube video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="origin" allowfullscreen></iframe>
+    <p id="youtube-player-notice" role="status" hidden>Open the published website or serve this page over HTTP to play embedded videos.</p>
+  </dialog>
+  <dialog class="public-review-dialog" id="youtube-library" aria-label="Sarvahit Trust Videos">
+    <div class="public-review-dialog-header">
+      <form method="dialog"><button class="public-review-dialog-close" aria-label="Close videos">&times;</button></form>
+    </div>
+    <ol id="youtube-library-list" tabindex="0" aria-label="Scrollable video list"></ol>
+  </dialog>
   <dialog class="public-review-dialog" id="public-review-dialog" aria-labelledby="public-review-name">
     <div class="public-review-dialog-header">
       <h3 id="public-review-name"></h3>
@@ -2879,7 +2911,7 @@
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwsYD3cnq8ShfUZDPhV5hd5w2FUoDXALI3tBE7x8LpWJbP2cXrBnUL9UwcyQsYENdB48Q/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycby-g5wS4xmG9Y0zrGXkJIe-dKmI8QkXGGlHbNGp4Gav6QknLYVry0td3KvFm7VeGDGXGQ/exec";
     const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzsSzsE8Up6THc3oH22npXG5SAnjkJwdh-3wav6MiIrkGVKdhr_9slckL0T3mKeU-__/exec";
     const GOOGLE_DRIVE_TEAM_API_URL = GOOGLE_DRIVE_UPLOAD_URL;
     const volunteerCount = document.getElementById("volunteer-count");
@@ -3527,7 +3559,34 @@
     const youtubeNext = document.getElementById("youtube-next");
     const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/channel/UCArUc8vHzOs3uQyhDwbl5eA/videos";
 
+    const youtubeCount = document.getElementById("youtube-count");
+    const youtubeLibrary = document.getElementById("youtube-library");
+    const youtubeLibraryList = document.getElementById("youtube-library-list");
+    youtubeCount.addEventListener("click", () => youtubeLibrary.showModal());
+    const youtubePlayer = document.getElementById("youtube-player");
+    const youtubePlayerFrame = document.getElementById("youtube-player-frame");
+    function playYoutubeVideo(video) {
+      youtubePlayerFrame.title = video.title || "Sarvahit Trust video";
+      const canEmbed = location.protocol === "http:" || location.protocol === "https:";
+      const notice = document.getElementById("youtube-player-notice");
+      youtubePlayerFrame.hidden = !canEmbed;
+      notice.hidden = canEmbed;
+      if (canEmbed) {
+        const embed = new URL("https://www.youtube.com/embed/" + encodeURIComponent(video.id));
+        embed.searchParams.set("autoplay", "1");
+        embed.searchParams.set("playsinline", "1");
+        embed.searchParams.set("origin", location.origin);
+        youtubePlayerFrame.src = embed.href;
+      }
+      youtubePlayer.showModal();
+    }
+    youtubePlayer.addEventListener("close", () => youtubePlayerFrame.removeAttribute("src"));
     function updateYoutubeNavigation() {
+      if (youtubeGallery?.firstElementChild?.classList.contains("blog-item")) {
+        const first = Array.from(youtubeGallery.children).findIndex((card) =>
+          card.getBoundingClientRect().right > youtubeGallery.getBoundingClientRect().left + 2);
+        youtubeCount.textContent = Math.max(1, first + 1) + "/" + youtubeGallery.children.length;
+      }
       if (!youtubeGallery || !youtubePrevious || !youtubeNext) return;
       const maxScroll = youtubeGallery.scrollWidth - youtubeGallery.clientWidth;
       youtubePrevious.disabled = maxScroll <= 2 || youtubeGallery.scrollLeft <= 2;
@@ -3550,6 +3609,7 @@
       link.rel = "noopener noreferrer";
       link.textContent = "Open the YouTube channel";
       notice.appendChild(link);
+      youtubeCount.hidden = true;
       youtubeGallery.replaceChildren(notice);
       updateYoutubeNavigation();
     }
@@ -3562,14 +3622,14 @@
       }
 
       youtubeGallery.replaceChildren();
+      youtubeLibraryList.replaceChildren();
       videos.forEach((video) => {
-        if (!video.id || !video.url) return;
-        const card = document.createElement("a");
+        if (!/^[A-Za-z0-9_-]{11}$/.test(video.id || "")) return;
+        const card = document.createElement("button");
+        card.type = "button";
         card.className = "blog-item";
-        card.href = video.url;
-        card.target = "_blank";
-        card.rel = "noopener noreferrer";
-        card.setAttribute("aria-label", "Watch " + (video.title || "Sarvahit Trust video") + " on YouTube");
+        card.setAttribute("aria-label", "Play " + (video.title || "Sarvahit Trust video"));
+        card.addEventListener("click", () => playYoutubeVideo(video));
 
         const thumbnail = document.createElement("img");
         thumbnail.src = video.thumbnailUrl || ("https://i.ytimg.com/vi/" + encodeURIComponent(video.id) + "/hqdefault.jpg");
@@ -3587,8 +3647,17 @@
         overlay.append(play, title);
         card.append(thumbnail, overlay);
         youtubeGallery.appendChild(card);
+        const item = document.createElement("li");
+        const link = card.cloneNode(false);
+        link.removeAttribute("class");
+        link.append(thumbnail.cloneNode());
+        link.addEventListener("click", () => playYoutubeVideo(video));
+        item.append(link);
+        youtubeLibraryList.append(item);
       });
 
+      youtubeLibraryList.style.setProperty("--video-count", Math.max(1, youtubeLibraryList.children.length));
+      youtubeCount.hidden = !youtubeGallery.children.length;
       if (!youtubeGallery.children.length) {
         showYoutubeGalleryFallback("No public videos were found yet.");
         return;
