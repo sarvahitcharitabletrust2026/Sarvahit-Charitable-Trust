@@ -28,10 +28,12 @@
 
     html {
       scroll-behavior: smooth;
+      background: #fff;
     }
 
     body {
-      margin: 0;
+      max-width: 1408px;
+      margin: 0 auto;
       color: var(--ink);
       background: var(--paper);
       font-family: "Hind", system-ui, sans-serif;
@@ -512,8 +514,7 @@
     #contact { background: #fff; }
 
     #team .section-head { max-width: none; margin: 0 0 36px; text-align: left; }
-    #team .section-head h2 { color: var(--green-dark); font-size: clamp(24px,3vw,34px); letter-spacing: .08em; }
-    #team .section-head p { margin-top: 8px; color: var(--green); font: 700 clamp(28px,4vw,44px)/1.15 "Poppins",sans-serif; }
+    #team .section-head p { margin-top: 8px; }
     .founder-card { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: center; margin-bottom: 34px; padding: 26px; border: 1px solid #d8e5dc; border-radius: 20px; background: linear-gradient(120deg,#fff,#edf6ef); box-shadow: 0 14px 34px rgba(20,50,35,.08); }
     .team-photo { box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; border: 3px solid #fff; border-radius: 16px; background: linear-gradient(145deg,#d9eadc,#f5e9cb); color: var(--green-dark); font: 700 50px/1 "Poppins",sans-serif; }
     .team-photo img { width: 100%; height: 100%; object-fit: cover; }
@@ -908,10 +909,28 @@
     #partners { padding-block: 76px; background: #fff; border-top: 1px solid #c8dfcf; border-bottom: 1px solid #e6e0d6; }
     #partners .section-head { position: relative; max-width: none; margin: 0 0 42px; text-align: left; }
     #partners .section-head::before { content: "WITH US"; display: block; margin-bottom: 8px; color: var(--green); font-size: 12px; font-weight: 800; letter-spacing: .14em; }
-    #partners .section-head h2 { color: var(--green-dark); font-size: clamp(28px, 3.5vw, 42px); }
-    .partners-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); align-items: center; gap: 28px; }
-    .partner-card { display: grid; place-items: center; min-height: 168px; padding: 18px; text-align: center; border: 1px solid rgba(18,106,81,.12); border-radius: 14px; background: rgba(255,255,255,.76); transition: transform .2s ease, box-shadow .2s ease; }
-    .partner-card:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(18,106,81,.12); }
+    :is(#about, #work, #gallery, #blog, #team, #partners, #reviews, #contact) .section-head h2,
+    #team .section-head p {
+      color: var(--green-dark);
+      font: 700 clamp(28px, 3.5vw, 42px)/1.12 "Poppins", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+    .partners-rail { position: relative; }
+    .partners-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--partner-rows, 1), auto); grid-auto-columns: var(--partner-width, 100%); gap: 24px; overflow-x: auto; padding-block: 6px 12px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .partners-grid::-webkit-scrollbar { display: none; }
+    .partners-grid .partner-card { min-width: 0; overflow-wrap: anywhere; scroll-snap-align: start; }
+    .partners-arrow { position: absolute; z-index: 1; top: 50%; translate: 0 -50%; }
+    .partners-arrow[hidden] { display: none; }
+    .partners-arrow:disabled { cursor: default; }
+    .partners-arrow-prev { left: 0; }
+    .partners-arrow-next { right: 0; }
+    .partners-rail:has(.partners-arrow:not([hidden])) { padding-inline: 50px; }
+    @media (max-width: 480px) {
+      .partners-rail:has(.partners-arrow:not([hidden])) { padding-inline: 34px; }
+      .partners-rail .partners-arrow { width: 30px; height: 38px; font-size: 26px; }
+    }
+    .partner-card { display: grid; place-items: center; min-height: 168px; padding: 18px; text-align: center; border: 1px solid #a8cbb9; border-radius: 14px; background: #f6fbf8; box-shadow: 0 3px 8px rgba(18,106,81,.16); transition: transform .2s ease, box-shadow .2s ease; }
+    .partner-card:hover, .partner-card:focus-within { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(18,106,81,.12); }
     .partner-logo { width: 110px; height: 92px; object-fit: contain; margin-bottom: 12px; mix-blend-mode: multiply; }
     .partner-card h3 { margin: 0 0 5px; color: var(--green-dark); font: 700 16px "Poppins", sans-serif; }
     .partner-card p { margin: 0; color: var(--muted); font-size: 13px; }
@@ -2533,7 +2552,11 @@
     <section id="partners">
       <div class="wrap">
         <div class="section-head"><h2>Partners and Supporters</h2><p>Working with organisations and community supporters to reach more people.</p></div>
-        <div class="partners-grid" id="partners-grid"><p>Our partner information will appear here.</p></div>
+        <div class="partners-rail">
+          <button type="button" class="drive-gallery-page-arrow partners-arrow partners-arrow-prev" aria-label="Scroll partners left" aria-controls="partners-grid" hidden>&lt;</button>
+          <div class="partners-grid" id="partners-grid" role="region" aria-label="Partner cards" tabindex="0"><p>Our partner information will appear here.</p></div>
+          <button type="button" class="drive-gallery-page-arrow partners-arrow partners-arrow-next" aria-label="Scroll partners right" aria-controls="partners-grid" hidden>&gt;</button>
+        </div>
       </div>
     </section>
 
@@ -2857,7 +2880,7 @@
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
     const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwsYD3cnq8ShfUZDPhV5hd5w2FUoDXALI3tBE7x8LpWJbP2cXrBnUL9UwcyQsYENdB48Q/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbx7lkm6cEpJwuAjW2NzpyQaE27FB7YhR5CmEM3whvtCWqncw7eoBaxAyAWqL_CHQpUO/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzsSzsE8Up6THc3oH22npXG5SAnjkJwdh-3wav6MiIrkGVKdhr_9slckL0T3mKeU-__/exec";
     const GOOGLE_DRIVE_TEAM_API_URL = GOOGLE_DRIVE_UPLOAD_URL;
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -3234,13 +3257,43 @@
       if (communityCount) communityCount.textContent = `${stats.communityWelfare || 0}+`;
     }
 
+    const partnersGrid = document.getElementById("partners-grid");
+    const partnersRail = partnersGrid.parentElement;
+    const partnersPrev = partnersRail.querySelector(".partners-arrow-prev");
+    const partnersNext = partnersRail.querySelector(".partners-arrow-next");
+    const partnerGap = 24;
+    function updatePartnerArrows() {
+      partnersPrev.disabled = partnersGrid.scrollLeft <= 1;
+      partnersNext.disabled = partnersGrid.scrollLeft + partnersGrid.clientWidth >= partnersGrid.scrollWidth - 1;
+    }
+    function layoutPartners() {
+      const count = partnersGrid.querySelectorAll(".partner-card").length;
+      const columns = Math.max(1, Math.min(5, Math.floor((partnersRail.clientWidth + partnerGap) / (150 + partnerGap))));
+      const overflow = count > columns * 2;
+      partnersPrev.hidden = partnersNext.hidden = !overflow;
+      const width = partnersGrid.clientWidth;
+      const rows = count <= columns ? 1 : 2;
+      const visible = Math.max(1, Math.min(columns, count));
+      partnersGrid.style.setProperty("--partner-rows", rows);
+      partnersGrid.style.setProperty("--partner-width", (width - partnerGap * (visible - 1)) / visible + "px");
+      updatePartnerArrows();
+    }
+    partnersGrid.addEventListener("scroll", updatePartnerArrows, { passive: true });
+    for (const [button, direction] of [[partnersPrev, -1], [partnersNext, 1]]) {
+      button.addEventListener("click", () => {
+        const card = partnersGrid.querySelector(".partner-card");
+        if (card) partnersGrid.scrollBy({ left: direction * (card.getBoundingClientRect().width + partnerGap), behavior: "smooth" });
+      });
+    }
+    new ResizeObserver(layoutPartners).observe(partnersRail, { box: "border-box" });
     async function loadPartners() {
       const grid = document.getElementById("partners-grid");
       if (!grid || !supabaseEnabled()) return;
       try {
-        const partners = await supabaseRequest(`${PARTNER_TABLE}?select=name,website_url,description,logo_url&is_published=eq.true&order=sort_order.asc,name.asc`);
-        grid.innerHTML = partners.length ? partners.map((partner) => `<article class="partner-card">${partner.logo_url ? `<img class="partner-logo" src="${escapeHtml(partner.logo_url)}" alt="${escapeHtml(partner.name)} logo" />` : ""}<h3>${escapeHtml(partner.name)}</h3>${partner.description ? `<p>${escapeHtml(partner.description)}</p>` : ""}${partner.website_url ? `<a href="${escapeHtml(partner.website_url)}" target="_blank" rel="noopener">Visit partner →</a>` : ""}</article>`).join("") : "<p>Our partner information will appear here.</p>";
+        const partners = await supabaseRequest(`${PARTNER_TABLE}?select=name,website_url,category,city,logo_url&is_published=eq.true&order=sort_order.asc,name.asc`);
+        grid.innerHTML = partners.length ? partners.map((partner) => `<article class="partner-card">${partner.logo_url ? `<img class="partner-logo" src="${escapeHtml(partner.logo_url)}" alt="${escapeHtml(partner.name)} logo" />` : ""}<h3>${escapeHtml(partner.name)}</h3>${partner.category ? `<p>${escapeHtml(partner.category)}</p>` : ""}${partner.city ? `<p>${escapeHtml(partner.city)}</p>` : ""}${partner.website_url ? `<a href="${escapeHtml(partner.website_url)}" target="_blank" rel="noopener">Visit partner →</a>` : ""}</article>`).join("") : "<p>Our partner information will appear here.</p>";
       } catch (_) { grid.innerHTML = "<p>Our partner information will appear here.</p>"; }
+      layoutPartners();
     }
 
     async function loadNotice() {

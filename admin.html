@@ -7,160 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="trust-portal.css">
   <style>
-    :root {
-      --ink: #172026;
-      --muted: #5b6770;
-      --paper: #fbfaf7;
-      --panel: #ffffff;
-      --green: #126a51;
-      --green-dark: #0c4b3b;
-      --gold: #d89a2b;
-      --line: #e6e0d6;
-      --danger: #9b1c1c;
-      --shadow: 0 18px 50px rgba(20, 30, 36, 0.12);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: var(--paper);
-      font-family: "Hind", system-ui, sans-serif;
-      font-size: 17px;
-      line-height: 1.6;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .topbar {
-      background: var(--green-dark);
-      color: #fff;
-      padding: 10px 20px;
-    }
-
-    .topbar-inner,
-    .wrap {
-      width: min(1180px, 100%);
-      margin: 0 auto;
-    }
-
-    .topbar-inner {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .topbar-actions { display: flex; align-items: center; gap: 12px; }
-    .topbar-actions [hidden] { display: none !important; }
-    .admin-brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-    }
-
-    .admin-logo {
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      object-fit: cover;
-      background: #fff;
-    }
-
-    .btn {
-      min-height: 42px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      padding: 9px 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font: inherit;
-      font-weight: 800;
-      transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-    }
-
-    .btn:hover,
-    .btn:focus {
-      transform: translateY(-1px);
-      outline: none;
-    }
-
-    .btn-primary {
-      background: var(--green);
-      color: #fff;
-    }
-
-    .btn-primary:hover,
-    .btn-primary:focus {
-      background: var(--green-dark);
-    }
-
-    .btn-light {
-      background: #fff;
-      color: var(--green-dark);
-      border-color: var(--line);
-    }
-
-    .btn-light:hover,
-    .btn-light:focus { background: #fff6df; border-color: var(--gold); color: var(--green-dark); }
-    button:not(.btn):not(.entry-dialog-close):not(.rating-star) { border-radius: 8px; transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
-    button:not(.btn):not(.entry-dialog-close):not(.rating-star):hover { background: var(--green); color: #fff; border-color: var(--green); }
-
-    .btn-danger {
-      background: #fff4f4;
-      color: var(--danger);
-      border-color: #e4b8b8;
-    }
-
-    .btn-danger:hover,
-    .btn-danger:focus {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    main {
-      padding: 48px 20px 70px;
-    }
-
-    h1,
-    h2 {
-      font-family: "Poppins", system-ui, sans-serif;
-      line-height: 1.15;
-      margin: 0 0 14px;
-    }
-
-    h1 {
-      font-size: clamp(34px, 5vw, 54px);
-    }
-
-    h2 {
-      font-size: 26px;
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-      padding: 24px;
-    }
-
-    .login-card {
-      max-width: 460px;
-      margin: 34px auto 0;
-    }
-
     .dashboard {
       display: none;
       gap: 20px;
@@ -186,61 +34,6 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 20px;
       min-width: 0;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      min-width: 0;
-    }
-
-    .form-grid > *,
-    input,
-    select,
-    textarea { min-width: 0; }
-
-    label {
-      display: grid;
-      gap: 6px;
-      font-weight: 800;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      min-height: 46px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font: inherit;
-      color: var(--ink);
-      background: #fff;
-    }
-
-    textarea {
-      min-height: 112px;
-      resize: vertical;
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
-
-    .message {
-      display: none;
-      margin-top: 14px;
-      padding: 11px 13px;
-      border-radius: 8px;
-      background: #e8f4ee;
-      color: var(--green-dark);
-      font-weight: 800;
-    }
-
-    .message.error {
-      background: #fff4f4;
-      color: var(--danger);
     }
 
     .volunteer-list {
@@ -450,12 +243,14 @@
     .donation-report-table thead th:nth-child(13),
     .donation-report-table thead th:nth-child(14),
     .donation-report-table thead th:nth-child(15) { text-align: center; }
-    .donation-report-table th:nth-child(13) { width: 138px; min-width: 138px; max-width: 138px; padding: 5px 4px; white-space: normal; font-size: 11.5px; line-height: 1.05; }
+    .donation-report-table th:nth-child(13) { width: 138px; min-width: 138px; max-width: 138px; padding: 5px 4px; white-space: normal; }
     .donation-report-table td:nth-child(13) { width: 138px; min-width: 138px; max-width: 138px; text-align: center; }
     .donation-table th:nth-child(12) { width: 160px; min-width: 160px; white-space: nowrap; }
     .donation-table td:nth-child(12) { width: 220px; min-width: 180px; max-width: 220px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; vertical-align: middle; }
-    .donation-certificate-cell { max-height: 70px; overflow-y: auto; overflow-x: hidden; padding-right: 4px; font-size: 13px; line-height: 1.35; scrollbar-width: thin; overscroll-behavior: contain; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
-    .donation-certificate-cell small { display: block; margin-top: 4px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+    .certificate-details-button { border: 0; padding: 4px; background: transparent; color: var(--green-dark, #104d40); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+    td.certificate-delivery-failed { background: #fff1f0; box-shadow: inset 0 0 0 2px #c53d35; }
+    .certificate-delivery-failed .certificate-details-button { color: #a42620; }
+    #certificate-delivery-details { overflow-wrap: anywhere; }
     .form-grid label[hidden] { display: none; }
 
     .donation-table th:not(:last-child),
@@ -508,6 +303,39 @@
         grid-template-columns: 1fr;
       }
     }
+    #partner-dialog .entry-dialog-header { position: relative; display: block; padding: 12px 44px; text-align: center; background: #126a51; color: #fff; }
+    #partner-dialog-close { position: absolute; inset-inline-end: 8px; top: 50%; transform: translateY(-50%); color: inherit; }
+    #partner-dialog .entry-dialog-header h2, #partner-dialog .entry-dialog-header p { color: inherit; }
+    #partner-form fieldset { display: grid; gap: 12px; margin: 0 0 16px; padding: 14px; border: 1px solid #dce7df; border-radius: 8px; min-width: 0; }
+    #partner-form fieldset { background: #f5faf7; }
+    #partner-form fieldset:nth-of-type(even) { background: #fcfaf5; }
+    #partner-form .partner-save-actions { justify-content: flex-end; }
+    #partner-form [value="draft"] { background: #f7e1ad; border-color: #ddbd72; color: #493008; }
+    #partner-form [value="draft"]:hover { background: #f0d18b; }
+    #partner-form .partner-save-actions .btn { min-height: 42px; padding: 10px 16px; font-size: 14px; }
+    #partner-form legend { padding: 0 6px; color: #0c4b3b; font-weight: 700; }
+    #partner-form label { display: block; min-width: 0; }
+    #partner-form .partner-setting { display: flex; align-items: center; gap: 10px; min-height: 56px; cursor: pointer; }
+    #partner-form .partner-setting input { appearance: none; display: grid; place-content: center; flex: 0 0 22px; width: 22px; height: 22px; min-height: 0; margin: 0; padding: 0; border: 2px solid currentColor; border-radius: 50%; cursor: pointer; }
+    #partner-form .partner-setting input:checked::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+    #partner-form .partner-setting input:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+    #partner-location-status:empty { display: none; }
+    .partner-location { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+    .partner-table-logo { width: 62px; height: 54px; object-fit: contain; }
+    #partner-document[hidden], #open-finance-ledger[hidden], #dashboard:not([data-role="admin"]) [data-delete-volunteer] { display: none; }
+    .recovery-link, #recovery-dialog .recovery-back { background: transparent; border: 0; color: #0c4b3b; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
+    #recovery-login-status:empty { display: none; }
+    #recovery-login-status { color: var(--green-dark); }
+    #recovery-dialog { width: min(calc(100% - 32px), 460px); padding: clamp(20px, 5vw, 36px); background: #fff; border: 1px solid #d8e4db; border-radius: 16px; color: #17231f; font: 16px/1.5 system-ui, sans-serif; }
+    #recovery-close { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; line-height: 1; color: var(--green-dark); }
+    #recovery-dialog::backdrop { background: rgba(12, 40, 32, .24); backdrop-filter: blur(4px); }
+    #recovery-dialog h1 { margin: 0 0 16px; color: #0c4b3b; font: 700 28px/1.5 system-ui, sans-serif; }
+    #recovery-dialog form { display: grid; gap: 14px; }
+    #recovery-dialog form[hidden] { display: none; }
+    #recovery-dialog input { border-color: #a9b9b0; }
+    #recovery-dialog button[type="submit"] { min-height: 44px; padding: 8px 12px; border: 0; border-radius: 8px; background: #126a51; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    #recovery-dialog button:disabled { opacity: .65; cursor: wait; }
+    #recovery-dialog #status[data-error] { color: #9b2525; }
   </style>
 </head>
 <body>
@@ -540,6 +368,8 @@
             </div>
           </div>
         </form>
+        <p><button class="recovery-link" type="button" id="open-recovery">Forgot Password?</button></p>
+        <p id="recovery-login-status" role="status"></p>
         <div class="message error" id="login-message">Wrong username or password.</div>
       </section>
 
@@ -638,7 +468,7 @@
         </dialog>
 
         <section class="panel trustee-report" id="expense-report">
-          <div class="expense-report-heading"><h2>Expense Report</h2><button class="btn btn-primary" type="button" id="open-finance-ledger">Financial Ledger</button></div>
+          <div class="expense-report-heading"><h2>Expense Report</h2><button class="btn btn-primary" type="button" id="open-finance-ledger" hidden>Financial Ledger</button></div>
           <p>Review recorded expenses by year or month. Only approved expenses are included in the public financial totals.</p>
           <div class="report-filters">
             <label>Year<select id="expense-year"><option value="all">All Years</option></select></label>
@@ -710,15 +540,15 @@
         </section>
 
         <section class="panel admin-only" id="partners-admin-panel">
-          <div class="expense-report-heading"><h2>Partner Section Design</h2><button class="btn btn-primary" type="button" id="add-partner">Add New Partner</button></div>
-          <p>Add partner name, logo, website and short description. The public page shows these as logo cards below Our Leadership &amp; Team.</p>
-          <div class="table-wrap"><table class="donation-table partner-admin-table"><thead><tr><th>Logo</th><th>Partner name</th><th>Website</th><th>Description</th><th>Actions</th></tr></thead><tbody id="partner-admin-list"><tr><td colspan="5">Login to load partners.</td></tr></tbody></table></div>
+          <div class="expense-report-heading"><h2>Partners and Supporters</h2><button class="btn btn-primary" type="button" id="add-partner">Add New Partner</button></div>
+          <p>Display Order sets the Sr. No. and the order of partners on the website.</p>
+          <div class="table-wrap" id="partner-table-scroll" tabindex="0" role="region" aria-label="Partners and Supporters table"><table class="donation-table partner-admin-table"><thead><tr><th>Sr. No.</th><th>Logo</th><th>Organization Name</th><th>Partner Category</th><th>Contact Details</th><th>City / State</th><th>Partnership Start Date</th><th>Actions</th></tr></thead><tbody id="partner-admin-list"><tr><td colspan="8">Login to load partners.</td></tr></tbody></table></div>
           <div class="message" id="partner-admin-message" role="status"></div>
         </section>
 
         <section class="panel trustee-report" id="volunteer-panel">
           <div class="expense-report-heading"><h2>Volunteer Data</h2><div class="team-row-actions"><button class="btn btn-primary" type="button" id="refresh-volunteers">Refresh Volunteer Data</button><button class="btn btn-primary" type="button" id="export-volunteers">Download Excel</button></div></div>
-          <p>Click a name to view volunteer details. Download the complete volunteer list as an Excel file, or use Delete to remove a record.</p>
+          <p>Click a name to view volunteer details. Download the complete volunteer list as an Excel file.</p>
           <div class="volunteer-list" id="volunteer-list"></div>
         </section>
 
@@ -746,17 +576,54 @@
         <div class="full"><button class="btn btn-primary" type="submit">Save Donation</button> <button class="btn btn-light" type="button" id="cash-donation-cancel">Cancel</button></div>
       </div></form><div class="message" id="cash-donation-message" role="status"></div>
     </dialog>
+    <dialog class="entry-dialog finance-dialog" id="certificate-delivery-dialog" aria-labelledby="certificate-delivery-title">
+      <div class="entry-dialog-header">
+        <h2 id="certificate-delivery-title">Certificate delivery</h2>
+        <form method="dialog"><button class="entry-dialog-close" aria-label="Close certificate details">&times;</button></form>
+      </div>
+      <div id="certificate-delivery-details"></div>
+    </dialog>
     <dialog class="entry-dialog finance-dialog" id="partner-dialog" aria-labelledby="partner-dialog-title">
       <div class="entry-dialog-header"><div><h2 id="partner-dialog-title">Add New Partner</h2><p>Create a partner logo card for the public website.</p></div><button class="entry-dialog-close" type="button" id="partner-dialog-close" aria-label="Close form">&times;</button></div>
-      <form id="partner-form"><input name="id" type="hidden" /><div class="form-grid">
-        <label>Partner name<input name="name" required maxlength="100" placeholder="Organisation or supporter name" /></label>
-        <label>Logo image URL<input name="logo_url" type="url" placeholder="https://example.com/logo.png" /></label>
-        <label class="full">Website URL<input name="website_url" type="url" placeholder="https://partner.example" /></label>
-        <label class="full">Short description<textarea name="description" maxlength="220" placeholder="Optional short description"></textarea></label>
-        <label>Display order<input name="sort_order" type="number" min="0" value="0" /></label>
-        <label>Visibility<select name="is_published"><option value="true">Show on website</option><option value="false">Save as hidden</option></select></label>
-        <div class="full"><button class="btn btn-primary" type="submit">Save Partner</button> <button class="btn btn-light" type="button" id="partner-form-cancel">Cancel</button></div>
-      </div></form><div class="message" id="partner-form-message" role="status"></div>
+      <form id="partner-form">
+        <input name="id" type="hidden" />
+        <fieldset><legend>Partner Information</legend>
+          <label>Organization / Partner Name *<input name="name" maxlength="100" required /></label>
+          <label>Partner Category *<select name="category" required><option value="">Select category</option><option>NGO</option><option>Company</option><option>Government</option><option>Educational Institution</option><option>Community Organization</option><option>Individual Supporter</option><option>Other</option></select></label>
+          <label>Organization Logo URL<input name="logo_url" type="url" placeholder="https://example.com/logo.png" /></label>
+          <label>Browse logo (PNG, JPEG or WebP, up to 512 KB)<input name="logo_file" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+          <label>Official Website<input name="website_url" type="url" placeholder="https://example.com" /></label>
+          <label>Short Description *<textarea name="description" maxlength="220" required></textarea></label>
+          <label>About Organization<textarea name="about_organization"></textarea></label>
+        </fieldset>
+        <fieldset><legend>Contact and Location Details</legend>
+          <label>Contact Person *<input name="contact_person" required /></label>
+          <label>Designation *<input name="contact_designation" required placeholder="Founder / Director / President" /></label>
+          <label>Email Address *<input name="contact_email" required type="email" /></label>
+          <label>Mobile Number *<input name="contact_phone" required type="tel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" title="Enter exactly 10 digits" /></label>
+          <label>Full Address *<textarea name="full_address" required></textarea></label>
+          <div class="partner-location">
+            <label>Country *<select name="country" required><option value="">Select country</option></select></label>
+            <label>State *<select name="state" required><option value="">Select state</option></select></label>
+            <label>City *<select name="city" required><option value="">Select city</option></select></label>
+          </div>
+          <div id="partner-location-status" role="status"></div>
+        </fieldset>
+        <fieldset><legend>Collaboration Details</legend>
+          <label>Collaboration Type *<select name="collaboration_type" required><option value="">Select type</option><option>Joint Social Work</option><option>Education Support</option><option>Medical Assistance</option><option>Food &amp; Ration Support</option><option>Financial Support</option><option>Tree Plantation</option><option>Event Partnership</option><option>Other</option></select></label>
+          <label>Supporting Document (optional PDF, up to 5 MB)<input name="supporting_file" type="file" accept="application/pdf" /></label>
+          <button type="button" class="btn btn-light" id="partner-document" hidden>Download current document</button>
+          <label>Partnership Start Date *<input name="partnership_start_date" required type="date" /></label>
+          <label>Partnership End Date (Optional)<input name="partnership_end_date" type="date" /></label>
+        </fieldset>
+        <fieldset><legend>Website Display Settings</legend>
+          <label class="partner-setting"><input name="is_published" type="checkbox" checked /> Show on Website</label>
+          <label class="partner-setting"><input name="featured" type="checkbox" /> Featured Partner</label>
+          <label class="partner-setting"><input name="partner_permission" type="checkbox" /> Partner Permission Confirmed</label>
+          <label>Display Order<input name="sort_order" type="number" min="0" step="1" value="0" required /></label>
+        </fieldset>
+        <div class="finance-actions partner-save-actions"><button class="btn btn-light" type="submit" value="draft" formnovalidate>Save Draft</button><button class="btn btn-primary" type="submit" value="save">Save Partner</button></div>
+      </form><div class="message" id="partner-form-message" role="status"></div>
     </dialog>
   </main>
 
@@ -774,6 +641,144 @@
       <form id="80g-certificate-form"><label>Upload certificate (PDF)<input name="certificate" type="file" accept="application/pdf" required /></label><div class="form-grid"><button class="btn btn-primary" type="submit"><span class="button-spinner" hidden aria-hidden="true"></span><span class="button-label">Send</span></button><button class="btn btn-light" type="button" data-close-80g>Cancel</button></div></form><div class="message" id="80g-message" role="status" aria-live="polite"></div>
     </dialog>
 
+  <dialog id="recovery-dialog" aria-labelledby="title">
+    <button class="entry-dialog-close" id="recovery-close" type="button" aria-label="Close password reset">&times;</button>
+
+    <h1 id="title">Reset Password</h1>
+    <form id="request-form">
+      <label><span style="font-weight: 400;">Registered email</span><input name="email" type="email" autocomplete="email" required></label>
+      <button type="submit">Send Reset Link</button>
+    </form>
+    <form id="password-form" hidden>
+      <label>New password<input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
+      <label>Confirm password<input name="confirmation" type="password" autocomplete="new-password" minlength="8" required></label>
+      <button type="submit">Save New Password</button>
+    </form>
+    <p id="status" role="status"></p>
+    <button type="button" class="recovery-back" id="recovery-back">Back to Trust Portal Login</button>
+  </dialog>
+  <script>
+  (() => {
+    const SUPABASE_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
+
+    const requestForm = document.getElementById("request-form");
+    const passwordForm = document.getElementById("password-form");
+    const status = document.getElementById("status");
+    const title = document.getElementById("title");
+    const dialog = document.getElementById("recovery-dialog");
+    const loginStatus = document.getElementById("recovery-login-status");
+    const callback = new URL(window.location.href);
+    const redirect = new URL("reset-password.html", callback);
+    const fragment = new URLSearchParams(callback.hash.slice(1));
+    let recoveryToken = fragment.get("type") === "recovery" ? fragment.get("access_token") : null;
+    const callbackError = fragment.has("error") || callback.searchParams.has("error");
+    if (recoveryToken || callbackError) {
+      callback.hash = "";
+      callback.search = "";
+      history.replaceState(null, "", callback.href);
+    }
+
+    function showStatus(message, error = false) {
+      status.textContent = message;
+      status.toggleAttribute("data-error", error);
+    }
+
+    const openButton = document.getElementById("open-recovery");
+    openButton.addEventListener("click", () => {
+      loginStatus.textContent = "";
+      const email = document.getElementById("login-form").elements.email.value;
+      if (!recoveryToken && email) requestForm.elements.email.value = email;
+      dialog.showModal();
+    });
+    for (const id of ["recovery-back", "recovery-close"]) {
+      document.getElementById(id).addEventListener("click", () => dialog.close());
+    }
+    dialog.addEventListener("close", () => openButton.focus());
+    if (recoveryToken || callbackError || new URLSearchParams(window.location.search).has("reset")) dialog.showModal();
+    if (recoveryToken) {
+      title.textContent = "Set New Password";
+      requestForm.hidden = true;
+      passwordForm.hidden = false;
+      passwordForm.elements.password.focus();
+    } else if (callbackError) {
+      showStatus("This reset link is invalid or expired. Request a new link below.", true);
+    }
+
+    requestForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = requestForm.querySelector("button");
+      if (button.disabled) return;
+      button.disabled = true;
+      showStatus("Requesting reset link…");
+      try {
+        const endpoint = new URL(SUPABASE_URL + "/auth/v1/recover");
+        endpoint.searchParams.set("redirect_to", redirect.href);
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+          body: JSON.stringify({ email: requestForm.elements.email.value.trim() })
+        });
+        if (response.status === 429) {
+          showStatus("Please wait before requesting another reset link.", true);
+        } else if (!response.ok) {
+          showStatus("The reset request could not be completed. Try again later.", true);
+        } else {
+          showStatus("If this email is registered, a password reset link will be sent. Check your inbox and spam folder.");
+        }
+      } catch {
+        showStatus("Unable to connect. Check your connection and try again.", true);
+      } finally { button.disabled = false; }
+    });
+
+    passwordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = passwordForm.querySelector("button");
+      const { password, confirmation } = passwordForm.elements;
+      if (!recoveryToken || button.disabled) return;
+      if (password.value !== confirmation.value) {
+        confirmation.focus();
+        showStatus("The passwords do not match.", true);
+        return;
+      }
+      button.disabled = true;
+      showStatus("Saving your new password…");
+      try {
+        const response = await fetch(SUPABASE_URL + "/auth/v1/user", {
+          method: "PUT",
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + recoveryToken, "Content-Type": "application/json" },
+          body: JSON.stringify({ password: password.value })
+        });
+        if (response.status === 401 || response.status === 403) {
+          recoveryToken = null;
+          title.textContent = "Reset Password";
+          passwordForm.reset();
+          passwordForm.hidden = true;
+          requestForm.hidden = false;
+          requestForm.elements.email.focus();
+          showStatus("This reset link is invalid or expired. Request a new link below.", true);
+        } else if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          showStatus(error.msg || error.message || "Could not update the password. Try again.", true);
+        } else {
+          recoveryToken = null;
+          sessionStorage.removeItem("trustAdminAccessToken");
+          passwordForm.reset();
+          passwordForm.hidden = true;
+          title.textContent = "Reset Password";
+          requestForm.hidden = false;
+          requestForm.reset();
+          showStatus("");
+          loginStatus.textContent = "Password updated. Sign in with your new password.";
+          dialog.close();
+        }
+      } catch {
+        showStatus("Unable to connect. Check your connection and try again.", true);
+      } finally { button.disabled = false; }
+    });
+  
+  })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script>
     document.addEventListener("input", (event) => {
@@ -797,11 +802,13 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbx7lkm6cEpJwuAjW2NzpyQaE27FB7YhR5CmEM3whvtCWqncw7eoBaxAyAWqL_CHQpUO/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzsSzsE8Up6THc3oH22npXG5SAnjkJwdh-3wav6MiIrkGVKdhr_9slckL0T3mKeU-__/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let portalRole = "";
     let portalIdentity = null;
     const canManagePortal = () => ["admin", "founder"].includes(portalRole);
+    const canDeleteVolunteers = () => portalRole === "admin";
+    const canOpenFinanceLedger = () => ["admin", "founder", "secretary", "treasurer"].includes(portalRole);
     const portalRoleLabel = (role) => ({ admin: "Admin", founder: "Founder & President", secretary: "Secretary", treasurer: "Treasurer", trustee: "Trustee" }[role] || "Trustee");
     const financeSubmitLabel = () => canManagePortal() ? "Save as Draft" : "Submit for Approval";
     let financeEntries = [];
@@ -831,8 +838,8 @@
         }
       });
       if (!response.ok) throw new Error(await response.text());
-      if (response.status === 204) return null;
-      return response.json();
+      const body = await response.text();
+      return body.trim() ? JSON.parse(body) : null;
     }
 
     async function financeStorageUrl(path) {
@@ -861,7 +868,7 @@
         if (entry.entry_type !== "expense") return false;
         const date = financeDate(entry);
         return (year === "all" || date.getFullYear() === Number(year)) && (month === "all" || date.getMonth() === Number(month));
-      });
+      }).sort((a, b) => financeDate(b) - financeDate(a) || Date.parse(b.created_at) - Date.parse(a.created_at));
     }
     function populateExpenseYears() {
       const select = document.getElementById("expense-year");
@@ -880,10 +887,10 @@
       document.getElementById("expense-year-total").textContent = formatCurrency(annual.reduce((sum, entry) => sum + Number(entry.amount || 0), 0));
       document.getElementById("expense-record-count").textContent = String(publishedFiltered.length);
       const rows = await Promise.all(filtered.map(async (entry) => {
-        const proof = entry.attachment_drive_url || await financeStorageUrl(entry.attachment_path);
+        const proof = (await financeStorageUrl(entry.attachment_path).catch(() => "")) || entry.attachment_drive_url;
         const time = entry.created_at ? new Date(entry.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—";
         const pendingClass = canManagePortal() && entry.workflow_status === "pending" ? "finance-pending-entry" : "";
-        return "<tr class=\"" + pendingClass + "\"><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(time) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.submitted_by_name || "—") + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt</a>' : "—") + (!canManagePortal() ? "" : "<td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td>") + "</tr>";
+        return "<tr class=\"" + pendingClass + "\"><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(time) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.submitted_by_name || "—") + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt / bill</a>' : "—") + (!canManagePortal() ? "" : "<td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td>") + "</tr>";
       }));
       document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="' + (!canManagePortal() ? 9 : 10) + '">No expenses found for this period.</td></tr>';
     }
@@ -1025,44 +1032,243 @@
         message.className = "message"; message.textContent = "Trustee portal access saved."; message.style.display = "block"; form.reset();
       } catch (error) { message.className = "message error"; message.textContent = error.message || "Could not save login access."; message.style.display = "block"; }
     });
+    const partnerDetailFields = ["category", "about_organization", "contact_person", "contact_designation", "contact_email", "contact_phone", "full_address", "city", "state", "country", "collaboration_type", "partnership_start_date", "partnership_end_date"];
+    const partnerListFields = ["id", "name", "logo_url", "website_url", "description", "sort_order", "is_published", "featured", "partner_permission", "supporting_document_name", ...partnerDetailFields];
+    let partnerRecords = [];
+    const partnerTableScroll = document.getElementById("partner-table-scroll");
+    const partnerTable = partnerTableScroll.querySelector("table");
+    const partnerTableBody = partnerTable.tBodies[0];
+    const partnerTableResize = new ResizeObserver(() => {
+      const fifthRow = partnerTableBody.rows[4];
+      if (!fifthRow || !partnerTable.offsetHeight) {
+        partnerTableScroll.style.maxHeight = "";
+        return;
+      }
+      const visibleHeight = fifthRow.getBoundingClientRect().top - partnerTable.getBoundingClientRect().top;
+      const frameHeight = partnerTableScroll.offsetHeight - partnerTableScroll.clientHeight;
+      partnerTableScroll.style.maxHeight = Math.ceil(visibleHeight + frameHeight) + "px";
+    });
+    partnerTableResize.observe(partnerTable);
+    partnerTableResize.observe(partnerTableScroll);
+
     function renderPartners(partners) {
+      partnerRecords = partners;
       const body = document.getElementById("partner-admin-list");
-      body.innerHTML = partners.length ? partners.map((partner) => `<tr><td>${partner.logo_url ? `<img class="team-admin-photo" style="width:62px;height:54px;object-fit:contain" src="${escapeHtml(partner.logo_url)}" alt="${escapeHtml(partner.name)} logo" />` : "—"}</td><td>${escapeHtml(partner.name)}</td><td>${partner.website_url ? `<a href="${escapeHtml(partner.website_url)}" target="_blank" rel="noopener">Open site</a>` : "—"}</td><td style="white-space:normal;min-width:220px">${escapeHtml(partner.description || "—")}</td><td><div class="finance-actions"><button class="btn btn-primary" type="button" data-edit-partner="${escapeHtml(partner.id)}">Edit</button><button class="btn btn-danger" type="button" data-delete-partner="${escapeHtml(partner.id)}">Delete</button></div></td></tr>`).join("") : '<tr><td colspan="5">No partners added yet.</td></tr>';
-      window.partnerRecords = partners;
+      body.innerHTML = partners.length ? partners.map((partner) => {
+        const contact = [partner.contact_person, partner.contact_designation, partner.contact_email, partner.contact_phone].filter(Boolean).map(escapeHtml).join("<br>");
+        const location = [partner.city, partner.state].filter(Boolean).join(", ");
+        const logo = partner.logo_url ? '<img class="partner-table-logo" src="' + escapeHtml(partner.logo_url) + '" alt="' + escapeHtml(partner.name) + ' logo" />' : "—";
+        const id = escapeHtml(partner.id);
+        return '<tr><td>' + escapeHtml(String(partner.sort_order)) + '</td><td>' + logo + '</td><td>' + escapeHtml(partner.name) + '</td><td>' + escapeHtml(partner.category || "—") + '</td><td>' + (contact || "—") + '</td><td>' + escapeHtml(location || "—") + '</td><td>' + escapeHtml(partner.partnership_start_date || "—") + '</td><td><div class="finance-actions"><button class="btn btn-primary" type="button" data-edit-partner="' + id + '">Edit</button><button class="btn btn-danger" type="button" data-delete-partner="' + id + '">Delete</button></div></td></tr>';
+      }).join("") : '<tr><td colspan="8">No partners added yet.</td></tr>';
     }
     async function loadPartners() {
       const body = document.getElementById("partner-admin-list");
-      body.innerHTML = '<tr><td colspan="5">Loading partners…</td></tr>';
-      try { renderPartners(await supabaseRequest(`${PARTNER_TABLE}?select=*&order=sort_order.asc,name.asc`)); }
-      catch (error) { body.innerHTML = '<tr><td colspan="5">Could not load partners.</td></tr>'; }
+      body.innerHTML = '<tr><td colspan="8">Loading partners.</td></tr>';
+      try { renderPartners(await supabaseRequest(PARTNER_TABLE + "?select=" + partnerListFields.join(",") + "&order=sort_order.asc,name.asc,id.asc")); }
+      catch { body.innerHTML = '<tr><td colspan="8">Could not load partners.</td></tr>'; }
     }
     const partnerDialog = document.getElementById("partner-dialog");
-    function openPartnerForm(partner = null) {
-      const form = document.getElementById("partner-form"); form.reset();
-      form.elements.id.value = partner?.id || ""; form.elements.name.value = partner?.name || ""; form.elements.logo_url.value = partner?.logo_url || "";
-      form.elements.website_url.value = partner?.website_url || ""; form.elements.description.value = partner?.description || ""; form.elements.sort_order.value = partner?.sort_order ?? 0; form.elements.is_published.value = String(partner?.is_published ?? true);
-      document.getElementById("partner-dialog-title").textContent = partner ? "Edit Partner" : "Add New Partner";
-      document.getElementById("partner-form-message").style.display = "none"; partnerDialog.showModal();
+    const partnerForm = document.getElementById("partner-form");
+    const partnerDocument = document.getElementById("partner-document");
+    const partnerFields = partnerForm.elements;
+    const partnerLocationStatus = document.getElementById("partner-location-status");
+    let partnerLocationRequest = 0;
+    const partnerLocationCache = new Map();
+    async function partnerLocations(path, selection) {
+      const key = JSON.stringify([path, selection]);
+      if (partnerLocationCache.has(key)) return partnerLocationCache.get(key);
+      const response = await fetch("https://countriesnow.space/api/v0.1/countries/" + path, {
+        signal: AbortSignal.timeout(10000),
+        ...(selection ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(selection) } : {})
+      });
+      if (!response.ok) throw new Error("Location lookup failed.");
+      const result = await response.json();
+      if (result.error) throw new Error("Location lookup failed.");
+      partnerLocationCache.set(key, result.data);
+      return result.data;
     }
-    async function savePartner(data) {
+    function setPartnerOptions(field, placeholder, options = [], saved = "") {
+      const values = [...new Set([...options, saved].filter(Boolean))].sort((a, b) => a.localeCompare(b, "en"));
+      field.replaceChildren(new Option(placeholder, ""), ...values.map((value) => new Option(value, value)));
+      field.value = saved;
+    }
+    async function loadPartnerLocation(saved, level = "country") {
+      const request = ++partnerLocationRequest;
+      const { country = "", state = "", city = "" } = saved;
+      if (level === "country") setPartnerOptions(partnerFields.country, "Select country", ["India"], country);
+      if (level !== "city") setPartnerOptions(partnerFields.state, "Select state", [], state);
+      setPartnerOptions(partnerFields.city, "Select city", [], city);
+      partnerLocationStatus.textContent = "Loading location options…";
+      try {
+        if (level === "country") {
+          const countries = await partnerLocations("iso");
+          if (request !== partnerLocationRequest) return;
+          setPartnerOptions(partnerFields.country, "Select country", countries.map((item) => item.name), country);
+        }
+        if (country && level !== "city") {
+          const location = await partnerLocations("states", { country });
+          if (request !== partnerLocationRequest) return;
+          setPartnerOptions(partnerFields.state, "Select state", location.states.map((item) => item.name), state);
+        }
+        if (country && state) {
+          const cities = await partnerLocations("state/cities", { country, state });
+          if (request !== partnerLocationRequest) return;
+          setPartnerOptions(partnerFields.city, "Select city", cities, city);
+        }
+        partnerLocationStatus.textContent = "";
+      } catch {
+        if (request === partnerLocationRequest) partnerLocationStatus.textContent = "Location options are unavailable. Reopen the form or select the location again to retry.";
+      }
+    }
+    partnerFields.country.addEventListener("change", () => loadPartnerLocation({ country: partnerFields.country.value }, "state"));
+    partnerFields.state.addEventListener("change", () => loadPartnerLocation({ country: partnerFields.country.value, state: partnerFields.state.value }, "city"));
+    partnerFields.contact_phone.addEventListener("input", (event) => {
+      event.target.value = event.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+    });
+    function openPartnerForm(partner = null) {
+      partnerForm.reset();
+      const fields = partnerForm.elements;
+      fields.id.value = partner?.id || "";
+      for (const field of ["name", "website_url", "description", ...partnerDetailFields]) {
+        if (!["country", "state", "city"].includes(field)) fields[field].value = partner?.[field] || "";
+      }
+      const collaboration = partner?.collaboration_type;
+      fields.collaboration_type.querySelector("[data-saved-collaboration]")?.remove();
+      if (collaboration && !Array.from(fields.collaboration_type.options).some((option) => option.value === collaboration)) {
+        const savedOption = new Option(collaboration, collaboration);
+        savedOption.dataset.savedCollaboration = "";
+        fields.collaboration_type.add(savedOption);
+      }
+      fields.collaboration_type.value = collaboration || "";
+      loadPartnerLocation(partner || { country: "India" });
+      fields.logo_url.value = /^https?:\/\//i.test(partner?.logo_url || "") ? partner.logo_url : "";
+      fields.sort_order.value = partner?.sort_order ?? Math.max(0, ...partnerRecords.map((item) => Number(item.sort_order))) + 1;
+      fields.is_published.checked = partner?.is_published ?? true;
+      fields.featured.checked = Boolean(partner?.featured);
+      fields.partner_permission.checked = Boolean(partner?.partner_permission);
+      partnerDocument.hidden = !partner?.supporting_document_name;
+      partnerDocument.textContent = partner?.supporting_document_name ? "Download " + partner.supporting_document_name : "Download current document";
+      document.getElementById("partner-dialog-title").textContent = partner ? "Edit Partner" : "Add New Partner";
+      document.getElementById("partner-form-message").style.display = "none";
+      partnerDialog.showModal();
+    }
+    function showPartnerFieldError(field, message) {
+      field.focus();
+      field.setCustomValidity(message);
+      field.reportValidity();
+      field.setCustomValidity("");
+      return false;
+    }
+    for (const field of [partnerFields.contact_person, partnerFields.contact_designation]) {
+      field.addEventListener("input", () => { field.value = field.value.replace(/[^\p{L}\p{M} ]/gu, ""); });
+    }
+    async function savePartner(form, draft) {
+      const data = Object.fromEntries(new FormData(form));
+      const previous = partnerRecords.find((partner) => partner.id === data.id);
+      if (![data.is_published, data.featured, data.partner_permission].some(Boolean)) {
+        throw new Error("Select at least one option in Website Display Settings.");
+      }
       const name = data.name.trim();
+      if (data.contact_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.contact_email.trim())) throw new Error("Enter a valid email address, for example name@example.com.");
+      if (data.contact_phone && !/^[0-9]{10}$/.test(data.contact_phone)) throw new Error("Enter a mobile number with exactly 10 digits.");
       const website_url = data.website_url.trim() || null;
-      const logo_url = data.logo_url.trim() || null;
+      const logoUrl = data.logo_url.trim();
       const description = data.description.trim() || null;
-      if (!name) throw new Error("Enter the partner name.");
-      if (website_url && !/^https?:\/\//i.test(website_url)) throw new Error("Website must start with http:// or https://.");
-      if (logo_url && !/^https?:\/\//i.test(logo_url)) throw new Error("Logo URL must start with http:// or https://.");
-      const record = { name, website_url, logo_url, description, sort_order: Number(data.sort_order || 0), is_published: data.is_published === "true" };
-      await supabaseRequest(data.id ? `${PARTNER_TABLE}?id=eq.${encodeURIComponent(data.id)}` : PARTNER_TABLE, { method: data.id ? "PATCH" : "POST", body: JSON.stringify(record) });
+      const sort_order = Number(data.sort_order);
+      if (!name || name.length > 100) throw new Error("Enter an organization name of up to 100 characters.");
+      if (!draft && (!data.category || !description || !data.collaboration_type)) throw new Error("Enter the category, short description and collaboration type.");
+      if ([website_url, logoUrl].some((url) => url && !/^https?:\/\//i.test(url))) throw new Error("Website and logo links must start with http:// or https://.");
+      if (!Number.isSafeInteger(sort_order) || sort_order < 0) throw Object.assign(new Error("Enter a non-negative whole number for display order."), { field: "sort_order" });
+      if (data.partnership_start_date && data.partnership_end_date && data.partnership_end_date < data.partnership_start_date) throw new Error("End date must be on or after the start date.");
+      const record = { name, website_url, description, sort_order, logo_url: logoUrl || (previous?.logo_url?.startsWith("data:image/") ? previous.logo_url : null), is_published: !draft && Boolean(data.is_published), featured: Boolean(data.featured), partner_permission: Boolean(data.partner_permission) };
+      for (const field of partnerDetailFields) record[field] = data[field].trim() || null;
+      const attachments = [];
+      const logo = form.elements.logo_file.files[0];
+      if (logo) {
+        if (!["image/png", "image/jpeg", "image/webp"].includes(logo.type) || logo.size > 512 * 1024) throw Object.assign(new Error("Choose a PNG, JPEG or WebP logo up to 512 KB."), { field: "logo_file" });
+        const base64 = await fileAsBase64(logo);
+        record.logo_url = "data:" + logo.type + ";base64," + base64;
+        attachments.push({ kind: "logo", fileName: logo.name, mimeType: logo.type, base64 });
+      }
+      const documentFile = form.elements.supporting_file.files[0];
+      if (documentFile) {
+        if (documentFile.type !== "application/pdf" || documentFile.size > 5 * 1024 * 1024) throw Object.assign(new Error("Choose a PDF up to 5 MB."), { field: "supporting_file" });
+        record.supporting_document_name = documentFile.name;
+        record.supporting_document_data = await fileAsBase64(documentFile);
+        attachments.push({ kind: "document", fileName: documentFile.name, mimeType: documentFile.type, base64: record.supporting_document_data });
+      }
+      if (attachments.length) {
+        try {
+          await sendFinanceDriveUpload({ type: "partner_files", organizationName: name, attachments, accessToken: adminAccessToken });
+        } catch (error) {
+          throw new Error("Partner files could not be saved to Google Drive: " + error.message);
+        }
+      }
+      await supabaseRequest(data.id ? PARTNER_TABLE + "?id=eq." + encodeURIComponent(data.id) : PARTNER_TABLE, { method: data.id ? "PATCH" : "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify(record) });
     }
     document.getElementById("add-partner").addEventListener("click", () => openPartnerForm());
     document.getElementById("partner-dialog-close").addEventListener("click", () => partnerDialog.close());
-    document.getElementById("partner-form-cancel").addEventListener("click", () => partnerDialog.close());
-    document.getElementById("partner-form").addEventListener("submit", async (event) => { event.preventDefault(); const message = document.getElementById("partner-form-message"); try { await savePartner(Object.fromEntries(new FormData(event.currentTarget).entries())); await loadPartners(); partnerDialog.close(); document.getElementById("partner-admin-message").textContent = "Partner saved."; document.getElementById("partner-admin-message").style.display = "block"; } catch (error) { message.className = "message error"; message.textContent = error.message || "Could not save partner."; message.style.display = "block"; } });
+    partnerForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (partnerForm.dataset.saving) return;
+      const draft = event.submitter?.value === "draft";
+      const fields = partnerForm.elements;
+      document.getElementById("partner-form-message").style.display = "none";
+      if (!draft) {
+        for (const name of ["name", "contact_person", "contact_designation", "full_address"]) {
+          if (!fields[name].value.trim()) return showPartnerFieldError(fields[name], "Please fill out this field.");
+        }
+      }
+      for (const field of [fields.contact_person, fields.contact_designation]) {
+        if (field.value && !/^[\p{L}\p{M} ]+$/u.test(field.value)) return showPartnerFieldError(field, "Enter letters and spaces only.");
+      }
+      if (fields.contact_email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.contact_email.value.trim())) {
+        return showPartnerFieldError(fields.contact_email, "Enter a valid email address, for example name@example.com.");
+      }
+      if (fields.contact_phone.value && !/^[0-9]{10}$/.test(fields.contact_phone.value)) {
+        return showPartnerFieldError(fields.contact_phone, "Enter a mobile number with exactly 10 digits.");
+      }
+      if (![fields.is_published, fields.featured, fields.partner_permission].some((field) => field.checked)) {
+        return showPartnerFieldError(fields.is_published, "Select at least one option in Website Display Settings.");
+      }
+      if (fields.partnership_start_date.value && fields.partnership_end_date.value && fields.partnership_end_date.value < fields.partnership_start_date.value) {
+        return showPartnerFieldError(fields.partnership_end_date, "End date must be on or after the start date.");
+      }
+      const message = document.getElementById("partner-form-message");
+      partnerForm.dataset.saving = "true";
+      try {
+        await savePartner(partnerForm, draft);
+        await loadPartners();
+        partnerDialog.close();
+        const status = document.getElementById("partner-admin-message");
+        status.textContent = draft ? "Draft saved." : "Partner saved.";
+        status.style.display = "block";
+      } catch (error) {
+        message.className = "message error";
+        if (error.field) return showPartnerFieldError(fields[error.field], error.message);
+        message.textContent = error.message || "Could not save partner.";
+        message.style.display = "block";
+      } finally { delete partnerForm.dataset.saving; }
+    });
+    partnerDocument.addEventListener("click", async () => {
+      try {
+        const id = partnerForm.elements.id.value;
+        const [partner] = await supabaseRequest(PARTNER_TABLE + "?id=eq." + encodeURIComponent(id) + "&select=supporting_document_name,supporting_document_data");
+        if (!partner?.supporting_document_data) return;
+        const bytes = Uint8Array.from(atob(partner.supporting_document_data), (character) => character.charCodeAt(0));
+        const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = partner.supporting_document_name;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (error) { alert(error.message || "Could not download document."); }
+    });
     document.getElementById("partner-admin-list").addEventListener("click", async (event) => {
       const edit = event.target.closest("[data-edit-partner]"); const remove = event.target.closest("[data-delete-partner]");
       try {
-        if (edit) { openPartnerForm((window.partnerRecords || []).find((partner) => partner.id === edit.dataset.editPartner)); }
+        if (edit) { openPartnerForm(partnerRecords.find((partner) => partner.id === edit.dataset.editPartner)); }
         if (remove && confirm("Remove this partner from the website?")) { await supabaseRequest(`${PARTNER_TABLE}?id=eq.${encodeURIComponent(remove.dataset.deletePartner)}`, { method: "DELETE" }); await loadPartners(); }
       } catch (error) { alert(error.message || "Could not save partner."); }
     });
@@ -1085,6 +1291,20 @@
     let active80GDonation = null;
     const eightyGDialog = document.getElementById("80g-certificate-dialog");
     document.getElementById("donation-list").addEventListener("click", async (event) => {
+      const certificateButton = event.target.closest("[data-certificate-index]");
+      if (certificateButton) {
+        const record = allDonations[Number(certificateButton.dataset.certificateIndex)];
+        if (!record) return;
+        const status = record.certificate_delivery_status || {};
+        const requested = Array.isArray(record.certificate_delivery) ? record.certificate_delivery : [];
+        const channels = [...new Set([...requested, ...Object.keys(status)])];
+        document.getElementById("certificate-delivery-title").textContent = record.certificate_id || record.certificateId;
+        document.getElementById("certificate-delivery-details").innerHTML = channels.length
+          ? `<dl>${channels.map((channel) => `<dt><strong>${escapeHtml(channel === "email" ? "Email" : channel === "whatsapp" ? "WhatsApp" : channel)}</strong></dt><dd>${escapeHtml(status[channel] || "Pending")}</dd>`).join("")}</dl>`
+          : "<p>No delivery channels selected.</p>";
+        document.getElementById("certificate-delivery-dialog").showModal();
+        return;
+      }
       const cancelButton = event.target.closest("[data-cancel-donation]");
       if (cancelButton) {
         const record = allDonations.find((item) => item.id === cancelButton.dataset.cancelDonation);
@@ -1192,6 +1412,7 @@
     }
     async function saveFinanceEntry(event) {
       event.preventDefault();
+      if (!canOpenFinanceLedger()) return;
       const form = event.currentTarget; const data = Object.fromEntries(new FormData(form).entries());
       const id = data.id || crypto.randomUUID();
       const existing = financeEntries.find((item) => item.id === id);
@@ -1372,6 +1593,9 @@
           const isPendingTrustee = isManualDonation && donation.workflow_status === "pending" && canManagePortal();
           const appreciationChannels = Array.isArray(donation.certificate_delivery) ? donation.certificate_delivery : [];
           const appreciationDelivery = donation.certificate_delivery_status || {};
+          const certificateFailed = Object.values(appreciationDelivery).some((state) => /^failed\b/i.test(String(state)));
+          const certificateNumber = donation.certificate_id || donation.certificateId;
+          const certificateLabel = certificateFailed ? "Certificate delivery failed. View details" : "View certificate delivery details";
           const appreciationSent = !isManualDonation && donation.payment_status === "published"
             && appreciationChannels.length > 0
             && appreciationChannels.every((channel) => ["sent", "already sent"].includes(String(appreciationDelivery[channel] || "").toLowerCase()));
@@ -1397,7 +1621,7 @@
             <td>${escapeHtml(donation.submitted_by_name || "—")}</td>
             <td>${escapeHtml(isManualDonation ? (donation.workflow_status || "draft") : (donation.payment_status || "submitted"))}</td>
 
-            <td><div class="donation-certificate-cell">${escapeHtml(donation.certificate_id || donation.certificateId)}${donation.entry_type !== "donation" && donation.certificate_delivery?.length ? `<small>Send via: ${escapeHtml(donation.certificate_delivery.join(" + "))}</small>` : ""}${donation.certificate_delivery_status ? `<small>Delivery: ${escapeHtml(Object.entries(donation.certificate_delivery_status).map(([channel, state]) => channel + " " + state).join("; "))}</small>` : ""}</div></td>
+            <td class="${certificateFailed ? "certificate-delivery-failed" : ""}">${isManualDonation || !certificateNumber ? escapeHtml(certificateNumber || "—") : `<button class="certificate-details-button" type="button" data-certificate-index="${allDonations.indexOf(donation)}" aria-label="${escapeHtml(certificateLabel + " for " + certificateNumber)}">${escapeHtml(certificateNumber)}</button>`}</td>
             <td>${escapeHtml(appreciationStatus)}${donation.appreciation_certificate_url ? `<br><a href="${escapeHtml(donation.appreciation_certificate_url)}" target="_blank" rel="noopener">View</a>` : ""}</td>
             <td>${eightyGEligible ? `${eightyGStatus === "Done" ? (donation.eighty_g_certificate_url ? `<a href="${escapeHtml(donation.eighty_g_certificate_url)}" target="_blank" rel="noopener">Done</a>` : escapeHtml(eightyGStatus)) : `<button class="btn btn-light" type="button" data-open-eighty-g="${escapeHtml(donation.id || "")}">${escapeHtml(eightyGStatus)}</button>`}` : escapeHtml(eightyGStatus)}</td>
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
@@ -1437,6 +1661,7 @@
     }
 
     async function deleteVolunteer(volunteer, index) {
+      if (!canDeleteVolunteers() || !volunteer) return;
       if (!supabaseEnabled()) {
         const volunteers = getLocalVolunteers();
         volunteers.splice(index, 1);
@@ -1590,7 +1815,7 @@
               <article class="volunteer-card">
                 <div class="volunteer-card-header">
                   <button class="entry-name" type="button" data-open-volunteer="${index}">${escapeHtml(volunteer.name)}</button>
-                  <button class="btn btn-danger" type="button" data-delete-volunteer="${index}">Delete</button>
+                  ${canDeleteVolunteers() ? `<button class="btn btn-danger" type="button" data-delete-volunteer="${index}">Delete</button>` : ""}
                 </div>
               </article>
             `).join("")
@@ -1672,9 +1897,10 @@
       document.getElementById("dashboard").dataset.role = portalRole;
       document.getElementById("dashboard").dataset.permission = canManagePortal() ? "manager" : "member";
       document.getElementById("portal-identity").textContent = (portalIdentity.name || "Trust member") + " · " + portalRoleLabel(portalRole);
+      document.getElementById("open-finance-ledger").hidden = !canOpenFinanceLedger();
       document.querySelector('#finance-entry-form [type="submit"]').textContent = financeSubmitLabel();
       document.getElementById("dashboard-title").textContent = canManagePortal() ? "Admin Dashboard" : "Trustee Dashboard";
-      document.getElementById("dashboard-subtitle").textContent = canManagePortal() ? "Update home page impact data, reports, team profiles, partners, and volunteer registrations." : "View reports, add financial entries, and review volunteer data.";
+      document.getElementById("dashboard-subtitle").textContent = canManagePortal() ? "Update home page impact data, reports, team profiles, partners, and volunteer registrations." : "View reports and review volunteer data.";
       document.getElementById("admin-logout").hidden = false;
       if (canManagePortal()) { await loadStatsForm(); await loadNoticeForm(); await loadTeamAdmin(); await loadPartners(); await renderReviews(); }
       await renderDonationReport(true);
@@ -1742,7 +1968,7 @@
       }
     });
     const financeDialog = document.getElementById("finance-entry-dialog");
-    document.getElementById("open-finance-ledger").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); financeDialog.showModal(); });
+    document.getElementById("open-finance-ledger").addEventListener("click", () => { if (!canOpenFinanceLedger()) return; const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); financeDialog.showModal(); });
     document.getElementById("finance-dialog-close").addEventListener("click", () => financeDialog.close());
     document.getElementById("finance-cancel-edit").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); document.getElementById("finance-admin-message").textContent = ""; });
 
@@ -1922,7 +2148,7 @@
         return;
       }
       const button = event.target.closest("[data-delete-volunteer]");
-      if (!button) return;
+      if (!button || !canDeleteVolunteers()) return;
       const index = Number(button.dataset.deleteVolunteer);
       const volunteers = await loadVolunteers();
       await deleteVolunteer(volunteers[index], index);
