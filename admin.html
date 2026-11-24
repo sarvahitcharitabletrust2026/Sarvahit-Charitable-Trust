@@ -333,7 +333,7 @@
     #recovery-dialog form { display: grid; gap: 14px; }
     #recovery-dialog form[hidden] { display: none; }
     #recovery-dialog input { border-color: #a9b9b0; }
-    #request-form input[type="email"], #login-form .login-email { font-weight: 400; }
+    #request-form input[type="email"], #login-form .login-email input { font-weight: 400; }
     #login-form .password-field { position: relative; }
     #login-form .password-field input { padding-inline-end: 52px; }
     #login-form .password-row label { margin-bottom: 6px; }
@@ -1310,6 +1310,21 @@
     let active80GDonation = null;
     const eightyGDialog = document.getElementById("80g-certificate-dialog");
     document.getElementById("donation-list").addEventListener("click", async (event) => {
+      const cityButton = event.target.closest("[data-donation-address-index]");
+      if (cityButton) {
+        const record = allDonations[Number(cityButton.dataset.donationAddressIndex)];
+        if (!record) return;
+        const addressFields = [
+          ["City", record.city],
+          ["State", record.state],
+          ["Country", record.country],
+          ["PIN Code", record.pin_code]
+        ];
+        showEntryDetails("Donation Address", '<div class="entry-detail-grid">' +
+          addressFields.map(([label, value]) => '<p><strong>' + label + ':</strong> ' + escapeHtml(value || "—") + '</p>').join("") +
+          '</div>');
+        return;
+      }
       const certificateButton = event.target.closest("[data-certificate-index]");
       if (certificateButton) {
         const record = allDonations[Number(certificateButton.dataset.certificateIndex)];
@@ -1633,7 +1648,7 @@
             <td>${escapeHtml(donation.pan_card_number || donation.panCardNumber || "")}</td>
             <td>${escapeHtml(donation.phone)}</td>
             <td>${escapeHtml(donation.email)}</td>
-            <td>${escapeHtml(donation.city)}</td>
+            <td>${donation.city ? `<button class="certificate-details-button" type="button" data-donation-address-index="${allDonations.indexOf(donation)}" aria-label="View donation address for ${escapeHtml(donation.city)}">${escapeHtml(donation.city)}</button>` : "&mdash;"}</td>
             <td>${escapeHtml(donation.purpose)}</td>
             <td>${escapeHtml(String(donation.payment_method || (donation.entry_type === "donation" ? "manual" : "online")).replaceAll("_", " ").toUpperCase())}</td>
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>

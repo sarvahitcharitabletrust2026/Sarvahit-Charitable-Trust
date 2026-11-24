@@ -508,7 +508,7 @@
     #work { background: #e6f2e9; }
     #donate { background: #f7fbf7; }
     #gallery { background: #e6f2e9; }
-    #blog { background: radial-gradient(ellipse at 92% 0%, #f5ead0, transparent 48%), linear-gradient(145deg, #e5f2e9, #faf8ef); }
+    #blog { background: #f7fbf7; }
     #team { background: #e6f2e9; padding-block: 82px; }
     #reviews { background: #e6f2e9; padding-block: 82px; }
     #contact { background: #f7fbf7; }
@@ -525,7 +525,7 @@
     .team-subhead { margin: 0 0 18px; color: var(--green-dark); font: 700 23px "Poppins",sans-serif; text-align: center; }
     .team-grid { display: flex; gap: 16px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
     .team-grid::-webkit-scrollbar { display: none; }
-    .team-card { flex: 0 0 calc((100% - 64px) / 5); min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 8px 22px rgba(20,30,36,.05); scroll-snap-align: start; }
+    .team-card { flex: 0 0 calc((100% - 64px) / 5); min-width: 0; padding: 12px; border: 1px solid #76ac93; border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(18,106,81,.20); scroll-snap-align: start; }
     .team-card .team-photo { margin-bottom: 12px; aspect-ratio: 1.12; border-radius: 11px; font-size: 36px; }
     .team-card h4 { margin: 0 0 3px; color: var(--green-dark); font: 700 16px/1.3 "Poppins",sans-serif; }
     .team-card p { margin: 0; color: var(--muted); font-size: 13px; }
@@ -1953,6 +1953,8 @@
       background: #fff;
     }
 
+    #contact .contact-box { background: #fff; border: 1px solid #76ac93; box-shadow: 0 5px 14px rgba(18, 106, 81, .16); }
+
     .contact-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -2696,10 +2698,11 @@
                 Email
                 <input name="email" type="email" autocomplete="email" required />
               </label>
-              <label>
-                City
-                <input name="city" autocomplete="address-level2" pattern="[A-Za-z ]+" data-letters-only required />
-              </label>
+              <label>Country<select name="country" autocomplete="country-name" required><option value="">Select country</option><option selected>India</option></select></label>
+              <label>State<select name="state" autocomplete="address-level1" required><option value="">Select state</option></select></label>
+              <label>City<select name="city" autocomplete="address-level2" required><option value="">Select city</option></select></label>
+              <div data-location-status role="status" hidden></div>
+              <label>PIN Code<input name="pin_code" type="text" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]+" data-pin-code required /></label>
               <label>
                 Donation Amount
                 <input name="amount" type="number" inputmode="numeric" min="100" step="1" data-integer-amount required />
@@ -2803,12 +2806,13 @@
             </label>
             <label>
               Email
-              <input name="email" type="email" autocomplete="email" />
+              <input name="email" type="email" autocomplete="email" required />
             </label>
-            <label>
-              City
-              <input name="city" autocomplete="address-level2" pattern="[A-Za-z ]+" data-letters-only required />
-            </label>
+            <label>Country<select name="country" autocomplete="country-name" required><option value="">Select country</option><option selected>India</option></select></label>
+            <label>State<select name="state" autocomplete="address-level1" required><option value="">Select state</option></select></label>
+            <label>City<select name="city" autocomplete="address-level2" required><option value="">Select city</option></select></label>
+            <div data-location-status role="status" hidden></div>
+            <label>PIN Code<input name="pin_code" type="text" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]+" data-pin-code required /></label>
             <label>
               Interested Work
               <select name="interest" required>
@@ -3229,6 +3233,9 @@
           phone: data.phone,
           email: data.email,
           city: data.city,
+          state: data.state?.trim() || null,
+          country: data.country?.trim() || null,
+          pin_code: data.pin_code?.trim() || null,
           interest: data.interest,
           availability: data.availability
         })
@@ -4008,6 +4015,9 @@
           email: donation.email,
           phone: donation.phone,
           city: donation.city,
+          state: donation.state?.trim() || null,
+          country: donation.country?.trim() || null,
+          pin_code: donation.pin_code?.trim() || null,
           amount: donation.amount,
           purpose: donation.purpose,
           screenshot_path: donation.screenshotPath,
@@ -4736,6 +4746,15 @@
         volunteerCount.textContent = getVolunteers().length;
       }
     });
+    document.querySelectorAll("[data-pin-code]").forEach((field) => {
+      const sanitize = () => {
+        const value = field.value.replace(/[^0-9]/g, "");
+        if (value !== field.value) field.value = value;
+      };
+      field.addEventListener("input", (event) => { if (!event.isComposing) sanitize(); });
+      field.addEventListener("compositionend", sanitize);
+    });
   </script>
+  <script src="public-location-fields.js"></script>
 </body>
 </html>

@@ -925,3 +925,14 @@ create policy "only admins delete volunteers" on public.volunteer_registrations
   as restrictive for delete to authenticated using (public.is_trust_finance_admin());
 
 commit;
+
+-- Address fields for public registration forms.
+alter table public.volunteer_registrations
+  add column if not exists state text,
+  add column if not exists country text,
+  add column if not exists pin_code text;
+
+alter table public.donation_records
+  add column if not exists state text,
+  add column if not exists country text,
+  add column if not exists pin_code text;

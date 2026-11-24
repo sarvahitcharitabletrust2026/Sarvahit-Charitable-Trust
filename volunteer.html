@@ -369,12 +369,13 @@
               </label>
               <label>
                 Email
-                <input name="email" type="email" autocomplete="email" />
+                <input name="email" type="email" autocomplete="email" required />
               </label>
-              <label>
-                City
-                <input name="city" autocomplete="address-level2" required />
-              </label>
+              <label>Country<select name="country" autocomplete="country-name" required><option value="">Select country</option><option selected>India</option></select></label>
+              <label>State<select name="state" autocomplete="address-level1" required><option value="">Select state</option></select></label>
+              <label>City<select name="city" autocomplete="address-level2" required><option value="">Select city</option></select></label>
+              <div data-location-status role="status" hidden></div>
+              <label>PIN Code<input name="pin_code" type="text" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]+" data-pin-code required /></label>
               <label>
                 Interested Work
                 <select name="interest" required>
@@ -475,6 +476,15 @@
     });
 
     renderVolunteers();
+    document.querySelectorAll("[data-pin-code]").forEach((field) => {
+      const sanitize = () => {
+        const value = field.value.replace(/[^0-9]/g, "");
+        if (value !== field.value) field.value = value;
+      };
+      field.addEventListener("input", (event) => { if (!event.isComposing) sanitize(); });
+      field.addEventListener("compositionend", sanitize);
+    });
   </script>
+  <script src="public-location-fields.js"></script>
 </body>
 </html>
