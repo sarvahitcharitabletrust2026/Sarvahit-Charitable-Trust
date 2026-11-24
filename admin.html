@@ -112,6 +112,11 @@
       border-color: var(--line);
     }
 
+    .btn-light:hover,
+    .btn-light:focus { background: #fff6df; border-color: var(--gold); color: var(--green-dark); }
+    button:not(.btn):not(.entry-dialog-close):not(.rating-star) { border-radius: 8px; transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
+    button:not(.btn):not(.entry-dialog-close):not(.rating-star):hover { background: var(--green); color: #fff; border-color: var(--green); }
+
     .btn-danger {
       background: #fff4f4;
       color: var(--danger);
@@ -169,6 +174,12 @@
     .dashboard.is-visible {
       display: grid;
     }
+
+    .portal-identity { display: none; margin: 0 0 14px; color: var(--green-dark); font-family: "Poppins", system-ui, sans-serif; font-size: 24px; font-weight: 800; text-align: center; }
+    .dashboard.is-visible .portal-identity { display: block; }
+    .dashboard > div:first-child h1 { font-size: clamp(28px, 3vw, 36px); }
+    .finance-pending-entry td { background: #fff8df; font-weight: 700; }
+    .finance-pending-entry td:first-child { border-left: 4px solid var(--gold); }
 
     .grid-2 {
       display: grid;
@@ -457,20 +468,38 @@
       font-weight: 800;
     }
 
-    .team-admin-table { min-width: 820px; }
+    .team-admin-table { min-width: 1362px; table-layout: fixed; }
     #team-admin-panel .table-wrap { max-height: 360px; }
-    .team-admin-table th, .team-admin-table td { vertical-align: middle; }
-    .team-admin-table input[type="text"] { min-width: 150px; }
-    .team-photo-actions { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .team-photo-picker { position: relative; display: grid; place-items: center; flex: 0 0 92px; width: 92px; height: 88px; padding: 0; overflow: hidden; border: 2px solid var(--green); border-radius: 14px; background: #fff; cursor: pointer; }
+    .team-admin-table th { height: 42px; padding: 7px 9px; vertical-align: middle; text-align: center; font-size: 15px; }
+    .team-admin-table td { height: 42px; padding: 7px 9px; vertical-align: middle; text-align: left; font-size: 15px; }
+    .team-admin-table th:nth-child(1), .team-admin-table td:nth-child(1) { width: 52px; }
+    .team-admin-table th:nth-child(2), .team-admin-table td:nth-child(2) { width: 150px; }
+    .team-admin-table th:nth-child(3), .team-admin-table td:nth-child(3) { width: 190px; }
+    .team-admin-table th:nth-child(4), .team-admin-table td:nth-child(4) { width: 130px; }
+    .team-admin-table th:nth-child(5), .team-admin-table td:nth-child(5) { width: 180px; }
+    .team-admin-table th:nth-child(6), .team-admin-table td:nth-child(6) { width: 140px; }
+    .team-admin-table th:nth-child(7), .team-admin-table td:nth-child(7) { width: 165px; }
+    .team-admin-table th:nth-child(8), .team-admin-table td:nth-child(8) { width: 125px; }
+    .team-admin-table th:nth-child(9), .team-admin-table td:nth-child(9) { width: 230px; }
+    .team-admin-table input[type="text"], .team-admin-table input[type="email"], .team-admin-table input[type="tel"] { width: 100%; min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; text-align: left; font-size: 15px; }
+    .team-admin-table input[type="text"]:focus, .team-admin-table input[type="email"]:focus, .team-admin-table input[type="tel"]:focus { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
+    .team-photo-actions { display: flex; align-items: center; justify-content: flex-start; gap: 8px; min-width: 0; }
+    .team-photo-picker { position: relative; display: grid; place-items: center; flex: 0 0 70px; width: 70px; height: 64px; padding: 0; overflow: hidden; border: 2px solid var(--green); border-radius: 10px; background: #fff; cursor: pointer; }
     .team-admin-photo { width: 100%; height: 100%; display: block; object-fit: cover; }
     .team-photo-picker-empty { background: #fff; }
     .team-photo-picker input { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; clip-path: inset(50%); border: 0; }
     .team-photo-picker:focus-within { outline: 2px solid var(--green); outline-offset: 2px; }
-    .team-row-actions { display: flex; align-items: center; gap: 12px; }
-    .team-row-actions .btn { min-width: 78px; min-height: 50px; padding: 8px 14px; }
-    .team-row-actions [data-team-remove] { min-width: 104px; }
+    .team-row-actions { display: flex; align-items: center; justify-content: flex-start; gap: 12px; }
+    .team-row-actions { gap: 6px; }
+    .team-row-actions .btn { min-width: 58px; min-height: 34px; padding: 5px 9px; font-size: 12px; }
+    .team-row-actions [data-team-remove] { min-width: 72px; }
     .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; clip-path: inset(50%); border: 0; }
+    .dashboard[data-permission="member"] .admin-only { display: none !important; }
+    .dashboard[data-permission="member"] .founder-only { display: none !important; }
+    .dashboard[data-permission="member"] .trustee-report { display: block; }
+    .dashboard[data-permission="member"] .finance-actions { display: none; }
+    .dashboard[data-permission="member"] [data-trustee-hide] { display: none !important; }
+    .partner-admin-table { min-width: 720px; }
 
     @media (max-width: 820px) {
       .grid-2,
@@ -495,11 +524,11 @@
   <main>
     <div class="wrap">
       <section class="login-card panel" id="login-panel">
-        <h1>Admin Login</h1>
+        <h1>Trust Portal Login</h1>
         <form id="login-form">
           <div class="form-grid">
             <label class="full">
-              Admin Email
+              Email ID
               <input name="email" type="email" autocomplete="username" required />
             </label>
             <label class="full">
@@ -516,12 +545,13 @@
 
       <section class="dashboard" id="dashboard">
         <div>
-          <h1>Admin Dashboard</h1>
-          <p>Update home page impact data, notice format, and manage volunteer registrations.</p>
+          <p class="portal-identity" id="portal-identity" aria-live="polite"></p>
+          <h1 id="dashboard-title">Admin Dashboard</h1>
+          <p id="dashboard-subtitle">Update home page impact data, notice format, and manage volunteer registrations.</p>
 
         </div>
 
-        <div class="grid-2">
+        <div class="grid-2 admin-only">
           <section class="panel">
             <h2>Impact Data</h2>
             <form id="stats-form">
@@ -537,6 +567,18 @@
                 <label>
                   Medical help cases
                   <input name="medicalCases" type="number" min="0" required />
+                </label>
+                <label>
+                  Awareness drives
+                  <input name="awarenessDrives" type="number" min="0" required />
+                </label>
+                <label>
+                  Tree plantations
+                  <input name="treePlantations" type="number" min="0" required />
+                </label>
+                <label>
+                  Community welfare
+                  <input name="communityWelfare" type="number" min="0" required />
                 </label>
                 <div class="full">
                   <button class="btn btn-primary" type="submit">Update Data</button>
@@ -595,21 +637,21 @@
           </div></form><div class="message" id="finance-admin-message" role="status"></div>
         </dialog>
 
-        <section class="panel" id="expense-report">
+        <section class="panel trustee-report" id="expense-report">
           <div class="expense-report-heading"><h2>Expense Report</h2><button class="btn btn-primary" type="button" id="open-finance-ledger">Financial Ledger</button></div>
           <p>Review recorded expenses by year or month. Only approved expenses are included in the public financial totals.</p>
           <div class="report-filters">
             <label>Year<select id="expense-year"><option value="all">All Years</option></select></label>
             <label>Month<select id="expense-month"><option value="all">All Months</option><option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option></select></label>
             <button class="btn btn-primary" type="button" id="refresh-expenses">Refresh</button>
-            <button class="btn btn-light" type="button" id="export-expenses">Download Excel</button>
+            <button class="btn btn-primary" type="button" id="export-expenses">Download Excel</button>
           </div>
           <div class="report-summary">
             <div class="report-stat">Selected Expenses<strong id="expense-selected-total">INR 0.00</strong></div>
             <div class="report-stat">Year Total<strong id="expense-year-total">INR 0.00</strong></div>
             <div class="report-stat">Expense Records<strong id="expense-record-count">0</strong></div>
           </div>
-          <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Time</th><th>Category</th><th>Payee</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Receipt / Bill</th><th>Actions</th></tr></thead><tbody id="expense-list"><tr><td colspan="9">Login to load expense data.</td></tr></tbody></table></div>
+          <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Time</th><th>Category</th><th>Payee</th><th>Payment type</th><th>Amount</th><th>Submitted by</th><th>Status</th><th>Receipt / Bill</th><th class="admin-only">Actions</th></tr></thead><tbody id="expense-list"><tr><td colspan="10">Login to load expense data.</td></tr></tbody></table></div>
         </section>
         <section class="panel">
           <div class="expense-report-heading"><h2>Donation Report</h2><button class="btn btn-primary" type="button" id="open-cash-donation">Add Cash Donation</button></div>
@@ -632,7 +674,7 @@
               </select>
             </label>
             <button class="btn btn-primary" type="button" id="refresh-donations">Refresh</button>
-            <button class="btn btn-light" type="button" id="export-donations">Download Excel</button>
+            <button class="btn btn-primary" type="button" id="export-donations">Download Excel</button>
           </div>
           <div class="report-summary">
             <div class="report-stat">Published Total<strong id="donation-selected-total">INR 0</strong></div>
@@ -641,31 +683,46 @@
           </div>
           <div class="table-wrap">
             <table class="donation-table donation-report-table">
-              <thead><tr><th>Date</th><th>Time</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Payment type</th><th>Amount</th><th>Status</th><th>Certificate</th><th>Appreciation Certificate</th><th>80G Certificate</th><th>Screenshot</th><th>Actions</th></tr></thead>
-              <tbody id="donation-list"><tr><td colspan="16">Login to load donation data.</td></tr></tbody>
+              <thead><tr><th>Date</th><th>Time</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Payment type</th><th>Amount</th><th>Submitted by</th><th>Status</th><th>Certificate</th><th>Appreciation Certificate</th><th>80G Certificate</th><th>Screenshot</th><th class="admin-only">Actions</th></tr></thead>
+              <tbody id="donation-list"><tr><td colspan="17">Login to load donation data.</td></tr></tbody>
             </table>
           </div>
         </section>
 
-        <section class="panel" id="team-admin-panel">
-          <div class="expense-report-heading"><h2>Our Leadership &amp; Team</h2><button class="btn btn-light" type="button" id="refresh-team-members">Refresh</button></div>
+        <section class="panel admin-only" id="team-admin-panel">
+          <div class="expense-report-heading"><h2>Our Leadership &amp; Team</h2><button class="btn btn-primary" type="button" id="refresh-team-members">Refresh</button></div>
           <p>Manage the Founder &amp; President and ten core team profiles. Saving a new photo replaces the previous Drive photo. Remove Photo moves it to Drive trash and removes it from the website.</p>
+          <form id="trustee-access-form" class="form-grid" style="margin: 18px 0; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: #f7f8f5;">
+            <label>Trustee name<input name="fullName" required maxlength="100" placeholder="Full name" /></label>
+            <label>Email ID<input name="email" type="email" required placeholder="trustee@email.com" /></label>
+            <label>Portal role<select name="role"><option value="founder">Founder &amp; President</option><option value="secretary">Secretary</option><option value="treasurer">Treasurer</option><option value="trustee">Trustee</option></select></label>
+            <div style="align-self:end"><button class="btn btn-primary" type="submit">Save Login Access</button></div>
+            <p class="full" style="margin:0;color:var(--muted);font-size:14px;">Create or reset the email password in Supabase Authentication first. For safety, passwords are never displayed or stored in the team table.</p>
+          </form>
+          <div class="message" id="trustee-access-message" role="status"></div>
           <div class="table-wrap">
             <table class="donation-table team-admin-table">
-              <thead><tr><th>Sr.No</th><th>Designation</th><th>Name</th><th>Photo</th></tr></thead>
-              <tbody id="team-admin-list"><tr><td colspan="4">Login to load team profiles.</td></tr></tbody>
+              <thead><tr><th>Sr.No</th><th>Designation</th><th>Name</th><th>Contact</th><th>Email ID</th><th>PAN</th><th>Address</th><th>Contribution</th><th>Photo</th></tr></thead>
+              <tbody id="team-admin-list"><tr><td colspan="9">Login to load team profiles.</td></tr></tbody>
             </table>
           </div>
           <div class="message" id="team-admin-message" role="status"></div>
         </section>
 
-        <section class="panel">
-          <div class="expense-report-heading"><h2>Volunteer Data</h2><div class="team-row-actions"><button class="btn btn-light" type="button" id="refresh-volunteers">Refresh Volunteer Data</button><button class="btn btn-primary" type="button" id="export-volunteers">Download Excel</button></div></div>
+        <section class="panel admin-only" id="partners-admin-panel">
+          <div class="expense-report-heading"><h2>Partner Section Design</h2><button class="btn btn-primary" type="button" id="add-partner">Add New Partner</button></div>
+          <p>Add partner name, logo, website and short description. The public page shows these as logo cards below Our Leadership &amp; Team.</p>
+          <div class="table-wrap"><table class="donation-table partner-admin-table"><thead><tr><th>Logo</th><th>Partner name</th><th>Website</th><th>Description</th><th>Actions</th></tr></thead><tbody id="partner-admin-list"><tr><td colspan="5">Login to load partners.</td></tr></tbody></table></div>
+          <div class="message" id="partner-admin-message" role="status"></div>
+        </section>
+
+        <section class="panel trustee-report" id="volunteer-panel">
+          <div class="expense-report-heading"><h2>Volunteer Data</h2><div class="team-row-actions"><button class="btn btn-primary" type="button" id="refresh-volunteers">Refresh Volunteer Data</button><button class="btn btn-primary" type="button" id="export-volunteers">Download Excel</button></div></div>
           <p>Click a name to view volunteer details. Download the complete volunteer list as an Excel file, or use Delete to remove a record.</p>
           <div class="volunteer-list" id="volunteer-list"></div>
         </section>
 
-        <section class="panel">
+        <section class="panel admin-only">
           <h2>Trusted Person Reviews</h2>
           <p>Only names are listed here. Click a name to read the visitor’s review. Delete any unsuitable review.</p>
           <button class="btn btn-primary" type="button" id="refresh-reviews">Refresh Reviews</button>
@@ -688,6 +745,18 @@
         
         <div class="full"><button class="btn btn-primary" type="submit">Save Donation</button> <button class="btn btn-light" type="button" id="cash-donation-cancel">Cancel</button></div>
       </div></form><div class="message" id="cash-donation-message" role="status"></div>
+    </dialog>
+    <dialog class="entry-dialog finance-dialog" id="partner-dialog" aria-labelledby="partner-dialog-title">
+      <div class="entry-dialog-header"><div><h2 id="partner-dialog-title">Add New Partner</h2><p>Create a partner logo card for the public website.</p></div><button class="entry-dialog-close" type="button" id="partner-dialog-close" aria-label="Close form">&times;</button></div>
+      <form id="partner-form"><input name="id" type="hidden" /><div class="form-grid">
+        <label>Partner name<input name="name" required maxlength="100" placeholder="Organisation or supporter name" /></label>
+        <label>Logo image URL<input name="logo_url" type="url" placeholder="https://example.com/logo.png" /></label>
+        <label class="full">Website URL<input name="website_url" type="url" placeholder="https://partner.example" /></label>
+        <label class="full">Short description<textarea name="description" maxlength="220" placeholder="Optional short description"></textarea></label>
+        <label>Display order<input name="sort_order" type="number" min="0" value="0" /></label>
+        <label>Visibility<select name="is_published"><option value="true">Show on website</option><option value="false">Save as hidden</option></select></label>
+        <div class="full"><button class="btn btn-primary" type="submit">Save Partner</button> <button class="btn btn-light" type="button" id="partner-form-cancel">Cancel</button></div>
+      </div></form><div class="message" id="partner-form-message" role="status"></div>
     </dialog>
   </main>
 
@@ -724,11 +793,17 @@
     const SUPABASE_REVIEW_TABLE = "trusted_reviews";
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
     const SUPABASE_DONATION_TABLE = "donation_records";
+    const PARTNER_TABLE = "trust_partners";
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzfeWU8pAKVHxgKWK17-KXYgQCJAAeGdqBEiXfTxhmQ-vKE6WgOxImQJLVaf-1AbTY/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbx7lkm6cEpJwuAjW2NzpyQaE27FB7YhR5CmEM3whvtCWqncw7eoBaxAyAWqL_CHQpUO/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
+    let portalRole = "";
+    let portalIdentity = null;
+    const canManagePortal = () => ["admin", "founder"].includes(portalRole);
+    const portalRoleLabel = (role) => ({ admin: "Admin", founder: "Founder & President", secretary: "Secretary", treasurer: "Treasurer", trustee: "Trustee" }[role] || "Trustee");
+    const financeSubmitLabel = () => canManagePortal() ? "Save as Draft" : "Submit for Approval";
     let financeEntries = [];
     const TEAM_DEFAULTS = ["Founder & President", "Secretary", "Treasurer", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee", "Trustee"];
     let teamMembers = [];
@@ -774,6 +849,7 @@
       renderExpenseReport();
     }
     function financeActionButtons(entry) {
+      if (!canManagePortal()) return "";
       const approve = entry.workflow_status === "published" ? "" : '<button class="btn btn-primary" type="button" data-approve-finance="' + entry.id + '">' + (entry.workflow_status === "approved" ? "Publish" : "Approve &amp; Publish") + '</button>';
       return '<button class="btn btn-light" type="button" data-edit-finance="' + entry.id + '">Edit</button>' + approve + '<button class="btn btn-danger" type="button" data-delete-finance="' + entry.id + '">Delete</button>';
     }
@@ -797,17 +873,19 @@
     async function renderExpenseReport() {
       populateExpenseYears();
       const filtered = selectedExpenses();
+      const publishedFiltered = filtered.filter((entry) => entry.workflow_status === "published");
       const selectedYear = document.getElementById("expense-year").value;
-      const annual = financeEntries.filter((entry) => entry.entry_type === "expense" && (selectedYear === "all" || financeDate(entry).getFullYear() === Number(selectedYear)));
-      document.getElementById("expense-selected-total").textContent = formatCurrency(filtered.reduce((sum, entry) => sum + Number(entry.amount || 0), 0));
+      const annual = financeEntries.filter((entry) => entry.entry_type === "expense" && entry.workflow_status === "published" && (selectedYear === "all" || financeDate(entry).getFullYear() === Number(selectedYear)));
+      document.getElementById("expense-selected-total").textContent = formatCurrency(publishedFiltered.reduce((sum, entry) => sum + Number(entry.amount || 0), 0));
       document.getElementById("expense-year-total").textContent = formatCurrency(annual.reduce((sum, entry) => sum + Number(entry.amount || 0), 0));
-      document.getElementById("expense-record-count").textContent = String(filtered.length);
+      document.getElementById("expense-record-count").textContent = String(publishedFiltered.length);
       const rows = await Promise.all(filtered.map(async (entry) => {
         const proof = entry.attachment_drive_url || await financeStorageUrl(entry.attachment_path);
         const time = entry.created_at ? new Date(entry.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—";
-        return "<tr><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(time) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt</a>' : "—") + "</td><td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td></tr>";
+        const pendingClass = canManagePortal() && entry.workflow_status === "pending" ? "finance-pending-entry" : "";
+        return "<tr class=\"" + pendingClass + "\"><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(time) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.submitted_by_name || "—") + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt</a>' : "—") + (!canManagePortal() ? "" : "<td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td>") + "</tr>";
       }));
-      document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="9">No expenses found for this period.</td></tr>';
+      document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="' + (!canManagePortal() ? 9 : 10) + '">No expenses found for this period.</td></tr>';
     }
     function fileAsBase64(file) {
       return new Promise((resolve, reject) => {
@@ -855,8 +933,13 @@
       body.innerHTML = teamMembers.map((member, index) => `
         <tr data-team-row="${index}">
           <td>${index + 1}</td>
-          <td><input type="text" data-team-designation="${index}" value="${escapeHtml(member.designation || TEAM_DEFAULTS[index])}" maxlength="80" aria-label="Designation, profile ${index + 1}" /></td>
-          <td><input type="text" data-team-name="${index}" value="${escapeHtml(member.name || "")}" maxlength="100" placeholder="Enter name" aria-label="Name, profile ${index + 1}" /></td>
+          <td><strong data-team-designation="${index}">${escapeHtml(member.designation || TEAM_DEFAULTS[index])}</strong></td>
+          <td><input type="text" data-team-name="${index}" value="${escapeHtml(member.name || "")}" maxlength="100" pattern="[A-Za-z ]+" placeholder="Letters and spaces only" aria-label="Name, profile ${index + 1}" /></td>
+          <td><input type="tel" data-team-contact="${index}" value="${escapeHtml(member.contact || "")}" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" aria-label="Contact, profile ${index + 1}" /></td>
+          <td><input type="email" data-team-email="${index}" value="${escapeHtml(member.email || "")}" maxlength="150" placeholder="Email ID" aria-label="Email ID, profile ${index + 1}" /></td>
+          <td><input type="text" data-team-pan="${index}" value="${escapeHtml(member.pan || "")}" maxlength="10" pattern="[A-Z]{5}[0-9]{4}[A-Z]" placeholder="ABCDE1234F" aria-label="PAN, profile ${index + 1}" /></td>
+          <td><input type="text" data-team-address="${index}" value="${escapeHtml(member.address || "")}" maxlength="240" placeholder="Address" aria-label="Address, profile ${index + 1}" /></td>
+          <td><input type="text" data-team-contribution="${index}" value="${escapeHtml(member.contribution || "")}" inputmode="numeric" pattern="[0-9]*" maxlength="12" placeholder="Numbers only" aria-label="Contribution, profile ${index + 1}" /></td>
           <td><div class="team-photo-actions">
             <label class="team-photo-picker${member.thumbnailUrl ? "" : " team-photo-picker-empty"}" title="Choose File" aria-label="Choose photo for profile ${index + 1}">${member.thumbnailUrl ? `<img class="team-admin-photo" src="${escapeHtml(member.thumbnailUrl)}" alt="${escapeHtml(member.name || member.designation || "Team member photo")}" />` : ""}<span class="visually-hidden">Choose File</span><input type="file" data-team-file="${index}" accept="image/jpeg,image/png,image/webp" aria-label="Choose photo, profile ${index + 1}" /></label>
             <div class="team-row-actions"><button class="btn btn-primary" type="button" data-team-save="${index}">Save</button>${member.photoId ? `<button class="btn btn-danger" type="button" data-team-remove="${index}">Remove</button>` : ""}</div>
@@ -865,29 +948,38 @@
     }
     async function loadTeamAdmin() {
       const body = document.getElementById("team-admin-list");
-      body.innerHTML = '<tr><td colspan="4">Loading team profiles…</td></tr>';
+      body.innerHTML = '<tr><td colspan="9">Loading team profiles…</td></tr>';
       try {
         const result = await sendFinanceDriveUpload({ type: "team_list", accessToken: adminAccessToken });
         teamMembers = Array.isArray(result.members) ? result.members : [];
         renderTeamAdmin();
         document.getElementById("team-admin-message").style.display = "none";
       } catch (error) {
-        body.innerHTML = '<tr><td colspan="4">Could not load profiles. Refresh after checking the Drive service.</td></tr>';
+        body.innerHTML = '<tr><td colspan="9">Could not load profiles. Refresh after checking the Drive service.</td></tr>';
         showTeamAdminMessage(error.message || "Could not load team profiles.", true);
       }
     }
     async function saveTeamAdminRow(index, removePhoto = false) {
       const row = document.querySelector(`[data-team-row="${index}"]`);
-      const designation = row.querySelector(`[data-team-designation="${index}"]`).value.trim();
+      const designation = row.querySelector(`[data-team-designation="${index}"]`).textContent.trim();
       const name = row.querySelector(`[data-team-name="${index}"]`).value.trim();
+      const contact = row.querySelector(`[data-team-contact="${index}"]`).value.trim();
+      const email = row.querySelector(`[data-team-email="${index}"]`).value.trim();
+      const pan = row.querySelector(`[data-team-pan="${index}"]`).value.trim();
+      const address = row.querySelector(`[data-team-address="${index}"]`).value.trim();
+      const contribution = row.querySelector(`[data-team-contribution="${index}"]`).value.trim();
       const file = row.querySelector(`[data-team-file="${index}"]`).files[0];
       if (!designation || !name) throw new Error("Enter both a designation and name before saving.");
+      if (!/^[A-Za-z ]+$/.test(name)) throw new Error("Name can contain letters and spaces only.");
+      if (contact && !/^\d{10}$/.test(contact)) throw new Error("Contact must contain exactly 10 digits.");
+      if (pan && !/^[A-Z]{5}\d{4}[A-Z]$/.test(pan)) throw new Error("PAN must use the format ABCDE1234F.");
+      if (contribution && !/^\d+$/.test(contribution)) throw new Error("Contribution can contain numbers only.");
       if (file && !["image/jpeg", "image/png", "image/webp"].includes(file.type)) throw new Error("Choose a JPG, PNG, or WebP photo.");
       if (file && file.size > 8 * 1024 * 1024) throw new Error("Each photo must be 8 MB or smaller.");
       const button = row.querySelector(removePhoto ? `[data-team-remove="${index}"]` : `[data-team-save="${index}"]`);
       button.disabled = true;
       try {
-        const payload = { type: "team_save", memberIndex: index, designation, name, removePhoto, accessToken: adminAccessToken };
+        const payload = { type: "team_save", memberIndex: index, designation, name, contact, email, pan, address, contribution, removePhoto, accessToken: adminAccessToken };
         if (file && !removePhoto) { payload.fileName = file.name; payload.mimeType = file.type; payload.base64 = await fileAsBase64(file); }
         await sendFinanceDriveUpload(payload);
         await loadTeamAdmin();
@@ -915,7 +1007,65 @@
       image.src = picker.dataset.previewUrl;
       picker.classList.remove("team-photo-picker-empty");
     });
+    document.getElementById("team-admin-list").addEventListener("input", (event) => {
+      const input = event.target;
+      if (!(input instanceof HTMLInputElement)) return;
+      if (input.hasAttribute("data-team-name")) input.value = input.value.replace(/[^A-Za-z ]/g, "");
+      if (input.hasAttribute("data-team-contact") || input.hasAttribute("data-team-contribution")) input.value = input.value.replace(/\D/g, "").slice(0, input.hasAttribute("data-team-contact") ? 10 : 12);
+      if (input.hasAttribute("data-team-pan")) input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+    });
     document.getElementById("refresh-team-members").addEventListener("click", loadTeamAdmin);
+    document.getElementById("trustee-access-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const data = Object.fromEntries(new FormData(form).entries());
+      const message = document.getElementById("trustee-access-message");
+      try {
+        await supabaseRequest("rpc/set_trust_portal_user", { method: "POST", body: JSON.stringify({ p_email: data.email, p_full_name: data.fullName, p_role: data.role }) });
+        message.className = "message"; message.textContent = "Trustee portal access saved."; message.style.display = "block"; form.reset();
+      } catch (error) { message.className = "message error"; message.textContent = error.message || "Could not save login access."; message.style.display = "block"; }
+    });
+    function renderPartners(partners) {
+      const body = document.getElementById("partner-admin-list");
+      body.innerHTML = partners.length ? partners.map((partner) => `<tr><td>${partner.logo_url ? `<img class="team-admin-photo" style="width:62px;height:54px;object-fit:contain" src="${escapeHtml(partner.logo_url)}" alt="${escapeHtml(partner.name)} logo" />` : "—"}</td><td>${escapeHtml(partner.name)}</td><td>${partner.website_url ? `<a href="${escapeHtml(partner.website_url)}" target="_blank" rel="noopener">Open site</a>` : "—"}</td><td style="white-space:normal;min-width:220px">${escapeHtml(partner.description || "—")}</td><td><div class="finance-actions"><button class="btn btn-primary" type="button" data-edit-partner="${escapeHtml(partner.id)}">Edit</button><button class="btn btn-danger" type="button" data-delete-partner="${escapeHtml(partner.id)}">Delete</button></div></td></tr>`).join("") : '<tr><td colspan="5">No partners added yet.</td></tr>';
+      window.partnerRecords = partners;
+    }
+    async function loadPartners() {
+      const body = document.getElementById("partner-admin-list");
+      body.innerHTML = '<tr><td colspan="5">Loading partners…</td></tr>';
+      try { renderPartners(await supabaseRequest(`${PARTNER_TABLE}?select=*&order=sort_order.asc,name.asc`)); }
+      catch (error) { body.innerHTML = '<tr><td colspan="5">Could not load partners.</td></tr>'; }
+    }
+    const partnerDialog = document.getElementById("partner-dialog");
+    function openPartnerForm(partner = null) {
+      const form = document.getElementById("partner-form"); form.reset();
+      form.elements.id.value = partner?.id || ""; form.elements.name.value = partner?.name || ""; form.elements.logo_url.value = partner?.logo_url || "";
+      form.elements.website_url.value = partner?.website_url || ""; form.elements.description.value = partner?.description || ""; form.elements.sort_order.value = partner?.sort_order ?? 0; form.elements.is_published.value = String(partner?.is_published ?? true);
+      document.getElementById("partner-dialog-title").textContent = partner ? "Edit Partner" : "Add New Partner";
+      document.getElementById("partner-form-message").style.display = "none"; partnerDialog.showModal();
+    }
+    async function savePartner(data) {
+      const name = data.name.trim();
+      const website_url = data.website_url.trim() || null;
+      const logo_url = data.logo_url.trim() || null;
+      const description = data.description.trim() || null;
+      if (!name) throw new Error("Enter the partner name.");
+      if (website_url && !/^https?:\/\//i.test(website_url)) throw new Error("Website must start with http:// or https://.");
+      if (logo_url && !/^https?:\/\//i.test(logo_url)) throw new Error("Logo URL must start with http:// or https://.");
+      const record = { name, website_url, logo_url, description, sort_order: Number(data.sort_order || 0), is_published: data.is_published === "true" };
+      await supabaseRequest(data.id ? `${PARTNER_TABLE}?id=eq.${encodeURIComponent(data.id)}` : PARTNER_TABLE, { method: data.id ? "PATCH" : "POST", body: JSON.stringify(record) });
+    }
+    document.getElementById("add-partner").addEventListener("click", () => openPartnerForm());
+    document.getElementById("partner-dialog-close").addEventListener("click", () => partnerDialog.close());
+    document.getElementById("partner-form-cancel").addEventListener("click", () => partnerDialog.close());
+    document.getElementById("partner-form").addEventListener("submit", async (event) => { event.preventDefault(); const message = document.getElementById("partner-form-message"); try { await savePartner(Object.fromEntries(new FormData(event.currentTarget).entries())); await loadPartners(); partnerDialog.close(); document.getElementById("partner-admin-message").textContent = "Partner saved."; document.getElementById("partner-admin-message").style.display = "block"; } catch (error) { message.className = "message error"; message.textContent = error.message || "Could not save partner."; message.style.display = "block"; } });
+    document.getElementById("partner-admin-list").addEventListener("click", async (event) => {
+      const edit = event.target.closest("[data-edit-partner]"); const remove = event.target.closest("[data-delete-partner]");
+      try {
+        if (edit) { openPartnerForm((window.partnerRecords || []).find((partner) => partner.id === edit.dataset.editPartner)); }
+        if (remove && confirm("Remove this partner from the website?")) { await supabaseRequest(`${PARTNER_TABLE}?id=eq.${encodeURIComponent(remove.dataset.deletePartner)}`, { method: "DELETE" }); await loadPartners(); }
+      } catch (error) { alert(error.message || "Could not save partner."); }
+    });
     async function sendDonationCertificate(record) {
       const channels = Array.isArray(record.certificate_delivery) ? record.certificate_delivery : [];
       if (!channels.length) return {};
@@ -1054,7 +1204,7 @@
         const upload = await fetch(SUPABASE_URL + "/storage/v1/object/" + FINANCE_BUCKET + "/" + attachmentPath, { method: "POST", headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + adminAccessToken, "Content-Type": file.type || "application/octet-stream" }, body: file });
         if (!upload.ok) throw new Error(await upload.text());
       }
-      const record = { entry_type: "expense", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", fund_name: null, public_note: data.public_note.trim() || null, donor_name: null, donor_email: null, donor_phone: null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, attachment_path: attachmentPath, attachment_drive_url: attachmentDriveUrl, reconciliation_status: existing?.reconciliation_status || "unreconciled", workflow_status: existing?.workflow_status || "draft" };
+      const record = { entry_type: "expense", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", fund_name: null, public_note: data.public_note.trim() || null, donor_name: null, donor_email: null, donor_phone: null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, attachment_path: attachmentPath, attachment_drive_url: attachmentDriveUrl, reconciliation_status: existing?.reconciliation_status || "unreconciled", workflow_status: existing?.workflow_status || (canManagePortal() ? "draft" : "pending") };
       await supabaseRequest(data.id ? FINANCE_TABLE + "?id=eq." + encodeURIComponent(data.id) : FINANCE_TABLE, { method: data.id ? "PATCH" : "POST", body: JSON.stringify(record) });
       let driveUploadWarning = "";
       if (file) {
@@ -1071,7 +1221,8 @@
       let refreshWarning = "";
       try { await loadFinanceEntries(); } catch (error) { refreshWarning = " The expense saved, but the report could not refresh: " + error.message; }
       const savedMessage = document.getElementById("finance-admin-message");
-      savedMessage.textContent = driveUploadWarning ? "Expense saved as draft. The receipt is private in Supabase, but its Google Drive copy could not be saved: " + driveUploadWarning + refreshWarning : "Expense saved as draft. Review it below and approve it when ready." + refreshWarning;
+      const stateText = canManagePortal() ? "saved as draft" : "submitted for admin approval";
+      savedMessage.textContent = driveUploadWarning ? "Expense " + stateText + ". The receipt is private in Supabase, but its Google Drive copy could not be saved: " + driveUploadWarning + refreshWarning : "Expense " + stateText + "." + refreshWarning;
       savedMessage.style.display = "block";
     }
     async function setFinanceStatus(id, values) { await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(id), { method: "PATCH", body: JSON.stringify(values) }); await loadFinanceEntries(); }
@@ -1218,6 +1369,7 @@
           const isManualDonation = donation.donation_source === "ledger";
           const isPublishedDonation = isManualDonation ? donation.workflow_status === "published" : donation.payment_status === "published";
           const isNewOnline = !isManualDonation && donation.payment_status === "submitted";
+          const isPendingTrustee = isManualDonation && donation.workflow_status === "pending" && canManagePortal();
           const appreciationChannels = Array.isArray(donation.certificate_delivery) ? donation.certificate_delivery : [];
           const appreciationDelivery = donation.certificate_delivery_status || {};
           const appreciationSent = !isManualDonation && donation.payment_status === "published"
@@ -1231,7 +1383,7 @@
           const eightyGStatus = eightyGEligible
             ? (["done", "send", "sent"].includes(saved80GStatus.toLowerCase()) ? "Done" : saved80GStatus || "Pending")
             : "—";
-          return `<tr class="${isNewOnline ? "donation-new-online" : ""}">
+          return `<tr class="${isNewOnline ? "donation-new-online" : ""}${isPendingTrustee ? " finance-pending-entry" : ""}">
             <td>${escapeHtml(date.toLocaleDateString("en-IN"))}</td>
             <td>${escapeHtml((donation.recorded_at || donation.created_at) ? new Date(donation.recorded_at || donation.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—")}</td>
             <td>${escapeHtml(donation.donor_name || donation.name)}</td>
@@ -1242,16 +1394,17 @@
             <td>${escapeHtml(donation.purpose)}</td>
             <td>${escapeHtml(String(donation.payment_method || (donation.entry_type === "donation" ? "manual" : "online")).replaceAll("_", " ").toUpperCase())}</td>
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>
+            <td>${escapeHtml(donation.submitted_by_name || "—")}</td>
             <td>${escapeHtml(isManualDonation ? (donation.workflow_status || "draft") : (donation.payment_status || "submitted"))}</td>
 
             <td><div class="donation-certificate-cell">${escapeHtml(donation.certificate_id || donation.certificateId)}${donation.entry_type !== "donation" && donation.certificate_delivery?.length ? `<small>Send via: ${escapeHtml(donation.certificate_delivery.join(" + "))}</small>` : ""}${donation.certificate_delivery_status ? `<small>Delivery: ${escapeHtml(Object.entries(donation.certificate_delivery_status).map(([channel, state]) => channel + " " + state).join("; "))}</small>` : ""}</div></td>
             <td>${escapeHtml(appreciationStatus)}${donation.appreciation_certificate_url ? `<br><a href="${escapeHtml(donation.appreciation_certificate_url)}" target="_blank" rel="noopener">View</a>` : ""}</td>
             <td>${eightyGEligible ? `${eightyGStatus === "Done" ? (donation.eighty_g_certificate_url ? `<a href="${escapeHtml(donation.eighty_g_certificate_url)}" target="_blank" rel="noopener">Done</a>` : escapeHtml(eightyGStatus)) : `<button class="btn btn-light" type="button" data-open-eighty-g="${escapeHtml(donation.id || "")}">${escapeHtml(eightyGStatus)}</button>`}` : escapeHtml(eightyGStatus)}</td>
             <td>${screenshotUrl ? `<a href="${escapeHtml(screenshotUrl)}" target="_blank" rel="noopener">View</a>` : "Unavailable"}</td>
-            <td><div class="finance-actions">${donation.entry_type !== "donation" && donation.payment_status === "submitted" ? `<button class="btn btn-primary" type="button" data-publish-donation="${escapeHtml(donation.id || "")}">Verify &amp; Publish</button><button class="btn btn-danger" type="button" data-cancel-donation="${escapeHtml(donation.id || "")}">Cancel</button>` : ""}${donation.entry_type !== "donation" && donation.payment_status === "published" && donation.certificate_delivery?.length && !donation.certificate_delivery.every((channel) => ["sent", "already sent"].includes(donation.certificate_delivery_status?.[channel])) ? `<button class="btn btn-primary" type="button" data-send-certificate="${escapeHtml(donation.id || "")}">Send Certificate</button>` : ""}<button class="btn btn-danger" type="button" data-delete-donation="${escapeHtml(donation.id || donation.certificate_id || donation.certificateId || "")}" data-donation-source="${donation.entry_type === "donation" ? "ledger" : "online"}">Delete</button></div></td>
+            ${!canManagePortal() ? "" : `<td><div class="finance-actions">${isManualDonation && donation.workflow_status === "pending" ? `<button class="btn btn-primary" type="button" data-approve-ledger-donation="${escapeHtml(donation.id || "")}">Approve &amp; Publish</button>` : ""}${donation.entry_type !== "donation" && donation.payment_status === "submitted" ? `<button class="btn btn-primary" type="button" data-publish-donation="${escapeHtml(donation.id || "")}">Verify &amp; Publish</button><button class="btn btn-danger" type="button" data-cancel-donation="${escapeHtml(donation.id || "")}">Cancel</button>` : ""}${donation.entry_type !== "donation" && donation.payment_status === "published" && donation.certificate_delivery?.length && !donation.certificate_delivery.every((channel) => ["sent", "already sent"].includes(donation.certificate_delivery_status?.[channel])) ? `<button class="btn btn-primary" type="button" data-send-certificate="${escapeHtml(donation.id || "")}">Send Certificate</button>` : ""}<button class="btn btn-danger" type="button" data-delete-donation="${escapeHtml(donation.id || donation.certificate_id || donation.certificateId || "")}" data-donation-source="${donation.entry_type === "donation" ? "ledger" : "online"}">Delete</button></div></td>`}
           </tr>`;
         }));
-        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="16">No donation found for selected period.</td></tr>';
+        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="' + (!canManagePortal() ? 16 : 17) + '">No donation found for selected period.</td></tr>';
       } catch (error) {
         list.innerHTML = '<tr><td colspan="16">Could not load donation data. Check that the finance setup is current and sign in with a finance admin account.</td></tr>';
       }
@@ -1270,6 +1423,7 @@
         Purpose: item.purpose || "",
         "Payment type": item.payment_method || "online",
         Amount: Number(item.amount || 0),
+        "Submitted by": item.submitted_by_name || "",
         Status: item.payment_status || item.workflow_status || "submitted",
         Certificate: item.certificate_id || item.certificateId || ""
       }));
@@ -1320,7 +1474,10 @@
           stats = {
             foodPackets: rows[0].food_packets,
             studentsSupported: rows[0].students_supported,
-            medicalCases: rows[0].medical_cases
+            medicalCases: rows[0].medical_cases,
+            awarenessDrives: rows[0].awareness_drives,
+            treePlantations: rows[0].tree_plantations,
+            communityWelfare: rows[0].community_welfare
           };
           localStorage.setItem(TRUST_STATS_KEY, JSON.stringify(stats));
         }
@@ -1329,6 +1486,9 @@
       form.foodPackets.value = stats.foodPackets || 0;
       form.studentsSupported.value = stats.studentsSupported || 0;
       form.medicalCases.value = stats.medicalCases || 0;
+      form.awarenessDrives.value = stats.awarenessDrives || 0;
+      form.treePlantations.value = stats.treePlantations || 0;
+      form.communityWelfare.value = stats.communityWelfare || 0;
     }
 
     async function saveImpactStats(stats) {
@@ -1344,6 +1504,9 @@
           food_packets: stats.foodPackets,
           students_supported: stats.studentsSupported,
           medical_cases: stats.medicalCases,
+          awareness_drives: stats.awarenessDrives,
+          tree_plantations: stats.treePlantations,
+          community_welfare: stats.communityWelfare,
           updated_at: new Date().toISOString()
         })
       });
@@ -1496,26 +1659,33 @@
         if (!response.ok || !auth.access_token) throw new Error("Sign-in failed");
         adminAccessToken = auth.access_token;
         sessionStorage.setItem("trustAdminAccessToken", adminAccessToken);
-        const identity = await fetch(`${SUPABASE_URL}/rest/v1/rpc/is_trust_finance_admin`, { method: "POST", headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${adminAccessToken}`, "Content-Type": "application/json" }, body: "{}" });
-        if (!identity.ok || !(await identity.json())) throw new Error("This account is not authorized for the Trust admin panel.");
+        const identity = await fetch(`${SUPABASE_URL}/rest/v1/rpc/trust_portal_identity`, { method: "POST", headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${adminAccessToken}`, "Content-Type": "application/json" }, body: "{}" });
+        portalIdentity = identity.ok ? await identity.json() : null;
+        if (!portalIdentity?.role) throw new Error("This account is not authorized for the Trust portal.");
+        portalRole = portalIdentity.role;
       } catch (error) {
         adminAccessToken = ""; sessionStorage.removeItem("trustAdminAccessToken");
         loginMessage.textContent = error.message || "Could not sign in."; loginMessage.style.display = "block"; return;
       }
       document.getElementById("login-panel").style.display = "none";
       document.getElementById("dashboard").classList.add("is-visible");
+      document.getElementById("dashboard").dataset.role = portalRole;
+      document.getElementById("dashboard").dataset.permission = canManagePortal() ? "manager" : "member";
+      document.getElementById("portal-identity").textContent = (portalIdentity.name || "Trust member") + " · " + portalRoleLabel(portalRole);
+      document.querySelector('#finance-entry-form [type="submit"]').textContent = financeSubmitLabel();
+      document.getElementById("dashboard-title").textContent = canManagePortal() ? "Admin Dashboard" : "Trustee Dashboard";
+      document.getElementById("dashboard-subtitle").textContent = canManagePortal() ? "Update home page impact data, reports, team profiles, partners, and volunteer registrations." : "View reports, add financial entries, and review volunteer data.";
       document.getElementById("admin-logout").hidden = false;
-      await loadStatsForm();
-      await loadNoticeForm();
+      if (canManagePortal()) { await loadStatsForm(); await loadNoticeForm(); await loadTeamAdmin(); await loadPartners(); await renderReviews(); }
       await renderDonationReport(true);
-      await loadTeamAdmin();
       await renderVolunteers();
-      await renderReviews();
       await loadFinanceEntries();
     });
     document.getElementById("admin-logout").addEventListener("click", () => {
-      adminAccessToken = ""; sessionStorage.removeItem("trustAdminAccessToken");
+      adminAccessToken = ""; portalRole = ""; portalIdentity = null; sessionStorage.removeItem("trustAdminAccessToken");
       document.getElementById("dashboard").classList.remove("is-visible");
+      document.getElementById("dashboard").removeAttribute("data-role");
+      document.getElementById("dashboard").removeAttribute("data-permission");
       document.getElementById("admin-logout").hidden = true;
       document.getElementById("login-panel").style.display = "block";
     });
@@ -1568,7 +1738,7 @@
         message.style.display = "block";
       } finally {
         submitButton.disabled = false;
-        submitButton.textContent = "Save as Draft";
+        submitButton.textContent = financeSubmitLabel();
       }
     });
     const financeDialog = document.getElementById("finance-entry-dialog");
@@ -1582,7 +1752,10 @@
       await saveImpactStats({
         foodPackets: Number(data.foodPackets || 0),
         studentsSupported: Number(data.studentsSupported || 0),
-        medicalCases: Number(data.medicalCases || 0)
+        medicalCases: Number(data.medicalCases || 0),
+        awarenessDrives: Number(data.awarenessDrives || 0),
+        treePlantations: Number(data.treePlantations || 0),
+        communityWelfare: Number(data.communityWelfare || 0)
       });
       showMessage("stats-message");
     });
@@ -1609,6 +1782,15 @@
     document.getElementById("donation-month").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("export-donations").addEventListener("click", exportDonationExcel);
     document.getElementById("donation-list").addEventListener("click", async (event) => {
+      const approveLedgerDonation = event.target.closest("[data-approve-ledger-donation]");
+      if (approveLedgerDonation) {
+        const entry = financeEntries.find((item) => item.id === approveLedgerDonation.dataset.approveLedgerDonation && item.entry_type === "donation");
+        if (!entry || !confirm("Approve and publish this cash donation? It will then be included in the totals.")) return;
+        approveLedgerDonation.disabled = true;
+        try { await approveFinanceEntry(entry); await renderDonationReport(true); }
+        catch (error) { alert("Could not approve this donation: " + error.message); approveLedgerDonation.disabled = false; }
+        return;
+      }
       const publishButton = event.target.closest("[data-publish-donation]");
       if (publishButton) {
         const id = publishButton.dataset.publishDonation;
@@ -1715,15 +1897,15 @@
       button.disabled = true; message.textContent = "Saving donation…"; message.style.display = "block";
       try {
         const data = Object.fromEntries(new FormData(form).entries());
-        const record = { entry_type: "donation", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", public_note: null, donor_name: data.donor_name.trim(), donor_email: data.donor_email.trim() || null, donor_phone: data.donor_phone.trim() || null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, reconciliation_status: "unreconciled", workflow_status: "approved" };
+        const record = { entry_type: "donation", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", public_note: null, donor_name: data.donor_name.trim(), donor_email: data.donor_email.trim() || null, donor_phone: data.donor_phone.trim() || null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, reconciliation_status: "unreconciled", workflow_status: canManagePortal() ? "approved" : "pending" };
         const inserted = await supabaseRequest(FINANCE_TABLE, { method: "POST", body: JSON.stringify(record) });
         let publicationError = "";
-        try {
+        if (canManagePortal()) try {
           const id = inserted?.[0]?.id;
           if (!id) throw new Error("The donation was saved but its record ID was not returned.");
           await supabaseRequest(FINANCE_TABLE + "?id=eq." + encodeURIComponent(id), { method: "PATCH", body: JSON.stringify({ workflow_status: "published" }) });
         } catch (error) { publicationError = error.message || "Publication failed."; }
-        await renderDonationReport(true); await loadFinanceEntries(); form.reset(); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); message.textContent = publicationError ? "Donation saved as approved and added to the report, but could not be published: " + publicationError : "Donation saved, approved, and added to the donation report.";
+        await renderDonationReport(true); await loadFinanceEntries(); form.reset(); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); message.textContent = !canManagePortal() ? "Donation submitted for admin approval. It will be included in public totals after publication." : publicationError ? "Donation saved as approved and added to the report, but could not be published: " + publicationError : "Donation saved, approved, and added to the donation report.";
       } catch (error) { message.textContent = "Could not save donation: " + error.message; }
       finally { button.disabled = false; }
     });

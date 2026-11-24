@@ -508,8 +508,8 @@
     #gallery { background: #f1f6f2; }
     #blog { background: #fff; }
     #team { background: #f1f6f2; padding-block: 82px; }
-    #reviews { background: #fff; padding-block: 82px; }
-    #contact { background: #f1f6f2; }
+    #reviews { background: #f8fcf9; padding-block: 82px; }
+    #contact { background: #fff; }
 
     #team .section-head { max-width: none; margin: 0 0 36px; text-align: left; }
     #team .section-head h2 { color: var(--green-dark); font-size: clamp(24px,3vw,34px); letter-spacing: .08em; }
@@ -518,7 +518,7 @@
     .team-photo { box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; border: 3px solid #fff; border-radius: 16px; background: linear-gradient(145deg,#d9eadc,#f5e9cb); color: var(--green-dark); font: 700 50px/1 "Poppins",sans-serif; }
     .team-photo img { width: 100%; height: 100%; object-fit: cover; }
     .founder-card .team-photo { border: 4px solid #fff; border-radius: 50%; outline: 3px solid var(--green); box-shadow: 0 8px 24px rgba(12,75,59,.18); }
-    .team-role { display: inline-block; margin-bottom: 8px; color: #8d6a22; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .team-role { display: inline-block; margin-bottom: 8px; color: #8d6a22; font-size: 16px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
     .founder-card h3 { margin: 0 0 8px; color: var(--green-dark); font: 700 clamp(24px,3vw,34px)/1.15 "Poppins",sans-serif; }
     .founder-card p { margin: 0; color: var(--muted); }
     .team-subhead { margin: 0 0 18px; color: var(--green-dark); font: 700 23px "Poppins",sans-serif; text-align: center; }
@@ -899,6 +899,26 @@
       padding: 18px 20px;
     }
 
+    .impact-strip { max-width: 1408px; margin: -58px auto 0; position: relative; z-index: 3; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+    .impact-strip .stats { display: contents; }
+    .impact-strip .stat { min-width: 0; padding: 22px 12px; border-right: 1px solid var(--line); text-align: center; color: var(--muted); font-weight: 700; }
+    .impact-strip .stat:last-child { border-right: 0; }
+    .impact-strip .stat strong { display: block; color: var(--green-dark); font: 800 clamp(24px, 2.5vw, 34px)/1 "Poppins", sans-serif; margin-bottom: 8px; }
+    #team { background: #f8fcf9; }
+    #partners { padding-block: 76px; background: #fff; border-top: 1px solid #c8dfcf; border-bottom: 1px solid #e6e0d6; }
+    #partners .section-head { position: relative; max-width: none; margin: 0 0 42px; text-align: left; }
+    #partners .section-head::before { content: "WITH US"; display: block; margin-bottom: 8px; color: var(--green); font-size: 12px; font-weight: 800; letter-spacing: .14em; }
+    #partners .section-head h2 { color: var(--green-dark); font-size: clamp(28px, 3.5vw, 42px); }
+    .partners-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); align-items: center; gap: 28px; }
+    .partner-card { display: grid; place-items: center; min-height: 168px; padding: 18px; text-align: center; border: 1px solid rgba(18,106,81,.12); border-radius: 14px; background: rgba(255,255,255,.76); transition: transform .2s ease, box-shadow .2s ease; }
+    .partner-card:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(18,106,81,.12); }
+    .partner-logo { width: 110px; height: 92px; object-fit: contain; margin-bottom: 12px; mix-blend-mode: multiply; }
+    .partner-card h3 { margin: 0 0 5px; color: var(--green-dark); font: 700 16px "Poppins", sans-serif; }
+    .partner-card p { margin: 0; color: var(--muted); font-size: 13px; }
+    .partner-card a { display: inline-block; margin-top: 9px; color: var(--green); font-size: 13px; font-weight: 800; }
+    @media (max-width: 900px) { .impact-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-inline: 16px; } .impact-strip .stat:nth-child(4) { border-right: 0; } .impact-strip .stat:nth-child(n+5) { border-top: 1px solid var(--line); } }
+    @media (max-width: 560px) { .impact-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: -30px; } .impact-strip .stat { border-right: 1px solid var(--line) !important; border-top: 1px solid var(--line); } .impact-strip .stat:nth-child(2n) { border-right: 0 !important; } .impact-strip .stat:nth-child(-n+2) { border-top: 0; } }
+
     .notice-box {
       max-width: 1180px;
       margin: 0 auto;
@@ -960,60 +980,24 @@
       outline: none;
     }
 
-    .review-layout {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 22px;
-      align-items: start;
-    }
-
-    .review-card {
-      display: flex;
-      flex-direction: column;
-      height: 285px;
-      overflow: hidden;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-      box-shadow: 0 12px 34px rgba(20, 30, 36, 0.07);
-    }
-
-    .review-card p {
-      display: -webkit-box;
-      flex: 1;
-      margin: 10px 0;
-      padding: 12px 10px;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      overflow: hidden;
-      color: var(--muted);
-      overflow-wrap: anywhere;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 4;
-    }
-
-    .review-card strong {
-      color: var(--green-dark);
-      font-family: "Poppins", system-ui, sans-serif;
-    }
-
-    .review-name-button {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cfe4d8;
-      border-radius: 6px;
-      background: #edf7ef;
-      color: var(--green-dark);
-      font: inherit;
-      font-weight: 800;
-      text-align: left;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .review-name-button:hover,
-    .review-name-button:focus-visible { background: #dcefe3; outline: 2px solid var(--green); outline-offset: 2px; }
+    .review-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 22px; align-items: stretch; }
+    .review-viewer { min-width: 0; align-content: start; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 12px 34px rgba(20,30,36,.07); }
+    .review-viewer h3 { margin: 0 0 16px; color: var(--green-dark); text-align: center; font: 700 25px "Poppins",sans-serif; }
+    .review-table-wrap { height: 300px; max-height: 300px; align-self: start; overflow-x: hidden; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; scrollbar-width: thin; scrollbar-color: var(--green) #edf7ef; }
+    .review-table-wrap::-webkit-scrollbar { width: 9px; }
+    .review-table-wrap::-webkit-scrollbar-track { background: #edf7ef; }
+    .review-table-wrap::-webkit-scrollbar-thumb { background: var(--green); border: 2px solid #edf7ef; border-radius: 10px; }
+    .review-table { width: 100%; table-layout: fixed; border-collapse: collapse; background: #fff; }
+    .review-table th, .review-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: middle; text-align: left; overflow-wrap: anywhere; word-break: break-word; }
+    .review-table th:last-child, .review-table td:last-child { border-right: 0; }
+    .review-table th { position: sticky; top: 0; z-index: 1; background: #edf7ef; color: var(--green-dark); font-family: "Poppins",system-ui,sans-serif; font-size: 14px; }
+    .review-table th:nth-child(1), .review-table td:nth-child(1) { width: 23%; } .review-table th:nth-child(2), .review-table td:nth-child(2) { width: 43%; color: var(--muted); } .review-table th:nth-child(3), .review-table td:nth-child(3) { width: 18%; } .review-table th:nth-child(4), .review-table td:nth-child(4) { width: 16%; }
+    .review-text-preview { display: -webkit-box; max-height: 42px; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-height: 1.35; }
+    .review-name-button { padding: 0; border: 0; background: transparent; color: var(--green-dark); font: inherit; font-weight: 800; text-align: left; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; cursor: pointer; }
+    .review-name-button:hover, .review-name-button:focus-visible { color: var(--green); text-decoration-color: currentColor; outline: none; }
+    .review-text-button { width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+    .review-text-button:hover .review-text-preview, .review-text-button:focus-visible .review-text-preview { color: var(--green-dark); text-decoration: underline; text-underline-offset: 3px; }
+    .review-text-button:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
 
     .public-review-dialog {
       width: min(560px, calc(100% - 32px));
@@ -1037,8 +1021,9 @@
       margin: auto 0 0;
       padding-top: 8px;
       color: #d99a00;
-      font-size: 20px;
-      letter-spacing: 2px;
+      font-size: 18px;
+      letter-spacing: 0;
+      white-space: nowrap;
     }
 
     .review-rating .is-empty { color: #c8c8c8; }
@@ -1058,8 +1043,8 @@
     .review-submit-row .btn { order: 1; }
     .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
     @media (max-width: 520px) { .review-submit-row { flex-wrap: wrap; } .review-submit-row .review-rating-picker { margin-left: 0; } }
-    .review-reactions { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
-    .review-reaction { border: 1px solid var(--line); border-radius: 18px; padding: 5px 9px; background: #fff; cursor: pointer; }
+    .review-reactions { display: flex; flex-wrap: nowrap; gap: 3px; align-items: center; white-space: nowrap; }
+    .review-reaction { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 18px; padding: 4px 6px; background: #fff; cursor: pointer; font-size: 11px; white-space: nowrap; }
     .review-reaction.is-selected { border-color: var(--green); background: #edf7ef; }
 
     .review-form-box {
@@ -2278,6 +2263,7 @@
         <a href="#home">Home</a>
         <a href="#about">About</a>
         <a href="#work">Work</a>
+        <a href="#partners">Partners</a>
         <details class="dropdown" id="get-involved-dropdown">
           <summary>Get Involved</summary>
           <div class="dropdown-menu">
@@ -2321,11 +2307,14 @@
       </div>
     </section>
 
-    <div class="wrap">
-      <div class="stats" aria-label="Trust impact highlights">
+    <div class="impact-strip" aria-label="Trust impact highlights">
+      <div class="stats">
         <div class="stat"><strong id="food-count">0+</strong>Food packets distributed</div>
         <div class="stat"><strong id="student-count">0+</strong>Students supported</div>
         <div class="stat"><strong id="medical-count">0+</strong>Medical help cases</div>
+        <div class="stat"><strong id="awareness-count">0+</strong>Awareness drives</div>
+        <div class="stat"><strong id="community-count">0+</strong>Community welfare</div>
+        <div class="stat"><strong id="tree-count">0+</strong>Tree plantation</div>
         <div class="stat"><strong id="volunteer-count">0</strong>Volunteers joined trust</div>
       </div>
     </div>
@@ -2541,6 +2530,13 @@
       </div>
     </section>
 
+    <section id="partners">
+      <div class="wrap">
+        <div class="section-head"><h2>Partners and Supporters</h2><p>Working with organisations and community supporters to reach more people.</p></div>
+        <div class="partners-grid" id="partners-grid"><p>Our partner information will appear here.</p></div>
+      </div>
+    </section>
+
     <section id="reviews">
       <div class="wrap">
         <div class="section-head">
@@ -2573,11 +2569,8 @@
             <div class="save-message" id="review-message">Review submitted successfully.</div>
           </div>
           <div class="review-viewer">
-            <div class="review-grid" id="review-list" aria-live="polite"></div>
-            <div class="review-controls" aria-label="Review controls">
-              <button class="review-arrow" type="button" id="review-prev" aria-label="Previous reviews">&#8249;</button>
-              <button class="review-arrow" type="button" id="review-next" aria-label="Next reviews">&#8250;</button>
-            </div>
+            <h3>Reviews</h3>
+            <div class="review-table-wrap"><table class="review-table"><thead><tr><th>Name</th><th>Review</th><th>Rating</th><th>Likes</th></tr></thead><tbody id="review-list" aria-live="polite"><tr><td colspan="4">Loading reviews…</td></tr></tbody></table></div>
           </div>
         </div>
       </div>
@@ -2857,13 +2850,14 @@
     const SUPABASE_REVIEW_TABLE = "trusted_reviews";
     const SUPABASE_PUBLIC_REVIEW_VIEW = "trust_public_reviews";
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
+    const PARTNER_TABLE = "trust_partners";
     const SUPABASE_DONATION_TABLE = "donation_records";
     const TRUST_DONOR_COUNT_FUNCTION = "trust_public_donor_count";
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
     const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwsYD3cnq8ShfUZDPhV5hd5w2FUoDXALI3tBE7x8LpWJbP2cXrBnUL9UwcyQsYENdB48Q/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzfeWU8pAKVHxgKWK17-KXYgQCJAAeGdqBEiXfTxhmQ-vKE6WgOxImQJLVaf-1AbTY/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbx7lkm6cEpJwuAjW2NzpyQaE27FB7YhR5CmEM3whvtCWqncw7eoBaxAyAWqL_CHQpUO/exec";
     const GOOGLE_DRIVE_TEAM_API_URL = GOOGLE_DRIVE_UPLOAD_URL;
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -3218,7 +3212,10 @@
           stats = {
             foodPackets: rows[0].food_packets,
             studentsSupported: rows[0].students_supported,
-            medicalCases: rows[0].medical_cases
+            medicalCases: rows[0].medical_cases,
+            awarenessDrives: rows[0].awareness_drives,
+            treePlantations: rows[0].tree_plantations,
+            communityWelfare: rows[0].community_welfare
           };
           localStorage.setItem(TRUST_STATS_KEY, JSON.stringify(stats));
         }
@@ -3226,9 +3223,24 @@
       const foodCount = document.getElementById("food-count");
       const studentCount = document.getElementById("student-count");
       const medicalCount = document.getElementById("medical-count");
+      const awarenessCount = document.getElementById("awareness-count");
+      const treeCount = document.getElementById("tree-count");
+      const communityCount = document.getElementById("community-count");
       if (foodCount) foodCount.textContent = `${stats.foodPackets || 0}+`;
       if (studentCount) studentCount.textContent = `${stats.studentsSupported || 0}+`;
       if (medicalCount) medicalCount.textContent = `${stats.medicalCases || 0}+`;
+      if (awarenessCount) awarenessCount.textContent = `${stats.awarenessDrives || 0}+`;
+      if (treeCount) treeCount.textContent = `${stats.treePlantations || 0}+`;
+      if (communityCount) communityCount.textContent = `${stats.communityWelfare || 0}+`;
+    }
+
+    async function loadPartners() {
+      const grid = document.getElementById("partners-grid");
+      if (!grid || !supabaseEnabled()) return;
+      try {
+        const partners = await supabaseRequest(`${PARTNER_TABLE}?select=name,website_url,description,logo_url&is_published=eq.true&order=sort_order.asc,name.asc`);
+        grid.innerHTML = partners.length ? partners.map((partner) => `<article class="partner-card">${partner.logo_url ? `<img class="partner-logo" src="${escapeHtml(partner.logo_url)}" alt="${escapeHtml(partner.name)} logo" />` : ""}<h3>${escapeHtml(partner.name)}</h3>${partner.description ? `<p>${escapeHtml(partner.description)}</p>` : ""}${partner.website_url ? `<a href="${escapeHtml(partner.website_url)}" target="_blank" rel="noopener">Visit partner →</a>` : ""}</article>`).join("") : "<p>Our partner information will appear here.</p>";
+      } catch (_) { grid.innerHTML = "<p>Our partner information will appear here.</p>"; }
     }
 
     async function loadNotice() {
@@ -4063,14 +4075,10 @@
       if (!list) return;
       allReviews = await loadReviews();
       if (!allReviews.length) {
-        list.innerHTML = "<p>No review submitted yet.</p>";
+        list.innerHTML = '<tr><td colspan="4">No review submitted yet.</td></tr>';
         return;
       }
-      const visibleReviews = [];
-      const count = Math.min(3, allReviews.length);
-      for (let i = 0; i < count; i += 1) {
-        visibleReviews.push(allReviews[(activeReviewIndex + i) % allReviews.length]);
-      }
+      const visibleReviews = allReviews;
       let reactionRows = [];
       let voterId = localStorage.getItem(TRUST_VOTER_KEY);
       if (!voterId) { voterId = crypto.randomUUID(); localStorage.setItem(TRUST_VOTER_KEY, voterId); }
@@ -4084,12 +4092,12 @@
         const reviewKey = String(item.id || item.createdAt || `${item.name}-${item.review}`);
         const reactions = reactionCounts[item.id] || localReactions[reviewKey] || { up: 0, heart: 0, down: 0, mine: "" };
         return `
-        <article class="review-card">
-          <button class="review-name-button" type="button" data-open-public-review="${(activeReviewIndex + visibleIndex) % allReviews.length}">${escapeHtml(item.name)}</button>
-          <p>${escapeHtml(item.review)}</p>
-          <div class="review-rating" aria-label="${Number(item.rating) > 0 ? `Rated ${Math.min(5, Number(item.rating))} out of 5 stars` : "Not rated yet"}">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= Number(item.rating) ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}${Number(item.rating) > 0 ? `<span class="review-rating-label">${Math.min(5, Number(item.rating))} / 5</span>` : ""}</div>
-          <div class="review-reactions" data-review-reactions="${escapeHtml(reviewKey)}">${[["up", "👍"], ["heart", "❤️"], ["down", "👎"]].map(([kind, symbol]) => `<button class="review-reaction${reactions.mine === kind ? " is-selected" : ""}" type="button" data-reaction="${kind}" data-review-id="${escapeHtml(String(item.id || ""))}" data-review-key="${escapeHtml(reviewKey)}" aria-label="${symbol} ${kind === "up" ? "Thumbs up" : kind === "down" ? "Thumbs down" : "Heart"}">${symbol} ${reactions[kind] || 0}</button>`).join("")}</div>
-        </article>
+        <tr>
+          <td><strong>${escapeHtml(item.name)}</strong></td>
+          <td><button class="review-text-button" type="button" data-open-public-review="${visibleIndex}" aria-label="Read full review by ${escapeHtml(item.name)}"><span class="review-text-preview">${escapeHtml(item.review)}</span></button></td>
+          <td><div class="review-rating" aria-label="${Number(item.rating) > 0 ? `Rated ${Math.min(5, Number(item.rating))} out of 5 stars` : "Not rated yet"}">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= Number(item.rating) ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}</div></td>
+          <td><div class="review-reactions" data-review-reactions="${escapeHtml(reviewKey)}">${[["up", "👍"], ["heart", "❤️"]].map(([kind, symbol]) => `<button class="review-reaction${reactions.mine === kind ? " is-selected" : ""}" type="button" data-reaction="${kind}" data-review-id="${escapeHtml(String(item.id || ""))}" data-review-key="${escapeHtml(reviewKey)}" aria-label="${symbol} ${kind === "up" ? "Like" : "Heart"}">${symbol} ${reactions[kind] || 0}</button>`).join("")}</div></td>
+        </tr>
       `; }).join("");
     }
 
@@ -4115,9 +4123,9 @@
     document.getElementById("review-list")?.addEventListener("click", (event) => {
       const reactionButton = event.target.closest("[data-reaction]");
       if (reactionButton) { castReviewReaction(reactionButton); return; }
-      const nameButton = event.target.closest("[data-open-public-review]");
-      if (!nameButton) return;
-      const review = allReviews[Number(nameButton.dataset.openPublicReview)];
+      const reviewButton = event.target.closest("[data-open-public-review]");
+      if (!reviewButton) return;
+      const review = allReviews[Number(reviewButton.dataset.openPublicReview)];
       if (review) openPublicReview(review);
     });
 
@@ -4583,7 +4591,14 @@
       if (foodCount) foodCount.textContent = `${stats.foodPackets || 0}+`;
       if (studentCount) studentCount.textContent = `${stats.studentsSupported || 0}+`;
       if (medicalCount) medicalCount.textContent = `${stats.medicalCases || 0}+`;
+      const awarenessCount = document.getElementById("awareness-count");
+      const treeCount = document.getElementById("tree-count");
+      const communityCount = document.getElementById("community-count");
+      if (awarenessCount) awarenessCount.textContent = `${stats.awarenessDrives || 0}+`;
+      if (treeCount) treeCount.textContent = `${stats.treePlantations || 0}+`;
+      if (communityCount) communityCount.textContent = `${stats.communityWelfare || 0}+`;
     });
+    loadPartners().catch(() => {});
     loadNotice().catch(() => {
       const notice = JSON.parse(localStorage.getItem(TRUST_NOTICE_KEY) || "{}");
       if (notice.title) document.getElementById("notice-title").textContent = notice.title;
