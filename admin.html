@@ -333,6 +333,14 @@
     #recovery-dialog form { display: grid; gap: 14px; }
     #recovery-dialog form[hidden] { display: none; }
     #recovery-dialog input { border-color: #a9b9b0; }
+    #request-form input[type="email"], #login-form .login-email { font-weight: 400; }
+    #login-form .password-field { position: relative; }
+    #login-form .password-field input { padding-inline-end: 52px; }
+    #login-form .password-row label { margin-bottom: 6px; }
+    #login-form .password-toggle { position: absolute; inset-inline-end: 3px; top: 50%; transform: translateY(-50%); width: 40px; min-height: 40px; padding: 0; background: transparent; color: var(--green-dark); }
+    #login-form .password-toggle:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+    #login-form .password-toggle .eye-slash { display: none; }
+    #login-form .password-toggle[aria-pressed="true"] .eye-slash { display: block; }
     #recovery-dialog button[type="submit"] { min-height: 44px; padding: 8px 12px; border: 0; border-radius: 8px; background: #126a51; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
     #recovery-dialog button:disabled { opacity: .65; cursor: wait; }
     #recovery-dialog #status[data-error] { color: #9b2525; }
@@ -355,14 +363,21 @@
         <h1>Trust Portal Login</h1>
         <form id="login-form">
           <div class="form-grid">
-            <label class="full">
+            <label class="full login-email">
               Email ID
               <input name="email" type="email" autocomplete="username" required />
             </label>
-            <label class="full">
-              Password
-              <input name="password" type="password" autocomplete="current-password" required />
-            </label>
+            <div class="full password-row">
+              <label for="login-password">Password</label>
+              <div class="password-field">
+                <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+                <button id="login-password-toggle" class="btn password-toggle" type="button" aria-label="Show password" aria-pressed="false" aria-controls="login-password">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/><path class="eye-slash" d="m3 3 18 18"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
             <div class="full">
               <button class="btn btn-primary" type="submit">Login</button>
             </div>
@@ -712,6 +727,10 @@
       button.disabled = true;
       showStatus("Requesting reset link…");
       try {
+        if (redirect.protocol !== "https:" || ["localhost", "127.0.0.1", "[::1]", "0.0.0.0"].includes(redirect.hostname) || redirect.hostname.endsWith(".localhost")) {
+          showStatus("Open the live Trust Portal website to request a password reset link.", true);
+          return;
+        }
         const endpoint = new URL(SUPABASE_URL + "/auth/v1/recover");
         endpoint.searchParams.set("redirect_to", redirect.href);
         const response = await fetch(endpoint, {
@@ -1873,6 +1892,13 @@
       }
     }
 
+    const loginPassword = document.getElementById("login-password");
+    const loginPasswordToggle = document.getElementById("login-password-toggle");
+    loginPasswordToggle.addEventListener("click", () => {
+      const show = loginPassword.type === "password";
+      loginPassword.type = show ? "text" : "password";
+      loginPasswordToggle.setAttribute("aria-pressed", String(show));
+    });
     document.getElementById("login-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
