@@ -475,6 +475,10 @@
     :is(.report-stat, .financial-summary-card):nth-child(3) { background: #ebf3fa; border-color: #cddfeb; }
     .report-stat:nth-child(3) strong { color: #285678; }
     .financial-summary-card:nth-child(4) { background: #f2edf9; border-color: #ded2eb; }
+    #financial-doc-wait:not([hidden]) { position:absolute; inset:0; z-index:2; display:grid; place-items:center; background:#0c4b3b55; }
+    .doc-wait-card { display:grid; justify-items:center; gap:12px; padding:22px; border-radius:12px; background:white; color:var(--green-dark); font-weight:700; }
+    .doc-wait-spinner { width:34px; height:34px; border:4px solid #dcece3; border-top-color:var(--green); border-radius:50%; animation:button-spin .8s linear infinite; }
+    #financial-doc-success:not(:empty) { position:fixed; z-index:1000; top:20px; right:20px; padding:12px 18px; max-width:calc(100% - 40px); border-radius:10px; background:#e5f5eb; color:var(--green-dark); box-shadow:var(--shadow); font-weight:700; }
   </style>
 </head>
 <body>
@@ -660,11 +664,13 @@
           </div>
         </section>
 
+        <div id="financial-doc-success" role="status"></div>
         <dialog class="entry-dialog" id="financial-doc-dialog" aria-labelledby="financial-doc-title">
           <div class="financial-document-header">
             <div><h2 id="financial-doc-title">Upload Financial Document</h2><p>Sarvahit Charitable Trust · Admin Panel</p></div>
             <button class="entry-dialog-close" id="financial-doc-close" type="button" aria-label="Close form">&times;</button>
           </div>
+          <div id="financial-doc-wait" hidden role="status"><div class="doc-wait-card"><span class="doc-wait-spinner" aria-hidden="true"></span><span id="financial-doc-wait-label"></span></div></div>
           <form id="financial-doc-form">
             <label>Financial Year *<select name="fiscal_year" required></select></label>
             <label>Assessment Year<input id="financial-doc-ay" type="text" readonly /></label>
@@ -2335,6 +2341,9 @@
     const docList = document.getElementById("financial-doc-list");
     const docMessage = document.getElementById("financial-doc-message");
     const docFormMessage = document.getElementById("financial-doc-form-message");
+    const docWait = document.getElementById("financial-doc-wait");
+    const docSuccess = document.getElementById("financial-doc-success");
+    let docSuccessTimer;
     const docChecklist = document.getElementById("financial-checklist-options");
     const docChecklistStatus = document.getElementById("financial-checklist-status");
     const docCategories = [
@@ -2608,6 +2617,9 @@
         }
       }
       docSaving = true;
+      docForm.inert = true;
+      document.getElementById("financial-doc-wait-label").textContent = publish ? "Publishing document..." : "Saving draft...";
+      docWait.hidden = false;
       const buttons = Array.from(docForm.querySelectorAll("button"));
       buttons.forEach((button) => { button.disabled = true; });
       document.getElementById("financial-doc-close").disabled = true;
@@ -2634,12 +2646,16 @@
         docDialog.close();
         pendingDocUpload = null;
         docYear.value = category === "Permanent Documents" ? "permanent" : year;
-        await loadFinancialDocuments();
-        docMessage.textContent ||= publish ? "Document published to its selected audience." : "Draft saved for admins.";
+        clearTimeout(docSuccessTimer);
+        docSuccess.textContent = publish ? "Document published successfully." : "Draft saved successfully.";
+        docSuccessTimer = setTimeout(() => { docSuccess.textContent = ""; }, 6000);
+        void loadFinancialDocuments();
       } catch (error) {
         docFormMessage.textContent = error.message || "Could not save the document.";
       } finally {
         docSaving = false;
+        docWait.hidden = true;
+        docForm.inert = false;
         buttons.forEach((button) => { button.disabled = false; });
         document.getElementById("financial-doc-close").disabled = false;
       }
