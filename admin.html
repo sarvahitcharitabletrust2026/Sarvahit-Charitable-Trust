@@ -332,15 +332,18 @@
     #recovery-dialog h1 { margin: 0 0 16px; color: #0c4b3b; font: 700 28px/1.5 system-ui, sans-serif; }
     #recovery-dialog form { display: grid; gap: 14px; }
     #recovery-dialog form[hidden] { display: none; }
+    #password-form label { display: block; margin-bottom: 6px; font-weight: 600; }
+    #trustee-access-dialog { width: min(calc(100% - 32px), 760px); }
+    .team-admin-actions { display: flex; flex-wrap: wrap; gap: 10px; }
     #recovery-dialog input { border-color: #a9b9b0; }
     #request-form input[type="email"], #login-form .login-email input { font-weight: 400; }
-    #login-form .password-field { position: relative; }
-    #login-form .password-field input { padding-inline-end: 52px; }
+    :is(#login-form, #password-form) .password-field { position: relative; }
+    :is(#login-form, #password-form) .password-field input { padding-inline-end: 52px; }
     #login-form .password-row label { margin-bottom: 6px; }
-    #login-form .password-toggle { position: absolute; inset-inline-end: 3px; top: 50%; transform: translateY(-50%); width: 40px; min-height: 40px; padding: 0; background: transparent; color: var(--green-dark); }
-    #login-form .password-toggle:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
-    #login-form .password-toggle .eye-slash { display: none; }
-    #login-form .password-toggle[aria-pressed="true"] .eye-slash { display: block; }
+    :is(#login-form, #password-form) .password-toggle { position: absolute; inset-inline-end: 3px; top: 50%; transform: translateY(-50%); width: 40px; min-height: 40px; padding: 0; background: transparent; color: var(--green-dark); }
+    :is(#login-form, #password-form) .password-toggle:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+    :is(#login-form, #password-form) .password-toggle .eye-slash { display: none; }
+    :is(#login-form, #password-form) .password-toggle[aria-pressed="true"] .eye-slash { display: block; }
     #recovery-dialog button[type="submit"] { min-height: 44px; padding: 8px 12px; border: 0; border-radius: 8px; background: #126a51; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
     #recovery-dialog button:disabled { opacity: .65; cursor: wait; }
     #recovery-dialog #status[data-error] { color: #9b2525; }
@@ -535,16 +538,8 @@
         </section>
 
         <section class="panel admin-only" id="team-admin-panel">
-          <div class="expense-report-heading"><h2>Our Leadership &amp; Team</h2><button class="btn btn-primary" type="button" id="refresh-team-members">Refresh</button></div>
+          <div class="expense-report-heading"><h2>Our Leadership &amp; Team</h2><div class="team-admin-actions"><button class="btn btn-primary" type="button" id="open-trustee-access" aria-haspopup="dialog">Login Access</button><button class="btn btn-primary" type="button" id="refresh-team-members">Refresh</button></div></div>
           <p>Manage the Founder &amp; President and ten core team profiles. Saving a new photo replaces the previous Drive photo. Remove Photo moves it to Drive trash and removes it from the website.</p>
-          <form id="trustee-access-form" class="form-grid" style="margin: 18px 0; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: #f7f8f5;">
-            <label>Trustee name<input name="fullName" required maxlength="100" placeholder="Full name" /></label>
-            <label>Email ID<input name="email" type="email" required placeholder="trustee@email.com" /></label>
-            <label>Portal role<select name="role"><option value="founder">Founder &amp; President</option><option value="secretary">Secretary</option><option value="treasurer">Treasurer</option><option value="trustee">Trustee</option></select></label>
-            <div style="align-self:end"><button class="btn btn-primary" type="submit">Save Login Access</button></div>
-            <p class="full" style="margin:0;color:var(--muted);font-size:14px;">Create or reset the email password in Supabase Authentication first. For safety, passwords are never displayed or stored in the team table.</p>
-          </form>
-          <div class="message" id="trustee-access-message" role="status"></div>
           <div class="table-wrap">
             <table class="donation-table team-admin-table">
               <thead><tr><th>Sr.No</th><th>Designation</th><th>Name</th><th>Contact</th><th>Email ID</th><th>PAN</th><th>Address</th><th>Contribution</th><th>Photo</th></tr></thead>
@@ -656,6 +651,21 @@
       <form id="80g-certificate-form"><label>Upload certificate (PDF)<input name="certificate" type="file" accept="application/pdf" required /></label><div class="form-grid"><button class="btn btn-primary" type="submit"><span class="button-spinner" hidden aria-hidden="true"></span><span class="button-label">Send</span></button><button class="btn btn-light" type="button" data-close-80g>Cancel</button></div></form><div class="message" id="80g-message" role="status" aria-live="polite"></div>
     </dialog>
 
+  <dialog class="entry-dialog" id="trustee-access-dialog" aria-labelledby="trustee-access-title">
+    <div class="entry-dialog-header">
+      <h2 id="trustee-access-title">Login Access</h2>
+      <form method="dialog"><button class="entry-dialog-close" aria-label="Close login access">&times;</button></form>
+    </div>
+          <form id="trustee-access-form" class="form-grid" style="margin: 18px 0; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: #f7f8f5;">
+            <label>Trustee name<input name="fullName" required maxlength="100" placeholder="Full name" /></label>
+            <label>Email ID<input name="email" type="email" required placeholder="trustee@email.com" /></label>
+            <label>Portal role<select name="role"><option value="founder">Founder &amp; President</option><option value="secretary">Secretary</option><option value="treasurer">Treasurer</option><option value="trustee">Trustee</option></select></label>
+            <div style="align-self:end"><button class="btn btn-primary" type="submit">Save Login Access</button></div>
+            <p class="full" style="margin:0;color:var(--muted);font-size:14px;">Create or reset the email password in Supabase Authentication first. For safety, passwords are never displayed or stored in the team table.</p>
+          </form>
+          <div class="message" id="trustee-access-message" role="status"></div>
+  </dialog>
+
   <dialog id="recovery-dialog" aria-labelledby="title">
     <button class="entry-dialog-close" id="recovery-close" type="button" aria-label="Close password reset">&times;</button>
 
@@ -665,8 +675,28 @@
       <button type="submit">Send Reset Link</button>
     </form>
     <form id="password-form" hidden>
-      <label>New password<input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
-      <label>Confirm password<input name="confirmation" type="password" autocomplete="new-password" minlength="8" required></label>
+      <div>
+        <label for="recovery-password">New password</label>
+        <div class="password-field">
+          <input id="recovery-password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+          <button class="btn password-toggle" type="button" aria-label="Show new password" aria-pressed="false" aria-controls="recovery-password">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/><path class="eye-slash" d="m3 3 18 18"/>
+                  </svg>
+          </button>
+        </div>
+      </div>
+      <div>
+        <label for="recovery-confirmation">Confirm password</label>
+        <div class="password-field">
+          <input id="recovery-confirmation" name="confirmation" type="password" autocomplete="new-password" minlength="8" required>
+          <button class="btn password-toggle" type="button" aria-label="Show confirm password" aria-pressed="false" aria-controls="recovery-confirmation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/><path class="eye-slash" d="m3 3 18 18"/>
+                  </svg>
+          </button>
+        </div>
+      </div>
       <button type="submit">Save New Password</button>
     </form>
     <p id="status" role="status"></p>
@@ -709,7 +739,23 @@
     for (const id of ["recovery-back", "recovery-close"]) {
       document.getElementById(id).addEventListener("click", () => dialog.close());
     }
-    dialog.addEventListener("close", () => openButton.focus());
+    const recoveryToggles = passwordForm.querySelectorAll(".password-toggle");
+    function setRecoveryVisibility(toggle, visible) {
+      const input = document.getElementById(toggle.getAttribute("aria-controls"));
+      input.type = visible ? "text" : "password";
+      toggle.setAttribute("aria-pressed", String(visible));
+    }
+    for (const toggle of recoveryToggles) {
+      toggle.addEventListener("click", () => setRecoveryVisibility(toggle, toggle.getAttribute("aria-pressed") !== "true"));
+    }
+    function maskRecoveryPasswords() {
+      recoveryToggles.forEach((toggle) => setRecoveryVisibility(toggle, false));
+    }
+    passwordForm.addEventListener("reset", maskRecoveryPasswords);
+    dialog.addEventListener("close", () => {
+      maskRecoveryPasswords();
+      openButton.focus();
+    });
     if (recoveryToken || callbackError || new URLSearchParams(window.location.search).has("reset")) dialog.showModal();
     if (recoveryToken) {
       title.textContent = "Set New Password";
@@ -752,7 +798,7 @@
 
     passwordForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const button = passwordForm.querySelector("button");
+      const button = passwordForm.querySelector('button[type="submit"]');
       const { password, confirmation } = passwordForm.elements;
       if (!recoveryToken || button.disabled) return;
       if (password.value !== confirmation.value) {
@@ -1041,6 +1087,8 @@
       if (input.hasAttribute("data-team-pan")) input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
     });
     document.getElementById("refresh-team-members").addEventListener("click", loadTeamAdmin);
+    const trusteeAccessDialog = document.getElementById("trustee-access-dialog");
+    document.getElementById("open-trustee-access").addEventListener("click", () => trusteeAccessDialog.showModal());
     document.getElementById("trustee-access-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const form = event.currentTarget;

@@ -352,9 +352,11 @@
     }
 
     .hero {
-      height: calc(100vh - var(--site-chrome-height, 160px));
-      height: calc(100svh - var(--site-chrome-height, 160px));
-      min-height: 0;
+      width: min(100%, 1440px);
+      margin-inline: auto;
+      min-height: clamp(420px, 42vw, 570px);
+      padding-block: 32px;
+      background-color: #163c32;
       display: grid;
       align-items: center;
       position: relative;
@@ -523,9 +525,8 @@
     .founder-card h3 { margin: 0 0 8px; color: var(--green-dark); font: 700 clamp(24px,3vw,34px)/1.15 "Poppins",sans-serif; }
     .founder-card p { margin: 0; color: var(--muted); }
     .team-subhead { margin: 0 0 18px; color: var(--green-dark); font: 700 23px "Poppins",sans-serif; text-align: center; }
-    .team-grid { display: flex; gap: 16px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
-    .team-grid::-webkit-scrollbar { display: none; }
-    .team-card { flex: 0 0 calc((100% - 64px) / 5); min-width: 0; padding: 12px; border: 1px solid #76ac93; border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(18,106,81,.20); scroll-snap-align: start; }
+    .team-grid { gap: 16px; }
+    .team-card { min-width: 0; padding: 12px; border: 1px solid #76ac93; border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(18,106,81,.20); }
     .team-card .team-photo { margin-bottom: 12px; aspect-ratio: 1.12; border-radius: 11px; font-size: 36px; }
     .team-card h4 { margin: 0 0 3px; color: var(--green-dark); font: 700 16px/1.3 "Poppins",sans-serif; }
     .team-card p { margin: 0; color: var(--muted); font-size: 13px; }
@@ -915,19 +916,24 @@
       font: 700 clamp(28px, 3.5vw, 42px)/1.12 "Poppins", system-ui, sans-serif;
       letter-spacing: 0;
     }
-    .partners-rail { position: relative; }
-    .partners-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--partner-rows, 1), auto); grid-auto-columns: var(--partner-width, 100%); gap: 24px; overflow-x: auto; padding-block: 6px 12px; scroll-snap-type: x mandatory; scrollbar-width: none; }
-    .partners-grid::-webkit-scrollbar { display: none; }
-    .partners-grid .partner-card { min-width: 0; overflow-wrap: anywhere; scroll-snap-align: start; }
-    .partners-arrow { position: absolute; z-index: 1; top: 50%; translate: 0 -50%; }
-    .partners-arrow[hidden] { display: none; }
-    .partners-arrow:disabled { cursor: default; }
-    .partners-arrow-prev { left: 0; }
-    .partners-arrow-next { right: 0; }
-    .partners-rail:has(.partners-arrow:not([hidden])) { padding-inline: 50px; }
-    @media (max-width: 480px) {
-      .partners-rail:has(.partners-arrow:not([hidden])) { padding-inline: 34px; }
-      .partners-rail .partners-arrow { width: 30px; height: 38px; font-size: 26px; }
+    .partners-heading { display: grid; grid-template-columns: 1.3fr 1fr; align-items: start; gap: 24px; }
+    .partner-network h3 { margin: 0 0 12px; color: var(--green-dark); }
+    .partner-network dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+    .partner-network dl div { padding: 12px; border: 1px solid #83b49c; border-radius: 12px; background: #e3f2e8; box-shadow: 0 3px 10px rgba(18, 106, 81, .12); }
+    .partner-network dt { color: var(--green-dark); font-size: 18.2px; font-weight: 600; overflow-wrap: anywhere; }
+    .partner-network dd { margin: 0; color: var(--green-dark); font-size: 31.2px; font-weight: 700; }
+    #open-partners-directory[hidden] { display: none; }
+    .partners-toolbar { display: flex; justify-content: flex-end; margin-block: 12px; }
+    .partners-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; padding-block: 6px 12px; }
+    .partners-grid > p { grid-column: 1 / -1; }
+    .partners-grid .partner-card { min-width: 0; overflow-wrap: anywhere; }
+    #partners-directory { width: min(94vw, 1180px); background: linear-gradient(145deg, #e5f2e9, #fcf7ea); border-radius: 20px; }
+    @media (max-width: 1000px) { .partners-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 700px) {
+      .partners-heading { grid-template-columns: 1fr; }
+      #partners .section-head { margin-bottom: 0; }
+      .partners-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .partner-logo { max-width: 100%; }
     }
     .partner-card { display: grid; place-items: center; min-height: 168px; padding: 18px; text-align: center; border: 1px solid #76ac93; border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(18,106,81,.20); transition: transform .2s ease, box-shadow .2s ease; }
     .partner-card:hover, .partner-card:focus-within { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(18,106,81,.12); }
@@ -1454,58 +1460,13 @@
       gap: 14px;
     }
 
-    .drive-gallery-carousel {
-      display: grid;
-      grid-template-columns: 42px minmax(0, 1fr) 42px;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .drive-gallery-carousel.drive-gallery-embedded {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .drive-gallery-embedded > .drive-gallery-page-arrow {
-      display: none;
-    }
-
-    .drive-gallery-embedded .drive-gallery {
-      display: block;
-      overflow: hidden;
-    }
-
-    .drive-gallery-frame {
-      display: block;
-      width: 100%;
-      height: min(78vh, 820px);
-      min-height: 480px;
-      border: 0;
-      border-radius: 14px;
-      background: #f7f8f6;
-    }
-    .drive-gallery {
-      width: 100%;
-      min-width: 0;
-      display: flex;
-      gap: 18px;
-      align-items: stretch;
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-    }
-
-    .drive-gallery::-webkit-scrollbar {
-      display: none;
-    }
+    .drive-gallery { gap: 18px; }
 
     .drive-gallery-card {
-      flex: 0 0 calc((100% - 36px) / 3);
       min-width: 0;
       position: relative;
       overflow: hidden;
-      scroll-snap-align: start;
+
       border: 1px solid var(--line);
       border-radius: 14px;
       background: #fff;
@@ -1543,34 +1504,6 @@
 
     .drive-gallery-stage:hover .drive-gallery-image {
       transform: scale(1.015);
-    }
-
-    .drive-gallery-page-arrow {
-      width: 42px;
-      height: 48px;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: #fff;
-      color: var(--green-dark);
-      font-size: 34px;
-      line-height: 1;
-      cursor: pointer;
-      box-shadow: 0 5px 16px rgba(20, 30, 36, 0.12);
-      transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
-    }
-
-    .drive-gallery-page-arrow:hover:not(:disabled),
-    .drive-gallery-page-arrow:focus-visible {
-      background: #eaf4ed;
-      transform: translateY(-2px);
-      outline: 2px solid var(--green);
-      outline-offset: 2px;
-    }
-
-    .drive-gallery-page-arrow:disabled {
-      opacity: 0.35;
-      cursor: default;
-      box-shadow: none;
     }
 
     .drive-gallery-info {
@@ -1814,31 +1747,16 @@
       background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
     }
 
-    .blog-gallery {
-      min-width: 0;
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      overscroll-behavior-x: contain;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-    }
-
-    .blog-gallery::-webkit-scrollbar {
-      display: none;
-    }
+    .blog-gallery { gap: 14px; }
 
     .blog-item {
-      flex: 0 0 calc((100% - 28px) / 3);
       min-width: 0;
       position: relative;
       min-height: 260px;
       overflow: hidden;
       border-radius: 8px;
       background: #14231c;
-      scroll-snap-align: start;
+
     }
 
     .blog-item img {
@@ -2029,9 +1947,6 @@
         grid-template-columns: 1fr 1fr;
       }
 
-      .blog-item {
-        flex-basis: calc((100% - 14px) / 2);
-      }
 
       .gallery figure:first-child {
         grid-row: auto;
@@ -2040,70 +1955,10 @@
       }
     }
 
-    @media (max-width: 1050px) and (min-width: 621px) {
-      .drive-gallery-card {
-        flex-basis: calc((100% - 36px) / 3);
-      }
-      .team-card { flex-basis: calc((100% - 32px) / 3); }
-    }
 
     @media (max-width: 620px) {
       .founder-card { grid-template-columns: 1fr; justify-items: center; text-align: center; }
       .founder-card .team-photo { width: 170px; }
-      .team-carousel { grid-template-columns: 1fr 1fr; gap: 12px; }
-      .team-carousel .team-grid { grid-column: 1 / -1; grid-row: 1; }
-      .team-carousel #team-prev { grid-column: 1; grid-row: 2; justify-self: end; }
-      .team-carousel #team-next { grid-column: 2; grid-row: 2; justify-self: start; }
-      .team-card { flex-basis: calc((100% - 16px) / 2); }
-      .drive-gallery-carousel {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-
-      .youtube-gallery-carousel .blog-gallery {
-        grid-column: 1 / -1;
-        grid-row: 1;
-      }
-
-      .youtube-gallery-carousel #youtube-prev {
-        grid-column: 1;
-        grid-row: 2;
-        justify-self: end;
-      }
-
-      .youtube-gallery-carousel #youtube-next {
-        grid-column: 2;
-        grid-row: 2;
-        justify-self: start;
-      }
-
-      .drive-gallery-carousel.drive-gallery-embedded {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .drive-gallery {
-        grid-column: 1 / -1;
-        grid-row: 1;
-        gap: 12px;
-      }
-
-      .drive-gallery-card {
-        flex-basis: calc((100% - 12px) / 2);
-      }
-
-      .drive-gallery-page-arrow {
-        grid-row: 2;
-      }
-
-      .drive-gallery-page-prev {
-        grid-column: 1;
-        justify-self: end;
-      }
-
-      .drive-gallery-page-next {
-        grid-column: 2;
-        justify-self: start;
-      }
 
       body {
         font-size: 16px;
@@ -2156,8 +2011,8 @@
       }
 
       .hero {
-        min-height: 620px;
-        height: auto;
+        min-height: 0;
+        padding-block: 0;
         background-position: center;
       }
 
@@ -2244,9 +2099,19 @@
         height: 128px;
       }
 
-      .blog-item {
-        flex-basis: 100%;
-      }
+    }
+    :is(.team-grid, .drive-gallery, .blog-gallery) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .team-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    :is(.drive-gallery-message, .drive-gallery-fallback, .youtube-gallery-message) { grid-column: 1 / -1; }
+    .directory-preview .team-card:nth-child(n+6),
+    .directory-preview :is(.drive-gallery-card, .blog-item):nth-child(n+4) { display: none; }
+    #content-directory { width: min(94vw, 1180px); background: linear-gradient(145deg, #e5f2e9, #fcf7ea); border-radius: 20px; }
+    .directory-toolbar:has(button[hidden]) { display: none; }
+    @media (max-width: 1050px) { .team-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 860px) { .blog-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 620px) {
+      :is(.team-grid, .drive-gallery) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .blog-gallery { grid-template-columns: minmax(0, 1fr); }
     }
     .video-count-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
     .video-count-row:has(button[hidden]) { display: none; }
@@ -2259,7 +2124,22 @@
     #youtube-library-list button::after { content: ""; position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 38px; height: 38px; border-radius: 50%; background: #0c4b3b; opacity: .94; }
     #youtube-library-list button::before { content: ""; position: absolute; z-index: 1; left: 50%; top: 50%; transform: translate(-35%, -50%); border-block: 7px solid transparent; border-left: 11px solid #fff; }
     #youtube-library-list img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
-    #youtube-player { width: min(94vw, 1000px, max(360px, calc((80dvh - 105px) * 16 / 9))); border-radius: 20px; background: linear-gradient(145deg, #e5f2e9, #fcf7ea); }
+    #youtube-player { width: min(94vw, 1160px); border-radius: 20px; background: linear-gradient(145deg, #e5f2e9, #fcf7ea); }
+    #youtube-player .public-review-dialog-header { justify-content: flex-start; flex-wrap: wrap; gap: 10px; }
+    #youtube-player .public-review-dialog-header form { margin-inline-start: auto; }
+    #youtube-player-title { margin: 0; font-size: clamp(16px, 2.5vw, 24px); }
+    .youtube-brand { display: inline-flex; align-items: center; gap: 6px; color: var(--green-dark); font-weight: 700; }
+    .youtube-player-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, 29%); gap: 12px; }
+    .youtube-playlist { min-width: 0; padding: 12px; background: #fff; border: 1px solid #bdd4c4; border-radius: 10px; }
+    .youtube-playlist h3 { margin: 0 0 8px; }
+    #youtube-playlist-list { margin: 0; padding: 0; list-style: none; max-height: min(52dvh, 390px); overflow-y: auto; }
+    #youtube-playlist-list button { display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 8px; width: 100%; padding: 7px; text-align: left; color: var(--green-dark); font: inherit; font-size: 13px; overflow-wrap: anywhere; border: 1px solid transparent; border-radius: 8px; background: transparent; cursor: pointer; }
+    #youtube-playlist-list button:is(:hover, [aria-current="true"]) { background: #e5f2e9; border-color: #bdd4c4; }
+    #youtube-playlist-list img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; }
+    @media (max-width: 700px) {
+      .youtube-player-layout { grid-template-columns: minmax(0, 1fr); }
+      #youtube-playlist-list { max-height: 28dvh; }
+    }
     #youtube-player-frame[hidden], #youtube-player-notice[hidden] { display: none; }
     #youtube-player-notice { margin: 0; padding: 20px; border: 1px solid #bdd4c4; border-radius: 12px; background: #fff; color: var(--green-dark); }
     #youtube-player-frame { display: block; width: 100%; aspect-ratio: 16 / 9; min-height: 200px; background: #111; border: 0; border-radius: 8px; }
@@ -2509,12 +2389,11 @@
           <h2>Photos from Our Community Service Programs</h2>
           <p>Browse photos from our community service programs below.</p>
         </div>
-        <div class="drive-gallery-carousel" aria-label="Community service photo folders">
-          <button class="drive-gallery-page-arrow drive-gallery-page-prev" id="social-activity-prev" type="button" aria-label="Previous folders" disabled>‹</button>
+        <div class="partners-toolbar directory-toolbar"><button class="btn btn-primary" id="open-photo-directory" type="button" aria-haspopup="dialog" hidden></button></div>
+        <div class="directory-preview">
           <div class="drive-gallery" id="social-activity-gallery" aria-live="polite">
             <p class="drive-gallery-message">Loading community service photos...</p>
           </div>
-          <button class="drive-gallery-page-arrow drive-gallery-page-next" id="social-activity-next" type="button" aria-label="Next folders" disabled>›</button>
         </div>
       </div>
     </section>
@@ -2525,13 +2404,11 @@
           <h2>Sarvahit Trust Blog and Video Updates</h2>
           <p>Watch our social work, donation activities, community programs, and latest trust updates on YouTube.</p>
         </div>
-        <div class="video-count-row"><button class="btn btn-light" id="youtube-count" type="button" aria-haspopup="dialog" hidden></button></div>
-        <div class="drive-gallery-carousel youtube-gallery-carousel" aria-label="Sarvahit Trust YouTube videos">
-          <button class="drive-gallery-page-arrow" id="youtube-prev" type="button" aria-label="Previous videos" disabled>‹</button>
+        <div class="video-count-row"><button class="btn btn-primary" id="youtube-count" type="button" aria-haspopup="dialog" hidden></button></div>
+        <div class="directory-preview">
           <div class="blog-gallery" id="youtube-gallery" aria-live="polite">
             <p class="youtube-gallery-message">Loading latest YouTube videos...</p>
           </div>
-          <button class="drive-gallery-page-arrow" id="youtube-next" type="button" aria-label="Next videos" disabled>›</button>
         </div>
       </div>
     </section>
@@ -2551,9 +2428,9 @@
           </div>
         </article>
         <h3 class="team-subhead">Core Team Members</h3>
-        <div class="drive-gallery-carousel team-carousel" aria-label="Trustees and office bearers">
-          <button class="drive-gallery-page-arrow" id="team-prev" type="button" aria-label="Previous trustees" disabled>‹</button>
-          <div class="team-grid" id="team-grid" aria-label="Ten trust leadership profiles">
+        <div class="partners-toolbar"><button class="btn btn-primary" id="open-team-directory" type="button" aria-haspopup="dialog">View all team members</button></div>
+        <div class="directory-preview">
+          <div class="team-grid" id="team-grid" aria-label="Core team profiles">
           <article class="team-card"><div class="team-photo" data-team-photo="1" aria-label="Secretary photo placeholder">S</div><h4>Name to be added</h4><p>Secretary</p></article>
           <article class="team-card"><div class="team-photo" data-team-photo="2" aria-label="Treasurer photo placeholder">T</div><h4>Name to be added</h4><p>Treasurer</p></article>
           <article class="team-card"><div class="team-photo" data-team-photo="3" aria-label="Trustee photo placeholder">T1</div><h4>Name to be added</h4><p>Trustee</p></article>
@@ -2565,19 +2442,24 @@
           <article class="team-card"><div class="team-photo" data-team-photo="9" aria-label="Trustee photo placeholder">T7</div><h4>Name to be added</h4><p>Trustee</p></article>
           <article class="team-card"><div class="team-photo" data-team-photo="10" aria-label="Trustee photo placeholder">T8</div><h4>Name to be added</h4><p>Trustee</p></article>
           </div>
-          <button class="drive-gallery-page-arrow" id="team-next" type="button" aria-label="Next trustees" disabled>›</button>
         </div>
       </div>
     </section>
 
     <section id="partners">
       <div class="wrap">
-        <div class="section-head"><h2>Partners and Supporters</h2><p>Working with organisations and community supporters to reach more people.</p></div>
-        <div class="partners-rail">
-          <button type="button" class="drive-gallery-page-arrow partners-arrow partners-arrow-prev" aria-label="Scroll partners left" aria-controls="partners-grid" hidden>&lt;</button>
-          <div class="partners-grid" id="partners-grid" role="region" aria-label="Partner cards" tabindex="0"><p>Our partner information will appear here.</p></div>
-          <button type="button" class="drive-gallery-page-arrow partners-arrow partners-arrow-next" aria-label="Scroll partners right" aria-controls="partners-grid" hidden>&gt;</button>
+        <div class="partners-heading">
+          <div class="section-head"><h2>Partners and Supporters</h2><p>Working with organisations and community supporters to reach more people.</p></div>
+          <div class="partner-network">
+            <h3>Our Collaboration Network</h3>
+            <dl>
+              <div><dt>Partner Organizations</dt><dd id="partner-total">—</dd></div>
+              <div><dt>Active Collaborations</dt><dd id="partner-active">—</dd></div>
+            </dl>
+          </div>
         </div>
+        <div class="partners-toolbar"><button class="btn btn-primary" id="open-partners-directory" type="button" aria-haspopup="dialog" hidden></button></div>
+        <div class="partners-grid" id="partners-grid" aria-label="Partner cards"><p>Our partner information will appear here.</p></div>
       </div>
     </section>
 
@@ -2644,12 +2526,36 @@
     </section>
   </main>
 
-  <dialog class="public-review-dialog" id="youtube-player" aria-label="Video player">
+  <dialog class="public-review-dialog" id="partners-directory" aria-labelledby="partners-directory-title">
     <div class="public-review-dialog-header">
+      <h2 id="partners-directory-title">Partners and Supporters</h2>
+      <form method="dialog"><button class="public-review-dialog-close" aria-label="Close partners">&times;</button></form>
+    </div>
+    <div class="partners-grid" id="partners-directory-grid"></div>
+  </dialog>
+  <dialog class="public-review-dialog" id="content-directory" aria-labelledby="content-directory-title">
+    <div class="public-review-dialog-header">
+      <h2 id="content-directory-title"></h2>
+      <form method="dialog"><button class="public-review-dialog-close" aria-label="Close directory">&times;</button></form>
+    </div>
+    <div id="content-directory-grid"></div>
+  </dialog>
+  <dialog class="public-review-dialog" id="youtube-player" aria-labelledby="youtube-player-title">
+    <div class="public-review-dialog-header">
+      <h2 id="youtube-player-title">Sarvahit Charitable Trust</h2>
+      <a class="youtube-brand" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener"><span class="youtube-symbol" aria-hidden="true">▶</span> YouTube</a>
       <form method="dialog"><button class="public-review-dialog-close" aria-label="Close video">&times;</button></form>
     </div>
-    <iframe id="youtube-player-frame" title="YouTube video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="origin" allowfullscreen></iframe>
-    <p id="youtube-player-notice" role="status" hidden>Open the published website or serve this page over HTTP to play embedded videos.</p>
+    <div class="youtube-player-layout">
+      <div>
+        <iframe id="youtube-player-frame" title="YouTube video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="origin" allowfullscreen></iframe>
+        <p id="youtube-player-notice" role="status" hidden>Open the published website or serve this page over HTTP to play embedded videos.</p>
+      </div>
+      <aside class="youtube-playlist" aria-labelledby="youtube-playlist-title">
+        <h3 id="youtube-playlist-title">Playlist</h3>
+        <ol id="youtube-playlist-list"></ol>
+      </aside>
+    </div>
   </dialog>
   <dialog class="public-review-dialog" id="youtube-library" aria-label="Sarvahit Trust Videos">
     <div class="public-review-dialog-header">
@@ -2883,15 +2789,6 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
-    function updateHeroHeight() {
-      const topbar = document.querySelector(".topbar");
-      const header = document.querySelector("header");
-      const totalHeight = (topbar ? topbar.getBoundingClientRect().height : 0) + (header ? header.getBoundingClientRect().height : 0);
-      document.documentElement.style.setProperty("--site-chrome-height", Math.ceil(totalHeight) + "px");
-    }
-    updateHeroHeight();
-    window.addEventListener("resize", updateHeroHeight, { passive: true });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateHeroHeight);
     document.addEventListener("input", (event) => {
       const input = event.target;
       if (input instanceof HTMLInputElement && input.hasAttribute("data-integer-amount")) {
@@ -3297,42 +3194,54 @@
     }
 
     const partnersGrid = document.getElementById("partners-grid");
-    const partnersRail = partnersGrid.parentElement;
-    const partnersPrev = partnersRail.querySelector(".partners-arrow-prev");
-    const partnersNext = partnersRail.querySelector(".partners-arrow-next");
-    const partnerGap = 24;
-    function updatePartnerArrows() {
-      partnersPrev.disabled = partnersGrid.scrollLeft <= 1;
-      partnersNext.disabled = partnersGrid.scrollLeft + partnersGrid.clientWidth >= partnersGrid.scrollWidth - 1;
+    const partnersDirectory = document.getElementById("partners-directory");
+    const partnersDirectoryButton = document.getElementById("open-partners-directory");
+    partnersDirectoryButton.addEventListener("click", () => partnersDirectory.showModal());
+
+    function renderPartnerCard(partner) {
+      const site = safePartnerUrl(partner.website_url);
+      const logo = safePartnerUrl(partner.logo_url);
+      return `<article class="partner-card">${logo ? `<img class="partner-logo" loading="lazy" src="${escapeHtml(logo)}" alt="${escapeHtml(partner.name)} logo" />` : ""}<h3>${escapeHtml(partner.name)}</h3>${partner.category ? `<p>${escapeHtml(partner.category)}</p>` : ""}${partner.city ? `<p>${escapeHtml(partner.city)}</p>` : ""}${site ? `<a href="${escapeHtml(site)}" target="_blank" rel="noopener">Visit partner →</a>` : ""}</article>`;
     }
-    function layoutPartners() {
-      const count = partnersGrid.querySelectorAll(".partner-card").length;
-      const columns = Math.max(1, Math.min(5, Math.floor((partnersRail.clientWidth + partnerGap) / (150 + partnerGap))));
-      const overflow = count > columns * 2;
-      partnersPrev.hidden = partnersNext.hidden = !overflow;
-      const width = partnersGrid.clientWidth;
-      const rows = count <= columns ? 1 : 2;
-      const visible = Math.max(1, Math.min(columns, count));
-      partnersGrid.style.setProperty("--partner-rows", rows);
-      partnersGrid.style.setProperty("--partner-width", (width - partnerGap * (visible - 1)) / visible + "px");
-      updatePartnerArrows();
-    }
-    partnersGrid.addEventListener("scroll", updatePartnerArrows, { passive: true });
-    for (const [button, direction] of [[partnersPrev, -1], [partnersNext, 1]]) {
-      button.addEventListener("click", () => {
-        const card = partnersGrid.querySelector(".partner-card");
-        if (card) partnersGrid.scrollBy({ left: direction * (card.getBoundingClientRect().width + partnerGap), behavior: "smooth" });
-      });
-    }
-    new ResizeObserver(layoutPartners).observe(partnersRail, { box: "border-box" });
-    async function loadPartners() {
-      const grid = document.getElementById("partners-grid");
-      if (!grid || !supabaseEnabled()) return;
+
+    function safePartnerUrl(value) {
+      if (!value) return "";
       try {
-        const partners = await supabaseRequest(`${PARTNER_TABLE}?select=name,website_url,category,city,logo_url&is_published=eq.true&order=sort_order.asc,name.asc`);
-        grid.innerHTML = partners.length ? partners.map((partner) => `<article class="partner-card">${partner.logo_url ? `<img class="partner-logo" src="${escapeHtml(partner.logo_url)}" alt="${escapeHtml(partner.name)} logo" />` : ""}<h3>${escapeHtml(partner.name)}</h3>${partner.category ? `<p>${escapeHtml(partner.category)}</p>` : ""}${partner.city ? `<p>${escapeHtml(partner.city)}</p>` : ""}${partner.website_url ? `<a href="${escapeHtml(partner.website_url)}" target="_blank" rel="noopener">Visit partner →</a>` : ""}</article>`).join("") : "<p>Our partner information will appear here.</p>";
-      } catch (_) { grid.innerHTML = "<p>Our partner information will appear here.</p>"; }
-      layoutPartners();
+        const url = new URL(value);
+        return ["https:", "http:"].includes(url.protocol) ? url.href : "";
+      } catch {
+        return "";
+      }
+    }
+
+    async function loadPartners() {
+      if (!supabaseEnabled()) return;
+      try {
+        const fields = "name,website_url,category,city,logo_url";
+        const query = "&is_published=eq.true&order=sort_order.asc,name.asc";
+        let partners;
+        let activeCount = "—";
+        try {
+          partners = await supabaseRequest(PARTNER_TABLE + "?select=" + fields + ",partnership_start_date,partnership_end_date" + query);
+          const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Kolkata" }).format(new Date());
+          activeCount = partners.filter((partner) =>
+            (!partner.partnership_start_date || partner.partnership_start_date <= today)
+            && (!partner.partnership_end_date || partner.partnership_end_date >= today)
+          ).length;
+        } catch {
+          partners = await supabaseRequest(PARTNER_TABLE + "?select=" + fields + query);
+        }
+        document.getElementById("partner-total").textContent = partners.length;
+        document.getElementById("partner-active").textContent = activeCount;
+        if (!partners.length) return;
+        const cards = partners.map(renderPartnerCard);
+        partnersGrid.innerHTML = cards.slice(0, 10).join("");
+        document.getElementById("partners-directory-grid").innerHTML = cards.join("");
+        partnersDirectoryButton.textContent = "View all partners (" + partners.length + ")";
+        partnersDirectoryButton.hidden = false;
+      } catch {
+        partnersGrid.textContent = "Partner information is temporarily unavailable.";
+      }
     }
 
     async function loadNotice() {
@@ -3562,8 +3471,6 @@
     }
 
     const youtubeGallery = document.getElementById("youtube-gallery");
-    const youtubePrevious = document.getElementById("youtube-prev");
-    const youtubeNext = document.getElementById("youtube-next");
     const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/channel/UCArUc8vHzOs3uQyhDwbl5eA/videos";
 
     const youtubeCount = document.getElementById("youtube-count");
@@ -3572,7 +3479,12 @@
     youtubeCount.addEventListener("click", () => youtubeLibrary.showModal());
     const youtubePlayer = document.getElementById("youtube-player");
     const youtubePlayerFrame = document.getElementById("youtube-player-frame");
+    const youtubePlaylist = document.getElementById("youtube-playlist-list");
     function playYoutubeVideo(video) {
+      for (const button of youtubePlaylist.querySelectorAll("button")) {
+        if (button.dataset.videoId === video.id) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      }
       youtubePlayerFrame.title = video.title || "Sarvahit Trust video";
       const canEmbed = location.protocol === "http:" || location.protocol === "https:";
       const notice = document.getElementById("youtube-player-notice");
@@ -3585,26 +3497,9 @@
         embed.searchParams.set("origin", location.origin);
         youtubePlayerFrame.src = embed.href;
       }
-      youtubePlayer.showModal();
+      if (!youtubePlayer.open) youtubePlayer.showModal();
     }
     youtubePlayer.addEventListener("close", () => youtubePlayerFrame.removeAttribute("src"));
-    function updateYoutubeNavigation() {
-      if (youtubeGallery?.firstElementChild?.classList.contains("blog-item")) {
-        const first = Array.from(youtubeGallery.children).findIndex((card) =>
-          card.getBoundingClientRect().right > youtubeGallery.getBoundingClientRect().left + 2);
-        youtubeCount.textContent = Math.max(1, first + 1) + "/" + youtubeGallery.children.length;
-      }
-      if (!youtubeGallery || !youtubePrevious || !youtubeNext) return;
-      const maxScroll = youtubeGallery.scrollWidth - youtubeGallery.clientWidth;
-      youtubePrevious.disabled = maxScroll <= 2 || youtubeGallery.scrollLeft <= 2;
-      youtubeNext.disabled = maxScroll <= 2 || youtubeGallery.scrollLeft >= maxScroll - 2;
-    }
-
-    function slideYoutubeGallery(direction) {
-      if (!youtubeGallery) return;
-      youtubeGallery.scrollBy({ left: direction * youtubeGallery.clientWidth, behavior: "smooth" });
-    }
-
     function showYoutubeGalleryFallback(message) {
       if (!youtubeGallery) return;
       const notice = document.createElement("p");
@@ -3618,7 +3513,6 @@
       notice.appendChild(link);
       youtubeCount.hidden = true;
       youtubeGallery.replaceChildren(notice);
-      updateYoutubeNavigation();
     }
 
     function renderYoutubeGallery(payload) {
@@ -3630,6 +3524,7 @@
 
       youtubeGallery.replaceChildren();
       youtubeLibraryList.replaceChildren();
+      youtubePlaylist.replaceChildren();
       videos.forEach((video) => {
         if (!/^[A-Za-z0-9_-]{11}$/.test(video.id || "")) return;
         const card = document.createElement("button");
@@ -3661,15 +3556,27 @@
         link.addEventListener("click", () => playYoutubeVideo(video));
         item.append(link);
         youtubeLibraryList.append(item);
+
+        const playlistItem = document.createElement("li");
+        const playlistButton = card.cloneNode(false);
+        playlistButton.removeAttribute("class");
+        playlistButton.dataset.videoId = video.id;
+        const playlistThumbnail = thumbnail.cloneNode();
+        playlistThumbnail.alt = "";
+        playlistButton.append(playlistThumbnail, title.cloneNode(true));
+        playlistButton.addEventListener("click", () => playYoutubeVideo(video));
+        playlistItem.append(playlistButton);
+        youtubePlaylist.append(playlistItem);
       });
 
       youtubeLibraryList.style.setProperty("--video-count", Math.max(1, youtubeLibraryList.children.length));
-      youtubeCount.hidden = !youtubeGallery.children.length;
+      const videoCount = youtubeGallery.children.length;
+      youtubeCount.textContent = "View all videos (" + videoCount + ")";
+      youtubeCount.hidden = !videoCount;
       if (!youtubeGallery.children.length) {
         showYoutubeGalleryFallback("No public videos were found yet.");
         return;
       }
-      updateYoutubeNavigation();
     }
 
     function loadYoutubeVideos() {
@@ -3711,10 +3618,6 @@
       document.head.appendChild(script);
     }
 
-    youtubePrevious?.addEventListener("click", () => slideYoutubeGallery(-1));
-    youtubeNext?.addEventListener("click", () => slideYoutubeGallery(1));
-    youtubeGallery?.addEventListener("scroll", updateYoutubeNavigation, { passive: true });
-    window.addEventListener("resize", updateYoutubeNavigation);
 
     function loadSocialActivityGallery() {
       const gallery = document.getElementById("social-activity-gallery");
@@ -3815,25 +3718,28 @@
       document.head.appendChild(script);
     }
 
+    const contentDirectory = document.getElementById("content-directory");
+    const contentDirectoryTitle = document.getElementById("content-directory-title");
+    const contentDirectoryGrid = document.getElementById("content-directory-grid");
+    function connectContentDirectory(button, grid, title) {
+      const preview = grid.parentElement;
+      button.addEventListener("click", () => {
+        contentDirectoryTitle.textContent = title;
+        contentDirectoryGrid.append(grid);
+        contentDirectory.addEventListener("close", () => preview.append(grid), { once: true });
+        contentDirectory.showModal();
+      });
+    }
+
     const teamGrid = document.getElementById("team-grid");
-    const teamPrevious = document.getElementById("team-prev");
-    const teamNext = document.getElementById("team-next");
-    function updateTeamNavigation() {
-      if (!teamGrid || !teamPrevious || !teamNext) return;
-      const maxScroll = teamGrid.scrollWidth - teamGrid.clientWidth;
-      teamPrevious.disabled = maxScroll <= 2 || teamGrid.scrollLeft <= 2;
-      teamNext.disabled = maxScroll <= 2 || teamGrid.scrollLeft >= maxScroll - 2;
-    }
-    function slideTeam(direction) {
-      if (teamGrid) teamGrid.scrollBy({ left: direction * teamGrid.clientWidth, behavior: "smooth" });
-    }
-    teamPrevious?.addEventListener("click", () => slideTeam(-1));
-    teamNext?.addEventListener("click", () => slideTeam(1));
-    teamGrid?.addEventListener("scroll", updateTeamNavigation, { passive: true });
-    window.addEventListener("resize", updateTeamNavigation);
-    updateTeamNavigation();
+    const teamDirectoryButton = document.getElementById("open-team-directory");
+    teamDirectoryButton.textContent = "View all team members (" + teamGrid.children.length + ")";
+    connectContentDirectory(teamDirectoryButton, teamGrid, document.querySelector(".team-subhead").textContent);
+
+    const photoDirectoryButton = document.getElementById("open-photo-directory");
 
     function showSocialGalleryFallback(gallery) {
+      photoDirectoryButton.hidden = true;
       const link = document.createElement("a");
       link.className = "drive-gallery-fallback";
       link.href = GOOGLE_DRIVE_GALLERY_URL;
@@ -3841,11 +3747,11 @@
       link.rel = "noopener";
       link.textContent = "Photos could not be loaded from Drive. Open the community service photo folder to view them.";
       gallery.replaceChildren(link);
-      updateSocialActivityNavigation();
     }
 
     function renderSocialActivityGallery(gallery, payload) {
       const folders = Array.isArray(payload?.folders) ? payload.folders : [];
+      photoDirectoryButton.hidden = true;
 
       if (!folders.length) {
         gallery.replaceChildren(
@@ -3918,30 +3824,13 @@
         );
       }
 
-      updateSocialActivityNavigation();
+      const folderCount = gallery.querySelectorAll(".drive-gallery-card").length;
+      photoDirectoryButton.textContent = "View all photo folders (" + folderCount + ")";
+      photoDirectoryButton.hidden = !folderCount;
     }
 
     const socialActivityGallery = document.getElementById("social-activity-gallery");
-    const socialActivityPrevious = document.getElementById("social-activity-prev");
-    const socialActivityNext = document.getElementById("social-activity-next");
-
-    function updateSocialActivityNavigation() {
-      if (!socialActivityGallery || !socialActivityPrevious || !socialActivityNext) return;
-      const maxScroll = socialActivityGallery.scrollWidth - socialActivityGallery.clientWidth;
-      socialActivityPrevious.disabled = maxScroll <= 2 || socialActivityGallery.scrollLeft <= 2;
-      socialActivityNext.disabled = maxScroll <= 2 || socialActivityGallery.scrollLeft >= maxScroll - 2;
-    }
-
-    function slideSocialGallery(direction) {
-      if (!socialActivityGallery) return;
-      socialActivityGallery.scrollBy({ left: direction * socialActivityGallery.clientWidth, behavior: "smooth" });
-    }
-
-    socialActivityPrevious?.addEventListener("click", () => slideSocialGallery(-1));
-    socialActivityNext?.addEventListener("click", () => slideSocialGallery(1));
-
-    socialActivityGallery?.addEventListener("scroll", updateSocialActivityNavigation, { passive: true });
-    window.addEventListener("resize", updateSocialActivityNavigation);
+    connectContentDirectory(photoDirectoryButton, socialActivityGallery, document.querySelector("#gallery h2").textContent);
 
     loadSocialActivityGallery();
     loadTeamPhotos();
