@@ -93,6 +93,10 @@ function doPost(event) {
     const rawPayload = formTransport ? event.parameter.uploadPayload : (event.postData.contents || "{}");
     const data = JSON.parse(rawPayload);
     requestId = String(data.requestId || "");
+    if (data.type === "financial_document_backup") {
+      saveFinancialDocumentBackup_(data);
+      return uploadResponse_({ ok: true }, formTransport, requestId);
+    }
     if (data.type === "partner_files") {
       return uploadResponse_({ ok: true, files: savePartnerFiles_(data) }, formTransport, requestId);
     }
@@ -523,4 +527,52 @@ function sanitizeFileNamePart_(value) {
     .replace(/[\\/:*?"<>|\u0000-\u001f]/g, "-")
     .replace(/\s+/g, " ")
     .trim() || "Donor";
+}
+
+function saveFinancialDocumentBackup_(data) {
+  const token = String(data.accessToken || "");
+  const roleResponse = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/rest/v1/rpc/can_manage_financial_documents", {
+    method: "post", contentType: "application/json", payload: "{}",
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + token },
+    muteHttpExceptions: true
+  });
+  if (roleResponse.getResponseCode() !== 200 || roleResponse.getContentText() !== "true") {
+    throw new Error("Only an admin or founder can save financial documents.");
+  }
+  const year = Number(data.fiscalYear);
+  if (!Number.isInteger(year) || year < 2000 || year > 2199) throw new Error("Invalid financial year.");
+  const categories = [
+    "01 - Financial Statements", "02 - Income Tax Returns", "03 - Audit Reports", "04 - Bank Statements",
+    "05 - Donation & Expense Records", "06 - Annual Reports", "07 - Meetings & Resolutions", "08 - Other Documents", "Permanent Documents"
+  ];
+  if (!categories.includes(data.category)) throw new Error("Invalid document category.");
+  const path = String(data.storagePath || "");
+  if (!/^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(pdf|xlsx|docx|jpg|jpeg|png)$/.test(path)) throw new Error("Invalid document path.");
+  const file = UrlFetchApp.fetch(SUPABASE_PROJECT_URL + "/storage/v1/object/authenticated/trust-financial-documents/" + path, {
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: "Bearer " + token },
+    muteHttpExceptions: true
+  });
+  if (file.getResponseCode() !== 200) throw new Error("Could not read the private Supabase file.");
+  const shortYear = (value) => String(value).slice(-2);
+  const label = "Assessment Year " + (year + 1) + "-" + shortYear(year + 2) + " (FY " + year + "-" + shortYear(year + 1) + ")";
+  const root = DriveApp.getFolderById("1PIJ1kpJSY_bS7dftenxaQ_i9PbBdioZz");
+  const checkPrivate = (folder) => {
+    if (folder.getSharingAccess() !== DriveApp.Access.PRIVATE || folder.getEditors().length || folder.getViewers().length) {
+      throw new Error("Use a Drive folder restricted to the Apps Script owner for private backups.");
+    }
+  };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    checkPrivate(root);
+    const yearFolder = data.category === "Permanent Documents" ? root : getOrCreateFolder_(root, label);
+    checkPrivate(yearFolder);
+    const folder = getOrCreateFolder_(yearFolder, data.category);
+    checkPrivate(folder);
+    const name = path.split("/")[1].split(".")[0] + "-" + sanitizeFileNamePart_(data.fileName || "document").slice(0, 150);
+    if (folder.getFilesByName(name).hasNext()) return;
+    folder.createFile(file.getBlob().setName(name));
+  } finally {
+    lock.releaseLock();
+  }
 }

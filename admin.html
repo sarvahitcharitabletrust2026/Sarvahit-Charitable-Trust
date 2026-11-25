@@ -287,6 +287,9 @@
     .team-row-actions { display: flex; align-items: center; justify-content: flex-start; gap: 12px; }
     .team-row-actions { gap: 6px; }
     .team-row-actions .btn { min-width: 58px; min-height: 34px; padding: 5px 9px; font-size: 12px; }
+    #volunteer-panel .team-row-actions { flex-wrap: wrap; gap: 10px; }
+    #volunteer-panel .btn, #volunteer-panel .entry-name { min-height: 44px; padding: 9px 15px; font-size: 15px; }
+    #volunteer-panel .entry-name { overflow-wrap: anywhere; }
     .team-row-actions [data-team-remove] { min-width: 72px; }
     .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; clip-path: inset(50%); border: 0; }
     .dashboard[data-permission="member"] .admin-only { display: none !important; }
@@ -303,9 +306,11 @@
         grid-template-columns: 1fr;
       }
     }
-    #partner-dialog .entry-dialog-header { position: relative; display: block; padding: 12px 44px; text-align: center; background: #126a51; color: #fff; }
+    #partner-dialog .entry-dialog-header { position: relative; display: block; padding: 12px 44px 12px 24px; text-align: left; background: #126a51; color: #fff; }
     #partner-dialog-close { position: absolute; inset-inline-end: 8px; top: 50%; transform: translateY(-50%); color: inherit; }
     #partner-dialog .entry-dialog-header h2, #partner-dialog .entry-dialog-header p { color: inherit; }
+    #partner-dialog-title { margin-top: 10px; }
+    #partner-dialog .entry-dialog-header p { margin: 8px 0 18px; }
     #partner-form fieldset { display: grid; gap: 12px; margin: 0 0 16px; padding: 14px; border: 1px solid #dce7df; border-radius: 8px; min-width: 0; }
     #partner-form fieldset { background: #f5faf7; }
     #partner-form fieldset:nth-of-type(even) { background: #fcfaf5; }
@@ -347,6 +352,129 @@
     #recovery-dialog button[type="submit"] { min-height: 44px; padding: 8px 12px; border: 0; border-radius: 8px; background: #126a51; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
     #recovery-dialog button:disabled { opacity: .65; cursor: wait; }
     #recovery-dialog #status[data-error] { color: #9b2525; }
+
+
+    #financial-documents-panel [hidden], #financial-doc-dialog [hidden] { display: none; }
+    #financial-documents-panel, #financial-doc-dialog { background: #fff; color: var(--ink, #172923); border: 1px solid var(--line); }
+    #financial-documents-panel { padding: 0; overflow: hidden; }
+    .financial-records-header { background: var(--green-dark); color: #fff; padding: 22px clamp(16px, 3vw, 30px); }
+    .financial-records-header h2, #financial-doc-dialog .financial-document-header h2 { color: #fff; margin: 0; }
+    .financial-records-header .expense-report-heading { align-items: flex-start; }
+    .financial-records-header .btn-light { flex: 0 0 auto; }
+    .financial-records-access { margin: 6px 0 0; color: #e1f1e9; font-size: .88rem; }
+    .financial-records-content { padding: 18px clamp(16px, 3vw, 30px); }
+    .financial-records-filters { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+    .financial-records-summary { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin: 16px 0 0; }
+    .financial-summary-card { background: #f2f8f4; border: 1px solid #d4e5db; border-radius: 13px; padding: 13px 16px; }
+    .financial-summary-card dt { color: var(--muted); font-size: .88rem; }
+    .financial-summary-card dd { margin: 3px 0 0; color: var(--green-dark); font-size: clamp(1rem, 3vw, 1.4rem); font-weight: 700; overflow-wrap: anywhere; }
+    .financial-summary-card:nth-child(2) { background: #fbf6ea; border-color: #ede0c4; }
+    .financial-summary-card:nth-child(2) dd { color: #805715; }
+    .financial-summary-card:nth-child(3) { background: #f0f6fa; border-color: #d8e4ec; }
+    .financial-summary-card:nth-child(3) dd { color: #285678; }
+    .financial-summary-card:nth-child(4) { background: #f5f2fa; border-color: #e4ddec; }
+    .financial-summary-card:nth-child(4) dd { color: #624581; }
+    .financial-summary-note { color: var(--muted); font-size: .87rem; margin: 8px 0 0; }
+    .financial-records-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .financial-records-heading h3 { margin: 0; color: var(--green-dark); }
+    .financial-year-status, .financial-doc-status { display: inline-block; color: var(--green-dark); background: #e9f4ed; border-radius: 20px; padding: 3px 9px; font-size: .78rem; white-space: nowrap; }
+    .financial-records-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 6px; }
+    .financial-records-tabs .btn { min-height: 36px; padding: 6px 12px; border-radius: 22px; }
+    .financial-records-tabs .btn[aria-pressed="true"] { color: #fff; background: var(--green); border-color: var(--green); }
+    .financial-doc-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 13px 0; border-bottom: 1px solid var(--line); }
+    .financial-doc-info { display: flex; min-width: 0; align-items: center; gap: 10px; }
+    .financial-doc-type { flex: 0 0 auto; min-width: 45px; padding: 8px 5px; text-align: center; color: var(--green-dark); background: #edf6ef; border-radius: 8px; font-size: .7rem; font-weight: 700; }
+    .financial-doc-row p { color: var(--muted); margin: 3px 0 0; overflow-wrap: anywhere; }
+    .financial-doc-row strong { overflow-wrap: anywhere; }
+    .financial-doc-status { margin-inline-start: 7px; }
+    .financial-doc-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .financial-doc-actions .btn { min-height: 35px; padding: 6px 10px; }
+    .financial-checklist { margin-top: 14px; padding-top: 8px; }
+    .financial-checklist progress { width: 100%; accent-color: var(--green); }
+    #financial-checklist-options label { display: flex; align-items: center; gap: 9px; margin-top: 8px; }
+    .financial-records-footer { margin: 15px 0 0; text-align: center; color: var(--muted); font-size: .83rem; }
+    #financial-doc-dialog { width: min(92vw, 880px); padding: 0; overflow: auto; max-height: 90vh; border-radius: 17px; }
+    .financial-document-header { background: var(--green-dark); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 15px 20px; }
+    .financial-document-header p { margin: 3px 0 0; color: #e1f1e9; }
+    .financial-document-header .entry-dialog-close { color: #fff; }
+    #financial-doc-form { display: grid; gap: 15px; padding: 20px; }
+    #financial-doc-ay { display: block; margin-top: 6px; color: var(--green-dark); }
+    #financial-doc-form fieldset { display: grid; gap: 7px; border: 0; border-top: 1px solid var(--line); padding: 10px 0 0; margin: 0; min-width: 0; }
+    #financial-doc-form legend { color: var(--green-dark); font-weight: 700; padding-right: 7px; }
+    #financial-doc-form .financial-access-choice { display: flex; align-items: center; justify-content: flex-start; gap: 9px; padding: 6px 0; margin: 0; }
+    #financial-doc-form .financial-access-choice input[type=radio], #financial-checklist-options input[type=checkbox] { appearance: auto; flex: 0 0 17px; width: 17px; height: 17px; min-width: 17px; min-height: 0; padding: 0; margin: 0; accent-color: var(--green); }
+    #financial-doc-trustee-picker select { display: block; width: 100%; margin-top: 6px; }
+    #financial-doc-drop { background: #f5faf6; border: 1px dashed #82a992; padding: 18px; border-radius: 12px; text-align: center; }
+    #financial-doc-drop.is-dragging { background: #e4f4e9; }
+    #financial-doc-drop p { margin: 6px 0; overflow-wrap: anywhere; }
+    .financial-document-form-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 550px) { .financial-records-filters, .financial-document-form-actions { grid-template-columns: 1fr; } }
+
+    #financial-documents-panel { background: #f4f8f5; }
+    #financial-doc-dialog { background: #f0f6f2; }
+    #financial-doc-dialog[open], #partner-dialog[open] { display: flex; flex-direction: column; overflow: hidden; }
+    #financial-doc-dialog > .financial-document-header, #partner-dialog > .entry-dialog-header { flex: 0 0 auto; margin-bottom: 0; }
+    #financial-doc-form, #partner-dialog > .partner-dialog-body { min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+    #partner-dialog { padding: 0; }
+    #partner-dialog > .partner-dialog-body { padding: 18px 24px 24px; }
+    #financial-doc-form #financial-doc-ay { margin: 0; background: #e8f1eb; font: inherit; color: var(--ink); }
+    #financial-doc-form [value="draft"] { background: #2d7965; border-color: #2d7965; color: #fff; }
+    #financial-doc-form [value="draft"]:is(:hover, :focus-visible) { background: var(--green-dark); border-color: var(--green-dark); }
+    .financial-checklist { margin-top: 20px; padding: 14px 16px; border: 1px solid #d4e5db; border-radius: 12px; background: #fff; }
+    .financial-checklist summary { font-weight: 700; color: var(--green-dark); cursor: pointer; }
+    #financial-checklist-options { margin: 10px 0 0 14px; padding: 8px 14px; border: 1px solid #d4e5db; border-radius: 9px; background: #f4f8f5; }
+    #financial-checklist-options label { margin: 0; padding: 7px 0; font-weight: 600; }
+    #financial-checklist-status { margin: 0 0 6px; font-weight: 700; color: var(--green-dark); }
+    .financial-checklist progress { display: block; height: 12px; margin: 0 0 12px; }
+    #financial-checklist-options input[type=checkbox] { appearance: none; position: relative; border: 1.5px solid var(--green); border-radius: 50%; background: #fff; }
+    #financial-checklist-options input[type=checkbox]:checked { background: var(--green); }
+    #financial-checklist-options input[type=checkbox]:checked::after { content: ""; position: absolute; left: 5px; top: 2px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+    #financial-checklist-options input[type=checkbox]:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+    #dashboard > .panel:not(#financial-documents-panel), #dashboard > .grid-2 > .panel {
+      --section-padding: clamp(16px, 3vw, 30px);
+      padding: 0 var(--section-padding) 22px;
+      background: #f4f8f5;
+    }
+    #dashboard > .panel > :is(h2, .expense-report-heading):first-child,
+    #dashboard > .grid-2 > .panel > h2:first-child {
+      margin: 0 calc(-1 * var(--section-padding)) 18px;
+      padding: 22px var(--section-padding);
+      border-radius: 7px 7px 0 0;
+      background: var(--green-dark);
+      color: #fff;
+    }
+    #dashboard > .panel > .expense-report-heading:first-child h2 { color: inherit; }
+    #dashboard > .panel > .expense-report-heading:first-child .btn-primary {
+      border-color: var(--line);
+      background: #fff;
+      color: var(--green-dark);
+    }
+    #dashboard > .panel > .expense-report-heading:first-child .btn-primary:is(:hover, :focus-visible) {
+      background: #fff6df;
+      border-color: var(--gold);
+    }
+    #partner-admin-list .finance-actions { flex-direction: row; flex-wrap: nowrap; width: max-content; gap: 6px; }
+    #partner-admin-list .finance-actions .btn { flex: none; white-space: nowrap; }
+    .partner-admin-table :is(th, td):last-child { min-width: 116px; }
+    :is(#finance-entry-dialog, #cash-donation-dialog) { padding: 0; background: #f0f6f2; max-height: min(90vh, 800px); }
+    :is(#finance-entry-dialog, #cash-donation-dialog)[open] { display: flex; flex-direction: column; overflow: hidden; }
+    .finance-dialog > .financial-document-header { flex: 0 0 auto; }
+    .finance-dialog > .financial-document-header h2 { color: #fff; }
+    .finance-dialog-body { min-height: 0; padding: 20px; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+    #financial-doc-year-status { padding: 4px 11px; border: 1px solid #cbded3; font-weight: 700; }
+    #financial-doc-year-status[data-complete="true"] { color: #084f3b; background: #d2ecdd; border-color: #a7cdb7; }
+    :is(.report-stat, .financial-summary-card) {
+      background: #e9f4ed;
+      border: 1px solid #c4ddce;
+      box-shadow: 0 2px 6px rgba(12, 75, 59, .06);
+    }
+    .report-stat { border-radius: 13px; padding: 13px 16px; }
+    .report-stat strong { color: var(--green-dark); overflow-wrap: anywhere; }
+    :is(.report-stat, .financial-summary-card):nth-child(2) { background: #fbf3e0; border-color: #e9d6ad; }
+    .report-stat:nth-child(2) strong { color: #805715; }
+    :is(.report-stat, .financial-summary-card):nth-child(3) { background: #ebf3fa; border-color: #cddfeb; }
+    .report-stat:nth-child(3) strong { color: #285678; }
+    .financial-summary-card:nth-child(4) { background: #f2edf9; border-color: #ded2eb; }
   </style>
 </head>
 <body>
@@ -472,8 +600,8 @@
         </div>
 
         <dialog class="entry-dialog finance-dialog" id="finance-entry-dialog" aria-labelledby="finance-dialog-title">
-          <div class="entry-dialog-header"><div><h2 id="finance-dialog-title">Trust Financial Ledger</h2><p>Only authorized finance admins can add expenses. Records stay private until approved.</p></div><button class="entry-dialog-close" type="button" id="finance-dialog-close" aria-label="Close form">&times;</button></div>
-          <form id="finance-entry-form"><input type="hidden" name="id" /><div class="form-grid">
+          <div class="financial-document-header"><div><h2 id="finance-dialog-title">Trust Financial Ledger</h2><p>Only authorized finance admins can add expenses. Records stay private until approved.</p></div><button class="entry-dialog-close" type="button" id="finance-dialog-close" aria-label="Close form">&times;</button></div>
+          <div class="finance-dialog-body"><form id="finance-entry-form"><input type="hidden" name="id" /><div class="form-grid">
             <label>Date<input name="entry_date" type="date" required /></label>
             <label>Amount (INR)<input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount required /></label>
             <label>Category<input name="category" required placeholder="e.g. Food distribution" /></label>
@@ -482,9 +610,98 @@
             <label class="full">Receipt / bill file (private, up to 8 MB)<input name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" /></label>
             <label class="full">Public note<input name="public_note" maxlength="240" placeholder="Optional; visible only after publication" /></label>
             <div class="full"><button class="btn btn-primary" type="submit">Save as Draft</button> <button class="btn btn-light" type="button" id="finance-cancel-edit">Clear form</button></div>
-          </div></form><div class="message" id="finance-admin-message" role="status"></div>
+          </div></form><div class="message" id="finance-admin-message" role="status"></div></div>
         </dialog>
 
+
+
+        <section class="panel trustee-report" id="financial-documents-panel" aria-labelledby="financial-records-title">
+          <header class="financial-records-header">
+            <div class="expense-report-heading">
+              <div><h2 id="financial-records-title">Financial &amp; Compliance Records</h2>
+                <p class="financial-records-access">Authorized Trustees &amp; Admin Only</p>
+              </div>
+              <button class="btn btn-light" id="financial-doc-new" type="button" aria-haspopup="dialog" hidden>Upload Financial Document</button>
+            </div>
+          </header>
+          <div class="financial-records-content">
+            <div class="financial-records-filters">
+              <label>Select Financial Year<select id="financial-doc-year"></select></label>
+              <label>Search Documents<input id="financial-doc-search" type="search" placeholder="Search document name" /></label>
+            </div>
+            <dl class="financial-records-summary" id="financial-doc-summary" hidden>
+              <div class="financial-summary-card"><dt>Total Income</dt><dd id="financial-doc-income">&mdash;</dd></div>
+              <div class="financial-summary-card"><dt>Total Expenditure</dt><dd id="financial-doc-spent">&mdash;</dd></div>
+              <div class="financial-summary-card"><dt>Closing Fund Balance</dt><dd id="financial-doc-balance">&mdash;</dd></div>
+              <div class="financial-summary-card"><dt>Uploaded Documents</dt><dd id="financial-doc-count">&mdash;</dd></div>
+            </dl>
+            <p class="financial-summary-note" id="financial-doc-summary-note" hidden>Based on published Trust finance records.</p>
+            <div class="financial-records-heading">
+              <h3 id="financial-doc-list-title">Financial Documents</h3>
+              <span class="financial-year-status" id="financial-doc-year-status" hidden></span>
+            </div>
+            <div class="financial-records-tabs" id="financial-doc-tabs" role="group" aria-label="Document categories">
+              <button class="btn btn-light" type="button" data-record-filter="all" aria-pressed="true">All Documents</button>
+              <button class="btn btn-light" type="button" data-record-filter="financial" aria-pressed="false">Financial</button>
+              <button class="btn btn-light" type="button" data-record-filter="tax" aria-pressed="false">Tax &amp; Audit</button>
+              <button class="btn btn-light" type="button" data-record-filter="annual" aria-pressed="false">Annual Reports</button>
+            </div>
+            <p id="financial-doc-message" role="status"></p>
+            <div id="financial-doc-list"></div>
+            <div class="financial-checklist" hidden>
+              <p id="financial-checklist-status" role="status"></p>
+              <progress id="financial-checklist-progress" max="8" value="0" aria-label="Year-end compliance progress"></progress>
+              <details>
+                <summary>Financial Year Closing Checklist</summary>
+                <div id="financial-checklist-options"></div>
+              </details>
+            </div>
+            <p class="financial-records-footer">Confidential Records &middot; Sarvahit Charitable Trust</p>
+          </div>
+        </section>
+
+        <dialog class="entry-dialog" id="financial-doc-dialog" aria-labelledby="financial-doc-title">
+          <div class="financial-document-header">
+            <div><h2 id="financial-doc-title">Upload Financial Document</h2><p>Sarvahit Charitable Trust · Admin Panel</p></div>
+            <button class="entry-dialog-close" id="financial-doc-close" type="button" aria-label="Close form">&times;</button>
+          </div>
+          <form id="financial-doc-form">
+            <label>Financial Year *<select name="fiscal_year" required></select></label>
+            <label>Assessment Year<input id="financial-doc-ay" type="text" readonly /></label>
+            <label>Document Category *<select name="category" required></select></label>
+            <label>Document Name *<input name="title" maxlength="160" placeholder="e.g. Balance Sheet FY 2026-27" required /></label>
+            <label>Document Date<input name="document_date" type="date" /></label>
+            <label>Prepared By<input name="prepared_by" maxlength="120" placeholder="Accountant / Auditor / CA Name" /></label>
+            <label>Document Reference Number<input name="reference_number" maxlength="100" placeholder="Acknowledgement / Reference No." /></label>
+            <label>Description / Remarks<textarea name="remarks" maxlength="2000" rows="3" placeholder="Enter additional document details"></textarea></label>
+            <div>
+              <label for="financial-doc-file">Upload Document</label>
+              <div id="financial-doc-drop">
+                <strong>Drag &amp; Drop a File Here</strong>
+                <p>PDF, XLSX, DOCX, JPG or PNG · Up to 25 MB</p>
+                <input id="financial-doc-file" name="document" type="file" accept=".pdf,.xlsx,.docx,.jpg,.jpeg,.png" />
+                <p id="financial-doc-filename" role="status"></p>
+              </div>
+            </div>
+            <fieldset>
+              <legend>Document Access Permission</legend>
+              <label class="financial-access-choice"><input type="radio" name="access_level" value="admin" checked /><span>Admin Only</span></label>
+              <label class="financial-access-choice"><input type="radio" name="access_level" value="all" /><span>Admin &amp; All Trustees</span></label>
+              <label class="financial-access-choice"><input type="radio" name="access_level" value="selected" /><span>Admin &amp; Selected Trustees</span></label>
+              <label id="financial-doc-trustee-picker" hidden>Selected Trustees
+                <select name="trustee_ids" multiple size="5"></select>
+              </label>
+            </fieldset>
+            <label>Document Status *<select name="status">
+              <option>Draft</option><option>Finalized</option><option>Audited</option><option>Filed</option>
+            </select></label>
+            <p id="financial-doc-form-message" role="status"></p>
+            <div class="financial-document-form-actions">
+              <button class="btn btn-light" name="save_action" value="draft" type="submit">Save Draft</button>
+              <button class="btn btn-primary" name="save_action" value="publish" type="submit">Upload &amp; Publish</button>
+            </div>
+          </form>
+        </dialog>
         <section class="panel trustee-report" id="expense-report">
           <div class="expense-report-heading"><h2>Expense Report</h2><button class="btn btn-primary" type="button" id="open-finance-ledger" hidden>Financial Ledger</button></div>
           <p>Review recorded expenses by year or month. Only approved expenses are included in the public financial totals.</p>
@@ -563,17 +780,16 @@
         </section>
 
         <section class="panel admin-only">
-          <h2>Trusted Person Reviews</h2>
+          <div class="expense-report-heading"><h2>Trusted Person Reviews</h2><button class="btn btn-primary" type="button" id="refresh-reviews">Refresh Reviews</button></div>
           <p>Only names are listed here. Click a name to read the visitor’s review. Delete any unsuitable review.</p>
-          <button class="btn btn-primary" type="button" id="refresh-reviews">Refresh Reviews</button>
           <div class="volunteer-list" id="review-list"></div>
         </section>
       </section>
     </div>
 
     <dialog class="entry-dialog finance-dialog" id="cash-donation-dialog" aria-labelledby="cash-donation-title">
-      <div class="entry-dialog-header"><div><h2 id="cash-donation-title">Add Donation</h2><p>Record a donation received by the trust.</p></div><button class="entry-dialog-close" type="button" id="cash-donation-close" aria-label="Close form">&times;</button></div>
-      <form id="cash-donation-form"><div class="form-grid">
+      <div class="financial-document-header"><div><h2 id="cash-donation-title">Add Donation</h2><p>Record a donation received by the trust.</p></div><button class="entry-dialog-close" type="button" id="cash-donation-close" aria-label="Close form">&times;</button></div>
+      <div class="finance-dialog-body"><form id="cash-donation-form"><div class="form-grid">
         <label>Date<input name="entry_date" type="date" required /></label>
         <label>Amount (INR)<input name="amount" type="number" inputmode="numeric" min="100" step="1" data-integer-amount required /></label>
         <label>Donor name<input name="donor_name" required autocomplete="name" placeholder="Letters only" /></label>
@@ -584,7 +800,7 @@
         <label>Purpose<input name="category" required placeholder="Letters only" /></label>
         
         <div class="full"><button class="btn btn-primary" type="submit">Save Donation</button> <button class="btn btn-light" type="button" id="cash-donation-cancel">Cancel</button></div>
-      </div></form><div class="message" id="cash-donation-message" role="status"></div>
+      </div></form><div class="message" id="cash-donation-message" role="status"></div></div>
     </dialog>
     <dialog class="entry-dialog finance-dialog" id="certificate-delivery-dialog" aria-labelledby="certificate-delivery-title">
       <div class="entry-dialog-header">
@@ -595,6 +811,7 @@
     </dialog>
     <dialog class="entry-dialog finance-dialog" id="partner-dialog" aria-labelledby="partner-dialog-title">
       <div class="entry-dialog-header"><div><h2 id="partner-dialog-title">Add New Partner</h2><p>Create a partner logo card for the public website.</p></div><button class="entry-dialog-close" type="button" id="partner-dialog-close" aria-label="Close form">&times;</button></div>
+      <div class="partner-dialog-body">
       <form id="partner-form">
         <input name="id" type="hidden" />
         <fieldset><legend>Partner Information</legend>
@@ -634,6 +851,7 @@
         </fieldset>
         <div class="finance-actions partner-save-actions"><button class="btn btn-light" type="submit" value="draft" formnovalidate>Save Draft</button><button class="btn btn-primary" type="submit" value="save">Save Partner</button></div>
       </form><div class="message" id="partner-form-message" role="status"></div>
+      </div>
     </dialog>
   </main>
 
@@ -671,7 +889,7 @@
 
     <h1 id="title">Reset Password</h1>
     <form id="request-form">
-      <label><span style="font-weight: 400;">Registered email</span><input name="email" type="email" autocomplete="email" required></label>
+      <label><span style="font-weight: 600;">Registered email</span><input name="email" type="email" autocomplete="email" required></label>
       <button type="submit">Send Reset Link</button>
     </form>
     <form id="password-form" hidden>
@@ -845,6 +1063,7 @@
   })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script>
     document.addEventListener("input", (event) => {
       const input = event.target;
@@ -867,7 +1086,7 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzsSzsE8Up6THc3oH22npXG5SAnjkJwdh-3wav6MiIrkGVKdhr_9slckL0T3mKeU-__/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxg59Bu0fBMgYPgDIWajCiBqUkbqzZGwfZmxM2lKNZiyvwiQ3_t27TrHgLGc_4SMkpz/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let portalRole = "";
     let portalIdentity = null;
@@ -959,6 +1178,76 @@
       }));
       document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="' + (!canManagePortal() ? 9 : 10) + '">No expenses found for this period.</td></tr>';
     }
+    async function compressReceiptImage(file, targetSize) {
+      const bitmap = await createImageBitmap(file);
+      const canvas = document.createElement("canvas");
+      let best = file;
+      try {
+        const context = canvas.getContext("2d");
+        const longEdge = Math.max(bitmap.width, bitmap.height);
+        for (const [scale, quality] of [[1, .82], [.85, .78], [.7, .74], [.6, .7]]) {
+          const ratio = Math.max(scale, Math.min(1, 900 / longEdge));
+          canvas.width = Math.max(1, Math.round(bitmap.width * ratio));
+          canvas.height = Math.max(1, Math.round(bitmap.height * ratio));
+          context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+          const candidate = await new Promise((resolve) => canvas.toBlob(resolve, file.type, quality));
+          if (candidate?.type === file.type && candidate.size > 0 && candidate.size < best.size) best = candidate;
+          if (best.size <= targetSize) break;
+        }
+        return best;
+      } finally {
+        bitmap.close();
+        canvas.width = canvas.height = 0;
+      }
+    }
+
+    async function compressReceiptPdf(file, targetSize) {
+      const { PDFDocument, PDFDict, PDFName, PDFNumber, PDFRawStream } = window.PDFLib;
+      const pdf = await PDFDocument.load(await file.arrayBuffer(), { updateMetadata: false, throwOnInvalidObject: true });
+      const objects = pdf.context.enumerateIndirectObjects();
+      const key = (name) => PDFName.of(name);
+      if (objects.some(([, object]) => object instanceof PDFDict &&
+          (object.has(key("ByteRange")) || object.get(key("Type")) === key("Sig")))) return file;
+      const compact = new Blob([await pdf.save({ useObjectStreams: true, updateFieldAppearances: false, addDefaultPage: false })], { type: file.type });
+      if (compact.size <= targetSize) return compact;
+
+      // Re-encode ordinary RGB JPEG scans while keeping PDF text and page layout.
+      for (const [ref, stream] of objects) {
+        if (!(stream instanceof PDFRawStream)) continue;
+        const dict = stream.dict;
+        if (dict.get(key("Subtype")) !== key("Image") || dict.get(key("Filter")) !== key("DCTDecode") ||
+            dict.get(key("ColorSpace")) !== key("DeviceRGB") ||
+            dict.get(key("BitsPerComponent"))?.asNumber?.() !== 8 ||
+            ["Decode", "DecodeParms", "Mask", "SMask", "Alternates", "ImageMask"].some((name) => dict.has(key(name)))) continue;
+        const scan = new Blob([stream.getContents()], { type: "image/jpeg" });
+        const smaller = await compressReceiptImage(scan, Math.floor(scan.size / 2));
+        if (smaller.size >= scan.size) continue;
+        const bitmap = await createImageBitmap(smaller);
+        const imageDict = dict.clone();
+        imageDict.set(key("Width"), PDFNumber.of(bitmap.width));
+        imageDict.set(key("Height"), PDFNumber.of(bitmap.height));
+        bitmap.close();
+        pdf.context.assign(ref, PDFRawStream.of(imageDict, new Uint8Array(await smaller.arrayBuffer())));
+      }
+      const optimized = new Blob([await pdf.save({ useObjectStreams: true, updateFieldAppearances: false, addDefaultPage: false })], { type: file.type });
+      return optimized.size < compact.size ? optimized : compact;
+    }
+
+    async function compressAdminAttachment(file) {
+      try {
+        const targetSize = Math.floor(file.size / 2);
+        const candidate = file.type === "application/pdf"
+          ? await compressReceiptPdf(file, targetSize)
+          : await compressReceiptImage(file, targetSize);
+        if (candidate.size > 0 && candidate.size < file.size) {
+          return new File([candidate], file.name, { type: file.type, lastModified: file.lastModified });
+        }
+      } catch (error) {
+        console.warn("Attachment compression unavailable; using the original file.", error);
+      }
+      return file;
+    }
+
     function fileAsBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1122,11 +1411,11 @@
       partnerRecords = partners;
       const body = document.getElementById("partner-admin-list");
       body.innerHTML = partners.length ? partners.map((partner) => {
-        const contact = [partner.contact_person, partner.contact_designation, partner.contact_email, partner.contact_phone].filter(Boolean).map(escapeHtml).join("<br>");
+        const contact = [partner.contact_person, partner.contact_designation].filter(Boolean).map(escapeHtml).join("<br>");
         const location = [partner.city, partner.state].filter(Boolean).join(", ");
         const logo = partner.logo_url ? '<img class="partner-table-logo" src="' + escapeHtml(partner.logo_url) + '" alt="' + escapeHtml(partner.name) + ' logo" />' : "—";
         const id = escapeHtml(partner.id);
-        return '<tr><td>' + escapeHtml(String(partner.sort_order)) + '</td><td>' + logo + '</td><td>' + escapeHtml(partner.name) + '</td><td>' + escapeHtml(partner.category || "—") + '</td><td>' + (contact || "—") + '</td><td>' + escapeHtml(location || "—") + '</td><td>' + escapeHtml(partner.partnership_start_date || "—") + '</td><td><div class="finance-actions"><button class="btn btn-primary" type="button" data-edit-partner="' + id + '">Edit</button><button class="btn btn-danger" type="button" data-delete-partner="' + id + '">Delete</button></div></td></tr>';
+        return '<tr><td>' + escapeHtml(String(partner.sort_order)) + '</td><td>' + logo + '</td><td>' + escapeHtml(partner.name) + '</td><td>' + escapeHtml(partner.category || "—") + '</td><td>' + '<button class="certificate-details-button" type="button" aria-haspopup="dialog" data-view-partner="' + id + '" aria-label="View contact details for ' + escapeHtml(partner.name) + '">' + (contact || '&mdash;') + '</button>' + '</td><td>' + escapeHtml(location || "—") + '</td><td>' + escapeHtml(partner.partnership_start_date || "—") + '</td><td><div class="finance-actions"><button class="btn btn-primary" type="button" data-edit-partner="' + id + '">Edit</button><button class="btn btn-danger" type="button" data-delete-partner="' + id + '">Delete</button></div></td></tr>';
       }).join("") : '<tr><td colspan="8">No partners added yet.</td></tr>';
     }
     async function loadPartners() {
@@ -1262,7 +1551,8 @@
       if (documentFile) {
         if (documentFile.type !== "application/pdf" || documentFile.size > 5 * 1024 * 1024) throw Object.assign(new Error("Choose a PDF up to 5 MB."), { field: "supporting_file" });
         record.supporting_document_name = documentFile.name;
-        record.supporting_document_data = await fileAsBase64(documentFile);
+        const compressedDocument = await compressAdminAttachment(documentFile);
+        record.supporting_document_data = await fileAsBase64(compressedDocument);
         attachments.push({ kind: "document", fileName: documentFile.name, mimeType: documentFile.type, base64: record.supporting_document_data });
       }
       if (attachments.length) {
@@ -1333,6 +1623,25 @@
       } catch (error) { alert(error.message || "Could not download document."); }
     });
     document.getElementById("partner-admin-list").addEventListener("click", async (event) => {
+      const view = event.target.closest("[data-view-partner]");
+      if (view) {
+        const partner = partnerRecords.find((item) => item.id === view.dataset.viewPartner);
+        if (!partner) return;
+        const details = [
+          ["Contact Person", partner.contact_person],
+          ["Designation", partner.contact_designation],
+          ["Email", partner.contact_email],
+          ["Phone", partner.contact_phone],
+          ["Address", partner.full_address],
+          ["City", partner.city],
+          ["State", partner.state],
+          ["Country", partner.country]
+        ];
+        showEntryDetails(partner.name, '<div class="entry-detail-grid">' + details.map(([label, value]) =>
+          '<p><strong>' + label + ':</strong> ' + escapeHtml(value || "-") + '</p>'
+        ).join("") + "</div>");
+        return;
+      }
       const edit = event.target.closest("[data-edit-partner]"); const remove = event.target.closest("[data-delete-partner]");
       try {
         if (edit) { openPartnerForm(partnerRecords.find((partner) => partner.id === edit.dataset.editPartner)); }
@@ -1498,16 +1807,20 @@
       const form = event.currentTarget; const data = Object.fromEntries(new FormData(form).entries());
       const id = data.id || crypto.randomUUID();
       const existing = financeEntries.find((item) => item.id === id);
-      const file = form.elements.attachment.files[0];
+      let file = form.elements.attachment.files[0];
       let attachmentPath = existing?.attachment_path || null;
       let attachmentDriveUrl = existing?.attachment_drive_url || null;
       if (file) {
         if (!new Set(["application/pdf", "image/jpeg", "image/png", "image/webp"]).has(file.type) || file.size > 8 * 1024 * 1024) throw new Error("Attach a PDF, JPG, PNG or WebP file up to 8 MB.");
+        file = await compressAdminAttachment(file);
+        attachmentDriveUrl = null;
         const safeName = file.name.replace(/[^A-Za-z0-9._-]/g, "_"); attachmentPath = id + "/" + Date.now() + "-" + safeName;
         const upload = await fetch(SUPABASE_URL + "/storage/v1/object/" + FINANCE_BUCKET + "/" + attachmentPath, { method: "POST", headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + adminAccessToken, "Content-Type": file.type || "application/octet-stream" }, body: file });
         if (!upload.ok) throw new Error(await upload.text());
       }
       const record = { entry_type: "expense", entry_date: data.entry_date, amount: Number(data.amount), category: data.category.trim(), fund_type: "unrestricted", fund_name: null, public_note: data.public_note.trim() || null, donor_name: null, donor_email: null, donor_phone: null, bank_reference: data.bank_reference.trim() || null, payment_method: data.payment_method, attachment_path: attachmentPath, attachment_drive_url: attachmentDriveUrl, reconciliation_status: existing?.reconciliation_status || "unreconciled", workflow_status: existing?.workflow_status || (canManagePortal() ? "draft" : "pending") };
+      if (!data.id) record.id = id;
+      if (file) record.attachment_drive_file_id = null;
       await supabaseRequest(data.id ? FINANCE_TABLE + "?id=eq." + encodeURIComponent(data.id) : FINANCE_TABLE, { method: data.id ? "PATCH" : "POST", body: JSON.stringify(record) });
       let driveUploadWarning = "";
       if (file) {
@@ -1992,11 +2305,18 @@
       document.getElementById("dashboard-subtitle").textContent = canManagePortal() ? "Update home page impact data, reports, team profiles, partners, and volunteer registrations." : "View reports and review volunteer data.";
       document.getElementById("admin-logout").hidden = false;
       if (canManagePortal()) { await loadStatsForm(); await loadNoticeForm(); await loadTeamAdmin(); await loadPartners(); await renderReviews(); }
+      document.getElementById("financial-doc-new").hidden = !canManagePortal();
+      docYear.querySelector('option[value="archived"]')?.remove();
+      if (canManagePortal()) docYear.add(new Option("Archived Documents", "archived"));
+      docYear.value = currentFiscalYear;
+      selectRecordCategory("all");
+      void loadFinancialDocuments();
       await renderDonationReport(true);
       await renderVolunteers();
       await loadFinanceEntries();
     });
     document.getElementById("admin-logout").addEventListener("click", () => {
+      ++docRequest; docRecords = []; docList.replaceChildren(); docChecklist.replaceChildren(); docDialog.close();
       adminAccessToken = ""; portalRole = ""; portalIdentity = null; sessionStorage.removeItem("trustAdminAccessToken");
       document.getElementById("dashboard").classList.remove("is-visible");
       document.getElementById("dashboard").removeAttribute("data-role");
@@ -2004,6 +2324,465 @@
       document.getElementById("admin-logout").hidden = true;
       document.getElementById("login-panel").style.display = "block";
     });
+
+
+    const docBucket = "trust-financial-documents";
+    const docPanel = document.getElementById("financial-documents-panel");
+    const docDialog = document.getElementById("financial-doc-dialog");
+    const docForm = document.getElementById("financial-doc-form");
+    const docFields = docForm.elements;
+    const docYear = document.getElementById("financial-doc-year");
+    const docList = document.getElementById("financial-doc-list");
+    const docMessage = document.getElementById("financial-doc-message");
+    const docFormMessage = document.getElementById("financial-doc-form-message");
+    const docChecklist = document.getElementById("financial-checklist-options");
+    const docChecklistStatus = document.getElementById("financial-checklist-status");
+    const docCategories = [
+      "01 - Financial Statements", "02 - Income Tax Returns", "03 - Audit Reports", "04 - Bank Statements",
+      "05 - Donation & Expense Records", "06 - Annual Reports", "07 - Meetings & Resolutions", "08 - Other Documents", "Permanent Documents"
+    ];
+    const docChecklistLabels = [
+      "Donation records verified", "Expense records verified", "Bank reconciliation completed", "Balance Sheet prepared",
+      "Income & Expenditure prepared", "Audit completed (if applicable)", "Income Tax Return filed", "Trustees approval completed"
+    ];
+    const docTypes = {
+      pdf: "application/pdf", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png"
+    };
+    const [docCalendarYear, docMonth] = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit"
+    }).format(new Date()).split("-").map(Number);
+    const currentFiscalYear = docCalendarYear - Number(docMonth < 4);
+    let docRecords = [];
+    let editingDoc = null;
+    let pendingDocUpload = null;
+    let docRequest = 0;
+    let docSaving = false;
+    let checklistSaving = false;
+
+    function docYearRange(start) {
+      const year = Number(start);
+      return year + "-" + String(year + 1).slice(-2);
+    }
+
+    function docFiscalLabel(start) {
+      return "FY " + docYearRange(start) + " (AY " + docYearRange(Number(start) + 1) + ")";
+    }
+
+    function populateDocYears() {
+      const years = Array.from({ length: Math.max(1, currentFiscalYear - 2000 + 6) }, (_, index) => 2000 + index).reverse();
+      for (const select of [docYear, docFields.fiscal_year]) {
+        for (const year of years) select.add(new Option(docFiscalLabel(year), year));
+        select.value = currentFiscalYear;
+      }
+      docYear.add(new Option("Permanent Documents", "permanent"));
+      for (const category of docCategories) docFields.category.add(new Option(category, category));
+    }
+    populateDocYears();
+
+
+    const recordTabs = document.getElementById("financial-doc-tabs");
+    const recordSummary = document.getElementById("financial-doc-summary");
+    const recordSummaryNote = document.getElementById("financial-doc-summary-note");
+    const recordYearStatus = document.getElementById("financial-doc-year-status");
+    let recordCategory = "all";
+    const recordCategories = {
+      financial: ["01", "04", "05"],
+      tax: ["02", "03"],
+      annual: ["06"]
+    };
+
+    function financialYearTotals(rows, year) {
+      const start = year + "-04-01";
+      const end = (year + 1) + "-04-01";
+      const totals = { income: 0, spent: 0, balance: 0 };
+      for (const row of rows) {
+        if (row.month_start >= end) continue;
+        const amount = Number(row.total_amount || 0);
+        if (row.entry_type === "donation") {
+          if (row.month_start >= start) totals.income += amount;
+          totals.balance += amount;
+        } else if (row.entry_type === "expense") {
+          if (row.month_start >= start) totals.spent += amount;
+          totals.balance -= amount;
+        } else if (row.entry_type === "opening_balance") {
+          totals.balance += amount;
+        }
+      }
+      return totals;
+    }
+
+    async function loadFinancialRecordTotals(year, request) {
+      const rows = [];
+      const fields = "month_start,entry_type,total_amount";
+      const order = "month_start.asc,entry_type.asc,category.asc,fund_type.asc";
+      try {
+        for (let offset = 0; request === docRequest; offset += 500) {
+          const page = await supabaseRequest("trust_finance_public_summary?select=" + fields + "&order=" + order +
+            "&month_start=lt." + (year + 1) + "-04-01&limit=500&offset=" + offset);
+          rows.push(...page);
+          if (page.length < 500) break;
+        }
+        if (request !== docRequest) return;
+        const totals = financialYearTotals(rows, year);
+        const formatter = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" });
+        for (const [name, amount] of Object.entries(totals)) {
+          document.getElementById("financial-doc-" + name).textContent = formatter.format(amount);
+        }
+      } catch {
+        if (request === docRequest) recordSummaryNote.textContent = "Published finance totals are temporarily unavailable.";
+      }
+    }
+
+    function resetFinancialRecordHeader(year) {
+      const numericYear = /^\d{4}$/.test(year);
+      recordSummary.hidden = !numericYear;
+      recordSummaryNote.hidden = !numericYear;
+      recordSummaryNote.textContent = "Based on published Trust finance records.";
+      recordYearStatus.hidden = true;
+      recordTabs.hidden = !numericYear;
+      for (const name of ["income", "spent", "balance", "count"]) {
+        document.getElementById("financial-doc-" + name).textContent = "\u2014";
+      }
+      document.getElementById("financial-doc-list-title").textContent = numericYear
+        ? "Financial Year " + year + "\u2013" + String(Number(year) + 1).slice(-2)
+        : year === "permanent" ? "Permanent Documents" : "Archived Documents";
+    }
+
+    function renderFinancialDocuments() {
+      const query = document.getElementById("financial-doc-search").value.trim().toLowerCase();
+      const categories = recordCategories[recordCategory];
+      const documents = docRecords.filter((item) => item.title.toLowerCase().includes(query) &&
+        (!categories || categories.includes(item.category.slice(0, 2))));
+      docList.innerHTML = documents.map((item) => {
+        const id = escapeHtml(item.id);
+        const extension = escapeHtml(item.file_name.split(".").pop().toUpperCase());
+        const button = (action, label, style = "btn-light") =>
+          '<button class="btn ' + style + '" type="button" data-doc-action="' + action + '" data-doc-id="' + id + '">' + label + '</button>';
+        const fiscalLabel = item.category === "Permanent Documents" ? "Permanent Document" : "FY " + docYearRange(item.fiscal_year);
+        return '<article class="financial-doc-row"><div class="financial-doc-info"><span class="financial-doc-type">' + extension +
+          '</span><div><strong>' + escapeHtml(item.title) + '</strong><span class="financial-doc-status">' + escapeHtml(item.status) +
+          '</span><p>' + escapeHtml(fiscalLabel) + ' &middot; Version ' + Number(item.version) +
+          ' &middot; ' + escapeHtml(item.category) + '</p></div></div><div class="financial-doc-actions">' +
+          (item.archived ? button("restore", "Restore") + button("history", "History") : button("view", "View") + button("download", "Download") +
+          (canManagePortal() ? button("edit", "Edit") + button("history", "History") + button("archive", "Archive", "btn-danger") : "")) +
+          "</div></article>";
+      }).join("") || "<p>No documents found.</p>";
+    }
+
+    function renderFinancialChecklist(completed) {
+      docChecklist.replaceChildren();
+      const done = docChecklistLabels.filter((label) => completed.includes(label)).length;
+      document.getElementById("financial-checklist-progress").value = done;
+      recordYearStatus.hidden = false;
+      recordYearStatus.dataset.complete = String(done === docChecklistLabels.length);
+    recordYearStatus.textContent = done === docChecklistLabels.length ? "Complete" : "In Progress";
+      docChecklistStatus.textContent = "Financial year closing " + Math.round(done / docChecklistLabels.length * 100) + "% complete";
+      for (const label of docChecklistLabels) {
+        const container = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = label;
+        input.checked = completed.includes(label);
+        input.disabled = !canManagePortal();
+        container.append(input, label);
+        docChecklist.append(container);
+      }
+    }
+
+    async function loadFinancialDocuments() {
+      const request = ++docRequest;
+      const year = docYear.value;
+      const permanent = year === "permanent";
+      const archived = year === "archived";
+      const checklist = docChecklist.closest(".financial-checklist");
+      resetFinancialRecordHeader(year);
+      if (!permanent && !archived) void loadFinancialRecordTotals(Number(year), request);
+      docMessage.textContent = "Loading financial documents…";
+      docRecords = [];
+      docList.replaceChildren();
+      checklist.hidden = true;
+      try {
+        const category = encodeURIComponent("Permanent Documents");
+        const filter = archived ? "" : permanent ? "&category=eq." + category : "&fiscal_year=eq." + Number(year) + "&category=neq." + category;
+        const [documents, progress] = await Promise.all([
+          supabaseRequest("financial_documents?select=*&archived=eq." + archived + filter + "&order=updated_at.desc"),
+          permanent || archived ? [] : supabaseRequest("financial_year_checklist?select=completed&fiscal_year=eq." + Number(year))
+        ]);
+        if (request !== docRequest) return;
+        docRecords = documents;
+        document.getElementById("financial-doc-count").textContent = String(docRecords.length);
+        docMessage.textContent = "";
+        renderFinancialDocuments();
+        if (!permanent && !archived) {
+          renderFinancialChecklist(progress[0]?.completed || []);
+          checklist.hidden = false;
+        }
+      } catch (error) {
+        if (request === docRequest) docMessage.textContent = "Could not load financial documents. " + error.message;
+      }
+    }
+
+    function updateDocForm() {
+      document.getElementById("financial-doc-ay").value = docYearRange(Number(docFields.fiscal_year.value) + 1);
+      document.getElementById("financial-doc-trustee-picker").hidden = docFields.access_level.value !== "selected";
+    }
+
+    async function openFinancialDocForm(item = null) {
+      if (!canManagePortal() || docSaving) return;
+      editingDoc = item;
+      pendingDocUpload = null;
+      docForm.reset();
+      docFormMessage.textContent = "";
+      document.getElementById("financial-doc-title").textContent = item ? "Edit Financial Document" : "Upload Financial Document";
+      docFields.fiscal_year.value = item?.fiscal_year || (["permanent", "archived"].includes(docYear.value) ? currentFiscalYear : docYear.value);
+      if (item) {
+        for (const name of ["category", "title", "document_date", "prepared_by", "reference_number", "remarks", "access_level", "status"]) {
+          docFields[name].value = item[name] || "";
+        }
+      } else if (docYear.value === "permanent") docFields.category.value = "Permanent Documents";
+      docFields.fiscal_year.disabled = Boolean(item);
+      docFields.category.disabled = Boolean(item);
+      docFields.document.required = !item;
+      document.getElementById("financial-doc-filename").textContent = item ? "Current file: " + item.file_name : "";
+      docFields.trustee_ids.replaceChildren();
+      updateDocForm();
+      docDialog.showModal();
+      try {
+        const trustees = await supabaseRequest("rpc/financial_document_trustees", { method: "POST", body: "{}" });
+        if (!docDialog.open || editingDoc !== item) return;
+        for (const trustee of trustees) {
+          docFields.trustee_ids.add(new Option(trustee.full_name + " · " + trustee.role, trustee.user_id,
+            false, Boolean(item?.trustee_ids.includes(trustee.user_id))));
+        }
+      } catch (error) {
+        docFormMessage.textContent = "Could not load trustee accounts. " + error.message;
+      }
+    }
+
+    async function stageFinancialFile(file, id, year, category) {
+      const extension = file.name.split(".").pop().toLowerCase();
+      if (!Object.hasOwn(docTypes, extension) || (file.type && file.type !== docTypes[extension])) {
+        throw new Error("Choose a PDF, XLSX, DOCX, JPG or PNG file.");
+      }
+      if (!file.size || file.size > 25 * 1024 * 1024) throw new Error("Choose a non-empty file up to 25 MB.");
+      if (pendingDocUpload?.file !== file) {
+        pendingDocUpload = { file, id, path: id + "/" + crypto.randomUUID() + "." + extension, uploaded: false };
+      }
+      const staged = pendingDocUpload;
+      if (!staged.uploaded) {
+        const response = await fetch(SUPABASE_URL + "/storage/v1/object/" + docBucket + "/" + staged.path, {
+          method: "POST", body: file,
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + adminAccessToken, "Content-Type": docTypes[extension] }
+        });
+        if (!response.ok) throw new Error("Private file upload failed. " + await response.text());
+        staged.uploaded = true;
+      }
+      await sendFinanceDriveUpload({
+        type: "financial_document_backup", fiscalYear: year, category,
+        storagePath: staged.path, fileName: file.name, accessToken: adminAccessToken
+      });
+      return staged.path;
+    }
+
+    docForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!canManagePortal() || docSaving) return;
+      const file = docFields.document.files[0];
+      const publish = event.submitter?.value === "publish";
+      const status = publish && docFields.status.value === "Draft" ? "Finalized" : docFields.status.value;
+      const access = docFields.access_level.value;
+      const trustees = access === "selected" ? Array.from(docFields.trustee_ids.selectedOptions, (option) => option.value) : [];
+      const title = docFields.title.value.trim();
+      if (!title || (!editingDoc && !file) || (access === "selected" && !trustees.length)) {
+        docFormMessage.textContent = "Enter a name, choose a file for a new document, and select trustees if required.";
+        return;
+      }
+      if (file) {
+        const fileTitle = file.name.replace(/\.[^.]+$/, "").trim();
+        if (title !== fileTitle) {
+          docFormMessage.textContent = "Document Name must match the file name without its extension: " + fileTitle;
+          docFields.title.focus();
+          return;
+        }
+      }
+      docSaving = true;
+      const buttons = Array.from(docForm.querySelectorAll("button"));
+      buttons.forEach((button) => { button.disabled = true; });
+      document.getElementById("financial-doc-close").disabled = true;
+      docFormMessage.textContent = file ? "Uploading to private storage and Google Drive…" : "Saving document…";
+      try {
+        const id = editingDoc?.id || pendingDocUpload?.id || crypto.randomUUID();
+        const year = Number(docFields.fiscal_year.value);
+        const category = docFields.category.value;
+        const path = file ? await stageFinancialFile(file, id, year, category) : editingDoc.storage_path;
+        const record = {
+          id, fiscal_year: year, category, title, status: publish ? status : "Draft", published: publish,
+          document_date: docFields.document_date.value || null, prepared_by: docFields.prepared_by.value.trim(),
+          reference_number: docFields.reference_number.value.trim(), remarks: docFields.remarks.value.trim(),
+          access_level: access, trustee_ids: trustees, file_name: file?.name || editingDoc.file_name, storage_path: path
+        };
+        const filter = editingDoc ? "?id=eq." + editingDoc.id + "&version=eq." + editingDoc.version +
+          "&updated_at=eq." + encodeURIComponent(editingDoc.updated_at) : "?on_conflict=id";
+        const saved = await supabaseRequest("financial_documents" + filter, {
+          method: editingDoc ? "PATCH" : "POST",
+          headers: { Prefer: editingDoc ? "return=representation" : "resolution=merge-duplicates,return=representation" },
+          body: JSON.stringify(record)
+        });
+        if (!saved?.length) throw new Error("This document changed in another session. Reopen it and try again.");
+        docDialog.close();
+        pendingDocUpload = null;
+        docYear.value = category === "Permanent Documents" ? "permanent" : year;
+        await loadFinancialDocuments();
+        docMessage.textContent ||= publish ? "Document published to its selected audience." : "Draft saved for admins.";
+      } catch (error) {
+        docFormMessage.textContent = error.message || "Could not save the document.";
+      } finally {
+        docSaving = false;
+        buttons.forEach((button) => { button.disabled = false; });
+        document.getElementById("financial-doc-close").disabled = false;
+      }
+    });
+
+    async function signedFinancialDocUrl(path, download = "") {
+      const response = await fetch(SUPABASE_URL + "/storage/v1/object/sign/" + docBucket + "/" + path, {
+        method: "POST",
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + adminAccessToken, "Content-Type": "application/json" },
+        body: JSON.stringify({ expiresIn: 60 })
+      });
+      if (!response.ok) throw new Error("Could not open the private file.");
+      const { signedURL } = await response.json();
+      if (!signedURL?.startsWith("/object/sign/")) throw new Error("Invalid file link.");
+      const url = new URL("/storage/v1" + signedURL, SUPABASE_URL);
+      if (download) url.searchParams.set("download", download);
+      return url.href;
+    }
+
+    async function showFinancialHistory(item) {
+      const history = await supabaseRequest("financial_activity_logs?document_id=eq." + item.id + "&order=occurred_at.desc");
+      const versions = new Set([item.storage_path]);
+      const rows = history.map((entry) => {
+        const copy = entry.snapshot;
+        const version = copy && !versions.has(copy.storage_path);
+        if (version) versions.add(copy.storage_path);
+        const link = version ? ' <button class="certificate-details-button" type="button" data-old-doc-path="' +
+          escapeHtml(copy.storage_path) + '" data-old-doc-name="' + escapeHtml(copy.file_name) + '">Download version ' +
+          Number(copy.version) + '</button>' : "";
+        return "<p><strong>" + escapeHtml(entry.action) + "</strong> · " +
+          escapeHtml(new Date(entry.occurred_at).toLocaleString("en-IN")) + link + "</p>";
+      });
+      showEntryDetails(item.title + " · History", rows.join("") || "<p>No activity recorded.</p>");
+    }
+
+    function addFinancialFileButton(title, url, label) {
+      showEntryDetails(title, '<p><a class="btn btn-primary" target="_blank" rel="noopener" href="' +
+        escapeHtml(url) + '">' + label + '</a></p>');
+    }
+
+    docList.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-doc-action]");
+      if (!button) return;
+      const item = docRecords.find((record) => record.id === button.dataset.docId);
+      if (!item) return;
+      const action = button.dataset.docAction;
+      try {
+        if (action === "view" || action === "download") {
+          const url = await signedFinancialDocUrl(item.storage_path, action === "download" ? item.file_name : "");
+          await supabaseRequest("rpc/financial_document_opened", {
+            method: "POST", body: JSON.stringify({ p_document_id: item.id, p_action: action === "view" ? "Viewed" : "Downloaded" })
+          });
+          addFinancialFileButton(item.title, url, action === "view" ? "Open file" : "Download file");
+        } else if (canManagePortal()) {
+          if (action === "edit") await openFinancialDocForm(item);
+          if (action === "history") await showFinancialHistory(item);
+          if (action === "restore") {
+            await supabaseRequest("financial_documents?id=eq." + item.id, { method: "PATCH", body: '{"archived":false,"published":false}' });
+            await loadFinancialDocuments();
+            docMessage.textContent ||= "Document restored. Review and publish it to share again.";
+          }
+          if (action === "archive" && confirm('Archive "' + item.title + '"? The private file will be retained.')) {
+            await supabaseRequest("financial_documents?id=eq." + item.id, { method: "PATCH", body: '{"archived":true}' });
+            await loadFinancialDocuments();
+            docMessage.textContent ||= "Document archived.";
+          }
+        }
+      } catch (error) {
+        docMessage.textContent = error.message;
+      }
+    });
+
+    document.getElementById("entry-detail-content").addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-old-doc-path]");
+      if (!button || !canManagePortal()) return;
+      try {
+        const url = await signedFinancialDocUrl(button.dataset.oldDocPath, button.dataset.oldDocName);
+        addFinancialFileButton(button.dataset.oldDocName, url, "Download version");
+      } catch (error) {
+        button.closest("p").append(" " + error.message);
+      }
+    });
+
+    docChecklist.addEventListener("change", async () => {
+      if (!canManagePortal() || checklistSaving || docYear.value === "permanent") return;
+      const year = Number(docYear.value);
+      const inputs = Array.from(docChecklist.querySelectorAll("input"));
+      const completed = inputs.filter((input) => input.checked).map((input) => input.value);
+      checklistSaving = true;
+      inputs.forEach((input) => { input.disabled = true; });
+      try {
+        await supabaseRequest("financial_year_checklist?on_conflict=fiscal_year", {
+          method: "POST", headers: { Prefer: "resolution=merge-duplicates" },
+          body: JSON.stringify({ fiscal_year: year, completed })
+        });
+        if (Number(docYear.value) === year) renderFinancialChecklist(completed);
+      } catch (error) {
+        if (Number(docYear.value) === year) {
+          await loadFinancialDocuments();
+          docMessage.textContent = "Could not save the checklist. " + error.message;
+        }
+      } finally {
+        checklistSaving = false;
+        docChecklist.querySelectorAll("input").forEach((input) => { input.disabled = !canManagePortal(); });
+      }
+    });
+
+    document.getElementById("financial-doc-new").addEventListener("click", () => openFinancialDocForm());
+    document.getElementById("financial-doc-close").addEventListener("click", () => docDialog.close());
+    docDialog.addEventListener("cancel", (event) => { if (docSaving) event.preventDefault(); });
+    docForm.addEventListener("change", updateDocForm);
+    docFields.document.addEventListener("change", () => {
+      document.getElementById("financial-doc-filename").textContent = docFields.document.files[0]?.name || editingDoc?.file_name || "";
+    });
+    const docDrop = document.getElementById("financial-doc-drop");
+    docDrop.addEventListener("dragover", (event) => { event.preventDefault(); docDrop.classList.add("is-dragging"); });
+    docDrop.addEventListener("dragleave", () => docDrop.classList.remove("is-dragging"));
+    docDrop.addEventListener("drop", (event) => {
+      event.preventDefault();
+      docDrop.classList.remove("is-dragging");
+      if (docSaving || !event.dataTransfer.files.length) return;
+      if (event.dataTransfer.files.length > 1) { docFormMessage.textContent = "Choose one document at a time."; return; }
+      docFields.document.files = event.dataTransfer.files;
+      docFields.document.dispatchEvent(new Event("change"));
+    });
+    function selectRecordCategory(category) {
+      recordCategory = category;
+      for (const button of recordTabs.querySelectorAll("button")) {
+        button.setAttribute("aria-pressed", String(button.dataset.recordFilter === category));
+      }
+    }
+    recordTabs.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-record-filter]");
+      if (!button) return;
+      selectRecordCategory(button.dataset.recordFilter);
+      renderFinancialDocuments();
+    });
+    docYear.addEventListener("change", () => {
+      docChecklist.closest("details").open = false;
+      selectRecordCategory("all");
+      void loadFinancialDocuments();
+    });
+    document.getElementById("financial-doc-search").addEventListener("input", renderFinancialDocuments);
 
     async function handleFinanceActions(event) {
       const button = event.target.closest("button"); if (!button) return;

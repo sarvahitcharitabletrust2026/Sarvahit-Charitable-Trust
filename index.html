@@ -2146,6 +2146,25 @@
     #youtube-gallery button.blog-item { border: 0; padding: 0; text-align: left; cursor: pointer; }
     @media (max-width: 860px) { #youtube-library-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 540px) { #youtube-library-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    :is(#partners-directory, #content-directory)[open] { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
+    :is(#partners-directory, #content-directory) > .public-review-dialog-header {
+      flex: 0 0 auto; margin: 0; padding: 14px clamp(14px, 3vw, 24px); background: var(--green-dark); color: #fff;
+    }
+    :is(#partners-directory, #content-directory) > .public-review-dialog-header h2 {
+      color: inherit; margin: 0; min-width: 0; font-size: clamp(1rem, 4vw, 1.5rem); overflow-wrap: anywhere;
+    }
+    :is(#partners-directory, #content-directory) .public-review-dialog-close { color: inherit; min-width: 36px; }
+    :is(#partners-directory-grid, #content-directory-grid) {
+      min-height: 0; overflow: auto; padding: 18px clamp(14px, 3vw, 24px); overscroll-behavior: contain; scrollbar-gutter: stable;
+    }
+    #partners-directory-grid { align-content: start; grid-auto-rows: max-content; }
+    #partners-directory-grid .partner-card { align-content: center; min-height: 166px; gap: 3px; padding: 14px 10px; }
+    #partners-directory-grid .partner-logo { width: 110px; height: 72px; margin: 0 0 5px; }
+    #partners-directory-grid .partner-card h3 { margin: 0; }
+    #partners-directory-grid .partner-card a { margin-top: 5px; }
+    #partners-directory-grid .partner-card:is(:hover, :focus-within) { transform: none; }
+    @media (max-width: 1000px) { #partners-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 </head>
 <body>
@@ -2813,7 +2832,7 @@
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
     const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycby-g5wS4xmG9Y0zrGXkJIe-dKmI8QkXGGlHbNGp4Gav6QknLYVry0td3KvFm7VeGDGXGQ/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzsSzsE8Up6THc3oH22npXG5SAnjkJwdh-3wav6MiIrkGVKdhr_9slckL0T3mKeU-__/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxg59Bu0fBMgYPgDIWajCiBqUkbqzZGwfZmxM2lKNZiyvwiQ3_t27TrHgLGc_4SMkpz/exec";
     const GOOGLE_DRIVE_TEAM_API_URL = GOOGLE_DRIVE_UPLOAD_URL;
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
@@ -3196,7 +3215,31 @@
     const partnersGrid = document.getElementById("partners-grid");
     const partnersDirectory = document.getElementById("partners-directory");
     const partnersDirectoryButton = document.getElementById("open-partners-directory");
-    partnersDirectoryButton.addEventListener("click", () => partnersDirectory.showModal());
+    const partnersDirectoryGrid = document.getElementById("partners-directory-grid");
+
+    function sizePartnersDirectory() {
+      if (!partnersDirectory.open) return;
+      const lastVisibleCard = partnersDirectoryGrid.children[9];
+      if (!lastVisibleCard) {
+        partnersDirectoryGrid.style.maxHeight = "";
+        return;
+      }
+      const viewport = partnersDirectoryGrid.getBoundingClientRect();
+      const bottomPadding = parseFloat(getComputedStyle(partnersDirectoryGrid).paddingBottom);
+      const visibleHeight = lastVisibleCard.getBoundingClientRect().bottom - viewport.top +
+        partnersDirectoryGrid.scrollTop + bottomPadding;
+      partnersDirectoryGrid.style.maxHeight = Math.floor(visibleHeight) + "px";
+    }
+
+    const partnersDirectoryResize = new ResizeObserver(sizePartnersDirectory);
+    partnersDirectoryButton.addEventListener("click", () => {
+      partnersDirectory.showModal();
+      partnersDirectoryGrid.scrollTop = 0;
+      sizePartnersDirectory();
+      partnersDirectoryResize.observe(partnersDirectoryGrid);
+      Array.from(partnersDirectoryGrid.children).slice(0, 10).forEach((card) => partnersDirectoryResize.observe(card));
+    });
+    partnersDirectory.addEventListener("close", () => partnersDirectoryResize.disconnect());
 
     function renderPartnerCard(partner) {
       const site = safePartnerUrl(partner.website_url);
@@ -3236,7 +3279,7 @@
         if (!partners.length) return;
         const cards = partners.map(renderPartnerCard);
         partnersGrid.innerHTML = cards.slice(0, 10).join("");
-        document.getElementById("partners-directory-grid").innerHTML = cards.join("");
+        partnersDirectoryGrid.innerHTML = cards.join("");
         partnersDirectoryButton.textContent = "View all partners (" + partners.length + ")";
         partnersDirectoryButton.hidden = false;
       } catch {
