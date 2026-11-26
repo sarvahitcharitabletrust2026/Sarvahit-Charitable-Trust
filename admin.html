@@ -238,15 +238,12 @@
       background: #eef4ef;
       color: var(--green-dark);
     }
-    .donation-report-table thead th:nth-child(4),
-    .donation-report-table thead th:nth-child(9),
-    .donation-report-table thead th:nth-child(13),
-    .donation-report-table thead th:nth-child(14),
-    .donation-report-table thead th:nth-child(15) { text-align: center; }
-    .donation-report-table th:nth-child(13) { width: 138px; min-width: 138px; max-width: 138px; padding: 5px 4px; white-space: normal; }
-    .donation-report-table td:nth-child(13) { width: 138px; min-width: 138px; max-width: 138px; text-align: center; }
     .donation-table th:nth-child(12) { width: 160px; min-width: 160px; white-space: nowrap; }
     .donation-table td:nth-child(12) { width: 220px; min-width: 180px; max-width: 220px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; vertical-align: middle; }
+    .donation-report-table { min-width: 0; table-layout: auto; }
+    .donation-report-table :is(th, td):nth-child(12) {
+      width: auto; min-width: 0; max-width: none; white-space: nowrap;
+    }
     .certificate-details-button { border: 0; padding: 4px; background: transparent; color: var(--green-dark, #104d40); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
     td.certificate-delivery-failed { background: #fff1f0; box-shadow: inset 0 0 0 2px #c53d35; }
     .certificate-delivery-failed .certificate-details-button { color: #a42620; }
@@ -436,14 +433,14 @@
       background: #f4f8f5;
     }
     #dashboard > .panel > :is(h2, .expense-report-heading):first-child,
-    #dashboard > .grid-2 > .panel > h2:first-child {
+    #dashboard > .grid-2 > .panel > :is(h2, .expense-report-heading):first-child {
       margin: 0 calc(-1 * var(--section-padding)) 18px;
       padding: 22px var(--section-padding);
       border-radius: 7px 7px 0 0;
       background: var(--green-dark);
       color: #fff;
     }
-    #dashboard > .panel > .expense-report-heading:first-child h2 { color: inherit; }
+    #dashboard .expense-report-heading:first-child h2 { color: inherit; }
     #dashboard > .panel > .expense-report-heading:first-child .btn-primary {
       border-color: var(--line);
       background: #fff;
@@ -479,6 +476,25 @@
     .doc-wait-card { display:grid; justify-items:center; gap:12px; padding:22px; border-radius:12px; background:white; color:var(--green-dark); font-weight:700; }
     .doc-wait-spinner { width:34px; height:34px; border:4px solid #dcece3; border-top-color:var(--green); border-radius:50%; animation:button-spin .8s linear infinite; }
     #financial-doc-success:not(:empty) { position:fixed; z-index:1000; top:20px; right:20px; padding:12px 18px; max-width:calc(100% - 40px); border-radius:10px; background:#e5f5eb; color:var(--green-dark); box-shadow:var(--shadow); font-weight:700; }
+
+    @media (max-width: 768px) {
+      .topbar-inner, .wrap, .dashboard, .dashboard > *, .table-wrap { min-width: 0; max-width: 100%; }
+      .admin-brand { min-width: 0; white-space: normal; }
+      .admin-brand span, .portal-identity { min-width: 0; overflow-wrap: anywhere; }
+      .topbar-actions { flex-wrap: wrap; }
+      .dashboard.is-visible { grid-template-columns: minmax(0, 1fr); }
+      .table-wrap { overflow-x: auto; }
+    }
+    .media-destinations { margin-top: 12px; }
+    .media-studio-frame { display: block; width: 100%; min-height: 460px; border: 1px solid var(--line); border-radius: 8px; margin-top: 16px; background: #f0f6f2; }
+    #dashboard > .grid-2 { align-items: start; }
+    .dashboard-panel-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .dashboard-section-toggle { display: inline-flex; align-items: center; gap: 8px; }
+    .dashboard-panel-count { background: #e4efe8; color: var(--green-dark); font-weight: 800; border-radius: 999px; min-width: 1.6em; padding: 1px 6px; text-align: center; }
+    .dashboard-panel-content[hidden], .dashboard-section-toggle[hidden] { display: none !important; }
+    #dashboard .report-pending-only tr[data-report-published],
+    #dashboard .panel:not(.report-pending-only) tr[data-report-pending-empty] { display: none; }
+    #dashboard .expense-report-heading .dashboard-section-toggle { white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -533,7 +549,7 @@
 
         <div class="grid-2 admin-only">
           <section class="panel">
-            <h2>Impact Data</h2>
+            <h2 id="impact-panel-title">Impact Data</h2>
             <form id="stats-form">
               <div class="form-grid">
                 <label>
@@ -569,7 +585,7 @@
           </section>
 
           <section class="panel">
-            <h2>Notice Format</h2>
+            <h2 id="notice-panel-title">Notice Format</h2>
             <form id="notice-form">
               <div class="form-grid">
                 <label>
@@ -608,7 +624,7 @@
           <div class="finance-dialog-body"><form id="finance-entry-form"><input type="hidden" name="id" /><div class="form-grid">
             <label>Date<input name="entry_date" type="date" required /></label>
             <label>Amount (INR)<input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount required /></label>
-            <label>Category<input name="category" required placeholder="e.g. Food distribution" /></label>
+            <label>Donation Purpose<select name="category" required><option value="">Select purpose</option><option>Food Distribution</option><option>Education Support</option><option>Medical Help</option><option>Community Welfare</option><option>Tree Plantations</option><option>General Donation</option></select></label>
             <label>Payment type<select name="payment_method"><option value="cash">Cash</option><option value="upi">UPI / Google Pay / PhonePe</option><option value="bank_transfer">Bank transfer / RTGS / NEFT</option><option value="cheque">Cheque</option><option value="other">Other</option></select></label>
             <label class="full" id="finance-reference-row">Bank reference / transaction ID<input name="bank_reference" maxlength="160" placeholder="Cheque number, UPI transaction ID, or bank reference" /></label>
             <label class="full">Receipt / bill file (private, up to 8 MB)<input name="attachment" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" /></label>
@@ -722,10 +738,10 @@
             <div class="report-stat">Year Total<strong id="expense-year-total">INR 0.00</strong></div>
             <div class="report-stat">Expense Records<strong id="expense-record-count">0</strong></div>
           </div>
-          <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Time</th><th>Category</th><th>Payee</th><th>Payment type</th><th>Amount</th><th>Submitted by</th><th>Status</th><th>Receipt / Bill</th><th class="admin-only">Actions</th></tr></thead><tbody id="expense-list"><tr><td colspan="10">Login to load expense data.</td></tr></tbody></table></div>
+          <div class="table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Time</th><th>Donation Purpose</th><th>Payee</th><th>Payment type</th><th>Amount</th><th>Submitted by</th><th>Status</th><th>Receipt / Bill</th><th class="admin-only">Actions</th></tr></thead><tbody id="expense-list"><tr><td colspan="10">Login to load expense data.</td></tr></tbody></table></div>
         </section>
         <section class="panel">
-          <div class="expense-report-heading"><h2>Donation Report</h2><button class="btn btn-primary" type="button" id="open-cash-donation">Add Cash Donation</button></div>
+          <div class="expense-report-heading"><h2 id="donation-panel-title">Donation Report</h2><button class="btn btn-primary" type="button" id="open-cash-donation">Add Donation</button></div>
           <p>Online donations are included in public totals only after you verify and publish them. Pending submissions remain visible here for review.</p>
           <div class="report-filters">
             <label>
@@ -754,8 +770,8 @@
           </div>
           <div class="table-wrap">
             <table class="donation-table donation-report-table">
-              <thead><tr><th>Date</th><th>Time</th><th>Donor</th><th>PAN Card Number</th><th>Mobile</th><th>Email</th><th>City</th><th>Purpose</th><th>Payment type</th><th>Amount</th><th>Submitted by</th><th>Status</th><th>Certificate</th><th>Appreciation Certificate</th><th>80G Certificate</th><th>Screenshot</th><th class="admin-only">Actions</th></tr></thead>
-              <tbody id="donation-list"><tr><td colspan="17">Login to load donation data.</td></tr></tbody>
+              <thead><tr><th>Date</th><th>Time</th><th>Donor</th><th>Donor Details</th><th>Donation Purpose</th><th>Payment type</th><th>Amount</th><th>Submitted by</th><th>Status</th><th>Certificate</th><th>Appreciation Certificate</th><th>80G Certificate</th><th>Screenshot</th><th class="admin-only">Actions</th></tr></thead>
+              <tbody id="donation-list"><tr><td colspan="14">Login to load donation data.</td></tr></tbody>
             </table>
           </div>
         </section>
@@ -772,6 +788,454 @@
           <div class="message" id="team-admin-message" role="status"></div>
         </section>
 
+        <section class="panel admin-only" id="media-social-panel" aria-labelledby="media-social-title">
+          <div class="expense-report-heading">
+            <h2 id="media-social-title">Media &amp; Social Management</h2>
+            <button class="btn btn-primary" type="button" id="media-studio-toggle" aria-expanded="false" aria-controls="media-studio-container">Open Media Studio</button>
+          </div>
+          <p>Manage program media, prepare watermarked content, and open your publishing destinations.</p>
+          <div class="team-admin-actions media-destinations">
+            <a class="btn btn-light" href="https://drive.google.com/drive/folders/1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv" target="_blank" rel="noopener noreferrer">Program Photos Folder</a>
+            <a class="btn btn-light" href="https://drive.google.com/file/d/1PyLduahRVahq0b8lWzIVSxvvGrJDSoVo/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Trust Watermark</a>
+            <a class="btn btn-light" href="https://studio.youtube.com/channel/UCArUc8vHzOs3uQyhDwbl5eA/videos/upload?filter=%5B%5D&amp;sort=%7B%22columnType%22%3A%22date%22%2C%22sortOrder%22%3A%22DESCENDING%22%7D" target="_blank" rel="noopener noreferrer">YouTube Studio Upload</a>
+          </div>
+          <div id="media-studio-container" hidden></div>
+          <template id="media-studio-template">
+            <iframe class="media-studio-frame" title="Sarvahit Media Studio" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-downloads allow-popups allow-popups-to-escape-sandbox" allow="clipboard-write" srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;title&gt;Sarvahit Media Studio V02&lt;/title&gt;&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&amp;family=Poppins:wght@500;600;700;800&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;&lt;style&gt;
+*{box-sizing:border-box}body{margin:0;background:#f3f6f4;color:#20382f;font:15px system-ui,sans-serif}header{background:#173f35;color:white;padding:24px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px}header small{color:#e8d9ae;letter-spacing:2px}h1,h2,h3{margin:0 0 12px}h1{font-size:26px}h2{font-size:22px}p{line-height:1.6}main{max-width:1400px;margin:auto;display:grid;grid-template-columns:240px 1fr;gap:24px;padding:24px}nav,section,.card{background:white;border:1px solid #dce5df;border-radius:14px;padding:22px;box-shadow:0 3px 12px #173f3508}nav{align-self:start;position:sticky;top:16px}nav button{display:block;width:100%;text-align:left;background:transparent;color:#345448;margin:4px 0}nav button.active,nav button:hover{background:#e0eee5;color:#173f35}button{border:0;border-radius:8px;padding:11px 16px;background:#173f35;color:white;font:inherit;font-weight:600;cursor:pointer}button.secondary{background:#e8efeb;color:#173f35}button.danger{background:#a52d2d}button:hover{filter:brightness(1.08)}section{display:none}section.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.stat strong{display:block;font-size:30px;color:#176547}.muted,small{color:#64786d}.notice{background:#fff6df;border:1px solid #e7d5a5;padding:12px;border-radius:8px;margin-bottom:18px}label{display:block;font-weight:600;margin:12px 0 6px}input,select,textarea{width:100%;padding:11px;border:1px solid #c9d7ce;border-radius:8px;background:white;font:inherit;color:inherit}input[type=checkbox]{width:auto}input[type=range]{padding:0}textarea{min-height:90px}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.drop{border:2px dashed #a9c3b4;border-radius:12px;padding:20px;background:#f6faf7}.media{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:20px}.media article{border:1px solid #dce5df;border-radius:12px;overflow:hidden;background:white}.media article&gt;div{padding:14px}.media img,.media video{width:100%;aspect-ratio:4/3;object-fit:cover;background:#e4eee7}.preview{position:relative;background:linear-gradient(140deg,#a8c8b3,#345c49);min-height:240px;border-radius:12px;overflow:hidden;display:grid;place-items:center;color:white}.preview img{width:100%;display:block}.preview .mark{position:absolute;right:2%;bottom:2%;width:18%;opacity:.4;text-align:center;font-weight:bold;font-size:12px}.mark img{width:100%}.pill{background:#e3efe7;border-radius:20px;padding:5px 10px;font-size:12px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.row&gt;*{flex:1}progress{width:100%;accent-color:#176547}footer{text-align:center;padding:20px;color:#64786d} @media(max-width:800px){main{display:block;padding:12px}nav{position:static;display:flex;overflow:auto;gap:5px;margin-bottom:12px;padding:8px}nav button{white-space:nowrap;width:auto}.stats{grid-template-columns:repeat(2,1fr)}header{padding:18px}section{padding:16px}}@media(max-width:480px){.grid:not(.stats){grid-template-columns:1fr}h1{font-size:20px}}
+
+body{background:#f0f6f2;color:#172026;font:16px/1.45 &quot;Hind&quot;,system-ui,sans-serif}
+main{max-width:none;margin:0;padding:12px;grid-template-columns:210px minmax(0,1fr);gap:14px}
+h2,h3{font-family:&quot;Poppins&quot;,system-ui,sans-serif;color:#0c4b3b}
+h2{font-size:21px}h3{font-size:16px}
+nav,section,.card{border-color:#e6e0d6;border-radius:8px;box-shadow:none}
+nav,section{padding:15px}nav button{color:#0c4b3b}
+button{background:#126a51;font-weight:700}button:hover{background:#0c4b3b}
+button.secondary{background:#eef4ef;color:#0c4b3b}
+a{color:#126a51;font-weight:700}input,select,textarea{border-color:#e6e0d6;min-width:0}
+:is(section,.card,.media article){overflow-wrap:anywhere}
+.media{grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))}
+@media(max-width:800px){nav{padding:8px}nav button{flex:none}}
+
+.studio-tab-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin:0 0 14px}
+.studio-tab-header h2{flex:1 1 12rem;margin:0;min-width:0}
+.studio-tab-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-inline-start:auto}
+.studio-tab-actions [role=status]:empty{display:none}
+.studio-tab-actions [role=status]{color:#52665b;font-size:.9rem}
+.studio-tab-actions button:disabled{opacity:.55;cursor:wait}
+
+[hidden]{display:none!important}
+.studio-scroll{max-height:22rem;overflow:auto;overscroll-behavior:contain;padding:12px;border:1px solid #cbdcd4;border-radius:10px;background:#edf5f0}
+.studio-list-title{margin:20px 0 8px}
+.studio-scroll .card{margin:0 0 8px!important;padding:12px}
+.studio-scroll p{margin:0 0 8px}
+.studio-folders{background:#edf5f0;border:1px solid #cbdcd4;border-radius:10px;padding:12px;margin-bottom:14px}
+.studio-folders summary{cursor:pointer;font:600 16px Poppins,system-ui;color:#0c4b3b}
+.studio-folders summary span{font:500 14px Hind,system-ui;margin-left:8px}
+.studio-folders ul{margin:.6rem 0 0;padding-left:26px}
+.studio-date-filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px}
+.studio-date-filters label{margin:0}
+.studio-reel-options{margin-top:8px}
+section{border-color:#ccddd3}
+section .card,.media article{background:#f3f8f5;border-color:#c9dbd2}
+section input,section select,section textarea{border-color:#b9cec3}
+input[type=checkbox]{appearance:none;width:1.1rem;height:1.1rem;padding:0;vertical-align:middle;border:1.5px solid #126a51;border-radius:50%;background:white;cursor:pointer}
+input[type=checkbox]:checked{background:#126a51;box-shadow:inset 0 0 0 3px #fff}
+input[type=checkbox]:focus-visible{outline:2px solid #0c4b3b;outline-offset:2px}
+button:disabled{opacity:.55;cursor:not-allowed}
+#mediaList article{display:flex;flex-direction:column}
+#mediaList article&gt;div{display:flex;flex-direction:column;flex:1}
+#mediaList article .actions{margin-top:auto;display:flex;flex-direction:column;align-items:flex-start}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;main&gt;&lt;nav id=&quot;nav&quot;&gt;&lt;/nav&gt;&lt;div&gt;
+&lt;section id=&quot;dashboard&quot; class=&quot;active&quot;&gt;&lt;h2&gt;Media Dashboard&lt;/h2&gt;&lt;p class=&quot;muted&quot;&gt;Upload once, organize by program, prepare for publication.&lt;/p&gt;&lt;div class=&quot;grid stats&quot; id=&quot;stats&quot;&gt;&lt;/div&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;go('programs')&quot;&gt;+ Create program&lt;/button&gt;&lt;button onclick=&quot;go('photos')&quot;&gt;Upload photos&lt;/button&gt;&lt;button onclick=&quot;go('videos')&quot;&gt;Prepare YouTube video&lt;/button&gt;&lt;/div&gt;&lt;h3 style=&quot;margin-top:30px&quot;&gt;Recent programs&lt;/h3&gt;&lt;div id=&quot;recent&quot;&gt;&lt;/div&gt;&lt;p id=&quot;studio-videos-status&quot; class=&quot;muted&quot; role=&quot;status&quot; hidden&gt;&lt;/p&gt;&lt;/section&gt;
+&lt;section id=&quot;programs&quot;&gt;&lt;h2&gt;Create &amp; Manage Programs&lt;/h2&gt;&lt;form id=&quot;programForm&quot;&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;&lt;label&gt;Program name *&lt;/label&gt;&lt;input name=&quot;name&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Category *&lt;/label&gt;&lt;select name=&quot;category&quot;&gt;&lt;option&gt;Blind Children Support&lt;/option&gt;&lt;option&gt;Education&lt;/option&gt;&lt;option&gt;Food Donation&lt;/option&gt;&lt;option&gt;Clothing&lt;/option&gt;&lt;option&gt;Medical Assistance&lt;/option&gt;&lt;option&gt;Ration Distribution&lt;/option&gt;&lt;option&gt;Environment&lt;/option&gt;&lt;option&gt;Other&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Program date *&lt;/label&gt;&lt;input type=&quot;date&quot; name=&quot;date&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Location *&lt;/label&gt;&lt;input name=&quot;location&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-country&quot;&gt;Country&lt;/label&gt;&lt;select id=&quot;studio-country&quot; name=&quot;country&quot; autocomplete=&quot;country-name&quot;&gt;&lt;option selected&gt;India&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-state&quot;&gt;State&lt;/label&gt;&lt;select id=&quot;studio-state&quot; name=&quot;state&quot; autocomplete=&quot;address-level1&quot;&gt;&lt;option value=&quot;&quot;&gt;Select state&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-city&quot;&gt;City&lt;/label&gt;&lt;select id=&quot;studio-city&quot; name=&quot;city&quot; autocomplete=&quot;address-level2&quot;&gt;&lt;option value=&quot;&quot;&gt;Select city&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;p data-location-status role=&quot;status&quot; hidden&gt;&lt;/p&gt;&lt;div&gt;&lt;label&gt;PIN code&lt;/label&gt;&lt;input name=&quot;pin&quot; inputmode=&quot;numeric&quot; pattern=&quot;[0-9]{6}&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Beneficiaries&lt;/label&gt;&lt;input name=&quot;beneficiaries&quot; type=&quot;number&quot; min=&quot;0&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Volunteers&lt;/label&gt;&lt;input name=&quot;volunteers&quot; type=&quot;number&quot; min=&quot;0&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Working partner&lt;/label&gt;&lt;input name=&quot;partner&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Cover photo (select after saving in Media Library)&lt;/label&gt;&lt;small&gt;Use the first uploaded photo as cover.&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;&lt;label&gt;Description *&lt;/label&gt;&lt;textarea name=&quot;description&quot; required&gt;&lt;/textarea&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;featured&quot;&gt; Feature on homepage&lt;/label&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;consent&quot; required&gt; Appropriate media publication consent obtained&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button&gt;Save program locally&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;&lt;h3 class=&quot;studio-list-title&quot;&gt;Saved Programs&lt;/h3&gt;&lt;div id=&quot;programList&quot; class=&quot;studio-scroll&quot; tabindex=&quot;0&quot; aria-label=&quot;Saved programs&quot;&gt;&lt;/div&gt;&lt;/section&gt;
+&lt;section id=&quot;photos&quot;&gt;&lt;h2&gt;Upload Program Photos&lt;/h2&gt;&lt;details class=&quot;studio-folders&quot;&gt;&lt;summary&gt;Google Drive Program Folders &lt;span id=&quot;studio-folders-status&quot; role=&quot;status&quot;&gt;&lt;/span&gt;&lt;/summary&gt;&lt;ul id=&quot;studio-drive-folders&quot; class=&quot;studio-scroll&quot;&gt;&lt;/ul&gt;&lt;/details&gt;&lt;label&gt;Program *&lt;/label&gt;&lt;select class=&quot;programSelect&quot; id=&quot;photoProgram&quot;&gt;&lt;/select&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;photoWatermark&quot; checked&gt; Apply Trust watermark&lt;/label&gt;&lt;div class=&quot;drop&quot;&gt;&lt;label&gt;Choose multiple photos&lt;/label&gt;&lt;input id=&quot;photoFiles&quot; type=&quot;file&quot; accept=&quot;image/jpeg,image/png,image/webp&quot; multiple&gt;&lt;small&gt;Photos upload to a Drive folder named after the selected program.&lt;/small&gt;&lt;/div&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;photoConsent&quot;&gt; Confirm permission to process these photos&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button id=&quot;uploadProgramPhotos&quot; type=&quot;button&quot; onclick=&quot;processPhotos()&quot;&gt;Process &amp; Upload to Google Drive&lt;/button&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;secondary&quot; id=&quot;retryPhotoUpload&quot; onclick=&quot;retryDrivePhotos()&quot;&gt;Retry pending uploads&lt;/button&gt;&lt;progress id=&quot;photoProgress&quot; value=&quot;0&quot; max=&quot;100&quot;&gt;&lt;/progress&gt;&lt;p id=&quot;photoStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/section&gt;
+&lt;section id=&quot;videos&quot;&gt;&lt;h2&gt;YouTube Video Preparation&lt;/h2&gt;&lt;p&gt;&lt;a  href=&quot;https://studio.youtube.com/channel/UCArUc8vHzOs3uQyhDwbl5eA/videos/upload?filter=%5B%5D&amp;amp;sort=%7B%22columnType%22%3A%22date%22%2C%22sortOrder%22%3A%22DESCENDING%22%7D&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Open YouTube Studio upload&lt;/a&gt;&lt;/p&gt;&lt;p class=&quot;muted&quot;&gt;Save the title and description here, then upload the video file with the YouTube Studio link above.&lt;/p&gt;&lt;form id=&quot;videoForm&quot;&gt;&lt;label&gt;Program *&lt;/label&gt;&lt;select class=&quot;programSelect&quot; name=&quot;program&quot; required&gt;&lt;/select&gt;&lt;label&gt;Video title *&lt;/label&gt;&lt;input name=&quot;title&quot; required maxlength=&quot;100&quot;&gt;&lt;label&gt;Description&lt;/label&gt;&lt;textarea name=&quot;description&quot;&gt;&lt;/textarea&gt;&lt;label&gt;Tags / hashtags&lt;/label&gt;&lt;input name=&quot;tags&quot; value=&quot;#SarvahitCharitableTrust #SocialWork&quot;&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;&lt;label&gt;Playlist&lt;/label&gt;&lt;input name=&quot;playlist&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Category&lt;/label&gt;&lt;select name=&quot;category&quot;&gt;&lt;option&gt;Nonprofits &amp; Activism&lt;/option&gt;&lt;option&gt;Education&lt;/option&gt;&lt;option&gt;People &amp; Blogs&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Format&lt;/label&gt;&lt;select name=&quot;format&quot;&gt;&lt;option&gt;Normal video&lt;/option&gt;&lt;option&gt;Shorts&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Visibility&lt;/label&gt;&lt;select name=&quot;visibility&quot;&gt;&lt;option&gt;Private&lt;/option&gt;&lt;option&gt;Unlisted&lt;/option&gt;&lt;option&gt;Public&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;&lt;label&gt;Audience *&lt;/label&gt;&lt;select name=&quot;audience&quot; required&gt;&lt;option value=&quot;&quot;&gt;Select audience&lt;/option&gt;&lt;option&gt;Made for kids&lt;/option&gt;&lt;option&gt;Not made for kids&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Video file (local preview only)&lt;/label&gt;&lt;input type=&quot;file&quot; id=&quot;videoFile&quot; accept=&quot;video/*&quot;&gt;&lt;video id=&quot;videoPreview&quot; controls style=&quot;width:100%;max-height:300px;display:none&quot;&gt;&lt;/video&gt;&lt;label&gt;Custom thumbnail&lt;/label&gt;&lt;input type=&quot;file&quot; accept=&quot;image/*&quot; id=&quot;thumbFile&quot;&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; required&gt; Publication consent confirmed&lt;/label&gt;&lt;p&gt;Requested video processing: bottom-right logo, 40% opacity, preserve original. Video rendering is not implemented in this prototype.&lt;/p&gt;&lt;button&gt;Save Draft Details&lt;/button&gt;&lt;p id=&quot;videoDraftStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/form&gt;&lt;/section&gt;
+&lt;section id=&quot;library&quot;&gt;&lt;h2&gt;Media Library&lt;/h2&gt;&lt;div class=&quot;grid&quot;&gt;&lt;input id=&quot;search&quot; placeholder=&quot;Search media&quot; oninput=&quot;render()&quot;&gt;&lt;select id=&quot;filter&quot; onchange=&quot;render()&quot;&gt;&lt;option value=&quot;all&quot;&gt;All media&lt;/option&gt;&lt;option value=&quot;photo&quot;&gt;Photos&lt;/option&gt;&lt;option value=&quot;video&quot;&gt;Video drafts&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;media&quot; id=&quot;mediaList&quot;&gt;&lt;/div&gt;&lt;/section&gt;
+&lt;section id=&quot;watermark&quot;&gt;&lt;h2&gt;Watermark Settings&lt;/h2&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;&lt;p&gt;&lt;a  href=&quot;https://drive.google.com/file/d/1PyLduahRVahq0b8lWzIVSxvvGrJDSoVo/view?usp=drive_link&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Open Trust watermark in Drive&lt;/a&gt;. &lt;span id=&quot;studio-logo-status&quot; role=&quot;status&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;label for=&quot;logoFile&quot;&gt;Replace logo (optional)&lt;/label&gt;&lt;input type=&quot;file&quot; id=&quot;logoFile&quot; accept=&quot;image/png,image/webp,image/jpeg&quot;&gt;&lt;label&gt;Opacity: &lt;span id=&quot;opacityText&quot;&gt;40&lt;/span&gt;%&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;opacity&quot; min=&quot;10&quot; max=&quot;100&quot; value=&quot;40&quot; oninput=&quot;updateMark()&quot;&gt;&lt;label&gt;Logo width: &lt;span id=&quot;sizeText&quot;&gt;18&lt;/span&gt;%&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;logoSize&quot; min=&quot;8&quot; max=&quot;30&quot; value=&quot;18&quot; oninput=&quot;updateMark()&quot;&gt;&lt;label&gt;Position&lt;/label&gt;&lt;select id=&quot;position&quot; onchange=&quot;updateMark()&quot;&gt;&lt;option value=&quot;br&quot;&gt;Bottom right&lt;/option&gt;&lt;option value=&quot;bl&quot;&gt;Bottom left&lt;/option&gt;&lt;option value=&quot;tr&quot;&gt;Top right&lt;/option&gt;&lt;option value=&quot;tl&quot;&gt;Top left&lt;/option&gt;&lt;/select&gt;&lt;button class=&quot;secondary&quot; onclick=&quot;resetMark()&quot;&gt;Restore defaults&lt;/button&gt;&lt;label&gt;Preview photo&lt;/label&gt;&lt;input type=&quot;file&quot; id=&quot;previewFile&quot; accept=&quot;image/*&quot;&gt;&lt;/div&gt;&lt;div class=&quot;preview&quot; id=&quot;preview&quot;&gt;&lt;span id=&quot;previewText&quot;&gt;Sample preview&lt;/span&gt;&lt;img id=&quot;previewImg&quot; hidden&gt;&lt;div class=&quot;mark&quot; id=&quot;mark&quot;&gt;SARVAHIT&lt;br&gt;CHARITABLE TRUST&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
+&lt;section id=&quot;social&quot;&gt;&lt;h2&gt;Social Content Generator&lt;/h2&gt;&lt;label&gt;Program&lt;/label&gt;&lt;select class=&quot;programSelect&quot; id=&quot;socialProgram&quot;&gt;&lt;/select&gt;&lt;label&gt;Language&lt;/label&gt;&lt;select id=&quot;language&quot;&gt;&lt;option&gt;English&lt;/option&gt;&lt;option&gt;Hindi&lt;/option&gt;&lt;option&gt;Marathi&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Format&lt;/label&gt;&lt;select id=&quot;format&quot;&gt;&lt;option&gt;Instagram / Facebook square — 1080 × 1080&lt;/option&gt;&lt;option&gt;Reels / Shorts — 1080 × 1920&lt;/option&gt;&lt;option&gt;YouTube thumbnail — 1280 × 720&lt;/option&gt;&lt;/select&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;caption()&quot;&gt;Generate caption&lt;/button&gt;&lt;button class=&quot;secondary&quot; onclick=&quot;copyCaption()&quot;&gt;Copy caption&lt;/button&gt;&lt;/div&gt;&lt;label&gt;Caption / description&lt;/label&gt;&lt;textarea id=&quot;caption&quot; style=&quot;min-height:160px&quot;&gt;&lt;/textarea&gt;&lt;p class=&quot;muted&quot;&gt;Poster, collage and reel rendering are planned integrations; caption generation works locally.&lt;/p&gt;&lt;/section&gt;
+&lt;section id=&quot;gallery&quot;&gt;&lt;h2&gt;Seva Ki Tasveerein&lt;/h2&gt;&lt;p&gt;Our journey of kindness · Public gallery preview&lt;/p&gt;&lt;div class=&quot;media&quot; id=&quot;galleryList&quot;&gt;&lt;/div&gt;&lt;/section&gt;
+&lt;section id=&quot;accounts&quot;&gt;&lt;h2&gt;Connected Accounts &amp; Analytics&lt;/h2&gt;&lt;div class=&quot;grid&quot; id=&quot;accountList&quot;&gt;&lt;/div&gt;&lt;h3 style=&quot;margin-top:24px&quot;&gt;Scheduled posts &amp; performance&lt;/h3&gt;&lt;p&gt;Live scheduling, views, likes, subscribers and engagement require platform API connections. No live metrics are available.&lt;/p&gt;&lt;/section&gt;
+&lt;section id=&quot;history&quot;&gt;&lt;h2&gt;Local Activity History&lt;/h2&gt;&lt;div id=&quot;history-filters&quot; class=&quot;studio-date-filters&quot;&gt;&lt;label&gt;DD&lt;select id=&quot;history-day&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;MM&lt;select id=&quot;history-month&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;YYYY&lt;select id=&quot;history-year&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;div id=&quot;historyList&quot; class=&quot;studio-scroll&quot; tabindex=&quot;0&quot; aria-label=&quot;Filtered activity logs&quot;&gt;&lt;/div&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;exportData()&quot;&gt;Export project metadata JSON&lt;/button&gt;&lt;/div&gt;&lt;/section&gt;&lt;section id=&quot;production&quot;&gt;&lt;h2&gt;Production Studio&lt;/h2&gt;&lt;p class=&quot;notice&quot;&gt;Local tools work without cloud accounts. Cloud operations require the authenticated backend described in Integration Setup.&lt;/p&gt;&lt;label&gt;Choose photos (first photo used for poster)&lt;/label&gt;&lt;input id=&quot;studioPhotos&quot; type=&quot;file&quot; accept=&quot;image/*&quot; multiple&gt;&lt;label&gt;Headline&lt;/label&gt;&lt;input id=&quot;studioTitle&quot; value=&quot;Together for a Better Tomorrow&quot;&gt;&lt;label&gt;Format&lt;/label&gt;&lt;select id=&quot;studioFormat&quot;&gt;&lt;option value=&quot;1080,1080&quot;&gt;Social poster&lt;/option&gt;&lt;option value=&quot;1280,720&quot;&gt;YouTube thumbnail&lt;/option&gt;&lt;option value=&quot;1080,1920&quot;&gt;Story / Reel&lt;/option&gt;&lt;option value=&quot;1080,1350&quot;&gt;Photo collage&lt;/option&gt;&lt;/select&gt;&lt;div id=&quot;reel-options&quot; class=&quot;grid studio-reel-options&quot; hidden&gt;&lt;label&gt;Video Transition Effect&lt;select id=&quot;reel-transition&quot;&gt;&lt;option value=&quot;cut&quot;&gt;None&lt;/option&gt;&lt;option value=&quot;fade&quot;&gt;Crossfade&lt;/option&gt;&lt;option value=&quot;slide&quot;&gt;Slide left&lt;/option&gt;&lt;option value=&quot;up&quot;&gt;Slide up&lt;/option&gt;&lt;option value=&quot;wipe&quot;&gt;Wipe right&lt;/option&gt;&lt;option value=&quot;dip&quot;&gt;Fade through black&lt;/option&gt;&lt;option value=&quot;iris&quot;&gt;Circle reveal&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;FX Effect&lt;select id=&quot;reel-fx&quot;&gt;&lt;option value=&quot;none&quot;&gt;None&lt;/option&gt;&lt;option value=&quot;zoom&quot;&gt;Slow zoom&lt;/option&gt;&lt;option value=&quot;mono&quot;&gt;Black and white&lt;/option&gt;&lt;option value=&quot;warm&quot;&gt;Warm tint&lt;/option&gt;&lt;option value=&quot;cool&quot;&gt;Cool tint&lt;/option&gt;&lt;option value=&quot;vintage&quot;&gt;Vintage&lt;/option&gt;&lt;option value=&quot;bold&quot;&gt;High contrast&lt;/option&gt;&lt;option value=&quot;vignette&quot;&gt;Vignette&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;makeArt()&quot;&gt;Generate artwork&lt;/button&gt;&lt;button onclick=&quot;downloadArt()&quot;&gt;Download PNG&lt;/button&gt;&lt;button id=&quot;make-reel&quot; onclick=&quot;makeReel()&quot; disabled&gt;Generate slideshow preview&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;card&quot; id=&quot;reel-preview-panel&quot; hidden&gt;&lt;h3&gt;Slideshow Preview&lt;/h3&gt;&lt;video id=&quot;reel-preview&quot; controls playsinline preload=&quot;auto&quot; style=&quot;display:block;width:min(100%,360px);max-height:70vh;background:#111;margin-bottom:12px&quot;&gt;&lt;/video&gt;&lt;button id=&quot;reel-download&quot; type=&quot;button&quot; disabled&gt;Download Slideshow&lt;/button&gt;&lt;/div&gt;&lt;canvas id=&quot;art&quot; style=&quot;width:100%;max-height:520px;object-fit:contain;margin-top:16px&quot;&gt;&lt;/canvas&gt;&lt;p id=&quot;studioStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;label&gt;Video for permanent watermark&lt;/label&gt;&lt;input id=&quot;markVideo&quot; type=&quot;file&quot; accept=&quot;video/*&quot;&gt;&lt;label&gt;&lt;input id=&quot;videoConsent&quot; type=&quot;checkbox&quot;&gt; Permission to process this video confirmed&lt;/label&gt;&lt;button onclick=&quot;watermarkVideo()&quot;&gt;Process &amp; download video&lt;/button&gt;&lt;p class=&quot;muted&quot;&gt;Browser video export uses WebM where supported; processing runs in real time. Production MP4 with reliable audio requires FFmpeg.&lt;/p&gt;&lt;/section&gt;&lt;section id=&quot;cloud&quot;&gt;&lt;h2&gt;Cloud Publishing &amp; Integration Setup&lt;/h2&gt;&lt;p class=&quot;notice&quot;&gt;This tab previews publishing requests. Upload program photos from Upload Photos, or open YouTube Studio from YouTube Videos.&lt;/p&gt;&lt;label&gt;Program&lt;/label&gt;&lt;select class=&quot;programSelect&quot; id=&quot;cloudProgram&quot;&gt;&lt;/select&gt;&lt;label&gt;Media file (processed version)&lt;/label&gt;&lt;input id=&quot;cloudFile&quot; type=&quot;file&quot;&gt;&lt;label&gt;Platform&lt;/label&gt;&lt;select id=&quot;cloudPlatform&quot;&gt;&lt;option&gt;Google Drive&lt;/option&gt;&lt;option&gt;YouTube&lt;/option&gt;&lt;option&gt;Instagram&lt;/option&gt;&lt;option&gt;Facebook&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Title&lt;/label&gt;&lt;input id=&quot;cloudTitle&quot;&gt;&lt;label&gt;Description&lt;/label&gt;&lt;textarea id=&quot;cloudDescription&quot;&gt;&lt;/textarea&gt;&lt;label&gt;Visibility&lt;/label&gt;&lt;select id=&quot;cloudVisibility&quot;&gt;&lt;option&gt;private&lt;/option&gt;&lt;option&gt;unlisted&lt;/option&gt;&lt;option&gt;public&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Schedule (local time)&lt;/label&gt;&lt;input id=&quot;cloudSchedule&quot; type=&quot;datetime-local&quot;&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;cloudConsent&quot;&gt; Consent and publication rights confirmed&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;cloudPlan('upload')&quot;&gt;Preview request (no upload)&lt;/button&gt;&lt;button onclick=&quot;cloudPlan('schedule')&quot;&gt;Prepare scheduled post&lt;/button&gt;&lt;/div&gt;&lt;label&gt;Remote file/video ID&lt;/label&gt;&lt;input id=&quot;remoteId&quot;&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button class=&quot;danger&quot; onclick=&quot;cloudPlan('delete')&quot;&gt;Prepare deletion request&lt;/button&gt;&lt;button onclick=&quot;cloudPlan('analytics')&quot;&gt;Prepare analytics request&lt;/button&gt;&lt;/div&gt;&lt;pre id=&quot;cloudOutput&quot; style=&quot;white-space:pre-wrap;overflow-wrap:anywhere&quot;&gt;&lt;/pre&gt;&lt;/section&gt;&lt;/div&gt;&lt;/main&gt;
+&lt;script&gt;
+const $=id=&gt;document.getElementById(id), tabs={dashboard:'Dashboard',programs:'Manage Programs',photos:'Upload Photos',videos:'YouTube Videos',library:'Media Library',social:'Social Content',gallery:'Public Gallery Preview',watermark:'Watermark Settings',accounts:'Accounts &amp; Analytics',history:'Activity History',production:'Production Studio',cloud:'Cloud Publishing &amp; Setup'};let state={programs:[],media:[],history:[]},logo='',db;let publishedVideoCount='—';window.setPublishedVideoCount=count=&gt;{publishedVideoCount=count;render()};const uid=()=&gt;crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random();function go(id){document.querySelectorAll('section').forEach(s=&gt;s.classList.toggle('active',s.id===id));document.querySelectorAll('nav button').forEach(b=&gt;b.classList.toggle('active',b.dataset.tab===id));render()}Object.entries(tabs).forEach(([id,n])=&gt;{let b=document.createElement('button');b.textContent=n;b.dataset.tab=id;b.onclick=()=&gt;go(id);$('nav').append(b)});function esc(s){return String(s??'').replace(/[&amp;&lt;&gt;&quot;']/g,c=&gt;({'&amp;':'&amp;amp;','&lt;':'&amp;lt;','&gt;':'&amp;gt;','&quot;':'&amp;quot;',&quot;'&quot;:'&amp;#39;'}[c]))}function log(s){state.history.unshift({text:s,date:new Date().toLocaleString(),at:new Date().toISOString()})}function save(){if(!db)return Promise.resolve();return new Promise((resolve,reject)=&gt;{let t=db.transaction('data','readwrite');t.objectStore('data').put(state,'state');t.oncomplete=resolve;t.onerror=()=&gt;reject(t.error);t.onabort=()=&gt;reject(t.error)})}function persist(){save().catch(e=&gt;alert('Local save failed: '+e.message));render()}function render(){document.querySelectorAll('.programSelect').forEach(s=&gt;{let v=s.value;s.innerHTML='&lt;option value=&quot;&quot;&gt;Select program&lt;/option&gt;'+state.programs.map(p=&gt;`&lt;option value=&quot;${esc(p.id)}&quot;&gt;${esc(p.name)}&lt;/option&gt;`).join('');s.value=v});$('stats').innerHTML=[['Programs',state.programs.length],['Photos',state.media.filter(m=&gt;m.type==='photo').length],['YouTube Videos',publishedVideoCount],['Video Drafts',state.media.filter(m=&gt;m.type==='video').length]].map(([n,v])=&gt;`&lt;div class=&quot;card stat&quot;&gt;&lt;small&gt;${n}&lt;/small&gt;&lt;strong&gt;${v}&lt;/strong&gt;&lt;/div&gt;`).join('');$('recent').innerHTML=state.programs.slice(-4).map(p=&gt;`&lt;p&gt;${esc(p.name)} · ${esc(p.date)}&lt;/p&gt;`).join('')||'&lt;p&gt;No programs yet.&lt;/p&gt;';$('programList').innerHTML=state.programs.map(p=&gt;`&lt;div class=&quot;card&quot; style=&quot;margin-top:12px&quot;&gt;&lt;strong&gt;${esc(p.name)}&lt;/strong&gt;&lt;p&gt;${esc(p.date)} · ${esc(p.location)}&lt;/p&gt;&lt;button class=&quot;danger&quot; onclick=&quot;removeProgram('${p.id}')&quot;&gt;Delete program&lt;/button&gt;&lt;/div&gt;`).join('');let q=$('search').value.toLowerCase(),f=$('filter').value;$('mediaList').innerHTML=state.media.filter(m=&gt;(f==='all'||m.type===f)&amp;&amp;m.title.toLowerCase().includes(q)).map(m=&gt;`&lt;article&gt;${m.type==='photo'?`&lt;img src=&quot;${m.data}&quot; alt=&quot;${esc(m.title)}&quot;&gt;`:''}&lt;div&gt;&lt;strong&gt;${esc(m.title)}&lt;/strong&gt;&lt;p class=&quot;muted&quot;&gt;${esc(m.type)} · ${m.hidden?'Hidden':'Local preview'}&lt;/p&gt;&lt;div class=&quot;actions&quot;&gt;${m.type==='photo'?`&lt;button class=&quot;secondary&quot; onclick=&quot;downloadPhoto('${m.id}')&quot;&gt;Download&lt;/button&gt;&lt;button class=&quot;secondary&quot; onclick=&quot;toggle('${m.id}')&quot;&gt;${m.hidden?'Show':'Hide'}&lt;/button&gt;`:''}&lt;button class=&quot;danger&quot; onclick=&quot;removeMedia('${m.id}')&quot;&gt;Delete local&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/article&gt;`).join('')||'&lt;p&gt;No media found.&lt;/p&gt;';$('galleryList').innerHTML=state.programs.map(p=&gt;{let a=state.media.filter(m=&gt;m.program===p.id&amp;&amp;m.type==='photo'&amp;&amp;!m.hidden);return `&lt;article&gt;${a.length?`&lt;img src=&quot;${a[0].data}&quot; alt=&quot;${esc(p.name)}&quot;&gt;`:''}&lt;div&gt;&lt;span class=&quot;pill&quot;&gt;${esc(p.category)}&lt;/span&gt;&lt;h3 style=&quot;margin-top:12px&quot;&gt;${esc(p.name)}&lt;/h3&gt;&lt;p&gt;${esc(p.description)}&lt;/p&gt;&lt;small&gt;${a.length} photos · ${esc(p.date)}&lt;/small&gt;&lt;/div&gt;&lt;/article&gt;`}).join('');renderStudioHistory()}function removeProgram(id){if(state.media.some(m=&gt;m.program===id))return alert('Delete associated media first.');if(confirm('Delete this local program?')){state.programs=state.programs.filter(p=&gt;p.id!==id);log('Program deleted');persist()}}function removeMedia(id){if(confirm('Delete this local record? This does not affect Google Drive or YouTube.')){state.media=state.media.filter(m=&gt;m.id!==id);log('Local media deleted');persist()}}function toggle(id){let m=state.media.find(m=&gt;m.id===id);m.hidden=!m.hidden;persist()}function downloadPhoto(id){let m=state.media.find(m=&gt;m.id===id);let a=document.createElement('a');a.href=m.data;a.download=m.title.replace(/\.[^.]+$/,'')+'-watermarked.jpg';a.click()}
+$('programForm').onsubmit=e=&gt;{e.preventDefault();let p=Object.fromEntries(new FormData(e.target));p.id=uid();state.programs.push(p);log('Created program: '+p.name);persist();e.target.reset()};const read=f=&gt;new Promise((r,j)=&gt;{let x=new FileReader();x.onload=()=&gt;r(x.result);x.onerror=j;x.readAsDataURL(f)}),load=s=&gt;new Promise((r,j)=&gt;{let i=new Image();i.onload=()=&gt;r(i);i.onerror=j;i.src=s});$('logoFile').onchange=async e=&gt;{if(e.target.files[0]){logo=await read(e.target.files[0]);$('mark').innerHTML='';let i=new Image();i.src=logo;$('mark').append(i)}};$('previewFile').onchange=async e=&gt;{if(e.target.files[0]){$('previewImg').src=await read(e.target.files[0]);$('previewImg').hidden=false;$('previewText').hidden=true}};function updateMark(){let o=$('opacity').value,z=$('logoSize').value,p=$('position').value,m=$('mark');$('opacityText').textContent=o;$('sizeText').textContent=z;m.style.opacity=o/100;m.style.width=z+'%';m.style.left=p.endsWith('l')?'2%':'auto';m.style.right=p.endsWith('r')?'2%':'auto';m.style.top=p.startsWith('t')?'2%':'auto';m.style.bottom=p.startsWith('b')?'2%':'auto'}function resetMark(){$('opacity').value=40;$('logoSize').value=18;$('position').value='br';updateMark()}let photoUploadBusy = false;
+function setPhotoUploadBusy(busy) {
+  photoUploadBusy = busy;
+  $('uploadProgramPhotos').disabled = busy;
+  $('retryPhotoUpload').disabled = busy;
+}
+async function uploadPendingPhotos(photos) {
+  let sent = 0, failed = 0, lastError = &quot;&quot;;
+  for (const photo of photos) {
+    const program = state.programs.find(item =&gt; item.id === photo.program);
+    try {
+      if (!program) throw Error(&quot;The saved program is missing.&quot;);
+      const result = await window.uploadProgramPhoto({
+        programName: program.name, photoId: photo.id, fileName: photo.title,
+        base64: photo.data.split(&quot;,&quot;)[1], watermarked: photo.watermarked !== false, consent: true
+      });
+      photo.drivePending = false;
+      photo.driveUrl = result.fileUrl;
+      sent++;
+    } catch (error) {
+      failed++;
+      lastError = error.message || &quot;Drive upload failed.&quot;;
+    }
+    $('photoProgress').value = (sent + failed) / photos.length * 100;
+    $('photoStatus').textContent = &quot;Uploaded &quot; + sent + &quot; of &quot; + photos.length + &quot; photos to Google Drive.&quot;;
+  }
+  await save();
+  $('photoStatus').textContent = sent + &quot; uploaded to Google Drive.&quot; +
+    (failed ? &quot; &quot; + failed + &quot; pending. &quot; + lastError + &quot; Use Retry pending uploads.&quot; : &quot;&quot;);
+  render();
+}
+async function retryDrivePhotos() {
+  if (photoUploadBusy) return;
+  const program = $('photoProgram').value;
+  const pending = state.media.filter(photo =&gt; photo.program === program &amp;&amp; photo.drivePending);
+  if (!pending.length) { $('photoStatus').textContent = &quot;No pending uploads for the selected program.&quot;; return; }
+  if (!$('photoConsent').checked) { $('photoStatus').textContent = &quot;Confirm permission before retrying.&quot;; return; }
+  setPhotoUploadBusy(true);
+  try { await uploadPendingPhotos(pending); }
+  catch (error) { $('photoStatus').textContent = error.message; }
+  finally { setPhotoUploadBusy(false); }
+}
+async function processPhotos() {
+  if (photoUploadBusy) return;
+  const program = $('photoProgram').value;
+  const files = [...$('photoFiles').files];
+  const applyMark = $('photoWatermark').checked;
+  if (!program || !files.length || (applyMark &amp;&amp; !logo) || !$('photoConsent').checked) {
+    $('photoStatus').textContent = &quot;Select a program and photos, confirm permission, and load a logo if the watermark is enabled.&quot;;
+    return;
+  }
+  setPhotoUploadBusy(true);
+  const added = [];
+  try {
+    $('photoProgress').value = 0;
+    $('photoStatus').textContent = applyMark ? 'Applying watermark...' : 'Preparing photos...';
+    const l = applyMark ? await load(logo) : null;
+    for (let i = 0; i &lt; files.length; i++) {
+      let f=files[i],im=await load(await read(f)),c=document.createElement('canvas'),scale=Math.min(1,2400/Math.max(im.width,im.height));c.width=Math.round(im.width*scale);c.height=Math.round(im.height*scale);let ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);if(l){let w=c.width*$('logoSize').value/100,h=w*l.height/l.width;if(h&gt;c.height*.8){h=c.height*.8;w=h*l.width/l.height}let pos=$('position').value;ctx.globalAlpha=$('opacity').value/100;ctx.drawImage(l,pos.endsWith('r')?c.width*.98-w:c.width*.02,pos.startsWith('b')?c.height*.98-h:c.height*.02,w,h);}
+      added.push({ id: uid(), program, type: 'photo', title: f.name, data: c.toDataURL('image/jpeg', .9), watermarked: applyMark, drivePending: true });
+    }
+    state.media.push(...added);
+    await save();
+    await uploadPendingPhotos(added);
+    $('photoFiles').value = &quot;&quot;;
+  } catch (error) {
+    $('photoStatus').textContent = &quot;Photo processing or local save failed: &quot; + error.message;
+  } finally {
+    setPhotoUploadBusy(false);
+  }
+}
+$('videoFile').onchange=e=&gt;{if(e.target.files[0]){let v=$('videoPreview');if(v.src.startsWith('blob:'))URL.revokeObjectURL(v.src);v.src=URL.createObjectURL(e.target.files[0]);v.style.display='block'}};$('videoForm').onsubmit=e=&gt;{e.preventDefault();let m=Object.fromEntries(new FormData(e.target));m.id=uid();m.type='video';m.filename=$('videoFile').files[0]?.name||'';m.thumbnailName=$('thumbFile').files[0]?.name||'';state.media.push(m);log('Saved video draft: '+m.title);persist();$('videoDraftStatus').textContent='Draft details saved in this browser. Use Open YouTube Studio upload to upload your video file.';};function caption(){let p=state.programs.find(p=&gt;p.id===$('socialProgram').value);if(!p)return alert('Select program');let t={English:`Together for a better tomorrow. Sarvahit Charitable Trust organized ${p.name} at ${p.location}. Thank you to everyone who supported this initiative.`,Hindi:`एक बेहतर कल की ओर। सर्वहित चैरिटेबल ट्रस्ट ने ${p.location} में ${p.name} कार्यक्रम आयोजित किया। सभी सहयोगियों का धन्यवाद।`,Marathi:`उज्ज्वल उद्यासाठी एकत्र. सर्वहित चॅरिटेबल ट्रस्टने ${p.location} येथे ${p.name} कार्यक्रम आयोजित केला. सर्व सहकाऱ्यांचे मनःपूर्वक आभार.`};$('caption').value=t[$('language').value]+'\n\n#SarvahitCharitableTrust #SocialWork #TogetherForGood'}async function copyCaption(){try{await navigator.clipboard.writeText($('caption').value)}catch{ $('caption').select();alert('Select and copy the caption manually.')}}function exportData(){let data={...state,media:state.media.map(({data,...m})=&gt;m)};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='sarvahit-media-metadata.json';a.click();setTimeout(()=&gt;URL.revokeObjectURL(a.href),1000)}$('accountList').innerHTML=['Google Drive','YouTube','Instagram','Facebook','WhatsApp'].map(n=&gt;`&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;${n}&lt;/h3&gt;&lt;small&gt;Not connected · Backend setup required&lt;/small&gt;&lt;/div&gt;`).join('');try{let r=indexedDB.open('sarvahit-media-studio',1);r.onupgradeneeded=()=&gt;r.result.createObjectStore('data');r.onsuccess=()=&gt;{db=r.result;let g=db.transaction('data').objectStore('data').get('state');g.onsuccess=()=&gt;{if(g.result)state=g.result;render()}};r.onerror=()=&gt;alert('Browser storage unavailable; changes are temporary.')}catch(e){alert('Browser storage unavailable; changes are temporary.')}go('dashboard');
+&lt;/script&gt;&lt;!-- Integration contract: authenticate admin server-side with Supabase JWT/RLS; private original media storage; Drive folder Year YYYY / program ID and name / Original Photos, Watermarked Photos, Original Videos, Watermarked Videos, Thumbnails; server-side OAuth tokens; resumable uploads; FFmpeg worker overlays transparent logo at 40% opacity bottom right; YouTube Data API upload/update/delete with explicit confirmation; persist provider IDs and audit trail; use authorized consent, retry and job status; never expose service keys. Keep originals and processed copies separate. --&gt; &lt;script&gt;
+function saveBlob(blob,name){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=&gt;URL.revokeObjectURL(a.href),2000)}
+function cover(ctx,im,x,y,w,h){let r=Math.max(w/im.width,h/im.height);ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.drawImage(im,x+(w-im.width*r)/2,y+(h-im.height*r)/2,im.width*r,im.height*r);ctx.restore()}
+async function stamp(ctx,w,h,loadedLogo){if(!logo)throw Error('Upload original Trust logo in Watermark Settings first');let im=loadedLogo||await load(logo),a=w*.18,b=a*im.height/im.width;if(b&gt;h*.8){b=h*.8;a=b*im.width/im.height}ctx.save();ctx.globalAlpha=.4;ctx.drawImage(im,w*.98-a,h*.98-b,a,b);ctx.restore()}
+async function makeArt(){try{let fs=[...$('studioPhotos').files];if(!fs.length)throw Error('Choose photos');let c=$('art'),[w,h]=$('studioFormat').value.split(',').map(Number);c.width=w;c.height=h;let x=c.getContext('2d');x.fillStyle='#173f35';x.fillRect(0,0,w,h);let ims=await Promise.all(fs.slice(0,9).map(async f=&gt;load(await read(f))));let n=$('studioFormat').selectedIndex===3?ims.length:1,cols=Math.ceil(Math.sqrt(n)),rows=Math.ceil(n/cols);for(let i=0;i&lt;n;i++)cover(x,ims[i],i%cols*w/cols,Math.floor(i/cols)*h*.76/rows,w/cols,h*.76/rows);x.fillStyle='white';x.font=`bold ${Math.round(w*.042)}px sans-serif`;x.fillText($('studioTitle').value,w*.05,h*.84,w*.9);x.fillStyle='#e8d9ae';x.font=`${Math.round(w*.026)}px sans-serif`;x.fillText('SARVAHIT CHARITABLE TRUST',w*.05,h*.92,w*.68);await stamp(x,w,h);$('studioStatus').textContent='Artwork ready.'}catch(e){$('studioStatus').textContent=e.message}}
+function downloadArt(){if(!$('art').width||!logo)return; $('art').toBlob(b=&gt;saveBlob(b,'sarvahit-artwork.png'))}
+async function recordCanvas(canvas, draw, duration, audio) {
+  if (!window.MediaRecorder || !canvas.captureStream) throw Error('Video recording is unavailable in this browser.');
+  await draw(0);
+  const stream = canvas.captureStream(25);
+  let recorder;
+  try {
+    if (audio) audio.getAudioTracks().forEach(track =&gt; stream.addTrack(track));
+    const mimeType = ['video/webm;codecs=vp8', 'video/webm;codecs=vp9', 'video/mp4'].find(type =&gt; MediaRecorder.isTypeSupported?.(type));
+    recorder = new MediaRecorder(stream, { videoBitsPerSecond: 3500000, ...(mimeType ? { mimeType } : {}) });
+    const chunks = [];
+    let failure;
+    recorder.ondataavailable = event =&gt; { if (event.data.size) chunks.push(event.data); };
+    recorder.onerror = event =&gt; { failure = event.error || Error('Video recording failed.'); };
+    const stopped = new Promise(resolve =&gt; { recorder.onstop = resolve; });
+    recorder.start(500);
+    const track = stream.getVideoTracks()[0];
+    const start = performance.now();
+    while (performance.now() - start &lt; duration &amp;&amp; !failure &amp;&amp; recorder.state !== 'inactive') {
+      await draw(Math.min(duration - 1, performance.now() - start) / 1000);
+      track.requestFrame?.();
+      await new Promise(resolve =&gt; setTimeout(resolve, 40));
+    }
+    if (recorder.state !== 'inactive') recorder.stop();
+    await stopped;
+    if (failure) throw failure;
+    const blob = new Blob(chunks, { type: recorder.mimeType || chunks[0]?.type || 'video/webm' });
+    if (blob.size &lt; 2048) throw Error('The browser recorded too little video data. Keep Production Studio visible and regenerate the preview.');
+    return blob;
+  } finally {
+    if (recorder &amp;&amp; recorder.state !== 'inactive') recorder.stop();
+    stream.getTracks().forEach(track =&gt; track.stop());
+  }
+}
+let reelBusy = false;
+let reelPreviewUrl = '';
+let reelPreviewBlob;
+function clearReelPreview() {
+  const preview = $('reel-preview');
+  if (reelPreviewUrl) URL.revokeObjectURL(reelPreviewUrl);
+  reelPreviewUrl = '';
+  reelPreviewBlob = undefined;
+  preview.pause();
+  preview.removeAttribute('src');
+  preview.load();
+  $('reel-preview-panel').hidden = true;
+  $('reel-download').disabled = true;
+}
+$('reel-preview').addEventListener('loadeddata', () =&gt; {
+  if (!reelPreviewBlob || !$('reel-preview').videoWidth) return;
+  $('reel-download').disabled = false;
+  $('studioStatus').textContent = 'Preview ready. Play it to check the effects before downloading.';
+});
+$('reel-preview').addEventListener('error', () =&gt; {
+  if (!reelPreviewBlob) return;
+  clearReelPreview();
+  $('studioStatus').textContent = 'The recorded video could not be played. Generate the preview again.';
+});
+$('reel-download').addEventListener('click', () =&gt; {
+  if (reelPreviewBlob &amp;&amp; !$('reel-download').disabled)
+    saveBlob(reelPreviewBlob, 'sarvahit-slideshow.' + (reelPreviewBlob.type.includes('mp4') ? 'mp4' : 'webm'));
+});
+for (const id of ['studioFormat','studioPhotos','reel-transition','reel-fx']) {
+  $(id).addEventListener('change', () =&gt; {
+    if (!reelPreviewBlob || reelBusy) return;
+    clearReelPreview();
+    $('studioStatus').textContent = 'Generate a new preview to apply these changes.';
+  });
+}
+function updateReelOptions() {
+  const reel = $('studioFormat').value === '1080,1920';
+  $('reel-options').hidden = !reel;
+  $('make-reel').disabled = !reel || reelBusy;
+}
+async function makeReel() {
+  if ($('studioFormat').value !== '1080,1920' || reelBusy) return;
+  reelBusy = true;
+  clearReelPreview();
+  updateReelOptions();
+  try {
+    const files = [...$('studioPhotos').files];
+    if (!files.length || !logo) throw Error('Choose photos and a Trust logo.');
+    const images = await Promise.all(files.map(async file =&gt; load(await read(file))));
+    const mark = await load(logo);
+    const transition = $('reel-transition').value;
+    const effect = $('reel-fx').value;
+    const canvas = $('art'), w = 720, height = 1280;
+    canvas.width = w; canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    const draw = (image, x, y, progress, alpha = 1) =&gt; {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      const filters = {mono:'grayscale(100%)', warm:'sepia(30%) saturate(120%)', cool:'sepia(20%) hue-rotate(165deg)', vintage:'sepia(65%) contrast(85%)', bold:'contrast(145%) saturate(115%)'};
+      ctx.filter = filters[effect] || 'none';
+      const zoom = effect === 'zoom' ? 1 + progress * .12 : 1;
+      cover(ctx, image, x - (zoom - 1) * w / 2, y - (zoom - 1) * height / 2, w * zoom, height * zoom);
+      ctx.restore();
+    };
+    $('studioStatus').textContent = 'Recording slideshow…';
+    const result = await recordCanvas(canvas, async time =&gt; {
+      const index = Math.min(images.length - 1, Math.floor(time / 3));
+      const progress = (time % 3) / 3;
+      const mix = index &amp;&amp; transition !== 'cut' ? Math.min(1, (time % 3) / .6) : 1;
+      ctx.fillStyle = '#111'; ctx.fillRect(0, 0, w, height);
+      if (mix &lt; 1 &amp;&amp; ['slide','up'].includes(transition)) {
+        const dx = transition === 'slide' ? w : 0;
+        const dy = transition === 'up' ? height : 0;
+        draw(images[index - 1], -dx * mix, -dy * mix, 1);
+        draw(images[index], dx * (1 - mix), dy * (1 - mix), progress);
+      } else if (mix &lt; 1 &amp;&amp; transition === 'dip') {
+        if (mix &lt; .5) draw(images[index - 1], 0, 0, 1, 1 - mix * 2);
+        else draw(images[index], 0, 0, progress, mix * 2 - 1);
+      } else if (mix &lt; 1 &amp;&amp; ['wipe','iris'].includes(transition)) {
+        draw(images[index - 1], 0, 0, 1);
+        ctx.save();
+        ctx.beginPath();
+        if (transition === 'wipe') ctx.rect(0, 0, w * mix, height);
+        else ctx.arc(w / 2, height / 2, Math.hypot(w / 2, height / 2) * mix, 0, 2 * Math.PI);
+        ctx.clip();
+        draw(images[index], 0, 0, progress);
+        ctx.restore();
+      } else {
+        if (mix &lt; 1) draw(images[index - 1], 0, 0, 1);
+        draw(images[index], 0, 0, progress, mix);
+      }
+      if (effect === 'vignette') {
+        const gradient = ctx.createRadialGradient(w / 2,height / 2,w * .2,w / 2,height / 2,height * .57);
+        gradient.addColorStop(0,'transparent');
+        gradient.addColorStop(1,'rgba(0,0,0,.62)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0,0,w,height);
+      }
+      await stamp(ctx, w, height, mark);
+    }, images.length * 3000);
+    reelPreviewBlob = result;
+    reelPreviewUrl = URL.createObjectURL(result);
+    $('reel-preview-panel').hidden = false;
+    $('studioStatus').textContent = 'Checking the recorded preview…';
+    $('reel-preview').src = reelPreviewUrl;
+    $('reel-preview').load();
+  } catch (error) {
+    $('studioStatus').textContent = error.message;
+  } finally {
+    reelBusy = false;
+    updateReelOptions();
+  }
+}
+async function watermarkVideo(){let v=document.createElement('video'),url;try{let f=$('markVideo').files[0];if(!f||!logo||!$('videoConsent').checked)throw Error('Choose video, logo and confirm consent');url=URL.createObjectURL(f);v.src=url;v.muted=true;await new Promise((r,j)=&gt;{v.onloadedmetadata=r;v.onerror=j});if(!Number.isFinite(v.duration))throw Error('Unsupported video duration');let c=$('art'),scale=Math.min(1,1280/Math.max(v.videoWidth,v.videoHeight));c.width=Math.round(v.videoWidth*scale);c.height=Math.round(v.videoHeight*scale);let x=c.getContext('2d');$('studioStatus').textContent='Recording watermarked video (silent preview)…';await v.play();let b=await recordCanvas(c,async()=&gt;{x.drawImage(v,0,0,c.width,c.height);await stamp(x,c.width,c.height)},v.duration*1000);saveBlob(b,'sarvahit-watermarked-silent.'+(b.type.includes('mp4')?'mp4':'webm'));$('studioStatus').textContent='Silent watermarked video exported. Use FFmpeg backend for audio.'}catch(e){$('studioStatus').textContent=e.message}finally{v.pause();if(url)URL.revokeObjectURL(url)}}
+function cloudPlan(action){let p=state.programs.find(p=&gt;p.id===$('cloudProgram').value);if(['upload','schedule'].includes(action)&amp;&amp;(!p||!$('cloudFile').files.length||!$('cloudConsent').checked))return alert('Select program, file and consent');if(action==='delete'&amp;&amp;(!$('remoteId').value||!confirm('Prepare deletion request only? No remote file will be deleted.')))return;let data={action,platform:$('cloudPlatform').value,programId:p?.id,programName:p?.name,year:p?.date?.slice(0,4),filename:$('cloudFile').files[0]?.name,title:$('cloudTitle').value,description:$('cloudDescription').value,visibility:$('cloudVisibility').value,schedule:$('cloudSchedule').value,remoteId:$('remoteId').value,consent:$('cloudConsent').checked};$('cloudOutput').textContent='Request preview only — not sent to any provider.\n'+JSON.stringify(data,null,2)}
+
+var defaultTrustLogo;
+function showStudioLogo(src) {
+  const mark = $('mark');
+  if (!src) { mark.textContent = 'Sarvahit Charitable Trust'; return; }
+  const image = new Image();
+  image.src = src; image.alt = '';
+  mark.replaceChildren(image);
+}
+function renderStudioHistory() {
+  const fields = ['history-day','history-month','history-year'].map($);
+  if (fields.some(field =&gt; !field)) return;
+  const [day, month, year] = fields.map(field =&gt; field.value);
+  const logs = state.history.map(item =&gt; ({ item, date: new Date(item.at || item.date) }));
+  const years = [...new Set(logs.map(log =&gt; log.date.getFullYear()).filter(Number.isFinite))].sort((a,b) =&gt; b-a);
+  fields[2].replaceChildren(new Option('All years','',true), ...years.map(value =&gt; new Option(value,value)));
+  fields[2].value = years.includes(Number(year)) ? year : '';
+  const matching = logs.filter(({ date }) =&gt; {
+    if (!day &amp;&amp; !month &amp;&amp; !year) return true;
+    return (!day || date.getDate() === Number(day)) &amp;&amp; (!month || date.getMonth()+1 === Number(month)) &amp;&amp; (!year || date.getFullYear() === Number(year));
+  });
+  $('historyList').replaceChildren(...matching.map(({ item, date }) =&gt; {
+    const row = document.createElement('p');
+    row.textContent = (Number.isNaN(date.getTime()) ? item.date : date.toLocaleDateString('en-GB') + ', ' + date.toLocaleTimeString()) + ' — ' + item.text;
+    return row;
+  }));
+  if (!matching.length) $('historyList').textContent = 'No activity for this date filter.';
+}
+for (const [id, total, label] of [['history-day',31,'All days'],['history-month',12,'All months']]) {
+  $(id).add(new Option(label,'',true));
+  for(let i=1;i&lt;=total;i++) $(id).add(new Option(String(i).padStart(2,'0'),i));
+}
+for (const id of ['history-day','history-month','history-year']) $(id).addEventListener('change', renderStudioHistory);
+$('studioFormat').addEventListener('change', updateReelOptions);
+updateReelOptions();
+renderStudioHistory();
+defaultTrustLogo = new URL('assets/SarvahitCharitableTrust_Logo.png', document.baseURI).href;
+logo ||= defaultTrustLogo;
+showStudioLogo(logo);
+$('studio-logo-status').textContent = 'Website logo selected while the Drive logo is checked.';
+window.setStudioDriveLogo = (src) =&gt; {
+  const previous = defaultTrustLogo;
+  defaultTrustLogo = src;
+  if (logo === previous || !logo) {
+    logo = src;
+    showStudioLogo(src);
+  }
+  $('studio-logo-status').textContent = 'Default logo loaded from Google Drive.';
+};
+async function reloadStudioRecords() {
+  if (!db) return;
+  const saved = await new Promise((resolve, reject) =&gt; {
+    const query = db.transaction('data', 'readonly').objectStore('data').get('state');
+    query.onsuccess = () =&gt; resolve(query.result);
+    query.onerror = () =&gt; reject(query.error);
+  });
+  if (!photoUploadBusy &amp;&amp; saved) state = saved;
+}
+function clearStudioInputs(panel) {
+  panel.querySelectorAll('form').forEach(form =&gt; form.reset());
+  for (const field of panel.querySelectorAll('input, select, textarea')) {
+    if (field.form) continue;
+    if (field.matches('input[type=&quot;file&quot;]')) field.value = &quot;&quot;;
+    else if (field.matches('input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;]')) field.checked = field.defaultChecked;
+    else if (field.matches('select')) {
+      const index = Array.from(field.options).findIndex(option =&gt; option.defaultSelected);
+      field.selectedIndex = Math.max(0, index);
+    } else field.value = field.defaultValue;
+  }
+  if (panel.id === 'photos') {
+    $('photoProgress').value = 0;
+    $('photoStatus').textContent = '';
+  }
+  if (panel.id === 'videos') {
+    const preview = $('videoPreview');
+    preview.pause();
+    if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
+    preview.removeAttribute('src');
+    preview.load();
+    preview.style.display = 'none';
+    $('videoDraftStatus').textContent = '';
+  }
+  if (panel.id === 'watermark') {
+    logo = defaultTrustLogo;
+    $('previewImg').removeAttribute('src');
+    $('previewImg').hidden = true;
+    $('previewText').hidden = false;
+    showStudioLogo(logo);
+    resetMark();
+  }
+  if (panel.id === 'production') {
+    clearReelPreview();
+    const artwork = $('art');
+    artwork.getContext('2d').clearRect(0, 0, artwork.width, artwork.height);
+    artwork.width = 0;
+    $('studioStatus').textContent = '';
+    updateReelOptions();
+  }
+  if (panel.id === 'cloud') $('cloudOutput').textContent = '';
+  render();
+}
+
+for (const tab of Object.keys(tabs)) {
+  const panel = $(tab);
+  const toolbar = document.createElement('div');
+  toolbar.className = 'studio-tab-actions';
+  const status = document.createElement('span');
+  status.setAttribute('role', 'status');
+  const refresh = document.createElement('button');
+  refresh.type = 'button';
+  refresh.textContent = 'Refresh';
+  if (tab === 'photos') refresh.id = 'studio-refresh-folders';
+  refresh.addEventListener('click', async () =&gt; {
+    if (photoUploadBusy) { status.textContent = 'Wait for the photo upload to finish.'; return; }
+    refresh.disabled = true;
+    status.textContent = 'Refreshing…';
+    try {
+      await reloadStudioRecords();
+      render();
+      const sourceRefreshed = await window.refreshStudioSource?.(tab);
+      status.textContent = sourceRefreshed === false ? 'Could not refresh remote data.' : 'Refreshed.';
+    } catch (error) {
+      status.textContent = 'Refresh failed: ' + error.message;
+    } finally {
+      refresh.disabled = false;
+    }
+  });
+  toolbar.append(refresh);
+  if (panel.querySelector('input, select, textarea')) {
+    const clear = document.createElement('button');
+    clear.type = 'button';
+    clear.textContent = 'Clear';
+    clear.addEventListener('click', () =&gt; {
+      if (photoUploadBusy) { status.textContent = 'Wait for the photo upload to finish.'; return; }
+      if (panel.id === 'production' &amp;&amp; reelBusy) { status.textContent = 'Wait for the preview to finish.'; return; }
+      clearStudioInputs(panel);
+      status.textContent = 'Inputs cleared.';
+    });
+    toolbar.append(clear);
+  }
+  toolbar.append(status);
+  const heading = panel.querySelector('h2');
+  const header = document.createElement('div');
+  header.className = 'studio-tab-header';
+  heading.before(header);
+  header.append(heading, toolbar);
+}
+&lt;/script&gt;&lt;script src=&quot;public-location-fields.js&quot;&gt;&lt;/script&gt;&lt;script src=&quot;https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js&quot;&gt;&lt;/script&gt;&lt;script src=&quot;media-google-admin.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+          </template>
+        </section>
+
         <section class="panel admin-only" id="partners-admin-panel">
           <div class="expense-report-heading"><h2>Partners and Supporters</h2><button class="btn btn-primary" type="button" id="add-partner">Add New Partner</button></div>
           <p>Display Order sets the Sr. No. and the order of partners on the website.</p>
@@ -786,7 +1250,7 @@
         </section>
 
         <section class="panel admin-only">
-          <div class="expense-report-heading"><h2>Trusted Person Reviews</h2><button class="btn btn-primary" type="button" id="refresh-reviews">Refresh Reviews</button></div>
+          <div class="expense-report-heading"><h2 id="reviews-panel-title">Trusted Person Reviews</h2><button class="btn btn-primary" type="button" id="refresh-reviews">Refresh Reviews</button></div>
           <p>Only names are listed here. Click a name to read the visitor’s review. Delete any unsuitable review.</p>
           <div class="volunteer-list" id="review-list"></div>
         </section>
@@ -803,7 +1267,7 @@
         <label>Email ID<input name="donor_email" type="email" autocomplete="email" placeholder="Required for donations of INR 4,999 or more" /></label>
         <label>Payment type<select name="payment_method"><option value="cash">Cash</option><option value="upi">UPI / Online</option><option value="rtgs">RTGS</option><option value="neft">NEFT</option><option value="bank_transfer">Bank transfer</option><option value="cheque">Cheque</option><option value="other">Other</option></select></label>
         <label class="full" id="cash-reference-row">Bank reference / transaction ID<input name="bank_reference" maxlength="160" placeholder="Cheque number, UPI transaction ID, or bank reference" /></label>
-        <label>Purpose<input name="category" required placeholder="Letters only" /></label>
+        <label>Donation Purpose<select name="category" required><option value="">Select purpose</option><option>Food Distribution</option><option>Education Support</option><option>Medical Help</option><option>Community Welfare</option><option>Tree Plantations</option><option>General Donation</option></select></label>
         
         <div class="full"><button class="btn btn-primary" type="submit">Save Donation</button> <button class="btn btn-light" type="button" id="cash-donation-cancel">Cancel</button></div>
       </div></form><div class="message" id="cash-donation-message" role="status"></div></div>
@@ -1068,7 +1532,7 @@
   
   })();
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script>
     document.addEventListener("input", (event) => {
@@ -1092,7 +1556,7 @@
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxg59Bu0fBMgYPgDIWajCiBqUkbqzZGwfZmxM2lKNZiyvwiQ3_t27TrHgLGc_4SMkpz/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyzwu3e6mnqYQxzhjgqzJT2ACunYjusxzb77IS5HLzv3NP1cUyGEsL6mBMI9OUTAXnA/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let portalRole = "";
     let portalIdentity = null;
@@ -1143,7 +1607,7 @@
     }
     async function loadFinanceEntries() {
       financeEntries = await supabaseRequest(FINANCE_TABLE + "?select=*&order=entry_date.desc,created_at.desc");
-      renderExpenseReport();
+      await renderExpenseReport();
     }
     function financeActionButtons(entry) {
       if (!canManagePortal()) return "";
@@ -1167,7 +1631,9 @@
       select.innerHTML = '<option value="all">All Years</option>' + years.map((year) => '<option value="' + year + '">' + year + '</option>').join("");
       if (["all", ...years.map(String)].includes(selected)) select.value = selected;
     }
+    let expenseRenderVersion = 0;
     async function renderExpenseReport() {
+      const version = ++expenseRenderVersion;
       populateExpenseYears();
       const filtered = selectedExpenses();
       const publishedFiltered = filtered.filter((entry) => entry.workflow_status === "published");
@@ -1180,9 +1646,10 @@
         const proof = (await financeStorageUrl(entry.attachment_path).catch(() => "")) || entry.attachment_drive_url;
         const time = entry.created_at ? new Date(entry.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—";
         const pendingClass = canManagePortal() && entry.workflow_status === "pending" ? "finance-pending-entry" : "";
-        return "<tr class=\"" + pendingClass + "\"><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(time) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.submitted_by_name || "—") + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt / bill</a>' : "—") + (!canManagePortal() ? "" : "<td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td>") + "</tr>";
+        return "<tr" + (entry.workflow_status === "published" ? " data-report-published" : "") + " class=\"" + pendingClass + "\"><td>" + escapeHtml(financeDate(entry).toLocaleDateString("en-IN")) + "</td><td>" + escapeHtml(time) + "</td><td>" + escapeHtml(entry.category) + "</td><td>" + escapeHtml(entry.donor_name || "—") + "</td><td>" + escapeHtml(String(entry.payment_method || "—").replaceAll("_", " ")) + "</td><td>" + escapeHtml(formatCurrency(entry.amount)) + "</td><td>" + escapeHtml(entry.submitted_by_name || "—") + "</td><td>" + escapeHtml(entry.workflow_status) + "</td><td>" + (proof ? '<a href="' + escapeHtml(proof) + '" target="_blank" rel="noopener">View receipt / bill</a>' : "—") + (!canManagePortal() ? "" : "<td><div class=\"finance-actions\">" + financeActionButtons(entry) + "</div></td>") + "</tr>";
       }));
-      document.getElementById("expense-list").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="' + (!canManagePortal() ? 9 : 10) + '">No expenses found for this period.</td></tr>';
+      if (version !== expenseRenderVersion) return;
+      document.getElementById("expense-list").innerHTML = reportRowsHtml(rows, publishedFiltered.length, canManagePortal() ? 10 : 9, "No expenses found for this period.");
     }
     async function compressReceiptImage(file, targetSize) {
       const bitmap = await createImageBitmap(file);
@@ -1296,6 +1763,7 @@
       element.style.display = "block";
     }
     function renderTeamAdmin() {
+      applyDashboardCount("team-admin-panel", teamMembers.length);
       const body = document.getElementById("team-admin-list");
       body.innerHTML = teamMembers.map((member, index) => `
         <tr data-team-row="${index}">
@@ -1415,6 +1883,7 @@
 
     function renderPartners(partners) {
       partnerRecords = partners;
+      applyDashboardCount("partners-admin-panel", partners.length);
       const body = document.getElementById("partner-admin-list");
       body.innerHTML = partners.length ? partners.map((partner) => {
         const contact = [partner.contact_person, partner.contact_designation].filter(Boolean).map(escapeHtml).join("<br>");
@@ -1673,18 +2142,13 @@
     let active80GDonation = null;
     const eightyGDialog = document.getElementById("80g-certificate-dialog");
     document.getElementById("donation-list").addEventListener("click", async (event) => {
-      const cityButton = event.target.closest("[data-donation-address-index]");
-      if (cityButton) {
-        const record = allDonations[Number(cityButton.dataset.donationAddressIndex)];
+      const detailsButton = event.target.closest("[data-donor-details-index]");
+      if (detailsButton) {
+        const record = renderedDonationDetails[Number(detailsButton.dataset.donorDetailsIndex)];
         if (!record) return;
-        const addressFields = [
-          ["City", record.city],
-          ["State", record.state],
-          ["Country", record.country],
-          ["PIN Code", record.pin_code]
-        ];
-        showEntryDetails("Donation Address", '<div class="entry-detail-grid">' +
-          addressFields.map(([label, value]) => '<p><strong>' + label + ':</strong> ' + escapeHtml(value || "—") + '</p>').join("") +
+        showEntryDetails("Donor Details", '<div class="entry-detail-grid">' +
+          Object.entries({ Donor: record.donor_name || record.name, ...donorContactDetails(record) })
+            .map(([label, value]) => '<p><strong>' + label + ':</strong> ' + escapeHtml(value || "-") + '</p>').join("") +
           '</div>');
         return;
       }
@@ -1839,7 +2303,7 @@
           driveUploadWarning = error.message || "Google Drive upload failed.";
         }
       }
-      form.reset(); form.elements.id.value = "";
+      form.reset(); form.elements.category.querySelector("[data-legacy-purpose]")?.remove(); form.elements.id.value = "";
       let refreshWarning = "";
       try { await loadFinanceEntries(); } catch (error) { refreshWarning = " The expense saved, but the report could not refresh: " + error.message; }
       const savedMessage = document.getElementById("finance-admin-message");
@@ -1910,13 +2374,36 @@
       }));
     }
 
-    async function loadDonations() {
+    function donorContactDetails(record) {
+      return {
+        "PAN Card Number": record.pan_card_number || record.panCardNumber || "",
+        Mobile: record.phone || "",
+        Email: record.email || "",
+        "Address Line": record.full_address || record.address || "",
+        City: record.city || "",
+        State: record.state || "",
+        Country: record.country || "",
+        "PIN Code": record.pin_code || record.pinCode || ""
+      };
+    }
+
+    async function loadDonationPages(query) {
+      const records = [];
+      while (true) {
+        const page = await supabaseRequest(query + "&limit=1000&offset=" + records.length);
+        if (!page.length) return records;
+        records.push(...page);
+      }
+    }
+
+    async function loadDonations({ exportAll = false } = {}) {
       if (!supabaseEnabled()) {
         return JSON.parse(localStorage.getItem("trustDonations") || "[]");
       }
+      const fetchRecords = exportAll ? loadDonationPages : supabaseRequest;
       const [submitted, ledger] = await Promise.all([
-        supabaseRequest(`${SUPABASE_DONATION_TABLE}?select=*&order=created_at.desc`),
-        supabaseRequest(`${FINANCE_TABLE}?select=*&entry_type=eq.donation&order=entry_date.desc,created_at.desc`)
+        fetchRecords(`${SUPABASE_DONATION_TABLE}?select=*&order=created_at.desc,id.desc`),
+        fetchRecords(`${FINANCE_TABLE}?select=*&entry_type=eq.donation&order=entry_date.desc,created_at.desc,id.desc`)
       ]);
       return [
         ...ledger.map((entry) => ({ ...entry, donation_source: "ledger", created_at: entry.entry_date + "T12:00:00", recorded_at: entry.created_at, donor_name: entry.donor_name, email: entry.donor_email, phone: entry.donor_phone, purpose: entry.category, payment_status: entry.workflow_status, certificate_id: "Manual" })),
@@ -1965,12 +2452,18 @@
       if (["all", ...years.map(String)].includes(selected)) select.value = selected;
     }
 
+    let renderedDonationDetails = [];
+
+    let donationRenderVersion = 0;
     async function renderDonationReport(reload = false) {
+      const version = ++donationRenderVersion;
       const list = document.getElementById("donation-list");
-      list.innerHTML = '<tr><td colspan="16">Loading donation data...</td></tr>';
+      if (!allDonations.length) list.innerHTML = '<tr><td colspan="14">Loading donation data...</td></tr>';
       try {
         if (reload || !allDonations.length) {
-          allDonations = await loadDonations();
+          const donations = await loadDonations();
+          if (version !== donationRenderVersion) return;
+          allDonations = donations;
           populateDonationYears();
         }
         const filtered = selectedDonations();
@@ -1985,37 +2478,22 @@
         document.getElementById("donation-year-total").textContent = formatCurrency(yearTotal);
         document.getElementById("donation-record-count").textContent = String(filtered.filter(isPublished).length);
 
-        const rows = await Promise.all(filtered.map(async (donation) => {
+        const rows = await Promise.all(filtered.map(async (donation, detailsIndex) => {
           const date = new Date(donation.created_at || donation.createdAt);
           const screenshotUrl = await getScreenshotUrl(donation);
           const isManualDonation = donation.donation_source === "ledger";
-          const isPublishedDonation = isManualDonation ? donation.workflow_status === "published" : donation.payment_status === "published";
           const isNewOnline = !isManualDonation && donation.payment_status === "submitted";
           const isPendingTrustee = isManualDonation && donation.workflow_status === "pending" && canManagePortal();
-          const appreciationChannels = Array.isArray(donation.certificate_delivery) ? donation.certificate_delivery : [];
           const appreciationDelivery = donation.certificate_delivery_status || {};
           const certificateFailed = Object.values(appreciationDelivery).some((state) => /^failed\b/i.test(String(state)));
           const certificateNumber = donation.certificate_id || donation.certificateId;
           const certificateLabel = certificateFailed ? "Certificate delivery failed. View details" : "View certificate delivery details";
-          const appreciationSent = !isManualDonation && donation.payment_status === "published"
-            && appreciationChannels.length > 0
-            && appreciationChannels.every((channel) => ["sent", "already sent"].includes(String(appreciationDelivery[channel] || "").toLowerCase()));
-          const appreciationStatus = isManualDonation ? "Manual" : appreciationSent ? "Done" : "Pending";
-          const eightyGAmountEligible = Number(donation.amount || 0) >= 4999;
-          const eightyGEligible = eightyGAmountEligible && isPublishedDonation
-            && (isManualDonation ? Boolean(donation.email) : appreciationSent);
-          const saved80GStatus = String(donation.eighty_g_certificate_status || "");
-          const eightyGStatus = eightyGEligible
-            ? (["done", "send", "sent"].includes(saved80GStatus.toLowerCase()) ? "Done" : saved80GStatus || "Pending")
-            : "—";
-          return `<tr class="${isNewOnline ? "donation-new-online" : ""}${isPendingTrustee ? " finance-pending-entry" : ""}">
+          const { appreciationStatus, eightyGEligible, eightyGStatus } = donationCertificateStatuses(donation);
+          return `<tr${isPublished(donation) ? " data-report-published" : ""} class="${isNewOnline ? "donation-new-online" : ""}${isPendingTrustee ? " finance-pending-entry" : ""}">
             <td>${escapeHtml(date.toLocaleDateString("en-IN"))}</td>
             <td>${escapeHtml((donation.recorded_at || donation.created_at) ? new Date(donation.recorded_at || donation.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—")}</td>
             <td>${escapeHtml(donation.donor_name || donation.name)}</td>
-            <td>${escapeHtml(donation.pan_card_number || donation.panCardNumber || "")}</td>
-            <td>${escapeHtml(donation.phone)}</td>
-            <td>${escapeHtml(donation.email)}</td>
-            <td>${donation.city ? `<button class="certificate-details-button" type="button" data-donation-address-index="${allDonations.indexOf(donation)}" aria-label="View donation address for ${escapeHtml(donation.city)}">${escapeHtml(donation.city)}</button>` : "&mdash;"}</td>
+            <td><button class="certificate-details-button" type="button" data-donor-details-index="${detailsIndex}" aria-haspopup="dialog">View Details</button></td>
             <td>${escapeHtml(donation.purpose)}</td>
             <td>${escapeHtml(String(donation.payment_method || (donation.entry_type === "donation" ? "manual" : "online")).replaceAll("_", " ").toUpperCase())}</td>
             <td>${escapeHtml(formatCurrency(donation.amount))}</td>
@@ -2029,36 +2507,247 @@
             ${!canManagePortal() ? "" : `<td><div class="finance-actions">${isManualDonation && donation.workflow_status === "pending" ? `<button class="btn btn-primary" type="button" data-approve-ledger-donation="${escapeHtml(donation.id || "")}">Approve &amp; Publish</button>` : ""}${donation.entry_type !== "donation" && donation.payment_status === "submitted" ? `<button class="btn btn-primary" type="button" data-publish-donation="${escapeHtml(donation.id || "")}">Verify &amp; Publish</button><button class="btn btn-danger" type="button" data-cancel-donation="${escapeHtml(donation.id || "")}">Cancel</button>` : ""}${donation.entry_type !== "donation" && donation.payment_status === "published" && donation.certificate_delivery?.length && !donation.certificate_delivery.every((channel) => ["sent", "already sent"].includes(donation.certificate_delivery_status?.[channel])) ? `<button class="btn btn-primary" type="button" data-send-certificate="${escapeHtml(donation.id || "")}">Send Certificate</button>` : ""}<button class="btn btn-danger" type="button" data-delete-donation="${escapeHtml(donation.id || donation.certificate_id || donation.certificateId || "")}" data-donation-source="${donation.entry_type === "donation" ? "ledger" : "online"}">Delete</button></div></td>`}
           </tr>`;
         }));
-        list.innerHTML = rows.length ? rows.join("") : '<tr><td colspan="' + (!canManagePortal() ? 16 : 17) + '">No donation found for selected period.</td></tr>';
+        if (version !== donationRenderVersion) return;
+        renderedDonationDetails = filtered;
+        list.innerHTML = reportRowsHtml(rows, filtered.filter(isPublished).length, canManagePortal() ? 14 : 13, "No donations found for this period.");
       } catch (error) {
-        list.innerHTML = '<tr><td colspan="16">Could not load donation data. Check that the finance setup is current and sign in with a finance admin account.</td></tr>';
+        if (version !== donationRenderVersion) return;
+        list.innerHTML = '<tr><td colspan="14">Could not load donation data. Check that the finance setup is current and sign in with a finance admin account.</td></tr>';
       }
     }
 
-    function exportDonationExcel() {
-      const donations = selectedDonations();
-      const rows = donations.map((item) => ({
-        Date: new Date(item.created_at || item.createdAt).toLocaleDateString("en-IN"),
-        Time: new Date(item.recorded_at || item.created_at || item.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
-        "Donor Name": item.donor_name || item.name || "",
-        "PAN Card Number": item.pan_card_number || item.panCardNumber || "",
-        Mobile: item.phone || "",
-        Email: item.email || "",
-        City: item.city || "",
-        Purpose: item.purpose || "",
-        "Payment type": item.payment_method || "online",
-        Amount: Number(item.amount || 0),
-        "Submitted by": item.submitted_by_name || "",
-        Status: item.payment_status || item.workflow_status || "submitted",
-        Certificate: item.certificate_id || item.certificateId || ""
-      }));
-      if (!rows.length) return;
+    function donationCertificateStatuses(donation) {
+      const isManualDonation = donation.donation_source === "ledger" || donation.entry_type === "donation";
+      const isPublishedDonation = isManualDonation ? donation.workflow_status === "published" : donation.payment_status === "published";
+      const appreciationChannels = Array.isArray(donation.certificate_delivery) ? donation.certificate_delivery : [];
+      const appreciationDelivery = donation.certificate_delivery_status || {};
+      const appreciationSent = !isManualDonation && donation.payment_status === "published"
+        && appreciationChannels.length > 0
+        && appreciationChannels.every((channel) => ["sent", "already sent"].includes(String(appreciationDelivery[channel] || "").toLowerCase()));
+      const appreciationStatus = isManualDonation ? "Manual" : appreciationSent ? "Done" : "Pending";
+      const eightyGAmountEligible = Number(donation.amount || 0) >= 4999;
+      const eightyGEligible = eightyGAmountEligible && isPublishedDonation
+        && (isManualDonation ? Boolean(donation.email) : appreciationSent);
+      const saved80GStatus = String(donation.eighty_g_certificate_status || "");
+      const eightyGStatus = eightyGEligible
+        ? (["done", "send", "sent"].includes(saved80GStatus.toLowerCase()) ? "Done" : saved80GStatus || "Pending")
+        : "—";
+      return { appreciationStatus, eightyGEligible, eightyGStatus };
+    }
+
+    function loadStudioVideos(frame) {
+      return new Promise((resolve) => {
+        const doc = frame.contentDocument;
+        const status = doc.getElementById("studio-videos-status");
+        const requestId = crypto.randomUUID();
+        const callback = "__sarvahitStudioVideos_" + requestId.replace(/-/g, "");
+        const url = new URL("https://script.google.com/macros/s/AKfycby-g5wS4xmG9Y0zrGXkJIe-dKmI8QkXGGlHbNGp4Gav6QknLYVry0td3KvFm7VeGDGXGQ/exec");
+        const script = doc.createElement("script");
+        const studioWindow = frame.contentWindow;
+        const complete = () => {
+          clearTimeout(timer);
+          script.remove();
+          delete studioWindow[callback];
+        };
+        const fail = () => {
+          complete();
+          status.hidden = false;
+          status.textContent = "YouTube video count could not be loaded.";
+          resolve(false);
+        };
+        const timer = setTimeout(fail, 20000);
+        studioWindow[callback] = (payload) => {
+          if (payload?.channel !== "sarvahit-youtube-videos" || payload.requestId !== requestId) return;
+          if (!Array.isArray(payload.videos)) return fail();
+          complete();
+          const ids = new Set(payload.videos.map(video => video?.id).filter(id => /^[\w-]{11}$/.test(id || "")));
+          studioWindow.setPublishedVideoCount(ids.size);
+          status.hidden = true;
+          resolve(true);
+        };
+        url.searchParams.set("feed", "videos");
+        url.searchParams.set("galleryRequestId", requestId);
+        url.searchParams.set("callback", callback);
+        script.src = url.href;
+        script.onerror = fail;
+        doc.head.append(script);
+      });
+    }
+
+    async function loadStudioDriveFolders(doc) {
+      const button = doc.getElementById("studio-refresh-folders");
+      const status = doc.getElementById("studio-folders-status");
+      const list = doc.getElementById("studio-drive-folders");
+      if (!canManagePortal() || button.dataset.folderLoading) return false;
+      const wasDisabled = button.disabled;
+      button.dataset.folderLoading = "true";
+      button.disabled = true;
+      status.textContent = "Loading folders from Google Drive...";
+      try {
+        const { folders } = await sendFinanceDriveUpload({ type: "media_folder_list", accessToken: adminAccessToken });
+        if (!Array.isArray(folders)) throw new Error("No folder list returned.");
+        const items = [];
+        for (const folder of folders) {
+          if (!/^[\w-]+$/.test(folder?.id || "")) continue;
+          const row = doc.createElement("li");
+          const link = doc.createElement("a");
+          link.href = "https://drive.google.com/drive/folders/" + folder.id;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = folder.path;
+          row.append(link);
+          items.push(row);
+        }
+        list.replaceChildren(...items);
+        status.textContent = items.length ? items.length + " folders" : "No program folders found.";
+        return true;
+      } catch (error) {
+        status.textContent = "Could not refresh folders: " + error.message;
+        return false;
+      } finally {
+        delete button.dataset.folderLoading;
+        button.disabled = wasDisabled;
+      }
+    }
+
+    const mediaStudioToggle = document.getElementById("media-studio-toggle");
+    const mediaStudioContainer = document.getElementById("media-studio-container");
+    let mediaStudioResize;
+    mediaStudioToggle.addEventListener("click", () => {
+      if (!canManagePortal()) return;
+      const open = mediaStudioContainer.hidden;
+      mediaStudioContainer.hidden = !open;
+      mediaStudioToggle.setAttribute("aria-expanded", String(open));
+      mediaStudioToggle.textContent = open ? "Close Media Studio" : "Open Media Studio";
+      if (!open || mediaStudioContainer.firstElementChild) return;
+      const frame = document.getElementById("media-studio-template").content.firstElementChild.cloneNode();
+      frame.addEventListener("load", () => {
+        const doc = frame.contentDocument;
+        const body = doc.body;
+        frame.contentWindow.googleMediaRequest = async (payload) => {
+          if (location.protocol !== "https:") throw new Error("Open the deployed HTTPS Admin Portal to connect Google.");
+          if (!canManagePortal() || !adminAccessToken) throw new Error("Sign in as an authorized admin.");
+          const response = await fetch("/api/google/action", {
+            method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminAccessToken },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.error || "Google backend unavailable on this deployment.");
+          return result;
+        };
+        doc.dispatchEvent(new frame.contentWindow.Event("google-media-ready"));
+        frame.contentWindow.refreshStudioSource = async (tab) => {
+          await frame.contentWindow.refreshGoogleMedia?.(tab);
+          if (tab === "photos") return loadStudioDriveFolders(doc);
+          if (tab === "dashboard" || tab === "videos") return loadStudioVideos(frame);
+        };
+        doc.querySelector('[data-tab="photos"]').addEventListener("click", () => {
+          if (!doc.getElementById("studio-folders-status").textContent) loadStudioDriveFolders(doc);
+        });
+        frame.contentWindow.uploadProgramPhoto = async (photo) => {
+          if (!canManagePortal() || !adminAccessToken) throw new Error("Sign in as an authorized admin to upload photos.");
+          return sendFinanceDriveUpload({ ...photo, type: "media_photo_upload", accessToken: adminAccessToken });
+        };
+        loadStudioVideos(frame);
+        void sendFinanceDriveUpload({ type: "media_default_logo", accessToken: adminAccessToken }).then(result => {
+          if (frame.isConnected && result.dataUrl) frame.contentWindow.setStudioDriveLogo(result.dataUrl);
+        }).catch(() => {
+          if (frame.isConnected) doc.getElementById("studio-logo-status").textContent = "Drive logo unavailable. Using the website logo.";
+        });
+        const resize = () => { if (!mediaStudioContainer.hidden) frame.style.height = Math.ceil(body.getBoundingClientRect().height) + "px"; };
+        if ("ResizeObserver" in window) {
+          mediaStudioResize?.disconnect();
+          mediaStudioResize = new ResizeObserver(resize);
+          mediaStudioResize.observe(body);
+        }
+        resize();
+      });
+      mediaStudioContainer.append(frame);
+    });
+    document.getElementById("admin-logout").addEventListener("click", () => {
+      mediaStudioResize?.disconnect();
+      mediaStudioContainer.replaceChildren();
+      mediaStudioContainer.hidden = true;
+      mediaStudioToggle.setAttribute("aria-expanded", "false");
+      mediaStudioToggle.textContent = "Open Media Studio";
+    });
+
+    const dateFormat = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Kolkata", day: "2-digit", month: "2-digit", year: "numeric"
+    });
+    const timeFormat = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true
+    });
+
+    function writeStyledReport(rows, sheetName, filename) {
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.json_to_sheet(rows);
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Donations");
-      const year = document.getElementById("donation-year").value;
-      const month = document.getElementById("donation-month").value;
-      XLSX.writeFile(workbook, `Sarvahit-Donations-${year}-${month}.xlsx`);
+      worksheet["!cols"] = Object.keys(rows[0]).map((label) => ({
+        wch: Math.min(65, rows.reduce((width, row) => Math.max(width, String(row[label]).length + 3), Math.ceil(label.length * 1.35) + 3))
+      }));
+      const borderSide = { style: "thin", color: { rgb: "000000" } };
+      const border = { top: borderSide, bottom: borderSide, left: borderSide, right: borderSide };
+      const headerStyle = {
+        border,
+        fill: { patternType: "solid", fgColor: { rgb: "FFFF00" } },
+        font: { name: "Calibri", sz: 14, bold: true, color: { rgb: "000000" } },
+        alignment: { horizontal: "center", vertical: "center" }
+      };
+      const centered = new Set(["Date", "Time", "PAN Card Number", "Mobile", "Mobile Number", "Sr.No"]);
+      const labels = Object.keys(rows[0]);
+      worksheet["!rows"] = [{ hpt: 23 }, ...rows.map(() => ({ hpt: 17 }))];
+      for (let column = 0; column < labels.length; column++) {
+        const label = labels[column];
+        const bodyStyle = {
+          border,
+          font: { name: "Calibri", sz: 11 },
+          alignment: { horizontal: centered.has(label) ? "center" : label === "Amount" ? "right" : "left", vertical: "center" }
+        };
+        for (let row = 0; row <= rows.length; row++) {
+          const address = XLSX.utils.encode_cell({ r: row, c: column });
+          const cell = worksheet[address] ||= { t: "s", v: "" };
+          cell.s = row === 0 ? headerStyle : bodyStyle;
+        }
+      }
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+      XLSX.writeFile(workbook, filename);
+    }
+
+    async function exportDonationExcel(event) {
+      const button = event.currentTarget;
+      button.disabled = true;
+      try {
+        const donations = await loadDonations({ exportAll: true });
+        if (!donations.length) { alert("No donation records to export."); return; }
+        const rows = donations.map((item) => {
+          const contact = donorContactDetails(item);
+          const { appreciationStatus, eightyGStatus } = donationCertificateStatuses(item);
+          const date = new Date(item.created_at || item.createdAt);
+          const recorded = new Date(item.recorded_at || item.created_at || item.createdAt);
+          return {
+            Date: dateFormat.format(date),
+            Time: timeFormat.format(recorded).toLowerCase(),
+            "Donor Name": item.donor_name || item.name || "",
+            "PAN Card Number": contact["PAN Card Number"],
+            Mobile: String(contact.Mobile),
+            Email: contact.Email,
+            "Full Address": [contact["Address Line"], contact.City, contact.State, contact.Country, contact["PIN Code"]].filter(Boolean).join(", "),
+            "Donation Purpose": item.purpose || "",
+            "Payment type": item.payment_method || (item.entry_type === "donation" ? "manual" : "online"),
+            Amount: Number(item.amount || 0),
+            "Submitted by": item.submitted_by_name || "",
+            Status: item.payment_status || item.workflow_status || "submitted",
+            Certificate: item.certificate_id || item.certificateId || "",
+            "Appreciation Certificate": appreciationStatus,
+            "80G Certificate": eightyGStatus
+          };
+        });
+        writeStyledReport(rows, "Donations", "Sarvahit-Donations-All.xlsx");
+      } catch (error) {
+        alert("Could not export donation records: " + error.message);
+      } finally {
+        button.disabled = false;
+      }
     }
 
     async function deleteVolunteer(volunteer, index) {
@@ -2211,6 +2900,7 @@
       list.innerHTML = "<p>Loading volunteer data...</p>";
       try {
         const volunteers = await loadVolunteers();
+        applyDashboardCount("volunteer-panel", volunteers.length);
         list.innerHTML = volunteers.length
           ? volunteers.map((volunteer, index) => `
               <article class="volunteer-card">
@@ -2239,16 +2929,14 @@
         const rows = volunteers.map((volunteer, index) => ({
           "Sr.No": index + 1,
           "Full Name": volunteer.name || "",
-          "Mobile Number": volunteer.phone || "",
+          "Mobile Number": String(volunteer.phone || ""),
           "Email": volunteer.email || "",
           "City": volunteer.city || "",
           "Interested Work": volunteer.interest || "",
           "Available Time": volunteer.availability || "",
-          "Joined At": volunteer.joinedAt ? new Date(volunteer.joinedAt).toLocaleString("en-IN") : ""
+          "Joined At": volunteer.joinedAt ? dateFormat.format(new Date(volunteer.joinedAt)) + " " + timeFormat.format(new Date(volunteer.joinedAt)).toLowerCase() : ""
         }));
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(rows), "Volunteers");
-        XLSX.writeFile(workbook, "Sarvahit-Volunteer-Data-" + new Date().toISOString().slice(0, 10) + ".xlsx");
+        writeStyledReport(rows, "Volunteers", "Sarvahit-Volunteer-Data-" + new Date().toISOString().slice(0, 10) + ".xlsx");
       } catch (error) { alert("Could not download volunteer data: " + (error.message || error)); }
       finally { button.disabled = false; button.textContent = originalLabel; }
     }
@@ -2258,6 +2946,7 @@
       list.innerHTML = "<p>Loading reviews...</p>";
       try {
         const reviews = await loadReviews();
+        applyDashboardCount("reviews-panel", reviews.length);
         list.innerHTML = reviews.length
           ? reviews.map((review, index) => `
               <article class="volunteer-card">
@@ -2303,6 +2992,7 @@
       document.getElementById("login-panel").style.display = "none";
       document.getElementById("dashboard").classList.add("is-visible");
       document.getElementById("dashboard").dataset.role = portalRole;
+      syncDashboardPanelControls();
       document.getElementById("dashboard").dataset.permission = canManagePortal() ? "manager" : "member";
       document.getElementById("portal-identity").textContent = (portalIdentity.name || "Trust member") + " · " + portalRoleLabel(portalRole);
       document.getElementById("open-finance-ledger").hidden = !canOpenFinanceLedger();
@@ -2326,6 +3016,7 @@
       adminAccessToken = ""; portalRole = ""; portalIdentity = null; sessionStorage.removeItem("trustAdminAccessToken");
       document.getElementById("dashboard").classList.remove("is-visible");
       document.getElementById("dashboard").removeAttribute("data-role");
+      syncDashboardPanelControls();
       document.getElementById("dashboard").removeAttribute("data-permission");
       document.getElementById("admin-logout").hidden = true;
       document.getElementById("login-panel").style.display = "block";
@@ -2806,6 +3497,13 @@
       const entry = financeEntries.find((item) => item.id === id); if (!entry) return;
       if (button.dataset.editFinance) {
         const form = document.getElementById("finance-entry-form");
+        const category = form.elements.category;
+        category.querySelector("[data-legacy-purpose]")?.remove();
+        if (entry.category && !Array.from(category.options).some((option) => option.value === entry.category)) {
+          const legacy = new Option(entry.category, entry.category);
+          legacy.dataset.legacyPurpose = "";
+          category.add(legacy);
+        }
         for (const key of ["id","entry_date","amount","category","payment_method","bank_reference","public_note"]) form.elements[key].value = entry[key] ?? "";
         updateFinanceReferenceVisibility();
         document.getElementById("finance-entry-dialog").showModal(); return;
@@ -2822,15 +3520,14 @@
     function selectedExpenseExcel() {
       const entries = selectedExpenses();
       const rows = entries.map((item) => ({
-        Date: item.entry_date, Time: item.created_at ? new Date(item.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "", Category: item.category, Payee: item.donor_name || "",
+        Date: item.entry_date ? dateFormat.format(new Date(item.entry_date + "T00:00:00+05:30")) : "",
+        Time: item.created_at ? timeFormat.format(new Date(item.created_at)).toLowerCase() : "", "Donation Purpose": item.category, Payee: item.donor_name || "",
         "Payment type": item.payment_method || "", "Bank reference / transaction ID": item.bank_reference || "", Amount: Number(item.amount || 0),
         Status: item.workflow_status, Reconciliation: item.reconciliation_status,
         "Public note": item.public_note || "", "Receipt folder URL": item.attachment_drive_url || ""
       }));
       if (!rows.length) return;
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(rows), "Expenses");
-      XLSX.writeFile(workbook, "Sarvahit-Expenses-" + document.getElementById("expense-year").value + "-" + document.getElementById("expense-month").value + ".xlsx");
+      writeStyledReport(rows, "Expenses", "Sarvahit-Expenses-" + document.getElementById("expense-year").value + "-" + document.getElementById("expense-month").value + ".xlsx");
     }
     document.getElementById("expense-list").addEventListener("click", handleFinanceActions);
     document.getElementById("finance-entry-form").addEventListener("submit", async (event) => {
@@ -2852,9 +3549,9 @@
       }
     });
     const financeDialog = document.getElementById("finance-entry-dialog");
-    document.getElementById("open-finance-ledger").addEventListener("click", () => { if (!canOpenFinanceLedger()) return; const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); financeDialog.showModal(); });
+    document.getElementById("open-finance-ledger").addEventListener("click", () => { if (!canOpenFinanceLedger()) return; const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.category.querySelector("[data-legacy-purpose]")?.remove(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); financeDialog.showModal(); });
     document.getElementById("finance-dialog-close").addEventListener("click", () => financeDialog.close());
-    document.getElementById("finance-cancel-edit").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); document.getElementById("finance-admin-message").textContent = ""; });
+    document.getElementById("finance-cancel-edit").addEventListener("click", () => { const form = document.getElementById("finance-entry-form"); form.reset(); form.elements.category.querySelector("[data-legacy-purpose]")?.remove(); form.elements.id.value = ""; updateFinanceReferenceVisibility(); document.getElementById("finance-admin-message").textContent = ""; });
 
     document.getElementById("stats-form").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -2887,7 +3584,105 @@
     document.getElementById("export-volunteers").addEventListener("click", exportVolunteerExcel);
     document.getElementById("refresh-reviews").addEventListener("click", renderReviews);
     document.getElementById("refresh-donations").addEventListener("click", () => renderDonationReport(true));
-    window.setInterval(() => { if (!document.hidden) renderDonationReport(true); }, 20000);
+    function reportRowsHtml(rows, publishedCount, columns, emptyMessage) {
+      const emptyRow = (message, marker = "") => '<tr' + marker + '><td colspan="' + columns + '">' + message + '</td></tr>';
+      if (!rows.length) return emptyRow(emptyMessage);
+      return rows.join("") + (publishedCount === rows.length ? emptyRow("No unpublished entries for this period.", " data-report-pending-empty") : "");
+    }
+
+    function applyDashboardCount(id, count) {
+      document.getElementById(id + "-count").textContent = String(count);
+    }
+
+    const dashboardPanelDisplays = [];
+
+    function syncDashboardPanelControls() {
+      dashboardPanelDisplays.forEach(display => display());
+    }
+
+    function installDashboardPanelControls() {
+      const panels = [
+        { id: "impact-panel", title: "impact-panel-title" },
+        { id: "notice-panel", title: "notice-panel-title" },
+        { id: "expense-report", table: "expense-list" },
+        { id: "donation-report-panel", title: "donation-panel-title", table: "donation-list" },
+        { id: "team-admin-panel", count: true },
+        { id: "partners-admin-panel", count: true },
+        { id: "volunteer-panel", count: true, list: "volunteer-list" },
+        { id: "reviews-panel", title: "reviews-panel-title", count: true, list: "review-list" }
+      ];
+      for (const { id, title, count, table, list } of panels) {
+        const panel = title ? document.getElementById(title).closest("section") : document.getElementById(id);
+        panel.id = id;
+        let heading = panel.firstElementChild;
+        if (heading.tagName === "H2") {
+          const header = document.createElement("div");
+          header.className = "expense-report-heading";
+          heading.before(header);
+          header.append(heading);
+          heading = header;
+        }
+        let actions = heading.querySelector(".team-admin-actions, .team-row-actions");
+        if (!actions) {
+          actions = document.createElement("div");
+          actions.append(...Array.from(heading.children).filter(item => item.tagName !== "H2"));
+          heading.append(actions);
+        }
+        actions.classList.add("dashboard-panel-actions");
+        const toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "btn btn-light dashboard-section-toggle";
+        let body = table ? document.getElementById(table) : null;
+        if (!table) {
+          body = document.createElement("div");
+          body.id = id + "-content";
+          body.className = "dashboard-panel-content";
+          body.append(...Array.from(panel.children).filter(item => item !== heading && !(count && item.tagName === "P")));
+          panel.append(body);
+        }
+        toggle.setAttribute("aria-controls", body.id);
+        const toggleLabel = document.createTextNode("");
+        toggle.append(toggleLabel);
+        if (count) {
+          const badge = document.createElement("span");
+          badge.className = "dashboard-panel-count";
+          badge.id = id + "-count";
+          badge.textContent = "—";
+          toggle.append(badge);
+        }
+        actions.prepend(toggle);
+        const key = "sarvahit-dashboard-open-" + id;
+        let open = false;
+        try { open = sessionStorage.getItem(key) === "true"; } catch {}
+        const display = () => {
+          const adminControls = portalRole === "admin";
+          const expanded = !adminControls || open;
+          toggle.hidden = !adminControls;
+          toggleLabel.nodeValue = expanded ? "Close" : "Open";
+          toggle.setAttribute("aria-expanded", String(expanded));
+          if (table) panel.classList.toggle("report-pending-only", !expanded);
+          else body.hidden = !expanded;
+          if (expanded && list) requestAnimationFrame(() => sizeListForFiveEntries(document.getElementById(list)));
+        };
+        toggle.addEventListener("click", () => {
+          if (portalRole !== "admin") return;
+          open = !open;
+          try { sessionStorage.setItem(key, String(open)); } catch {}
+          display();
+        });
+        dashboardPanelDisplays.push(display);
+        display();
+      }
+    }
+    installDashboardPanelControls();
+
+    let refreshingDashboardReports = false;
+    window.setInterval(async () => {
+      if (document.hidden || !adminAccessToken || refreshingDashboardReports) return;
+      refreshingDashboardReports = true;
+      try { await Promise.allSettled([renderDonationReport(true), loadFinanceEntries()]); }
+      finally { refreshingDashboardReports = false; }
+    }, 20000);
     document.getElementById("donation-year").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("donation-month").addEventListener("change", () => renderDonationReport(false));
     document.getElementById("export-donations").addEventListener("click", exportDonationExcel);
@@ -2968,20 +3763,17 @@
     financePaymentType.addEventListener("change", updateFinanceReferenceVisibility);
     updateFinanceReferenceVisibility();
     const donorNameInput = document.querySelector('#cash-donation-form [name="donor_name"]');
-    const donationPurposeInput = document.querySelector('#cash-donation-form [name="category"]');
     const donorEmailInput = document.querySelector('#cash-donation-form [name="donor_email"]');
     const cashDonationAmountInput = document.querySelector('#cash-donation-form [name="amount"]');
     const updateCashDonationEmailRequirement = () => {
       donorEmailInput.required = Number(cashDonationAmountInput.value) >= 4999;
     };
     cashDonationAmountInput.addEventListener("input", updateCashDonationEmailRequirement);
-    const financeCategoryInput = document.querySelector('#finance-entry-form [name="category"]');
     const keepLettersAndSpaces = (input) => {
       input.value = input.value.replace(/[^\p{L}\p{M}\s]/gu, "");
       input.setCustomValidity("");
     };
-    [donorNameInput, financeCategoryInput].forEach((input) => input.addEventListener("input", () => keepLettersAndSpaces(input)));
-    donationPurposeInput.addEventListener("input", () => donationPurposeInput.setCustomValidity(donationPurposeInput.value && !/^[\p{L}\p{M} ]+$/u.test(donationPurposeInput.value) ? "Please enter letters and spaces only." : ""));
+    donorNameInput.addEventListener("input", () => keepLettersAndSpaces(donorNameInput));
     const donorPhoneInput = document.querySelector('#cash-donation-form [name="donor_phone"]');
     donorPhoneInput.addEventListener("input", () => {
       donorPhoneInput.value = donorPhoneInput.value.replace(/\D/g, "").slice(0, 10);
@@ -2998,7 +3790,7 @@
     cashDonationPaymentType.addEventListener("change", updateCashReferenceVisibility);
     updateCashReferenceVisibility();
     const cashDonationDialog = document.getElementById("cash-donation-dialog");
-    document.getElementById("open-cash-donation").addEventListener("click", () => { const form = document.getElementById("cash-donation-form"); form.reset(); donorNameInput.setCustomValidity(""); financeCategoryInput.setCustomValidity(""); donationPurposeInput.setCustomValidity(""); donorPhoneInput.setCustomValidity(""); updateCashDonationEmailRequirement(); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); updateCashReferenceVisibility(); cashDonationDialog.showModal(); });
+    document.getElementById("open-cash-donation").addEventListener("click", () => { const form = document.getElementById("cash-donation-form"); form.reset(); donorNameInput.setCustomValidity(""); donorPhoneInput.setCustomValidity(""); updateCashDonationEmailRequirement(); form.elements.entry_date.value = new Date().toISOString().slice(0, 10); updateCashReferenceVisibility(); cashDonationDialog.showModal(); });
     document.getElementById("cash-donation-close").addEventListener("click", () => cashDonationDialog.close());
     document.getElementById("cash-donation-cancel").addEventListener("click", () => cashDonationDialog.close());
     document.getElementById("cash-donation-form").addEventListener("submit", async (event) => {

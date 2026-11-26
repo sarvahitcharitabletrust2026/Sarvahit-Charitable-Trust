@@ -93,6 +93,24 @@ function doPost(event) {
     const rawPayload = formTransport ? event.parameter.uploadPayload : (event.postData.contents || "{}");
     const data = JSON.parse(rawPayload);
     requestId = String(data.requestId || "");
+    if (data.type === "media_photo_upload") {
+      verifyFinanceAdmin_(data.accessToken);
+      return uploadResponse_({ ok: true, ...uploadProgramPhoto_(data) }, formTransport, requestId);
+    }
+    if (data.type === "media_default_logo") {
+      verifyFinanceAdmin_(data.accessToken);
+      const file = DriveApp.getFileById("1PyLduahRVahq0b8lWzIVSxvvGrJDSoVo");
+      const blob = file.getBlob();
+      const mime = blob.getContentType();
+      if (!["image/png", "image/jpeg", "image/webp"].includes(mime)) throw new Error("The Drive watermark must be PNG, JPEG or WebP.");
+      const bytes = blob.getBytes();
+      if (bytes.length > 2 * 1024 * 1024) throw new Error("The Drive watermark must be 2 MB or smaller.");
+      return uploadResponse_({ ok: true, dataUrl: "data:" + mime + ";base64," + Utilities.base64Encode(bytes) }, formTransport, requestId);
+    }
+    if (data.type === "media_folder_list") {
+      verifyFinanceAdmin_(data.accessToken);
+      return uploadResponse_({ ok: true, folders: listProgramPhotoFolders_() }, formTransport, requestId);
+    }
     if (data.type === "financial_document_backup") {
       saveFinancialDocumentBackup_(data);
       return uploadResponse_({ ok: true }, formTransport, requestId);
@@ -572,6 +590,48 @@ function saveFinancialDocumentBackup_(data) {
     const name = path.split("/")[1].split(".")[0] + "-" + sanitizeFileNamePart_(data.fileName || "document").slice(0, 150);
     if (folder.getFilesByName(name).hasNext()) return;
     folder.createFile(file.getBlob().setName(name));
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function listProgramPhotoFolders_() {
+  const root = DriveApp.getFolderById("1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv");
+  const pending = [{ folder: root, path: "" }];
+  const folders = [];
+  while (pending.length) {
+    const { folder, path } = pending.pop();
+    const children = folder.getFolders();
+    while (children.hasNext()) {
+      const child = children.next();
+      const childPath = path ? path + " / " + child.getName() : child.getName();
+      folders.push({ id: child.getId(), path: childPath });
+      pending.push({ folder: child, path: childPath });
+    }
+  }
+  return folders.sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true, sensitivity: "base" }));
+}
+
+function uploadProgramPhoto_(data) {
+  if (data.consent !== true) throw new Error("Photo publication permission is required.");
+  const name = String(data.programName || "").trim();
+  const photoId = String(data.photoId || "");
+  const base64 = String(data.base64 || "");
+  if (!name || !/^[\w-]{8,80}$/.test(photoId) || !base64) throw new Error("Program name and photo are required.");
+  if (base64.length > Math.ceil(8 * 1024 * 1024 / 3) * 4) throw new Error("The processed photo must be 8 MB or smaller.");
+  const bytes = Utilities.base64Decode(base64);
+  if (bytes.length < 4 || (bytes[0] & 255) !== 255 || (bytes[1] & 255) !== 216) throw new Error("A processed JPEG photo is required.");
+  const folderName = name.replace(/[\/\\\u0000-\u001f]/g, "-").slice(0, 120);
+  const stem = sanitizeFileNamePart_(String(data.fileName || "Photo").replace(/\.[^.]+$/, "")).slice(0, 100);
+  const filename = stem + (data.watermarked === false ? "-" : "-watermarked-") + photoId + ".jpg";
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const root = DriveApp.getFolderById("1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv");
+    const folder = getOrCreateFolder_(root, folderName);
+    const matches = folder.getFilesByName(filename);
+    const file = matches.hasNext() ? matches.next() : folder.createFile(Utilities.newBlob(bytes, "image/jpeg", filename));
+    return { fileId: file.getId(), fileUrl: file.getUrl(), folderUrl: folder.getUrl() };
   } finally {
     lock.releaseLock();
   }

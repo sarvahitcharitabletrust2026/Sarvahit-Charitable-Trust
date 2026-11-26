@@ -1082,3 +1082,61 @@ create policy financial_document_files_insert on storage.objects for insert to a
 with check (bucket_id = 'trust-financial-documents' and public.can_manage_financial_documents());
 
 commit;
+
+-- Google OAuth and Media Studio
+begin;
+create table if not exists public.media_oauth_states (
+  state_hash text primary key,
+  owner_id uuid not null references auth.users(id) on delete cascade,
+  browser_hash text not null,
+  verifier text not null,
+  expires_at timestamptz not null
+);
+create table if not exists public.media_google_connections (
+  owner_id uuid primary key references auth.users(id) on delete cascade,
+  encrypted_refresh text not null,
+  email text not null,
+  channel_id text,
+  channel_name text,
+  scopes text[] not null,
+  updated_at timestamptz not null default now()
+);
+create table if not exists public.media_upload_jobs (
+  id uuid primary key,
+  owner_id uuid not null references auth.users(id) on delete cascade,
+  status text not null check (status in ('staging','queued','processing','done','failed','review')),
+  source_path text not null unique,
+  request jsonb not null,
+  connection_at timestamptz not null,
+  stage text not null default 'Waiting for file',
+  result jsonb,
+  error text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists media_upload_queue_idx on public.media_upload_jobs (status, created_at);
+create index if not exists media_upload_owner_idx on public.media_upload_jobs (owner_id, created_at desc);
+create table if not exists public.media_activity_events (
+  id bigint generated always as identity primary key,
+  owner_id uuid not null references auth.users(id) on delete cascade,
+  action text not null,
+  details jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+alter table public.media_oauth_states enable row level security;
+alter table public.media_google_connections enable row level security;
+alter table public.media_upload_jobs enable row level security;
+alter table public.media_activity_events enable row level security;
+revoke all on public.media_oauth_states, public.media_google_connections, public.media_upload_jobs, public.media_activity_events from public, anon, authenticated;
+grant select, insert, update, delete on public.media_oauth_states, public.media_google_connections, public.media_upload_jobs, public.media_activity_events to service_role;
+grant usage, select on sequence public.media_activity_events_id_seq to service_role;
+insert into storage.buckets (id, name, public)
+values ('trust-media-staging','trust-media-staging',false)
+on conflict (id) do update set public = false;
+create or replace function public.media_is_admin(candidate uuid)
+returns boolean language sql stable security definer set search_path = ''
+as $$ select exists (select 1 from public.trust_finance_admins where user_id = candidate)
+  or exists (select 1 from public.trust_portal_profiles where user_id = candidate and role = 'founder'); $$;
+revoke all on function public.media_is_admin(uuid) from public, anon, authenticated;
+grant execute on function public.media_is_admin(uuid) to service_role;
+commit;
