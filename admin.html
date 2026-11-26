@@ -203,6 +203,15 @@
 
     .finance-actions { display: flex; flex-wrap: wrap; gap: 4px; }
     .finance-actions .btn { min-height: 28px; padding: 3px 7px; font-size: 12px; }
+    #expense-list .finance-actions, #donation-list .finance-actions {
+      flex-flow: row nowrap;
+      width: max-content;
+      gap: 6px;
+    }
+    #expense-list .finance-actions .btn, #donation-list .finance-actions .btn {
+      flex: none;
+      white-space: nowrap;
+    }
     .finance-actions .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
     .table-wrap {
