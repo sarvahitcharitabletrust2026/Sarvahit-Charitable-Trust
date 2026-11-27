@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -29,10 +28,12 @@
 
     html {
       scroll-behavior: smooth;
+      background: #fff;
     }
 
     body {
-      margin: 0;
+      max-width: 1408px;
+      margin: 0 auto;
       color: var(--ink);
       background: var(--paper);
       font-family: "Hind", system-ui, sans-serif;
@@ -127,43 +128,19 @@
       white-space: nowrap;
     }
 
-    .dropdown {
-      position: relative;
+    .nav-links > a:not(.btn), .involvement-toggle { border-radius: 8px; padding: 8px 10px; }
+    .nav-links > a:not(.btn):is(:hover, :focus-visible),
+    .involvement-toggle:is(:hover, :focus-visible, [aria-expanded="true"]) {
+      color: var(--green-dark); background: #eaf4ed;
     }
-
-    .dropdown summary {
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      list-style: none;
-      cursor: pointer;
-      font-weight: 700;
-      transition: color 0.2s ease, background-color 0.2s ease;
+    .nav { position: relative; }
+    .involvement-toggle {
+      display: inline-flex; align-items: center; gap: 7px; min-height: 44px;
+      color: inherit; background: transparent; border: 0; font: inherit;
+      font-weight: 700; white-space: nowrap; cursor: pointer;
     }
-
-    .dropdown:hover summary,
-    .dropdown:focus-within summary {
-      color: var(--green);
-    }
-
-    .dropdown:hover .dropdown-menu,
-    .dropdown:focus-within .dropdown-menu,
-    .dropdown[open] .dropdown-menu {
-      display: grid;
-    }
-
-    .dropdown summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .dropdown summary::after {
-      content: "v";
-      color: var(--green);
-      font-size: 11px;
-      line-height: 1;
-    }
-
+    .involvement-toggle svg { width: 15px; height: 15px; fill: none; stroke: var(--green); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .involvement-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
     .dropdown-menu {
       position: absolute;
       top: 100%;
@@ -328,9 +305,13 @@
     }
 
     .hero {
-      min-height: calc(100vh - 104px);
+      width: min(100%, 1440px);
+      margin-inline: auto;
+      min-height: clamp(420px, 42vw, 570px);
+      padding-block: 32px;
+      background-color: #163c32;
       display: grid;
-      align-items: start;
+      align-items: center;
       position: relative;
       overflow: hidden;
       background:
@@ -340,13 +321,17 @@
     }
 
     .hero-inner {
-      width: min(1180px, 100%);
+      width: min(1408px, 100%);
       margin: 0 auto;
-      padding: 26px 20px 44px;
+      padding: 12px 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(390px, 0.42fr);
+      align-items: center;
+      gap: clamp(20px, 3vw, 48px);
     }
 
     .hero-content {
-      max-width: 720px;
+      max-width: 820px;
     }
 
     .hero-logo {
@@ -376,15 +361,15 @@
 
     .hero h1 {
       font-family: "Poppins", system-ui, sans-serif;
-      font-size: clamp(42px, 7vw, 78px);
+      font-size: clamp(42px, 4.2vw, 64px);
       line-height: 1.04;
       margin: 0 0 18px;
       letter-spacing: 0;
     }
 
     .hero p {
-      font-size: 22px;
-      max-width: 640px;
+      font-size: 20px;
+      max-width: 700px;
       margin: 0 0 28px;
       color: rgba(255, 255, 255, 0.9);
     }
@@ -395,9 +380,109 @@
       gap: 12px;
     }
 
+    .hero-highlights {
+      display: grid;
+      gap: 8px;
+      max-width: 430px;
+      justify-self: end;
+      width: 100%;
+      padding: 8px;
+    }
+
+    .hero-highlight {
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 17px 19px;
+      border: 1px solid rgba(255,255,255,.27);
+      border-radius: 16px;
+      background: rgba(255,255,255,.13);
+      color: #fff;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 14px 35px rgba(0,0,0,.14);
+    }
+
+    .hero-highlight-icon {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,.17);
+      font-size: 23px;
+    }
+
+    .hero-highlight strong,
+    .hero-highlight span { display: block; }
+    .hero-highlight strong { font: 700 16px "Poppins", sans-serif; }
+    .hero-highlight span { color: rgba(255,255,255,.83); font-size: 14px; }
+    .hero-highlight-cta {
+      min-height: 48px;
+      justify-content: center;
+      border: 0;
+      background: var(--green);
+      font-weight: 700;
+      padding: 8px 12px;
+      font-size: 14px;
+      box-shadow: 0 14px 32px rgba(5, 35, 28, .28);
+    }
+
+    .hero-finance-grid { display: grid; gap: 7px; }
+    .hero-finance-item { min-height: 68px; display: flex; align-items: center; gap: 12px; min-width: 0; padding: 8px 12px; border: 1px solid rgba(255,255,255,.3); border-radius: 13px; background: rgba(255,255,255,.15); color: #fff; backdrop-filter: blur(9px); box-shadow: 0 12px 28px rgba(0,0,0,.14); }
+    .hero-finance-icon { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); }
+    .hero-finance-icon svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .hero-finance-copy { min-width: 0; }
+    .hero-finance-item:nth-child(2) { color: #9f4038; }
+    .hero-finance-item:nth-child(2) .hero-finance-icon { color: #fff; }
+    .hero-finance-copy span { display: block; color: #fff; font: 700 16px/1.2 "Poppins", sans-serif; }
+    .hero-finance-item strong { display: block; margin-top: 3px; color: #fff; font: 700 clamp(21px, 1.7vw, 25px)/1.15 "Poppins", sans-serif; overflow-wrap: anywhere; text-shadow: 0 1px 8px rgba(0,0,0,.25); }
+    .hero-finance-item:nth-child(1) { border-color: rgba(160,235,199,.52); }
+    .hero-finance-item:nth-child(2) { border-color: rgba(255,190,180,.5); }
+    .hero-finance-item:nth-child(3) { border-color: rgba(255,225,160,.52); }
+    .hero-finance-item:nth-child(4) { border-color: rgba(205,225,255,.5); }
+    .hero-finance-periods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .hero-finance-periods label { display: block; padding: 8px 10px 9px; border: 1px solid rgba(255,255,255,.3); border-radius: 11px; background: rgba(255,255,255,.15); color: #fff; font-size: 13px; font-weight: 700; backdrop-filter: blur(9px); }
+    .hero-finance-periods select { width: 100%; min-height: 34px; margin-top: 4px; padding: 4px 7px; border: 0; border-radius: 5px; background: #fff; color: #263238; font: inherit; }
+
     section {
       padding: 70px 20px;
     }
+
+    #about,
+    #work,
+    #gallery,
+    #blog,
+    #team,
+    #reviews {
+      border-block: 1px solid var(--line);
+    }
+
+    #about { background: #f7fbf7; }
+    #work { background: #e6f2e9; }
+    #donate { background: #f7fbf7; }
+    #gallery { background: #e6f2e9; }
+    #blog { background: #f7fbf7; }
+    #team { background: #e6f2e9; padding-block: 82px; }
+    #reviews { background: #e6f2e9; padding-block: 82px; }
+    #contact { background: #f7fbf7; }
+
+    #team .section-head { max-width: none; margin: 0 0 36px; text-align: left; }
+    #team .section-head p { margin-top: 8px; }
+    .founder-card { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: center; margin-bottom: 34px; padding: 26px; border: 1px solid #d8e5dc; border-radius: 20px; background: linear-gradient(120deg,#fff,#edf6ef); box-shadow: 0 14px 34px rgba(20,50,35,.08); }
+    .team-photo { box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; border: 3px solid #fff; border-radius: 16px; background: linear-gradient(145deg,#d9eadc,#f5e9cb); color: var(--green-dark); font: 700 50px/1 "Poppins",sans-serif; }
+    .team-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .founder-card .team-photo { border: 4px solid #fff; border-radius: 50%; outline: 3px solid var(--green); box-shadow: 0 8px 24px rgba(12,75,59,.18); }
+    .team-role { display: inline-block; margin-bottom: 8px; color: #8d6a22; font-size: 16px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .founder-card h3 { margin: 0 0 8px; color: var(--green-dark); font: 700 clamp(24px,3vw,34px)/1.15 "Poppins",sans-serif; }
+    .founder-card p { margin: 0; color: var(--muted); }
+    .team-subhead { margin: 0 0 18px; color: var(--green-dark); font: 700 23px "Poppins",sans-serif; text-align: center; }
+    .team-grid { gap: 16px; }
+    .team-card { min-width: 0; padding: 12px; border: 1px solid #76ac93; border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(18,106,81,.20); }
+    .team-card .team-photo { margin-bottom: 12px; aspect-ratio: 1.12; border-radius: 11px; font-size: 36px; }
+    .team-card h4 { margin: 0 0 3px; color: var(--green-dark); font: 700 16px/1.3 "Poppins",sans-serif; }
+    .team-card p { margin: 0; color: var(--muted); font-size: 13px; }
 
     #home,
     section[id] {
@@ -432,7 +517,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      margin-top: -46px;
+      margin-top: 0;
       position: relative;
       z-index: 4;
     }
@@ -523,6 +608,139 @@
       border-bottom: 1px solid var(--line);
     }
 
+    .finance-transparency {
+      background: #faf0df;
+      border-block: 1px solid var(--line);
+    }
+
+    .finance-heading {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      margin-bottom: 26px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .finance-heading-logo {
+      width: 62px;
+      height: 62px;
+      flex: 0 0 auto;
+      object-fit: contain;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .finance-heading h2 {
+      margin: 0;
+      color: var(--green-dark);
+      font: 700 clamp(24px, 3vw, 34px)/1.2 "Poppins", system-ui, sans-serif;
+    }
+
+    .finance-heading p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .finance-controls {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .finance-controls label {
+      display: grid;
+      gap: 4px;
+      color: var(--green-dark);
+      font-weight: 600;
+    }
+
+    .finance-controls select {
+      min-height: 44px;
+      min-width: 155px;
+      padding: 8px 34px 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .finance-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .finance-card {
+      min-height: 190px;
+      padding: 22px 24px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+    }
+
+    .finance-card-icon {
+      display: block;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 10px;
+    }
+
+    .finance-card h3 {
+      margin: 0 0 8px;
+      font: 600 18px/1.3 "Poppins", system-ui, sans-serif;
+    }
+
+    .finance-card strong {
+      display: block;
+      font: 600 clamp(28px, 4vw, 40px)/1.2 "Poppins", system-ui, sans-serif;
+      overflow-wrap: anywhere;
+    }
+
+    .finance-card small {
+      display: block;
+      margin-top: 8px;
+      font-size: 15px;
+    }
+
+    .finance-card-donations { background: #e8f4ee; color: var(--green); border-color: #d7e9dc; }
+    .finance-card-spent { background: #f8e9e5; color: #9f4038; border-color: #efd5cf; }
+    .finance-card-opening { background: #eef3ec; color: var(--green-dark); border-color: #dce6d7; }
+    .finance-card-closing { background: #fff4dc; color: #8a5a13; border-color: #f1dfb5; }
+
+    .finance-detail-panel {
+      padding: 22px 24px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      box-shadow: 0 8px 24px rgba(20, 30, 36, 0.06);
+    }
+
+    .finance-detail-panel h3 {
+      margin: 0 0 12px;
+      color: var(--green-dark);
+      font: 600 20px "Poppins", system-ui, sans-serif;
+    }
+
+    .finance-detail-panel p { margin: 12px 0 0; color: var(--muted); }
+    #finance-categories ul { margin: 0; padding-left: 22px; }
+    #finance-categories li { padding: 3px 0; }
+
+    @media (max-width: 640px) {
+      .finance-summary-grid { grid-template-columns: 1fr; gap: 12px; }
+      .finance-card { min-height: 160px; }
+      .finance-heading { align-items: flex-start; }
+      .finance-heading-logo { width: 52px; height: 52px; }
+      .finance-controls { align-items: stretch; }
+      .finance-controls label, .finance-controls select { width: 100%; }
+    }
+
     .donation-layout {
       display: grid;
       grid-template-columns: 0.95fr 1.05fr;
@@ -539,6 +757,7 @@
       flex-direction: column;
       justify-content: space-between;
       min-height: 360px;
+      min-width: 0;
     }
 
     .donation-note h2 {
@@ -553,6 +772,7 @@
       color: rgba(255, 255, 255, 0.86);
       margin: 0 0 20px;
       font-size: 19px;
+      overflow-wrap: anywhere;
     }
 
     .donation-box {
@@ -595,6 +815,7 @@
       padding: 14px 16px;
       font-weight: 700;
       color: #6d4811;
+      overflow-wrap: anywhere;
     }
 
     .payment-actions {
@@ -632,6 +853,49 @@
       border-bottom: 1px solid #efd293;
       padding: 18px 20px;
     }
+
+    .impact-strip { max-width: 1408px; margin: -58px auto 0; position: relative; z-index: 3; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+    .impact-strip .stats { display: contents; }
+    .impact-strip .stat { min-width: 0; padding: 22px 12px; border-right: 1px solid var(--line); text-align: center; color: var(--muted); font-weight: 700; }
+    .impact-strip .stat:last-child { border-right: 0; }
+    .impact-strip .stat strong { display: block; color: var(--green-dark); font: 800 clamp(24px, 2.5vw, 34px)/1 "Poppins", sans-serif; margin-bottom: 8px; }
+    
+    #partners { padding-block: 76px; background: #f7fbf7; border-top: 1px solid #c8dfcf; border-bottom: 1px solid #e6e0d6; }
+    #partners .section-head { position: relative; max-width: none; margin: 0 0 42px; text-align: left; }
+    #partners .section-head::before { content: "WITH US"; display: block; margin-bottom: 8px; color: var(--green); font-size: 12px; font-weight: 800; letter-spacing: .14em; }
+    :is(#about, #work, #gallery, #blog, #team, #partners, #reviews, #contact) .section-head h2,
+    #team .section-head p {
+      color: var(--green-dark);
+      font: 700 clamp(28px, 3.5vw, 42px)/1.12 "Poppins", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+    .partners-heading { display: grid; grid-template-columns: 1.3fr 1fr; align-items: start; gap: 24px; }
+    .partner-network h3 { margin: 0 0 12px; color: var(--green-dark); }
+    .partner-network dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+    .partner-network dl div { padding: 12px; border: 1px solid #83b49c; border-radius: 12px; background: #e3f2e8; box-shadow: 0 3px 10px rgba(18, 106, 81, .12); }
+    .partner-network dt { color: var(--green-dark); font-size: 18.2px; font-weight: 600; overflow-wrap: anywhere; }
+    .partner-network dd { margin: 0; color: var(--green-dark); font-size: 31.2px; font-weight: 700; }
+    #open-partners-directory[hidden] { display: none; }
+    .partners-toolbar { display: flex; justify-content: flex-end; margin-block: 12px; }
+    .partners-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; padding-block: 6px 12px; }
+    .partners-grid > p { grid-column: 1 / -1; }
+    .partners-grid .partner-card { min-width: 0; overflow-wrap: anywhere; }
+    #partners-directory { width: min(94vw, 1180px); background: linear-gradient(145deg, #e5f2e9, #fcf7ea); border-radius: 20px; }
+    @media (max-width: 1000px) { .partners-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 700px) {
+      .partners-heading { grid-template-columns: 1fr; }
+      #partners .section-head { margin-bottom: 0; }
+      .partners-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .partner-logo { max-width: 100%; }
+    }
+    .partner-card { display: grid; place-items: center; min-height: 168px; padding: 18px; text-align: center; border: 1px solid #76ac93; border-radius: 14px; background: #fff; box-shadow: 0 4px 12px rgba(18,106,81,.20); transition: transform .2s ease, box-shadow .2s ease; }
+    .partner-card:hover, .partner-card:focus-within { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(18,106,81,.12); }
+    .partner-logo { width: 110px; height: 92px; object-fit: contain; margin-bottom: 12px; }
+    .partner-card h3 { margin: 0 0 5px; color: var(--green-dark); font: 700 16px "Poppins", sans-serif; }
+    .partner-card p { margin: 0; color: var(--muted); font-size: 13px; }
+    .partner-card a { display: inline-block; margin-top: 9px; color: var(--green); font-size: 13px; font-weight: 800; }
+    @media (max-width: 900px) { .impact-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-inline: 16px; } .impact-strip .stat:nth-child(4) { border-right: 0; } .impact-strip .stat:nth-child(n+5) { border-top: 1px solid var(--line); } }
+    @media (max-width: 560px) { .impact-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: -30px; } .impact-strip .stat { border-right: 1px solid var(--line) !important; border-top: 1px solid var(--line); } .impact-strip .stat:nth-child(2n) { border-right: 0 !important; } .impact-strip .stat:nth-child(-n+2) { border-top: 0; } }
 
     .notice-box {
       max-width: 1180px;
@@ -694,60 +958,24 @@
       outline: none;
     }
 
-    .review-layout {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 22px;
-      align-items: start;
-    }
-
-    .review-card {
-      display: flex;
-      flex-direction: column;
-      height: 285px;
-      overflow: hidden;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-      box-shadow: 0 12px 34px rgba(20, 30, 36, 0.07);
-    }
-
-    .review-card p {
-      display: -webkit-box;
-      flex: 1;
-      margin: 10px 0;
-      padding: 12px 10px;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      overflow: hidden;
-      color: var(--muted);
-      overflow-wrap: anywhere;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 4;
-    }
-
-    .review-card strong {
-      color: var(--green-dark);
-      font-family: "Poppins", system-ui, sans-serif;
-    }
-
-    .review-name-button {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cfe4d8;
-      border-radius: 6px;
-      background: #edf7ef;
-      color: var(--green-dark);
-      font: inherit;
-      font-weight: 800;
-      text-align: left;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .review-name-button:hover,
-    .review-name-button:focus-visible { background: #dcefe3; outline: 2px solid var(--green); outline-offset: 2px; }
+    .review-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 22px; align-items: stretch; }
+    .review-viewer { min-width: 0; align-content: start; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 12px 34px rgba(20,30,36,.07); }
+    .review-viewer h3 { margin: 0 0 16px; color: var(--green-dark); text-align: center; font: 700 25px "Poppins",sans-serif; }
+    .review-table-wrap { height: 300px; max-height: 300px; align-self: start; overflow-x: hidden; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; scrollbar-width: thin; scrollbar-color: var(--green) #edf7ef; }
+    .review-table-wrap::-webkit-scrollbar { width: 9px; }
+    .review-table-wrap::-webkit-scrollbar-track { background: #edf7ef; }
+    .review-table-wrap::-webkit-scrollbar-thumb { background: var(--green); border: 2px solid #edf7ef; border-radius: 10px; }
+    .review-table { width: 100%; table-layout: fixed; border-collapse: collapse; background: #fff; }
+    .review-table th, .review-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: middle; text-align: left; overflow-wrap: anywhere; word-break: break-word; }
+    .review-table th:last-child, .review-table td:last-child { border-right: 0; }
+    .review-table th { position: sticky; top: 0; z-index: 1; background: #edf7ef; color: var(--green-dark); font-family: "Poppins",system-ui,sans-serif; font-size: 14px; }
+    .review-table th:nth-child(1), .review-table td:nth-child(1) { width: 23%; } .review-table th:nth-child(2), .review-table td:nth-child(2) { width: 43%; color: var(--muted); } .review-table th:nth-child(3), .review-table td:nth-child(3) { width: 18%; } .review-table th:nth-child(4), .review-table td:nth-child(4) { width: 16%; }
+    .review-text-preview { display: -webkit-box; max-height: 42px; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-height: 1.35; }
+    .review-name-button { padding: 0; border: 0; background: transparent; color: var(--green-dark); font: inherit; font-weight: 800; text-align: left; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; cursor: pointer; }
+    .review-name-button:hover, .review-name-button:focus-visible { color: var(--green); text-decoration-color: currentColor; outline: none; }
+    .review-text-button { width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+    .review-text-button:hover .review-text-preview, .review-text-button:focus-visible .review-text-preview { color: var(--green-dark); text-decoration: underline; text-underline-offset: 3px; }
+    .review-text-button:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
 
     .public-review-dialog {
       width: min(560px, calc(100% - 32px));
@@ -771,8 +999,9 @@
       margin: auto 0 0;
       padding-top: 8px;
       color: #d99a00;
-      font-size: 20px;
-      letter-spacing: 2px;
+      font-size: 18px;
+      letter-spacing: 0;
+      white-space: nowrap;
     }
 
     .review-rating .is-empty { color: #c8c8c8; }
@@ -784,11 +1013,16 @@
       letter-spacing: 0;
     }
 
-    .review-rating-picker { display: flex; gap: 5px; margin: 2px 0 4px; }
+    .review-rating-picker { display: flex; gap: 5px; margin: 0 4px 0 auto; }
     .review-rating-picker button { border: 0; padding: 0; background: transparent; color: #c8c8c8; font-size: 28px; cursor: pointer; }
     .review-rating-picker button.is-selected, .review-rating-picker button:hover, .review-rating-picker button:focus-visible { color: #d99a00; }
-    .review-reactions { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
-    .review-reaction { border: 1px solid var(--line); border-radius: 18px; padding: 5px 9px; background: #fff; cursor: pointer; }
+    .review-submit-row { display: flex; align-items: center; gap: 12px; }
+    .review-submit-row .review-rating-picker { order: 2; }
+    .review-submit-row .btn { order: 1; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    @media (max-width: 520px) { .review-submit-row { flex-wrap: wrap; } .review-submit-row .review-rating-picker { margin-left: 0; } }
+    .review-reactions { display: flex; flex-wrap: nowrap; gap: 3px; align-items: center; white-space: nowrap; }
+    .review-reaction { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 18px; padding: 4px 6px; background: #fff; cursor: pointer; font-size: 11px; white-space: nowrap; }
     .review-reaction.is-selected { border-color: var(--green); background: #edf7ef; }
 
     .review-form-box {
@@ -961,6 +1195,14 @@
       font-size: 28px;
       margin-bottom: 10px;
     }
+
+    .certificate-delivery { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 24px; margin: 18px auto; padding: 14px; border: 1px solid var(--line); border-radius: 8px; text-align: left; }
+    .certificate-delivery legend { padding: 0 8px; font-weight: 700; color: var(--green-dark); }
+    .certificate-delivery label { display: flex; align-items: center; gap: 8px; }
+    .certificate-delivery button { flex-basis: 100%; justify-self: center; }
+    .error-popup.is-success { border-top-color: var(--green); }
+    .error-popup.is-success h2 { color: var(--green-dark); }
+    .certificate-delivery button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 
     .error-popup-overlay {
       position: fixed;
@@ -1171,18 +1413,13 @@
       gap: 14px;
     }
 
-    .drive-gallery {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 24px 18px;
-      align-items: start;
-    }
+    .drive-gallery { gap: 18px; }
 
     .drive-gallery-card {
       min-width: 0;
       position: relative;
       overflow: hidden;
+
       border: 1px solid var(--line);
       border-radius: 14px;
       background: #fff;
@@ -1193,9 +1430,13 @@
       position: relative;
       width: 100%;
       aspect-ratio: 1.35 / 1;
+      display: block;
+      padding: 0;
+      border: 0;
       background: #eef1ee;
       overflow: hidden;
       cursor: default;
+      text-align: left;
     }
 
     .drive-gallery-image {
@@ -1208,50 +1449,14 @@
       transition: transform 0.18s ease;
     }
 
+    .drive-gallery-image.is-unavailable {
+      object-fit: contain;
+      padding: 24px;
+      color: var(--muted);
+    }
+
     .drive-gallery-stage:hover .drive-gallery-image {
       transform: scale(1.015);
-    }
-
-    .drive-gallery-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 38px;
-      height: 38px;
-      padding: 0;
-      border: 0;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.96);
-      color: #173d2c;
-      font-size: 29px;
-      font-weight: 400;
-      line-height: 1;
-      cursor: pointer;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
-      z-index: 3;
-    }
-
-    .drive-gallery-arrow.prev {
-      left: 8px;
-    }
-
-    .drive-gallery-arrow.next {
-      right: 8px;
-    }
-
-    .drive-gallery-arrow:hover,
-    .drive-gallery-arrow:focus-visible {
-      background: #fff;
-      outline: 2px solid var(--gold);
-      outline-offset: 2px;
-    }
-
-    .drive-gallery-arrow:disabled {
-      opacity: 0.38;
-      cursor: default;
-      outline: none;
     }
 
     .drive-gallery-info {
@@ -1278,8 +1483,8 @@
     }
 
     .drive-gallery-message {
+      flex: 0 0 100%;
       min-height: 160px;
-      grid-column: 1 / -1;
       display: grid;
       place-items: center;
       padding: 28px;
@@ -1290,7 +1495,7 @@
     }
 
     .drive-gallery-fallback {
-      grid-column: 1 / -1;
+      flex: 0 0 100%;
       display: block;
       padding: 16px 18px;
       border-radius: 10px;
@@ -1495,18 +1700,16 @@
       background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
     }
 
-    .blog-gallery {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
+    .blog-gallery { gap: 14px; }
 
     .blog-item {
+      min-width: 0;
       position: relative;
       min-height: 260px;
       overflow: hidden;
       border-radius: 8px;
       background: #14231c;
+
     }
 
     .blog-item img {
@@ -1545,6 +1748,24 @@
       background: #e62117;
       color: #fff;
       font-size: 17px;
+    }
+
+    .youtube-gallery-message {
+      flex: 0 0 100%;
+      min-height: 160px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .youtube-gallery-message a {
+      color: var(--green-dark);
+      font-weight: 700;
+      text-decoration: underline;
     }
 
     .gallery-modal-window {
@@ -1603,6 +1824,8 @@
       background: #fff;
     }
 
+    #contact .contact-box { background: #fff; border: 1px solid #76ac93; box-shadow: 0 5px 14px rgba(18, 106, 81, .16); }
+
     .contact-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1645,20 +1868,16 @@
 
       .nav-links {
         width: 100%;
-        overflow-x: auto;
-        padding-bottom: 4px;
+        min-width: 0;
+        flex-wrap: wrap;
+        white-space: normal;
+        overflow: visible;
       }
 
-      .dropdown-menu {
-        position: fixed;
-        top: auto;
-        left: 20px;
-        right: 20px;
-        min-width: auto;
-      }
 
       .stats,
       .work-grid,
+      .team-grid,
       .donation-layout,
       .contact-grid,
       .review-layout,
@@ -1674,9 +1893,6 @@
         grid-template-columns: 1fr 1fr;
       }
 
-      .blog-gallery {
-        grid-template-columns: 1fr 1fr;
-      }
 
       .gallery figure:first-child {
         grid-row: auto;
@@ -1685,31 +1901,10 @@
       }
     }
 
-    @media (max-width: 1050px) and (min-width: 621px) {
-      .drive-gallery {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
 
     @media (max-width: 620px) {
-      .drive-gallery {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px 12px;
-      }
-
-      .drive-gallery-arrow {
-        width: 34px;
-        height: 34px;
-        font-size: 25px;
-      }
-
-      .drive-gallery-arrow.prev {
-        left: 6px;
-      }
-
-      .drive-gallery-arrow.next {
-        right: 6px;
-      }
+      .founder-card { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .founder-card .team-photo { width: 170px; }
 
       body {
         font-size: 16px;
@@ -1724,6 +1919,15 @@
         flex-direction: column;
       }
 
+      .topbar-actions {
+        width: 100%;
+        max-width: 100%;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        margin-left: 0;
+      }
+
       .brand {
         align-items: center;
       }
@@ -1736,16 +1940,38 @@
       .nav-links {
         gap: 12px;
         font-size: 15px;
+        width: 100%;
+        min-width: 0;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: visible;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
+
+      .nav-links > a,
+      .nav-links > details {
+        flex: 0 0 auto;
       }
 
       .hero {
-        min-height: 620px;
+        min-height: 0;
+        padding-block: 0;
         background-position: center;
       }
 
       .hero-inner {
-        padding: 26px 18px 54px;
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 80px 18px 54px;
       }
+
+      .hero-highlights { grid-template-columns: 1fr; max-width: none; justify-self: stretch; }
+      .hero-highlight { min-height: 76px; padding: 12px; gap: 10px; }
+      .hero-highlight-icon { width: 38px; height: 38px; flex-basis: 38px; font-size: 19px; }
+      .hero-highlight-cta { grid-column: 1 / -1; }
 
       .hero p {
         font-size: 18px;
@@ -1819,10 +2045,109 @@
         height: 128px;
       }
 
-      .blog-gallery {
-        grid-template-columns: 1fr;
-      }
     }
+    :is(.team-grid, .drive-gallery, .blog-gallery) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .team-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    :is(.drive-gallery-message, .drive-gallery-fallback, .youtube-gallery-message) { grid-column: 1 / -1; }
+    .directory-preview .team-card:nth-child(n+6),
+    .directory-preview :is(.drive-gallery-card, .blog-item):nth-child(n+4) { display: none; }
+    #content-directory { width: min(94vw, 1180px); background: linear-gradient(145deg, #e5f2e9, #fcf7ea); border-radius: 20px; }
+    .directory-toolbar:has(button[hidden]) { display: none; }
+    @media (max-width: 1050px) { .team-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 860px) { .blog-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 620px) {
+      :is(.team-grid, .drive-gallery) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .blog-gallery { grid-template-columns: minmax(0, 1fr); }
+    }
+    .video-count-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+    .video-count-row:has(button[hidden]) { display: none; }
+    #youtube-library { width: min(94vw, 1180px); background: linear-gradient(145deg, #e5f2e9, #fcf7ea); border-color: #bdd4c4; border-radius: 20px; }
+    :is(#youtube-library, #youtube-player) .public-review-dialog-header { justify-content: flex-end; margin-bottom: 12px; }
+    :is(#youtube-library, #youtube-player) .public-review-dialog-close { width: 38px; height: 38px; line-height: 1; border: 1px solid #bfd7c8; border-radius: 50%; background: #fff; color: var(--green-dark); }
+    #youtube-library-list { --video-row: clamp(86px, 15vh, 130px); display: grid; grid-template-columns: repeat(min(5, var(--video-count, 5)), minmax(0, 1fr)); grid-auto-rows: var(--video-row); gap: 16px; margin: 0; padding: 6px 12px 6px 6px; list-style: none; max-height: calc(3 * var(--video-row) + 44px); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+    #youtube-library-list button { position: relative; display: block; width: 100%; height: 100%; padding: 4px; background: white; border: 1px solid #9ebfad; border-radius: 12px; box-shadow: 0 2px 5px rgba(18,106,81,.17); cursor: pointer; }
+    #youtube-library-list button:is(:hover, :focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+    #youtube-library-list button::after { content: ""; position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 38px; height: 38px; border-radius: 50%; background: #0c4b3b; opacity: .94; }
+    #youtube-library-list button::before { content: ""; position: absolute; z-index: 1; left: 50%; top: 50%; transform: translate(-35%, -50%); border-block: 7px solid transparent; border-left: 11px solid #fff; }
+    #youtube-library-list img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+    #youtube-player { width: min(94vw, 1160px); border-radius: 20px; background: linear-gradient(145deg, #e5f2e9, #fcf7ea); }
+    #youtube-player .public-review-dialog-header { justify-content: flex-start; flex-wrap: wrap; gap: 10px; }
+    #youtube-player .public-review-dialog-header form { margin-inline-start: auto; }
+    #youtube-player-title { margin: 0; font-size: clamp(16px, 2.5vw, 24px); }
+    .youtube-brand { display: inline-flex; align-items: center; gap: 6px; color: var(--green-dark); font-weight: 700; }
+    .youtube-player-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, 29%); gap: 12px; }
+    .youtube-playlist { min-width: 0; padding: 12px; background: #fff; border: 1px solid #bdd4c4; border-radius: 10px; }
+    .youtube-playlist h3 { margin: 0 0 8px; }
+    #youtube-playlist-list { margin: 0; padding: 0; list-style: none; max-height: min(52dvh, 390px); overflow-y: auto; }
+    #youtube-playlist-list button { display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 8px; width: 100%; padding: 7px; text-align: left; color: var(--green-dark); font: inherit; font-size: 13px; overflow-wrap: anywhere; border: 1px solid transparent; border-radius: 8px; background: transparent; cursor: pointer; }
+    #youtube-playlist-list button:is(:hover, [aria-current="true"]) { background: #e5f2e9; border-color: #bdd4c4; }
+    #youtube-playlist-list img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; }
+    @media (max-width: 700px) {
+      .youtube-player-layout { grid-template-columns: minmax(0, 1fr); }
+      #youtube-playlist-list { max-height: 28dvh; }
+    }
+    #youtube-player-frame[hidden], #youtube-player-notice[hidden] { display: none; }
+    #youtube-player-notice { margin: 0; padding: 20px; border: 1px solid #bdd4c4; border-radius: 12px; background: #fff; color: var(--green-dark); }
+    #youtube-player-frame { display: block; width: 100%; aspect-ratio: 16 / 9; min-height: 200px; background: #111; border: 0; border-radius: 8px; }
+    #youtube-gallery button.blog-item { border: 0; padding: 0; text-align: left; cursor: pointer; }
+    @media (max-width: 860px) { #youtube-library-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 540px) { #youtube-library-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    :is(#partners-directory, #content-directory)[open] { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
+    :is(#partners-directory, #content-directory) > .public-review-dialog-header {
+      flex: 0 0 auto; margin: 0; padding: 14px clamp(14px, 3vw, 24px); background: var(--green-dark); color: #fff;
+    }
+    :is(#partners-directory, #content-directory) > .public-review-dialog-header h2 {
+      color: inherit; margin: 0; min-width: 0; font-size: clamp(1rem, 4vw, 1.5rem); overflow-wrap: anywhere;
+    }
+    :is(#partners-directory, #content-directory) .public-review-dialog-close { color: inherit; min-width: 36px; }
+    :is(#partners-directory-grid, #content-directory-grid) {
+      min-height: 0; overflow: auto; padding: 18px clamp(14px, 3vw, 24px); overscroll-behavior: contain; scrollbar-gutter: stable;
+    }
+    #partners-directory-grid { align-content: start; grid-auto-rows: max-content; }
+    #partners-directory-grid .partner-card { align-content: center; min-height: 166px; gap: 3px; padding: 14px 10px; }
+    #partners-directory-grid .partner-logo { width: 110px; height: 72px; margin: 0 0 5px; }
+    #partners-directory-grid .partner-card h3 { margin: 0; }
+    #partners-directory-grid .partner-card a { margin-top: 5px; }
+    #partners-directory-grid .partner-card:is(:hover, :focus-within) { transform: none; }
+    @media (max-width: 1000px) { #partners-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    .nav-controls { display: flex; align-items: center; gap: 18px; min-width: 0; }
+    .nav-donate { flex: none; white-space: nowrap; }
+    @media (max-width: 1350px) {
+      .nav { position: relative; flex-direction: column; align-items: stretch; gap: 6px; }
+      .nav-controls { gap: 8px; }
+      .nav-links {
+        flex: 1 1 auto; min-width: 0; width: auto; flex-wrap: nowrap; white-space: nowrap;
+        overflow-x: auto; overscroll-behavior-x: contain; padding: 4px; gap: 8px;
+      }
+      .nav-links > * { flex: none; }
+      .nav-donate { padding-inline: 12px; }
+    }
+    .hero-actions .btn { transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease; }
+    .hero-actions .btn:is(:hover, :focus-visible) { transform: translateY(-3px) scale(1.03); box-shadow: 0 8px 20px #001c1680; }
+    .hero-actions .btn-primary:is(:hover, :focus-visible) { background: #0c4b3b; }
+    .hero-actions .btn-light:is(:hover, :focus-visible) { background: #e4f3ea; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-actions .btn { transition: none; }
+      .hero-actions .btn:is(:hover, :focus-visible) { transform: none; }
+    }
+    .finance-more { flex: 0 0 44px; min-height: 44px; margin-inline-start: auto; border: 0; border-radius: 8px; background: transparent; color: #fff; font: 800 20px/1 system-ui, sans-serif; letter-spacing: 2px; cursor: pointer; }
+    .finance-more:is(:hover, :focus-visible) { background: #ffffff30; outline: 2px solid #fff; outline-offset: -2px; }
+    #hero-finance-report { width: min(92vw, 520px); max-height: 85dvh; padding: 0; border: 1px solid var(--line); border-radius: 14px; }
+    #hero-finance-report::backdrop { background: #111a1cad; }
+    #get-involved-menu:not([hidden]) { display: grid; }
+    #hero-finance-report .bank-table thead th {
+      background: #dfece4; color: var(--green-dark); border-bottom: 2px solid #96b8a5;
+    }
+    #hero-report-period { margin: 0 0 12px; font-weight: 700; }
+    #hero-finance-report .bank-table th { text-align: left; }
+    #hero-finance-report .bank-table :is(th, td):last-child { text-align: right; }
+    #hero-report-link { margin-top: 16px; }
+    :is(#donor-window, #volunteer-window) .modal-window, #hero-finance-report { background: #f0f6f2; border-radius: 14px; }
+    :is(#donor-window, #volunteer-window, #hero-finance-report) .modal-head { background: var(--green-dark); color: #fff; padding: 15px 20px; }
+    :is(#donor-window, #volunteer-window, #hero-finance-report) .modal-close { flex: none; border: 0; background: transparent; color: #fff; font-size: 28px; }
+    :is(#donor-window, #volunteer-window) .form-grid > * { min-width: 0; }
   </style>
 </head>
 <body>
@@ -1831,10 +2156,10 @@
       <span>Sarvahit Charitable Trust | Help today. Hope for tomorrow.</span>
       <div class="topbar-actions">
         <div class="social-links" aria-label="Social media links">
-          <a class="social-icon" href="https://x.com/SarvahitCTrust" target="_blank" rel="noopener noreferrer" aria-label="X" title="X"><img src="assets/twitter-logo.png" alt="" /></a>
-          <a class="social-icon" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><img src="https://marketplace.canva.com/KrzKM/MAGzNqKrzKM/1/tl/canva-facebook-logo-MAGzNqKrzKM.png" alt="" /></a>
-          <a class="social-icon" href="https://www.instagram.com/sarvahitcharitabletrust2024/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><img src="https://marketplace.canva.com/0Q87E/MAGzNm0Q87E/1/tl/canva-instagram-icon-MAGzNm0Q87E.png" alt="" /></a>
-          <a class="social-icon" href="https://www.linkedin.com/in/sarvahit-charitable-trust-06a594442/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><img src="https://marketplace.canva.com/NA4A8/MAGzNvNA4A8/1/tl/canva-linkedin-icon-MAGzNvNA4A8.png" alt="" /></a>
+          <a class="social-icon" href="https://x.com/SarvahitCTrust" target="_blank" rel="noopener noreferrer" aria-label="X" title="X"><img src="https://drive.google.com/thumbnail?id=1WGuivnrnzxWePxklQhXCib0z1b9dGav7&amp;sz=w128" alt="" /></a>
+          <a class="social-icon" href="https://www.facebook.com/profile.php?id=61596207564292" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook"><img src="https://marketplace.canva.com/KrzKM/MAGzNqKrzKM/1/tl/canva-facebook-logo-MAGzNqKrzKM.png" alt="" /></a>
+          <a class="social-icon" href="https://www.instagram.com/sarvahitcharitabletrust2024/" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><img src="https://drive.google.com/thumbnail?id=14S_3eYZ1qJytAdMEnOBLGuU5WErgxqpC&amp;sz=w128" alt="" /></a>
+          <a class="social-icon" href="https://www.linkedin.com/in/sarvahit-charitable-trust-06a594442/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><img src="https://drive.google.com/thumbnail?id=1eKGqokVhqD06X8XIXjoJ1qTOtVACT4ze&amp;sz=w128" alt="" /></a>
           <a class="social-icon" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><img src="https://marketplace.canva.com/KE6ns/MAElfQKE6ns/1/tl/canva-youtube-logo-MAElfQKE6ns.png" alt="" /></a>
         </div>
         <select class="language-select" id="language-select" aria-label="Select language">
@@ -1855,23 +2180,24 @@
           <small>Working for the Welfare of Everyone</small>
         </span>
       </a>
+      <div class="nav-controls">
       <div class="nav-links">
         <a href="#home">Home</a>
         <a href="#about">About</a>
         <a href="#work">Work</a>
-        <details class="dropdown" id="get-involved-dropdown">
-          <summary>Get Involved</summary>
-          <div class="dropdown-menu">
-            <a href="#donor-window" class="involved-option" data-open-modal="donor-window">Donation</a>
-            <a href="#volunteer-window" class="involved-option" data-open-modal="volunteer-window">Be a Volunteer</a>
-          </div>
-        </details>
+        <a href="#partners">Partners</a>
+        <button class="involvement-toggle" id="get-involved-toggle" type="button" aria-expanded="false" aria-controls="get-involved-menu"><span>Get Involved</span><svg aria-hidden="true" viewBox="0 0 16 16"><path d="m3 6 5 5 5-5"/></svg></button>
         <a href="#gallery">Gallery</a>
         <a href="#blog">Blog</a>
         <a href="#reviews">Reviews</a>
         <a href="#contact">Contact</a>
-        <a class="btn btn-primary" href="#donor-window" data-open-modal="donor-window">Donate Now</a>
       </div>
+        <a class="btn btn-primary nav-donate" href="#donor-window" data-open-modal="donor-window">Donate Now</a>
+      </div>
+      <div class="dropdown-menu" id="get-involved-menu" hidden>
+            <a href="#donor-window" class="involved-option" data-open-modal="donor-window">Donation</a>
+            <a href="#volunteer-window" class="involved-option" data-open-modal="volunteer-window">Be a Volunteer</a>
+          </div>
     </nav>
   </header>
 
@@ -1883,18 +2209,33 @@
           <h1>Sarvahit Charitable Trust</h1>
           <p>We work to provide food, education, medical assistance, and community support to needy families, children, elderly people, and the underprivileged sections of society.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#donor-window" data-open-modal="donor-window">Donation Details</a>
+            <a class="btn btn-primary" href="#donor-window" data-open-modal="donor-window">Donate Now</a>
             <a class="btn btn-light" href="#work">Our Social Work</a>
           </div>
         </div>
+        <aside class="hero-highlights" aria-label="Financial transparency and our work">
+          <div class="hero-finance-periods" aria-label="Select reporting period">
+              <label>Year<select id="hero-finance-year" aria-label="Select year"></select></label>
+              <label>Month<select id="hero-finance-month" aria-label="Select month"></select></label>
+          </div>
+          <div class="hero-finance-grid">
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/><path d="M8 12h2l1.5-2 2.2 4 1.3-2H18"/></svg></span><div class="hero-finance-copy"><span>Total Donations</span><strong data-finance-mirror="finance-income">₹0.00</strong></div><button class="finance-more" type="button" aria-label="Donation Received" aria-haspopup="dialog" data-finance-report="donation"><span aria-hidden="true">&bull;&bull;&bull;</span></button></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 15h2"/><path d="M6 6V4a2 2 0 0 1 2-2h11"/></svg></span><div class="hero-finance-copy"><span>Total Spent</span><strong data-finance-mirror="finance-expenses">₹0.00</strong></div><button class="finance-more" type="button" aria-label="Expense Report" aria-haspopup="dialog" data-finance-report="expense"><span aria-hidden="true">&bull;&bull;&bull;</span></button></div>
+            <div class="hero-finance-item"><span class="hero-finance-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><div class="hero-finance-copy"><span>People Supported</span><strong id="hero-people-supported">0+</strong></div></div>
+          </div>
+          <a class="hero-highlight hero-highlight-cta" href="#donor-window" data-open-modal="donor-window">Join us in making a difference&nbsp; →</a>
+        </aside>
       </div>
     </section>
 
-    <div class="wrap">
-      <div class="stats" aria-label="Trust impact highlights">
+    <div class="impact-strip" aria-label="Trust impact highlights">
+      <div class="stats">
         <div class="stat"><strong id="food-count">0+</strong>Food packets distributed</div>
         <div class="stat"><strong id="student-count">0+</strong>Students supported</div>
         <div class="stat"><strong id="medical-count">0+</strong>Medical help cases</div>
+        <div class="stat"><strong id="awareness-count">0+</strong>Awareness drives</div>
+        <div class="stat"><strong id="community-count">0+</strong>Community welfare</div>
+        <div class="stat"><strong id="tree-count">0+</strong>Tree plantation</div>
         <div class="stat"><strong id="volunteer-count">0</strong>Volunteers joined trust</div>
       </div>
     </div>
@@ -1960,6 +2301,47 @@
       </div>
     </section>
 
+    <section id="transparency" class="finance-transparency" aria-labelledby="transparency-title" style="display:none">
+      <div class="wrap">
+        <div class="finance-heading">
+          <img class="finance-heading-logo" src="assets/SarvahitCharitableTrust_Logo.png" alt="" />
+          <div>
+            <h2 id="transparency-title">Sarvahit Charitable Trust</h2>
+            <p>Donation &amp; Financial Transparency</p>
+          </div>
+        </div>
+        <p class="section-head" style="max-width:none;margin:0 0 18px;color:var(--muted)">Published, approved totals only. Donor details and payment proofs are kept private.</p>
+        <div class="finance-controls">
+          <label>Period <select id="finance-period"><option value="year">Financial year (April–March)</option><option value="month" selected>Month</option></select></label>
+          <label>Financial year <select id="finance-year"></select></label>
+          <label id="finance-month-wrap">Month <select id="finance-month"></select></label>
+          <button class="btn btn-primary" type="button" id="finance-refresh">Refresh</button>
+        </div>
+        <div class="finance-summary-grid">
+          <article class="finance-card finance-card-donations">
+            <svg class="finance-card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 27s-10-6.2-10-13a5.7 5.7 0 0 1 10-3.7A5.7 5.7 0 0 1 26 14c0 6.8-10 13-10 13Z"/><path d="M3 24h5l3-4h5l3 3h5l5-5"/></svg>
+            <h3>Total Donations</h3><strong id="finance-income">₹0.00</strong><small>Published donations</small>
+          </article>
+          <article class="finance-card finance-card-spent">
+            <svg class="finance-card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="24" height="19" rx="3"/><path d="M4 12h21a3 3 0 0 1 3 3v4H20a3 3 0 0 1 0-6h8M22 17h.01"/><path d="M8 8V5h16"/></svg>
+            <h3>Total Spent</h3><strong id="finance-expenses">₹0.00</strong><small>Published expenses</small>
+          </article>
+          <article class="finance-card finance-card-opening">
+            <svg class="finance-card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13c0-4 5-7 12-7s11 3 11 7v9c0 3-5 5-11 5S5 25 5 22v-9Z"/><path d="M5 13c0 3 5 5 12 5s11-2 11-5M10 8 8 5M23 8l2-3M13 21h.01M22 21h.01M25 15h5v5h-5"/></svg>
+            <h3>Opening Balance</h3><strong id="finance-opening">₹0.00</strong><small>At the start of this period</small>
+          </article>
+          <article class="finance-card finance-card-closing">
+            <svg class="finance-card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 27S5 20 5 12a6 6 0 0 1 11-3 6 6 0 0 1 11 3c0 8-11 15-11 15Z"/><path d="m11 16 3 3 7-7"/></svg>
+            <h3>Available Balance</h3><strong id="finance-closing">₹0.00</strong><small>Closing balance</small>
+          </article>
+        </div>
+        <div class="finance-detail-panel"><h3>Spending by Category</h3><div id="finance-categories">No published expense data for this period.</div>
+          <p id="finance-funds-note" style="margin-top:16px;color:#52645a">Restricted and unrestricted funds are tracked separately by the Trust. Figures include published records only.</p>
+          <p id="finance-status" role="status" aria-live="polite">Loading published summaries…</p>
+        </div>
+      </div>
+    </section>
+
     <section class="donation-band" id="donate">
       <div class="wrap donation-layout">
         <div class="donation-note">
@@ -2007,10 +2389,13 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Photos from Our Community Service Programs</h2>
-          <p>Each work-wise folder is shown as a card. Use the arrows to browse its photos, or double-click a photo to open it in Google Drive.</p>
+          <p>Browse photos from our community service programs below.</p>
         </div>
-        <div class="drive-gallery" id="social-activity-gallery" aria-live="polite">
-          <p class="drive-gallery-message">Loading community service photos...</p>
+        <div class="partners-toolbar directory-toolbar"><button class="btn btn-primary" id="open-photo-directory" type="button" aria-haspopup="dialog" hidden></button></div>
+        <div class="directory-preview">
+          <div class="drive-gallery" id="social-activity-gallery" aria-live="polite">
+            <p class="drive-gallery-message">Loading community service photos...</p>
+          </div>
         </div>
       </div>
     </section>
@@ -2021,20 +2406,62 @@
           <h2>Sarvahit Trust Blog and Video Updates</h2>
           <p>Watch our social work, donation activities, community programs, and latest trust updates on YouTube.</p>
         </div>
-        <div class="blog-gallery">
-          <a class="blog-item" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener">
-            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=900&q=82" alt="Sarvahit Trust food distribution video" />
-            <span class="blog-overlay"><span class="youtube-symbol">&#9654;</span>Food Distribution Updates</span>
-          </a>
-          <a class="blog-item" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener">
-            <img src="https://images.unsplash.com/photo-1497486751825-1233686d5d80?auto=format&fit=crop&w=900&q=82" alt="Sarvahit Trust education support video" />
-            <span class="blog-overlay"><span class="youtube-symbol">&#9654;</span>Education Support Videos</span>
-          </a>
-          <a class="blog-item" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener">
-            <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=900&q=82" alt="Sarvahit Trust community work video" />
-            <span class="blog-overlay"><span class="youtube-symbol">&#9654;</span>Community Program Videos</span>
-          </a>
+        <div class="video-count-row"><button class="btn btn-primary" id="youtube-count" type="button" aria-haspopup="dialog" hidden></button></div>
+        <div class="directory-preview">
+          <div class="blog-gallery" id="youtube-gallery" aria-live="polite">
+            <p class="youtube-gallery-message">Loading latest YouTube videos...</p>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <section id="team">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>SARVAHIT CHARITABLE TRUST</h2>
+          <p>Our Leadership &amp; Team</p>
+        </div>
+        <article class="founder-card">
+          <div class="team-photo" data-team-photo="0" aria-label="Founder photo placeholder">HW</div>
+          <div>
+            <span class="team-role">Founder &amp; President</span>
+            <h3>Mr.Harshal Prakash Wani</h3>
+            <p>Guiding Sarvahit Trust’s mission to serve people and strengthen communities.</p>
+          </div>
+        </article>
+        <h3 class="team-subhead">Core Team Members</h3>
+        <div class="partners-toolbar"><button class="btn btn-primary" id="open-team-directory" type="button" aria-haspopup="dialog">View all team members</button></div>
+        <div class="directory-preview">
+          <div class="team-grid" id="team-grid" aria-label="Core team profiles">
+          <article class="team-card"><div class="team-photo" data-team-photo="1" aria-label="Secretary photo placeholder">S</div><h4>Name to be added</h4><p>Secretary</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="2" aria-label="Treasurer photo placeholder">T</div><h4>Name to be added</h4><p>Treasurer</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="3" aria-label="Trustee photo placeholder">T1</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="4" aria-label="Trustee photo placeholder">T2</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="5" aria-label="Trustee photo placeholder">T3</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="6" aria-label="Trustee photo placeholder">T4</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="7" aria-label="Trustee photo placeholder">T5</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="8" aria-label="Trustee photo placeholder">T6</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="9" aria-label="Trustee photo placeholder">T7</div><h4>Name to be added</h4><p>Trustee</p></article>
+          <article class="team-card"><div class="team-photo" data-team-photo="10" aria-label="Trustee photo placeholder">T8</div><h4>Name to be added</h4><p>Trustee</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="partners">
+      <div class="wrap">
+        <div class="partners-heading">
+          <div class="section-head"><h2>Partners and Supporters</h2><p>Working with organisations and community supporters to reach more people.</p></div>
+          <div class="partner-network">
+            <h3>Our Collaboration Network</h3>
+            <dl>
+              <div><dt>Partner Organizations</dt><dd id="partner-total">—</dd></div>
+              <div><dt>Active Collaborations</dt><dd id="partner-active">—</dd></div>
+            </dl>
+          </div>
+        </div>
+        <div class="partners-toolbar"><button class="btn btn-primary" id="open-partners-directory" type="button" aria-haspopup="dialog" hidden></button></div>
+        <div class="partners-grid" id="partners-grid" aria-label="Partner cards"><p>Our partner information will appear here.</p></div>
       </div>
     </section>
 
@@ -2057,26 +2484,21 @@
                   Your Review
                   <textarea name="review" required></textarea>
                 </label>
-                <fieldset class="full" style="border:0;padding:0;margin:0">
-                  <legend style="font-weight:700;margin-bottom:6px">Your Rating (required)</legend>
+                <fieldset class="full review-submit-row" style="border:0;padding:0;margin:0">
+                  <legend class="visually-hidden">Your Rating (required)</legend>
                   <div class="review-rating-picker" id="review-rating-picker" role="radiogroup" aria-label="Rate your experience from one to five stars">
                     <button type="button" data-rating="1" role="radio" aria-label="1 star" aria-checked="false">★</button><button type="button" data-rating="2" role="radio" aria-label="2 stars" aria-checked="false">★</button><button type="button" data-rating="3" role="radio" aria-label="3 stars" aria-checked="false">★</button><button type="button" data-rating="4" role="radio" aria-label="4 stars" aria-checked="false">★</button><button type="button" data-rating="5" role="radio" aria-label="5 stars" aria-checked="false">★</button>
                   </div>
                   <input type="hidden" name="rating" required />
-                </fieldset>
-                <div class="full">
                   <button class="btn btn-primary" type="submit">Submit Review</button>
-                </div>
+                </fieldset>
               </div>
             </form>
             <div class="save-message" id="review-message">Review submitted successfully.</div>
           </div>
           <div class="review-viewer">
-            <div class="review-grid" id="review-list" aria-live="polite"></div>
-            <div class="review-controls" aria-label="Review controls">
-              <button class="review-arrow" type="button" id="review-prev" aria-label="Previous reviews">&#8249;</button>
-              <button class="review-arrow" type="button" id="review-next" aria-label="Next reviews">&#8250;</button>
-            </div>
+            <h3>Reviews</h3>
+            <div class="review-table-wrap"><table class="review-table"><thead><tr><th>Name</th><th>Review</th><th>Rating</th><th>Likes</th></tr></thead><tbody id="review-list" aria-live="polite"><tr><td colspan="4">Loading reviews…</td></tr></tbody></table></div>
           </div>
         </div>
       </div>
@@ -2106,6 +2528,43 @@
     </section>
   </main>
 
+  <dialog class="public-review-dialog" id="partners-directory" aria-labelledby="partners-directory-title">
+    <div class="public-review-dialog-header">
+      <h2 id="partners-directory-title">Partners and Supporters</h2>
+      <form method="dialog"><button class="public-review-dialog-close" aria-label="Close partners">&times;</button></form>
+    </div>
+    <div class="partners-grid" id="partners-directory-grid"></div>
+  </dialog>
+  <dialog class="public-review-dialog" id="content-directory" aria-labelledby="content-directory-title">
+    <div class="public-review-dialog-header">
+      <h2 id="content-directory-title"></h2>
+      <form method="dialog"><button class="public-review-dialog-close" aria-label="Close directory">&times;</button></form>
+    </div>
+    <div id="content-directory-grid"></div>
+  </dialog>
+  <dialog class="public-review-dialog" id="youtube-player" aria-labelledby="youtube-player-title">
+    <div class="public-review-dialog-header">
+      <h2 id="youtube-player-title">Sarvahit Charitable Trust</h2>
+      <a class="youtube-brand" href="https://www.youtube.com/@SarvahitCharitableTrust" target="_blank" rel="noopener"><span class="youtube-symbol" aria-hidden="true">▶</span> YouTube</a>
+      <form method="dialog"><button class="public-review-dialog-close" aria-label="Close video">&times;</button></form>
+    </div>
+    <div class="youtube-player-layout">
+      <div>
+        <iframe id="youtube-player-frame" title="YouTube video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="origin" allowfullscreen></iframe>
+        <p id="youtube-player-notice" role="status" hidden>Open the published website or serve this page over HTTP to play embedded videos.</p>
+      </div>
+      <aside class="youtube-playlist" aria-labelledby="youtube-playlist-title">
+        <h3 id="youtube-playlist-title">Playlist</h3>
+        <ol id="youtube-playlist-list"></ol>
+      </aside>
+    </div>
+  </dialog>
+  <dialog class="public-review-dialog" id="youtube-library" aria-label="Sarvahit Trust Videos">
+    <div class="public-review-dialog-header">
+      <form method="dialog"><button class="public-review-dialog-close" aria-label="Close videos">&times;</button></form>
+    </div>
+    <ol id="youtube-library-list" tabindex="0" aria-label="Scrollable video list"></ol>
+  </dialog>
   <dialog class="public-review-dialog" id="public-review-dialog" aria-labelledby="public-review-name">
     <div class="public-review-dialog-header">
       <h3 id="public-review-name"></h3>
@@ -2147,13 +2606,14 @@
                 Email
                 <input name="email" type="email" autocomplete="email" required />
               </label>
-              <label>
-                City
-                <input name="city" autocomplete="address-level2" pattern="[A-Za-z ]+" data-letters-only required />
-              </label>
+              <label>Country<select name="country" autocomplete="country-name" required><option value="">Select country</option><option selected>India</option></select></label>
+              <label>State<select name="state" autocomplete="address-level1" required><option value="">Select state</option></select></label>
+              <label>City<select name="city" autocomplete="address-level2" required><option value="">Select city</option></select></label>
+              <div data-location-status role="status" hidden></div>
+              <label>PIN Code<input name="pin_code" type="text" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]+" data-pin-code required /></label>
               <label>
                 Donation Amount
-                <input name="amount" type="number" inputmode="decimal" min="1" step="0.01" required />
+                <input name="amount" type="number" inputmode="numeric" min="100" step="1" data-integer-amount required />
               </label>
               <label>
                 Donation Purpose
@@ -2163,6 +2623,7 @@
                   <option>Education Support</option>
                   <option>Medical Help</option>
                   <option>Community Welfare</option>
+                  <option>Tree Plantations</option>
                   <option>General Donation</option>
                 </select>
               </label>
@@ -2206,9 +2667,14 @@
 
         <section class="donation-panel" id="donor-certificate-panel" hidden>
           <div class="certificate-ready">
-            <h3>Thank You for Your Support</h3>
-            <p>Your payment details have been submitted. Your personalized appreciation certificate is ready.</p>
-            <button class="btn btn-primary" type="button" id="download-certificate">Download Certificate PDF</button>
+            <h3>Choose Certificate Delivery</h3>
+            <p>Select where you would like to receive your certificate.</p>
+            <fieldset class="certificate-delivery"><legend>Choose one or both options</legend>
+              <label><input type="checkbox" name="certificate-delivery" value="email"> Email</label>
+              <label><input type="checkbox" name="certificate-delivery" value="whatsapp"> WhatsApp</label>
+              <button class="btn btn-primary" type="button" id="submit-certificate-preference" disabled>Submit</button>
+              <p id="certificate-delivery-status" role="status" aria-live="polite"></p>
+            </fieldset>
           </div>
         </section>
       </div>
@@ -2230,6 +2696,21 @@
     </section>
   </div>
 
+  <dialog id="hero-finance-report" aria-labelledby="hero-report-title">
+    <div class="modal-head">
+      <h2 id="hero-report-title"></h2>
+      <form method="dialog"><button class="modal-close" aria-label="Close report">&times;</button></form>
+    </div>
+    <div class="modal-body">
+      <p id="hero-report-period"></p>
+      <table class="bank-table" aria-describedby="hero-report-period">
+        <thead><tr><th scope="col" id="hero-report-category">Donation Purpose</th><th scope="col">Amount</th></tr></thead>
+        <tbody id="hero-report-rows"></tbody>
+      </table>
+      <a id="hero-report-link" class="btn btn-primary" href="#transparency">View Financial Transparency</a>
+    </div>
+  </dialog>
+
   <div class="modal-overlay" id="volunteer-window" hidden role="dialog" aria-modal="true" aria-labelledby="volunteer-title">
     <div class="modal-window">
       <div class="modal-head">
@@ -2249,12 +2730,13 @@
             </label>
             <label>
               Email
-              <input name="email" type="email" autocomplete="email" />
+              <input name="email" type="email" autocomplete="email" required />
             </label>
-            <label>
-              City
-              <input name="city" autocomplete="address-level2" pattern="[A-Za-z ]+" data-letters-only required />
-            </label>
+            <label>Country<select name="country" autocomplete="country-name" required><option value="">Select country</option><option selected>India</option></select></label>
+            <label>State<select name="state" autocomplete="address-level1" required><option value="">Select state</option></select></label>
+            <label>City<select name="city" autocomplete="address-level2" required><option value="">Select city</option></select></label>
+            <div data-location-status role="status" hidden></div>
+            <label>PIN Code<input name="pin_code" type="text" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]+" data-pin-code required /></label>
             <label>
               Interested Work
               <select name="interest" required>
@@ -2264,6 +2746,7 @@
                 <option>Medical Help</option>
                 <option>Community Welfare</option>
                 <option>Clothes Distribution</option>
+                <option>Tree Plantations</option>
               </select>
             </label>
             <label>
@@ -2325,18 +2808,32 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
+    document.addEventListener("input", (event) => {
+      const input = event.target;
+      if (input instanceof HTMLInputElement && input.hasAttribute("data-integer-amount")) {
+        const digits = input.value.replace(/\D/g, "");
+        if (input.value !== digits) input.value = digits;
+      }
+    });
+    document.addEventListener("wheel", (event) => {
+      const input = event.target;
+      if (input instanceof HTMLInputElement && input.type === "number" && document.activeElement === input) event.preventDefault();
+    }, { passive: false });
     const SUPABASE_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
     const SUPABASE_TABLE = "volunteer_registrations";
     const SUPABASE_REVIEW_TABLE = "trusted_reviews";
+    const SUPABASE_PUBLIC_REVIEW_VIEW = "trust_public_reviews";
     const SUPABASE_STATS_TABLE = "trust_impact_stats";
+    const PARTNER_TABLE = "trust_partners";
     const SUPABASE_DONATION_TABLE = "donation_records";
-    const PAYMENT_BUCKET = "payment-screenshots";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbwp8h5CgczzmMbGaOJckPQ-9In_hqnEjYZrmhfFqpSEJhCSnRNngeLrGnA-tc9QU_qO/exec";
+    const TRUST_DONOR_COUNT_FUNCTION = "trust_public_donor_count";
     const GOOGLE_DRIVE_GALLERY_URL = "https://drive.google.com/embeddedfolderview?id=1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv#grid";
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
-    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycbwe150i-u7iDEDpx01_qCUR5bcBQHt2ilTyOlq3xIdZydWw0VCZ361xGxiKrqEPgUdv2A/exec";
+    const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycby-g5wS4xmG9Y0zrGXkJIe-dKmI8QkXGGlHbNGp4Gav6QknLYVry0td3KvFm7VeGDGXGQ/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyzwu3e6mnqYQxzhjgqzJT2ACunYjusxzb77IS5HLzv3NP1cUyGEsL6mBMI9OUTAXnA/exec";
+    const GOOGLE_DRIVE_TEAM_API_URL = GOOGLE_DRIVE_UPLOAD_URL;
     const volunteerCount = document.getElementById("volunteer-count");
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
@@ -2344,10 +2841,12 @@
     const TRUST_REACTIONS_KEY = "trustReviewReactions";
     const TRUST_VOTER_KEY = "trustReviewVoter";
     const SUPABASE_REACTIONS_TABLE = "trusted_review_reactions";
+    const TRUST_FINANCE_VIEW = "trust_finance_public_summary";
     const TRUST_LANGUAGE_KEY = "trustLanguage";
     let allReviews = [];
     let activeReviewIndex = 0;
     let activeDonation = null;
+    let publicFinanceRows = [];
 
     const translations = {
       en: {
@@ -2355,6 +2854,7 @@
         navHome: "Home",
         navAbout: "About",
         navWork: "Work",
+        navTransparency: "Transparency",
         navGetInvolved: "Get Involved",
         navDonation: "Donation",
         navVolunteer: "Be a Volunteer",
@@ -2392,6 +2892,7 @@
         navHome: "मुख्यपृष्ठ",
         navAbout: "माहिती",
         navWork: "कार्य",
+        navTransparency: "पारदर्शकता",
         navGetInvolved: "सहभाग",
         navDonation: "देणगी",
         navVolunteer: "स्वयंसेवक व्हा",
@@ -2429,6 +2930,7 @@
         navHome: "होम",
         navAbout: "परिचय",
         navWork: "कार्य",
+        navTransparency: "पारदर्शिता",
         navGetInvolved: "जुड़ें",
         navDonation: "दान",
         navVolunteer: "स्वयंसेवक बनें",
@@ -2487,8 +2989,171 @@
         return null;
       }
 
-      return response.json();
+      const responseText = await response.text();
+      return responseText ? JSON.parse(responseText) : null;
     }
+
+    const financeCurrency = (value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 2 }).format(Number(value || 0));
+    const financeMonthNames = Array.from({ length: 12 }, (_, month) => new Intl.DateTimeFormat("en-IN", { month: "long" }).format(new Date(2024, month, 1)));
+    const heroFinanceReport = document.getElementById("hero-finance-report");
+    let publicFinanceAvailable = false;
+    let financeReportType = "donation";
+
+    function financeCategoryTotals(rows, type) {
+      const totals = new Map();
+      for (const row of rows) {
+        if (row.entry_type !== type) continue;
+        const category = String(row.category || "").trim() || "Uncategorized";
+        const key = category.toLowerCase();
+        const existing = totals.get(key);
+        totals.set(key, [existing?.[0] || category, (existing?.[1] || 0) + Number(row.total_amount || 0)]);
+      }
+      return [...totals.values()].sort((a, b) => b[1] - a[1]);
+    }
+
+    function renderHeroFinanceReport(periodRows, mode, year, month) {
+      const donations = financeReportType === "donation";
+      document.getElementById("hero-report-title").textContent = donations ? "Donation Received" : "Expense Report";
+      document.getElementById("hero-report-category").textContent = donations ? "Donation Purpose" : "Category";
+      document.getElementById("hero-report-period").textContent = year && mode === "month"
+        ? financeMonthNames[month] + " " + (month < 3 ? year + 1 : year)
+        : (year ? "Financial Year " + year + "–" + String(year + 1).slice(-2) : "");
+      const categories = financeCategoryTotals(periodRows, financeReportType);
+      const rows = document.getElementById("hero-report-rows");
+      if (!publicFinanceAvailable) {
+        rows.innerHTML = '<tr><td colspan="2">Published totals are currently unavailable.</td></tr>';
+      } else if (!categories.length) {
+        rows.innerHTML = '<tr><td colspan="2">No published records for this period.</td></tr>';
+      } else {
+        rows.innerHTML = categories.map(([name, amount]) =>
+          '<tr><th scope="row">' + escapeHtml(name) + '</th><td>' + financeCurrency(amount) + '</td></tr>'
+        ).join("");
+      }
+    }
+
+    document.querySelectorAll("[data-finance-report]").forEach((button) => {
+      button.addEventListener("click", () => {
+        financeReportType = button.dataset.financeReport;
+        heroFinanceReport.showModal();
+        renderPublicFinance();
+      });
+    });
+    document.getElementById("hero-report-link").addEventListener("click", () => heroFinanceReport.close());
+
+    async function loadPublicFinance() {
+      const status = document.getElementById("finance-status");
+      const priorYear = document.getElementById("finance-year").value;
+      const priorMonth = document.getElementById("finance-month").value;
+      try {
+        if (!supabaseEnabled()) throw new Error("Transparency summaries are not configured yet.");
+        publicFinanceRows = await supabaseRequest(`${TRUST_FINANCE_VIEW}?select=month_start,calendar_year,financial_year_start,entry_type,fund_type,category,total_amount&order=month_start.asc`);
+        const yearSelect = document.getElementById("finance-year");
+        const knownYears = [...new Set(publicFinanceRows.map((row) => Number(row.financial_year_start)))].filter(Number.isFinite).sort((a, b) => b - a);
+        const today = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata", year: "numeric", month: "numeric"
+        }).formatToParts();
+        const indiaYear = Number(today.find((part) => part.type === "year").value);
+        const indiaMonth = Number(today.find((part) => part.type === "month").value);
+        const currentFY = indiaMonth >= 4 ? indiaYear : indiaYear - 1;
+        if (!knownYears.includes(currentFY)) knownYears.unshift(currentFY);
+        yearSelect.innerHTML = knownYears.map((year) => `<option value="${year}">${year}–${String(year + 1).slice(-2)}</option>`).join("");
+        const monthSelect = document.getElementById("finance-month");
+        monthSelect.innerHTML = financeMonthNames.map((name, month) => `<option value="${month}">${name}</option>`).join("");
+        monthSelect.value = [...monthSelect.options].some((option) => option.value === priorMonth) ? priorMonth : String(indiaMonth - 1);
+        yearSelect.value = knownYears.includes(Number(priorYear)) ? priorYear : String(currentFY);
+        const heroYear = document.getElementById("hero-finance-year");
+        const heroMonth = document.getElementById("hero-finance-month");
+        heroYear.innerHTML = yearSelect.innerHTML;
+        heroMonth.innerHTML = monthSelect.innerHTML;
+        heroYear.value = yearSelect.value;
+        publicFinanceAvailable = true;
+        status.textContent = publicFinanceRows.length ? "Showing approved and published financial records." : "No financial records have been published yet. Totals are INR 0.00.";
+        renderPublicFinance();
+        loadPublicDonorCount();
+      } catch (error) {
+        status.textContent = "Transparency summary is temporarily unavailable. Please try again later.";
+      }
+    }
+    function renderPublicFinance() {
+      const mode = document.getElementById("finance-period").value;
+      const startYear = Number(document.getElementById("finance-year").value);
+      const month = Number(document.getElementById("finance-month").value);
+      const monthYear = month < 3 ? startYear + 1 : startYear;
+      const start = mode === "month" ? new Date(monthYear, month, 1) : new Date(startYear, 3, 1);
+      const end = mode === "month" ? new Date(monthYear, month + 1, 1) : new Date(startYear + 1, 3, 1);
+      document.getElementById("hero-finance-year").value = String(startYear);
+      document.getElementById("hero-finance-month").value = String(month);
+      const asOf = (row) => new Date(`${row.month_start}T00:00:00`);
+      const total = (rows, type) => rows.filter((row) => row.entry_type === type).reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+      const periodRows = publicFinanceRows.filter((row) => asOf(row) >= start && asOf(row) < end);
+      const priorRows = publicFinanceRows.filter((row) => asOf(row) < start);
+      const income = total(periodRows, "donation");
+      const expenses = total(periodRows, "expense");
+      const opening = total(priorRows, "opening_balance") + total(priorRows, "donation") - total(priorRows, "expense");
+      document.getElementById("finance-income").textContent = financeCurrency(income);
+      document.getElementById("finance-expenses").textContent = financeCurrency(expenses);
+      document.getElementById("finance-opening").textContent = financeCurrency(opening);
+      const periodOpeningAdjustments = total(periodRows, "opening_balance");
+      document.getElementById("finance-closing").textContent = financeCurrency(opening + income - expenses + periodOpeningAdjustments);
+      document.querySelectorAll("[data-finance-mirror]").forEach((mirror) => {
+        const source = document.getElementById(mirror.dataset.financeMirror);
+        if (source) mirror.textContent = source.textContent;
+      });
+      const categories = financeCategoryTotals(periodRows, "expense");
+      if (heroFinanceReport.open) renderHeroFinanceReport(periodRows, mode, startYear, month);
+      document.getElementById("finance-categories").innerHTML = categories.length ? `<ul>${categories.map(([name, amount]) => `<li>${escapeHtml(name)}: ${financeCurrency(amount)}</li>`).join("")}</ul>` : "No published expense data for this period.";
+      const restrictedIncome = total(periodRows.filter((row) => row.fund_type === "restricted"), "donation");
+      const unrestrictedIncome = total(periodRows.filter((row) => row.fund_type === "unrestricted"), "donation");
+      const restrictedOutflow = total(periodRows.filter((row) => row.fund_type === "restricted"), "expense");
+      const unrestrictedOutflow = total(periodRows.filter((row) => row.fund_type === "unrestricted"), "expense");
+      const restrictedPrior = total(priorRows.filter((row) => row.fund_type === "restricted"), "opening_balance") + total(priorRows.filter((row) => row.fund_type === "restricted"), "donation") - total(priorRows.filter((row) => row.fund_type === "restricted"), "expense");
+      const unrestrictedPrior = total(priorRows.filter((row) => row.fund_type === "unrestricted"), "opening_balance") + total(priorRows.filter((row) => row.fund_type === "unrestricted"), "donation") - total(priorRows.filter((row) => row.fund_type === "unrestricted"), "expense");
+      document.getElementById("finance-funds-note").textContent = `Restricted funds: opening ${financeCurrency(restrictedPrior)}, donations ${financeCurrency(restrictedIncome)}, expenses ${financeCurrency(restrictedOutflow)}, closing ${financeCurrency(restrictedPrior + restrictedIncome - restrictedOutflow + total(periodRows.filter((row) => row.fund_type === "restricted"), "opening_balance"))}. Unrestricted funds: opening ${financeCurrency(unrestrictedPrior)}, donations ${financeCurrency(unrestrictedIncome)}, expenses ${financeCurrency(unrestrictedOutflow)}, closing ${financeCurrency(unrestrictedPrior + unrestrictedIncome - unrestrictedOutflow + total(periodRows.filter((row) => row.fund_type === "unrestricted"), "opening_balance"))}. Restricted funds are tracked separately and their use follows the donor's stated purpose.`;
+    }
+    async function loadPublicDonorCount() {
+      const output = document.getElementById("hero-people-supported");
+      if (!output) return;
+      if (!supabaseEnabled()) { output.textContent = "—"; return; }
+      try {
+        const mode = document.getElementById("finance-period").value;
+        const startYear = Number(document.getElementById("finance-year").value);
+        const month = Number(document.getElementById("finance-month").value);
+        const monthYear = month < 3 ? startYear + 1 : startYear;
+        const start = mode === "month" ? new Date(monthYear, month, 1) : new Date(startYear, 3, 1);
+        const end = mode === "month" ? new Date(monthYear, month + 1, 1) : new Date(startYear + 1, 3, 1);
+        const localDate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        const result = await supabaseRequest(`rpc/${TRUST_DONOR_COUNT_FUNCTION}`, {
+          method: "POST",
+          body: JSON.stringify({ p_start: localDate(start), p_end: localDate(end) })
+        });
+        const donors = Number(Array.isArray(result) ? result[0]?.trust_public_donor_count : result) || 0;
+        output.textContent = `${donors}+`;
+      } catch (_) {
+        output.textContent = "—";
+      }
+    }
+    document.getElementById("finance-period")?.addEventListener("change", (event) => {
+      document.getElementById("finance-month-wrap").hidden = event.target.value !== "month";
+      renderPublicFinance();
+      loadPublicDonorCount();
+    });
+    document.getElementById("finance-year")?.addEventListener("change", () => { renderPublicFinance(); loadPublicDonorCount(); });
+    document.getElementById("finance-month")?.addEventListener("change", () => { renderPublicFinance(); loadPublicDonorCount(); });
+    document.getElementById("finance-refresh")?.addEventListener("click", loadPublicFinance);
+    document.getElementById("hero-finance-year")?.addEventListener("change", (event) => {
+      const yearSelect = document.getElementById("finance-year");
+      yearSelect.value = event.target.value;
+      renderPublicFinance();
+      loadPublicDonorCount();
+    });
+    document.getElementById("hero-finance-month")?.addEventListener("change", (event) => {
+      const period = document.getElementById("finance-period");
+      period.value = "month";
+      document.getElementById("finance-month-wrap").hidden = false;
+      document.getElementById("finance-month").value = event.target.value;
+      renderPublicFinance();
+      loadPublicDonorCount();
+    });
 
     function getVolunteers() {
       return JSON.parse(localStorage.getItem("trustVolunteers") || "[]");
@@ -2529,11 +3194,15 @@
 
       await supabaseRequest(SUPABASE_TABLE, {
         method: "POST",
+        headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
           name: data.name,
           phone: data.phone,
           email: data.email,
           city: data.city,
+          state: data.state?.trim() || null,
+          country: data.country?.trim() || null,
+          pin_code: data.pin_code?.trim() || null,
           interest: data.interest,
           availability: data.availability
         })
@@ -2554,10 +3223,14 @@
     }
 
     async function updateVolunteerCount() {
-      const volunteers = await loadVolunteers();
-      if (volunteerCount) {
-        volunteerCount.textContent = volunteers.length;
+      if (!volunteerCount) return;
+      if (!supabaseEnabled()) {
+        volunteerCount.textContent = getVolunteers().length;
+        return;
       }
+      const result = await supabaseRequest("rpc/trust_public_volunteer_count", { method: "POST", body: "{}" });
+      const count = Number(Array.isArray(result) ? result[0]?.trust_public_volunteer_count : result) || 0;
+      volunteerCount.textContent = String(count);
     }
 
     async function loadImpactStats() {
@@ -2568,7 +3241,10 @@
           stats = {
             foodPackets: rows[0].food_packets,
             studentsSupported: rows[0].students_supported,
-            medicalCases: rows[0].medical_cases
+            medicalCases: rows[0].medical_cases,
+            awarenessDrives: rows[0].awareness_drives,
+            treePlantations: rows[0].tree_plantations,
+            communityWelfare: rows[0].community_welfare
           };
           localStorage.setItem(TRUST_STATS_KEY, JSON.stringify(stats));
         }
@@ -2576,9 +3252,90 @@
       const foodCount = document.getElementById("food-count");
       const studentCount = document.getElementById("student-count");
       const medicalCount = document.getElementById("medical-count");
+      const awarenessCount = document.getElementById("awareness-count");
+      const treeCount = document.getElementById("tree-count");
+      const communityCount = document.getElementById("community-count");
       if (foodCount) foodCount.textContent = `${stats.foodPackets || 0}+`;
       if (studentCount) studentCount.textContent = `${stats.studentsSupported || 0}+`;
       if (medicalCount) medicalCount.textContent = `${stats.medicalCases || 0}+`;
+      if (awarenessCount) awarenessCount.textContent = `${stats.awarenessDrives || 0}+`;
+      if (treeCount) treeCount.textContent = `${stats.treePlantations || 0}+`;
+      if (communityCount) communityCount.textContent = `${stats.communityWelfare || 0}+`;
+    }
+
+    const partnersGrid = document.getElementById("partners-grid");
+    const partnersDirectory = document.getElementById("partners-directory");
+    const partnersDirectoryButton = document.getElementById("open-partners-directory");
+    const partnersDirectoryGrid = document.getElementById("partners-directory-grid");
+
+    function sizePartnersDirectory() {
+      if (!partnersDirectory.open) return;
+      const lastVisibleCard = partnersDirectoryGrid.children[9];
+      if (!lastVisibleCard) {
+        partnersDirectoryGrid.style.maxHeight = "";
+        return;
+      }
+      const viewport = partnersDirectoryGrid.getBoundingClientRect();
+      const bottomPadding = parseFloat(getComputedStyle(partnersDirectoryGrid).paddingBottom);
+      const visibleHeight = lastVisibleCard.getBoundingClientRect().bottom - viewport.top +
+        partnersDirectoryGrid.scrollTop + bottomPadding;
+      partnersDirectoryGrid.style.maxHeight = Math.floor(visibleHeight) + "px";
+    }
+
+    const partnersDirectoryResize = new ResizeObserver(sizePartnersDirectory);
+    partnersDirectoryButton.addEventListener("click", () => {
+      partnersDirectory.showModal();
+      partnersDirectoryGrid.scrollTop = 0;
+      sizePartnersDirectory();
+      partnersDirectoryResize.observe(partnersDirectoryGrid);
+      Array.from(partnersDirectoryGrid.children).slice(0, 10).forEach((card) => partnersDirectoryResize.observe(card));
+    });
+    partnersDirectory.addEventListener("close", () => partnersDirectoryResize.disconnect());
+
+    function renderPartnerCard(partner) {
+      const site = safePartnerUrl(partner.website_url);
+      const logo = safePartnerUrl(partner.logo_url);
+      return `<article class="partner-card">${logo ? `<img class="partner-logo" loading="lazy" src="${escapeHtml(logo)}" alt="${escapeHtml(partner.name)} logo" />` : ""}<h3>${escapeHtml(partner.name)}</h3>${partner.category ? `<p>${escapeHtml(partner.category)}</p>` : ""}${partner.city ? `<p>${escapeHtml(partner.city)}</p>` : ""}${site ? `<a href="${escapeHtml(site)}" target="_blank" rel="noopener">Visit partner →</a>` : ""}</article>`;
+    }
+
+    function safePartnerUrl(value) {
+      if (!value) return "";
+      try {
+        const url = new URL(value);
+        return ["https:", "http:"].includes(url.protocol) ? url.href : "";
+      } catch {
+        return "";
+      }
+    }
+
+    async function loadPartners() {
+      if (!supabaseEnabled()) return;
+      try {
+        const fields = "name,website_url,category,city,logo_url";
+        const query = "&is_published=eq.true&order=sort_order.asc,name.asc";
+        let partners;
+        let activeCount = "—";
+        try {
+          partners = await supabaseRequest(PARTNER_TABLE + "?select=" + fields + ",partnership_start_date,partnership_end_date" + query);
+          const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Kolkata" }).format(new Date());
+          activeCount = partners.filter((partner) =>
+            (!partner.partnership_start_date || partner.partnership_start_date <= today)
+            && (!partner.partnership_end_date || partner.partnership_end_date >= today)
+          ).length;
+        } catch {
+          partners = await supabaseRequest(PARTNER_TABLE + "?select=" + fields + query);
+        }
+        document.getElementById("partner-total").textContent = partners.length;
+        document.getElementById("partner-active").textContent = activeCount;
+        if (!partners.length) return;
+        const cards = partners.map(renderPartnerCard);
+        partnersGrid.innerHTML = cards.slice(0, 10).join("");
+        partnersDirectoryGrid.innerHTML = cards.join("");
+        partnersDirectoryButton.textContent = "View all partners (" + partners.length + ")";
+        partnersDirectoryButton.hidden = false;
+      } catch {
+        partnersGrid.textContent = "Partner information is temporarily unavailable.";
+      }
     }
 
     async function loadNotice() {
@@ -2609,6 +3366,7 @@
     }
 
     function showErrorPopup(message, title = "Something went wrong") {
+      document.querySelector("#error-popup-overlay .error-popup")?.classList.remove("is-success");
       const overlay = document.getElementById("error-popup-overlay");
       document.getElementById("error-popup-title").textContent = title;
       document.getElementById("error-popup-message").textContent = message;
@@ -2616,14 +3374,30 @@
       document.getElementById("error-popup-close").focus();
     }
 
+    function showThankYouPopup() {
+      const popup = document.querySelector("#error-popup-overlay .error-popup");
+      popup?.classList.add("is-success");
+      document.getElementById("error-popup-title").textContent = "Thank You For Supporting";
+      document.getElementById("error-popup-message").textContent = "Your certificate will be sent after the Trust verifies your donation.";
+      document.getElementById("error-popup-overlay").hidden = false;
+      document.getElementById("error-popup-close").focus();
+    }
+
     function closeErrorPopup() {
+      const popup = document.querySelector("#error-popup-overlay .error-popup");
+      const wasSuccess = popup?.classList.contains("is-success");
       document.getElementById("error-popup-overlay").hidden = true;
+      popup?.classList.remove("is-success");
+      if (wasSuccess) closeModals();
     }
 
     function readableSubmissionError(error) {
       const rawMessage = String(error?.message || "").trim();
       if (!rawMessage || rawMessage.startsWith("<")) {
         return "Payment details could not be submitted. Check your internet connection and try again.";
+      }
+      if (/row-level security|row level security/i.test(rawMessage)) {
+        return "Supabase denied the donation insert. The site sends donations to project oqumyvitsaflllgihlgi; check its public donation INSERT policy and make sure this updated website is deployed.";
       }
       if (rawMessage.startsWith("Google Drive upload failed:")) {
         return "The payment screenshot could not be uploaded to Google Drive. Check your internet connection and try again.";
@@ -2697,8 +3471,9 @@
         if (!socialPhotoViewerState) return;
         const { images } = socialPhotoViewerState;
         if (!images.length) return;
-        socialPhotoViewerState.activeIndex =
-          (socialPhotoViewerState.activeIndex + direction + images.length) % images.length;
+        const nextIndex = socialPhotoViewerState.activeIndex + direction;
+        if (nextIndex < 0 || nextIndex >= images.length) return;
+        socialPhotoViewerState.activeIndex = nextIndex;
         showViewerPhoto();
       }
 
@@ -2721,8 +3496,8 @@
           : folderName + " community service photo";
         title.textContent = folderName;
         count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
-        previous.disabled = images.length < 2;
-        next.disabled = images.length < 2;
+        previous.disabled = activeIndex <= 0;
+        next.disabled = activeIndex >= images.length - 1;
       }
 
       close.addEventListener("click", () => dialog.close());
@@ -2789,60 +3564,288 @@
       }
     }
 
+    const youtubeGallery = document.getElementById("youtube-gallery");
+    const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/channel/UCArUc8vHzOs3uQyhDwbl5eA/videos";
+
+    const youtubeCount = document.getElementById("youtube-count");
+    const youtubeLibrary = document.getElementById("youtube-library");
+    const youtubeLibraryList = document.getElementById("youtube-library-list");
+    youtubeCount.addEventListener("click", () => youtubeLibrary.showModal());
+    const youtubePlayer = document.getElementById("youtube-player");
+    const youtubePlayerFrame = document.getElementById("youtube-player-frame");
+    const youtubePlaylist = document.getElementById("youtube-playlist-list");
+    function playYoutubeVideo(video) {
+      for (const button of youtubePlaylist.querySelectorAll("button")) {
+        if (button.dataset.videoId === video.id) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      }
+      youtubePlayerFrame.title = video.title || "Sarvahit Trust video";
+      const canEmbed = location.protocol === "http:" || location.protocol === "https:";
+      const notice = document.getElementById("youtube-player-notice");
+      youtubePlayerFrame.hidden = !canEmbed;
+      notice.hidden = canEmbed;
+      if (canEmbed) {
+        const embed = new URL("https://www.youtube.com/embed/" + encodeURIComponent(video.id));
+        embed.searchParams.set("autoplay", "1");
+        embed.searchParams.set("playsinline", "1");
+        embed.searchParams.set("origin", location.origin);
+        youtubePlayerFrame.src = embed.href;
+      }
+      if (!youtubePlayer.open) youtubePlayer.showModal();
+    }
+    youtubePlayer.addEventListener("close", () => youtubePlayerFrame.removeAttribute("src"));
+    function showYoutubeGalleryFallback(message) {
+      if (!youtubeGallery) return;
+      const notice = document.createElement("p");
+      notice.className = "youtube-gallery-message";
+      notice.append(document.createTextNode(message + " "));
+      const link = document.createElement("a");
+      link.href = YOUTUBE_CHANNEL_URL;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "Open the YouTube channel";
+      notice.appendChild(link);
+      youtubeCount.hidden = true;
+      youtubeGallery.replaceChildren(notice);
+    }
+
+    function renderYoutubeGallery(payload) {
+      const videos = Array.isArray(payload?.videos) ? payload.videos : [];
+      if (!videos.length) {
+        showYoutubeGalleryFallback("No public videos were found yet.");
+        return;
+      }
+
+      youtubeGallery.replaceChildren();
+      youtubeLibraryList.replaceChildren();
+      youtubePlaylist.replaceChildren();
+      videos.forEach((video) => {
+        if (!/^[A-Za-z0-9_-]{11}$/.test(video.id || "")) return;
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "blog-item";
+        card.setAttribute("aria-label", "Play " + (video.title || "Sarvahit Trust video"));
+        card.addEventListener("click", () => playYoutubeVideo(video));
+
+        const thumbnail = document.createElement("img");
+        thumbnail.src = video.thumbnailUrl || ("https://i.ytimg.com/vi/" + encodeURIComponent(video.id) + "/hqdefault.jpg");
+        thumbnail.alt = video.title || "Sarvahit Trust video";
+        thumbnail.loading = "lazy";
+
+        const overlay = document.createElement("span");
+        overlay.className = "blog-overlay";
+        const play = document.createElement("span");
+        play.className = "youtube-symbol";
+        play.setAttribute("aria-hidden", "true");
+        play.textContent = "▶";
+        const title = document.createElement("span");
+        title.textContent = video.title || "Sarvahit Trust video";
+        overlay.append(play, title);
+        card.append(thumbnail, overlay);
+        youtubeGallery.appendChild(card);
+        const item = document.createElement("li");
+        const link = card.cloneNode(false);
+        link.removeAttribute("class");
+        link.append(thumbnail.cloneNode());
+        link.addEventListener("click", () => playYoutubeVideo(video));
+        item.append(link);
+        youtubeLibraryList.append(item);
+
+        const playlistItem = document.createElement("li");
+        const playlistButton = card.cloneNode(false);
+        playlistButton.removeAttribute("class");
+        playlistButton.dataset.videoId = video.id;
+        const playlistThumbnail = thumbnail.cloneNode();
+        playlistThumbnail.alt = "";
+        playlistButton.append(playlistThumbnail, title.cloneNode(true));
+        playlistButton.addEventListener("click", () => playYoutubeVideo(video));
+        playlistItem.append(playlistButton);
+        youtubePlaylist.append(playlistItem);
+      });
+
+      youtubeLibraryList.style.setProperty("--video-count", Math.max(1, youtubeLibraryList.children.length));
+      const videoCount = youtubeGallery.children.length;
+      youtubeCount.textContent = "View all videos (" + videoCount + ")";
+      youtubeCount.hidden = !videoCount;
+      if (!youtubeGallery.children.length) {
+        showYoutubeGalleryFallback("No public videos were found yet.");
+        return;
+      }
+    }
+
+    function loadYoutubeVideos() {
+      if (!youtubeGallery || !GOOGLE_DRIVE_GALLERY_API_URL) return;
+      const requestId = crypto.randomUUID();
+      const callbackName = "__sarvahitVideos_" + requestId.replace(/-/g, "");
+      const script = document.createElement("script");
+      let finished = false;
+      const cleanup = () => {
+        clearTimeout(timer);
+        script.remove();
+        delete window[callbackName];
+      };
+      window[callbackName] = (payload) => {
+        if (finished || payload?.channel !== "sarvahit-youtube-videos" || payload?.requestId !== requestId) return;
+        finished = true;
+        cleanup();
+        if (payload.error) showYoutubeGalleryFallback("YouTube videos could not be loaded right now.");
+        else renderYoutubeGallery(payload);
+      };
+      const timer = window.setTimeout(() => {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        showYoutubeGalleryFallback("YouTube videos could not be loaded right now.");
+      }, 20000);
+      const feedUrl = new URL(GOOGLE_DRIVE_GALLERY_API_URL);
+      feedUrl.searchParams.set("feed", "videos");
+      feedUrl.searchParams.set("galleryRequestId", requestId);
+      feedUrl.searchParams.set("callback", callbackName);
+      script.src = feedUrl.toString();
+      script.async = true;
+      script.onerror = () => {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        showYoutubeGalleryFallback("YouTube videos could not be loaded right now.");
+      };
+      document.head.appendChild(script);
+    }
+
+
     function loadSocialActivityGallery() {
       const gallery = document.getElementById("social-activity-gallery");
       if (!gallery) return;
 
-      // The Apps Script endpoint is intentionally optional. Until it is deployed,
-      // keep the existing Drive folder view as a fallback.
-      if (!GOOGLE_DRIVE_GALLERY_API_URL) {
-        if (GOOGLE_DRIVE_GALLERY_URL) {
-          const link = document.createElement("a");
-          link.className = "drive-gallery-fallback";
-          link.href = GOOGLE_DRIVE_GALLERY_URL;
-          link.target = "_blank";
-          link.rel = "noopener";
-          link.textContent = "Gallery API is not connected yet. Open the work-wise Drive folders.";
-          gallery.replaceChildren(link);
-        }
+      if (GOOGLE_DRIVE_GALLERY_API_URL) {
+        const requestId = crypto.randomUUID();
+        let finished = false;
+        const callbackName = "__sarvahitGallery_" + requestId.replace(/-/g, "");
+        const script = document.createElement("script");
+        const cleanup = () => {
+          clearTimeout(timer);
+          script.remove();
+          delete window[callbackName];
+        };
+        window[callbackName] = (payload) => {
+          if (finished || payload?.channel !== "sarvahit-community-gallery" || payload?.requestId !== requestId) return;
+          finished = true;
+          cleanup();
+          if (payload.error) {
+            showSocialGalleryFallback(gallery);
+            return;
+          }
+          renderSocialActivityGallery(gallery, payload);
+        };
+        const timer = window.setTimeout(() => {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          showSocialGalleryFallback(gallery);
+        }, 20000);
+        const galleryUrl = new URL(GOOGLE_DRIVE_GALLERY_API_URL);
+        galleryUrl.searchParams.set("galleryRequestId", requestId);
+        galleryUrl.searchParams.set("callback", callbackName);
+        script.src = galleryUrl.toString();
+        script.async = true;
+        script.onerror = () => {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          showSocialGalleryFallback(gallery);
+        };
+        document.head.appendChild(script);
         return;
       }
 
-      const callbackName = "sarvahitDriveGallery_" + Date.now();
+      if (GOOGLE_DRIVE_GALLERY_URL) {
+        const link = document.createElement("a");
+        link.className = "drive-gallery-fallback";
+        link.href = GOOGLE_DRIVE_GALLERY_URL;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = "Open the community service photos in Google Drive.";
+        gallery.replaceChildren(link);
+      }
+    }
+
+    function loadTeamPhotos() {
+      if (!GOOGLE_DRIVE_TEAM_API_URL) return;
+      const photoSlots = Array.from(document.querySelectorAll("[data-team-photo]"));
+      if (!photoSlots.length) return;
+      const requestId = crypto.randomUUID();
+      const callbackName = "__sarvahitTeamPhotos_" + requestId.replace(/-/g, "");
       const script = document.createElement("script");
-
-      window[callbackName] = function (payload) {
-        try {
-          renderSocialActivityGallery(gallery, payload);
-        } finally {
-          delete window[callbackName];
-          script.remove();
-        }
+      let finished = false;
+      const cleanup = () => { clearTimeout(timer); script.remove(); delete window[callbackName]; };
+      window[callbackName] = (payload) => {
+        if (finished || payload?.channel !== "sarvahit-team-photos" || payload?.requestId !== requestId) return;
+        finished = true;
+        cleanup();
+        const members = Array.isArray(payload.members) ? payload.members : [];
+        photoSlots.forEach((slot, index) => {
+          const member = members[index];
+          if (!member) return;
+          const card = slot.closest(index === 0 ? ".founder-card" : ".team-card");
+          const nameElement = card?.querySelector(index === 0 ? "h3" : "h4");
+          const designationElement = index === 0 ? card?.querySelector(".team-role") : card?.querySelector("p");
+          if (nameElement && member.name) nameElement.textContent = index === 0 ? "Mr. " + member.name : member.name;
+          if (designationElement && member.designation) designationElement.textContent = member.designation;
+          const imageUrl = member.thumbnailUrl || member.imageUrl;
+          if (!imageUrl) return;
+          const image = document.createElement("img");
+          image.src = imageUrl;
+          image.alt = member.name ? member.name + " — " + (member.designation || "Sarvahit Trust team member") : "Sarvahit Trust team member";
+          image.loading = index < 3 ? "eager" : "lazy";
+          image.onerror = () => image.remove();
+          slot.replaceChildren(image);
+        });
       };
-
-      script.onerror = function () {
-        delete window[callbackName];
-        script.remove();
-        gallery.replaceChildren(
-          Object.assign(document.createElement("p"), {
-            className: "drive-gallery-message",
-            textContent: "Unable to load photos right now. Please try again later."
-          })
-        );
-      };
-
-      const separator = GOOGLE_DRIVE_GALLERY_API_URL.includes("?") ? "&" : "?";
-      script.src =
-        GOOGLE_DRIVE_GALLERY_API_URL +
-        separator +
-        "folderId=" + encodeURIComponent("1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv") +
-        "&callback=" + encodeURIComponent(callbackName);
-
+      const timer = window.setTimeout(() => { if (!finished) { finished = true; cleanup(); } }, 20000);
+      const feedUrl = new URL(GOOGLE_DRIVE_TEAM_API_URL);
+      feedUrl.searchParams.set("feed", "team");
+      feedUrl.searchParams.set("galleryRequestId", requestId);
+      feedUrl.searchParams.set("callback", callbackName);
+      script.src = feedUrl.toString();
+      script.async = true;
+      script.onerror = () => { if (!finished) { finished = true; cleanup(); } };
       document.head.appendChild(script);
+    }
+
+    const contentDirectory = document.getElementById("content-directory");
+    const contentDirectoryTitle = document.getElementById("content-directory-title");
+    const contentDirectoryGrid = document.getElementById("content-directory-grid");
+    function connectContentDirectory(button, grid, title) {
+      const preview = grid.parentElement;
+      button.addEventListener("click", () => {
+        contentDirectoryTitle.textContent = title;
+        contentDirectoryGrid.append(grid);
+        contentDirectory.addEventListener("close", () => preview.append(grid), { once: true });
+        contentDirectory.showModal();
+      });
+    }
+
+    const teamGrid = document.getElementById("team-grid");
+    const teamDirectoryButton = document.getElementById("open-team-directory");
+    teamDirectoryButton.textContent = "View all team members (" + teamGrid.children.length + ")";
+    connectContentDirectory(teamDirectoryButton, teamGrid, document.querySelector(".team-subhead").textContent);
+
+    const photoDirectoryButton = document.getElementById("open-photo-directory");
+
+    function showSocialGalleryFallback(gallery) {
+      photoDirectoryButton.hidden = true;
+      const link = document.createElement("a");
+      link.className = "drive-gallery-fallback";
+      link.href = GOOGLE_DRIVE_GALLERY_URL;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = "Photos could not be loaded from Drive. Open the community service photo folder to view them.";
+      gallery.replaceChildren(link);
     }
 
     function renderSocialActivityGallery(gallery, payload) {
       const folders = Array.isArray(payload?.folders) ? payload.folders : [];
+      photoDirectoryButton.hidden = true;
 
       if (!folders.length) {
         gallery.replaceChildren(
@@ -2856,85 +3859,54 @@
 
       gallery.replaceChildren();
 
-      folders.forEach((folder) => {
-        const images = Array.isArray(folder.images) ? folder.images : [];
-        if (!images.length) return;
-
+      folders.forEach((folder, index) => {
+        const folderName = folder.name || "Community Service Programs";
+        const folderImages = Array.isArray(folder.images) ? folder.images : [];
+        if (!folderImages.length) return;
         let activeIndex = 0;
-
+        const currentPhoto = () => folderImages[activeIndex];
         const card = document.createElement("article");
         card.className = "drive-gallery-card";
-        card.setAttribute("aria-label", folder.name + " photo gallery");
+        card.setAttribute("aria-label", folderName + " photo folder");
 
         const stage = document.createElement("div");
         stage.className = "drive-gallery-stage";
+        stage.setAttribute("role", "button");
+        stage.tabIndex = 0;
+        stage.setAttribute("aria-label", "Open " + folderName + " photos full size");
 
         const image = document.createElement("img");
         image.className = "drive-gallery-image";
-        image.loading = "lazy";
-        image.alt = folder.name + " community service photo";
-        image.title = "Double-click to enlarge this photo";
+        image.loading = index < 3 ? "eager" : "lazy";
+        image.title = "Click to view full size";
+        image.onerror = () => {
+          image.alt = "Photo temporarily unavailable in " + folderName;
+          image.classList.add("is-unavailable");
+        };
 
-        const previous = document.createElement("button");
-        previous.type = "button";
-        previous.className = "drive-gallery-arrow prev";
-        previous.setAttribute("aria-label", "Previous photo");
-        previous.textContent = "‹";
-
-        const next = document.createElement("button");
-        next.type = "button";
-        next.className = "drive-gallery-arrow next";
-        next.setAttribute("aria-label", "Next photo");
-        next.textContent = "›";
+        const photo = currentPhoto();
+        image.src = photo.thumbnailUrl || photo.imageUrl || "";
+        image.alt = photo.name || (folderName + " community service photo");
+        stage.setAttribute("aria-label", "Open " + folderName + " photos full size");
+        stage.addEventListener("click", () => openSocialPhotoViewer(folderName, folderImages, activeIndex));
+        stage.addEventListener("keydown", (event) => {
+          if (event.target !== stage || (event.key !== "Enter" && event.key !== " ")) return;
+          event.preventDefault();
+          openSocialPhotoViewer(folderName, folderImages, activeIndex);
+        });
+        stage.appendChild(image);
 
         const info = document.createElement("div");
         info.className = "drive-gallery-info";
-
         const title = document.createElement("h3");
         title.className = "drive-gallery-title";
-        title.textContent = folder.name;
-
+        title.textContent = folderName;
         const count = document.createElement("p");
         count.className = "drive-gallery-count";
-
-        function showImage() {
-          const current = images[activeIndex];
-          image.src = current.thumbnailUrl || current.imageUrl || "";
-          image.alt = current.name
-            ? folder.name + " — " + current.name
-            : folder.name + " community service photo";
-          image.title = current.name
-            ? current.name + " — double-click to enlarge this photo"
-            : "Double-click to enlarge this photo";
-          count.textContent = (activeIndex + 1) + " / " + images.length + " photos";
-          previous.disabled = images.length < 2;
-          next.disabled = images.length < 2;
-        }
-
-        previous.addEventListener("click", (event) => {
-          event.stopPropagation();
-          activeIndex = (activeIndex - 1 + images.length) % images.length;
-          showImage();
-        });
-
-        next.addEventListener("click", (event) => {
-          event.stopPropagation();
-          activeIndex = (activeIndex + 1) % images.length;
-          showImage();
-        });
-
-        image.addEventListener("dblclick", (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          openSocialPhotoViewer(folder.name, images, activeIndex);
-        });
-
-        stage.append(image, previous, next);
+        count.textContent = folderImages.length + (folderImages.length === 1 ? " photo" : " photos");
         info.append(title, count);
         card.append(stage, info);
         gallery.appendChild(card);
-
-        showImage();
       });
 
       if (!gallery.children.length) {
@@ -2945,67 +3917,71 @@
           })
         );
       }
+
+      const folderCount = gallery.querySelectorAll(".drive-gallery-card").length;
+      photoDirectoryButton.textContent = "View all photo folders (" + folderCount + ")";
+      photoDirectoryButton.hidden = !folderCount;
     }
+
+    const socialActivityGallery = document.getElementById("social-activity-gallery");
+    connectContentDirectory(photoDirectoryButton, socialActivityGallery, document.querySelector("#gallery h2").textContent);
 
     loadSocialActivityGallery();
+    loadTeamPhotos();
+    loadYoutubeVideos();
+    loadPublicFinance();
+    window.setInterval(loadPublicFinance, 20000);
+    window.setInterval(() => {
+      if (document.hidden) return;
+      loadImpactStats().catch(() => {});
+      loadNotice().catch(() => {});
+    }, 20000);
 
-    function fileToBase64(file) {
+    function sendDriveUpload(payload) {
       return new Promise((resolve, reject) => {
+        const frame = document.createElement("iframe");
+        const form = document.createElement("form");
+        const name = "trust-drive-upload-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+        const requestId = crypto.randomUUID();
+        payload.requestId = requestId;
+        frame.name = name; frame.hidden = true; form.hidden = true;
+        form.method = "POST"; form.action = GOOGLE_DRIVE_UPLOAD_URL; form.target = name;
+        const input = document.createElement("input");
+        input.type = "hidden"; input.name = "uploadPayload"; input.value = JSON.stringify(payload);
+        form.appendChild(input);
+        let finished = false;
+        const cleanup = () => { window.removeEventListener("message", onMessage); clearTimeout(timer); form.remove(); frame.remove(); };
+        const finish = (callback, value) => { if (finished) return; finished = true; cleanup(); callback(value); };
+        const onMessage = (event) => {
+          if (event.data?.channel !== "sarvahit-drive-upload" || event.data?.requestId !== requestId) return;
+          const result = event.data.result;
+          if (result?.ok) finish(resolve, result);
+          else finish(reject, new Error(result?.error || "Google Drive upload failed."));
+        };
+        const timer = setTimeout(() => finish(reject, new Error("Google Drive upload did not return a confirmation. Check the Apps Script deployment and try again.")), 90000);
+        window.addEventListener("message", onMessage);
+        document.body.append(frame, form);
+        form.submit();
+      });
+    }
+    async function uploadPaymentScreenshot(file, certificateId, fullName) {
+      const now = new Date();
+      const dateParts = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(now).map((part) => [part.type, part.value]));
+      const date = dateParts.year + "-" + dateParts.month + "-" + dateParts.day;
+      const year = dateParts.year;
+      const monthName = new Intl.DateTimeFormat("en", { timeZone: "Asia/Kolkata", month: "long" }).format(now);
+      // Payment screenshots are stored in the configured Drive folder; avoid a second public Storage upload that can be rejected by bucket RLS.
+      if (!GOOGLE_DRIVE_UPLOAD_URL) throw new Error("Google Drive upload failed: Drive upload is not connected.");
+      const base64 = await new Promise((resolve, reject) => {
         const reader = new FileReader();
+        reader.onerror = () => reject(new Error("Could not read the payment screenshot."));
         reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
-        reader.onerror = reject;
         reader.readAsDataURL(file);
       });
-    }
+      const driveResult = await sendDriveUpload({ type: "donation", donationDate: date, certificateId: certificateId, fullName: fullName, fileName: file.name, mimeType: file.type || "image/jpeg", base64: base64 });
 
-    async function uploadToGoogleDrive(file, certificateId, fullName) {
-      if (!GOOGLE_DRIVE_UPLOAD_URL) return null;
-      const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
-      await fetch(GOOGLE_DRIVE_UPLOAD_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          certificateId,
-          fullName,
-          fileName: `${certificateId} - ${fullName}.${extension}`,
-          mimeType: file.type || "image/jpeg",
-          base64: await fileToBase64(file)
-        })
-      });
-      // Apps Script does not expose CORS headers, so no-cors returns an opaque
-      // response whose status and file URL cannot be read from this website.
-      return null;
+      return { path: "drive/" + driveResult.fileId, driveUrl: driveResult.fileUrl, driveFileId: driveResult.fileId, year: year, month: monthName, day: date.slice(8, 10) };
     }
-
-    async function uploadPaymentScreenshot(file, certificateId, fullName) {
-      const year = String(new Date().getFullYear());
-      const extension = (file.name.split(".").pop() || "jpg").replace(/[^A-Za-z0-9]/g, "");
-      const path = `${year}/${certificateId}.${extension}`;
-      if (supabaseEnabled()) {
-        const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${PAYMENT_BUCKET}/${path}`, {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-            "Content-Type": file.type || "image/jpeg",
-            "x-upsert": "true"
-          },
-          body: file
-        });
-        if (!response.ok) {
-          throw new Error(await response.text());
-        }
-      }
-      let driveUrl;
-      try {
-        driveUrl = await uploadToGoogleDrive(file, certificateId, fullName);
-      } catch (error) {
-        throw new Error(`Google Drive upload failed: ${error.message || "Please try again."}`);
-      }
-      return { path, driveUrl };
-    }
-
     async function saveDonation(donation) {
       if (!supabaseEnabled()) {
         const donations = JSON.parse(localStorage.getItem("trustDonations") || "[]");
@@ -3015,22 +3991,29 @@
       }
       await supabaseRequest(SUPABASE_DONATION_TABLE, {
         method: "POST",
+        headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
           donor_name: donation.name,
           pan_card_number: donation.panCardNumber,
           email: donation.email,
           phone: donation.phone,
           city: donation.city,
+          state: donation.state?.trim() || null,
+          country: donation.country?.trim() || null,
+          pin_code: donation.pin_code?.trim() || null,
           amount: donation.amount,
           purpose: donation.purpose,
           screenshot_path: donation.screenshotPath,
           screenshot_file_name: donation.screenshotFileName,
           screenshot_mime_type: donation.screenshotMimeType,
-          screenshot_storage: donation.driveFileUrl ? "supabase_and_google_drive" : "supabase",
+          screenshot_storage: donation.driveFileUrl ? "google_drive" : "supabase",
           drive_file_url: donation.driveFileUrl,
-          drive_folder_year: String(new Date().getFullYear()),
+          drive_folder_year: donation.driveFolderYear || String(new Date().getFullYear()),
+          drive_folder_month: donation.driveFolderMonth || null,
+          drive_folder_day: donation.driveFolderDay || null,
           payment_status: "submitted",
-          certificate_id: donation.certificateId
+          certificate_id: donation.certificateId,
+          certificate_delivery: donation.certificateDelivery || []
         })
       });
     }
@@ -3168,7 +4151,7 @@
 
     async function loadReviews() {
       if (!supabaseEnabled()) return getLocalReviews();
-      const rows = await supabaseRequest(`${SUPABASE_REVIEW_TABLE}?select=*&order=created_at.desc`);
+      const rows = await supabaseRequest(`${SUPABASE_PUBLIC_REVIEW_VIEW}?select=id,name,review,rating,created_at&order=created_at.desc`);
       return rows.map((row) => ({
         id: row.id,
         name: row.name,
@@ -3193,6 +4176,7 @@
       }
       await supabaseRequest(SUPABASE_REVIEW_TABLE, {
         method: "POST",
+        headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
           name: data.name,
           review: data.review,
@@ -3206,14 +4190,10 @@
       if (!list) return;
       allReviews = await loadReviews();
       if (!allReviews.length) {
-        list.innerHTML = "<p>No review submitted yet.</p>";
+        list.innerHTML = '<tr><td colspan="4">No review submitted yet.</td></tr>';
         return;
       }
-      const visibleReviews = [];
-      const count = Math.min(3, allReviews.length);
-      for (let i = 0; i < count; i += 1) {
-        visibleReviews.push(allReviews[(activeReviewIndex + i) % allReviews.length]);
-      }
+      const visibleReviews = allReviews;
       let reactionRows = [];
       let voterId = localStorage.getItem(TRUST_VOTER_KEY);
       if (!voterId) { voterId = crypto.randomUUID(); localStorage.setItem(TRUST_VOTER_KEY, voterId); }
@@ -3227,12 +4207,12 @@
         const reviewKey = String(item.id || item.createdAt || `${item.name}-${item.review}`);
         const reactions = reactionCounts[item.id] || localReactions[reviewKey] || { up: 0, heart: 0, down: 0, mine: "" };
         return `
-        <article class="review-card">
-          <button class="review-name-button" type="button" data-open-public-review="${(activeReviewIndex + visibleIndex) % allReviews.length}">${escapeHtml(item.name)}</button>
-          <p>${escapeHtml(item.review)}</p>
-          <div class="review-rating" aria-label="${Number(item.rating) > 0 ? `Rated ${Math.min(5, Number(item.rating))} out of 5 stars` : "Not rated yet"}">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= Number(item.rating) ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}${Number(item.rating) > 0 ? `<span class="review-rating-label">${Math.min(5, Number(item.rating))} / 5</span>` : ""}</div>
-          <div class="review-reactions" data-review-reactions="${escapeHtml(reviewKey)}">${[["up", "👍"], ["heart", "❤️"], ["down", "👎"]].map(([kind, symbol]) => `<button class="review-reaction${reactions.mine === kind ? " is-selected" : ""}" type="button" data-reaction="${kind}" data-review-id="${escapeHtml(String(item.id || ""))}" data-review-key="${escapeHtml(reviewKey)}" aria-label="${symbol} ${kind === "up" ? "Thumbs up" : kind === "down" ? "Thumbs down" : "Heart"}">${symbol} ${reactions[kind] || 0}</button>`).join("")}</div>
-        </article>
+        <tr>
+          <td><strong>${escapeHtml(item.name)}</strong></td>
+          <td><button class="review-text-button" type="button" data-open-public-review="${visibleIndex}" aria-label="Read full review by ${escapeHtml(item.name)}"><span class="review-text-preview">${escapeHtml(item.review)}</span></button></td>
+          <td><div class="review-rating" aria-label="${Number(item.rating) > 0 ? `Rated ${Math.min(5, Number(item.rating))} out of 5 stars` : "Not rated yet"}">${[1, 2, 3, 4, 5].map((value) => `<span class="${value <= Number(item.rating) ? "" : "is-empty"}" aria-hidden="true">★</span>`).join("")}</div></td>
+          <td><div class="review-reactions" data-review-reactions="${escapeHtml(reviewKey)}">${[["up", "👍"], ["heart", "❤️"]].map(([kind, symbol]) => `<button class="review-reaction${reactions.mine === kind ? " is-selected" : ""}" type="button" data-reaction="${kind}" data-review-id="${escapeHtml(String(item.id || ""))}" data-review-key="${escapeHtml(reviewKey)}" aria-label="${symbol} ${kind === "up" ? "Like" : "Heart"}">${symbol} ${reactions[kind] || 0}</button>`).join("")}</div></td>
+        </tr>
       `; }).join("");
     }
 
@@ -3258,9 +4238,9 @@
     document.getElementById("review-list")?.addEventListener("click", (event) => {
       const reactionButton = event.target.closest("[data-reaction]");
       if (reactionButton) { castReviewReaction(reactionButton); return; }
-      const nameButton = event.target.closest("[data-open-public-review]");
-      if (!nameButton) return;
-      const review = allReviews[Number(nameButton.dataset.openPublicReview)];
+      const reviewButton = event.target.closest("[data-open-public-review]");
+      if (!reviewButton) return;
+      const review = allReviews[Number(reviewButton.dataset.openPublicReview)];
       if (review) openPublicReview(review);
     });
 
@@ -3334,17 +4314,18 @@
       setText(".nav-links > a[href='#home']", t.navHome);
       setText(".nav-links > a[href='#about']", t.navAbout);
       setText(".nav-links > a[href='#work']", t.navWork);
-      setText("#get-involved-dropdown summary", t.navGetInvolved);
+      setText(".nav-links > a[href='#transparency']", t.navTransparency);
+      setText("#get-involved-toggle span", t.navGetInvolved);
       setText(".dropdown-menu a[data-open-modal='donor-window']", t.navDonation);
       setText(".dropdown-menu a[data-open-modal='volunteer-window']", t.navVolunteer);
       setText(".nav-links > a[href='#gallery']", t.navGallery);
       setText(".nav-links > a[href='#blog']", t.navBlog || "Blog");
       setText(".nav-links > a[href='#reviews']", t.navReviews);
       setText(".nav-links > a[href='#contact']", t.navContact);
-      setText(".nav-links .btn-primary", t.donateNow);
+      setText(".nav-donate", t.donateNow);
       setText(".eyebrow", t.heroEyebrow);
       setText(".hero-content p", t.heroText);
-      setText(".hero-actions .btn-primary", t.donationDetails);
+      setText(".hero-actions .btn-primary", t.donateNow);
       setText(".hero-actions .btn-light", t.ourSocialWork);
       setStatLabel("food-count", t.foodStat);
       setStatLabel("student-count", t.studentStat);
@@ -3379,7 +4360,8 @@
     let donationSubmitting = false;
 
     function closeModals() {
-      if (donationSubmitting) return;
+      const successPopupOpen = !document.getElementById("error-popup-overlay").hidden && document.querySelector("#error-popup-overlay .error-popup.is-success");
+      if (donationSubmitting || successPopupOpen) return;
       document.querySelectorAll(".modal-overlay").forEach((modal) => {
         modal.hidden = true;
       });
@@ -3396,12 +4378,15 @@
         document.getElementById("donor-form")?.reset();
         document.getElementById("payment-screenshot").value = "";
         document.getElementById("donation-status").style.display = "none";
+        document.querySelectorAll('input[name="certificate-delivery"]').forEach((choice) => { choice.checked = false; });
+        document.getElementById("submit-certificate-preference").disabled = true;
+        document.getElementById("certificate-delivery-status").textContent = "";
         setDonationStep(1);
       }
       modal.hidden = false;
       document.body.style.overflow = "hidden";
       setInvolvedOptionState(id);
-      document.getElementById("get-involved-dropdown")?.removeAttribute("open");
+      closeInvolvementMenu();
     }
 
     document.querySelectorAll("[data-open-modal]").forEach((trigger) => {
@@ -3414,7 +4399,7 @@
 
     document.querySelectorAll(".nav-links > a").forEach((link) => {
       link.addEventListener("click", () => {
-        document.getElementById("get-involved-dropdown")?.removeAttribute("open");
+        closeInvolvementMenu();
       });
     });
 
@@ -3434,13 +4419,32 @@
       }
     }
 
-    const getInvolvedDropdown = document.getElementById("get-involved-dropdown");
-    getInvolvedDropdown?.addEventListener("mouseenter", () => {
-      getInvolvedDropdown.setAttribute("open", "");
+    const involvementToggle = document.getElementById("get-involved-toggle");
+    const involvementMenu = document.getElementById("get-involved-menu");
+    function closeInvolvementMenu() {
+      involvementToggle.setAttribute("aria-expanded", "false");
+      involvementMenu.hidden = true;
+    }
+    involvementToggle.addEventListener("click", (event) => {
+      if (!involvementMenu.hidden) return closeInvolvementMenu();
+      involvementMenu.hidden = false;
+      const nav = involvementToggle.closest("nav").getBoundingClientRect();
+      const button = involvementToggle.getBoundingClientRect();
+      involvementMenu.style.left = Math.max(0, Math.min(button.left - nav.left, nav.width - involvementMenu.offsetWidth)) + "px";
+      involvementToggle.setAttribute("aria-expanded", "true");
+      if (event.detail === 0) involvementMenu.querySelector("a:not(.is-disabled)")?.focus();
     });
-    getInvolvedDropdown?.addEventListener("mouseleave", () => {
-      getInvolvedDropdown.removeAttribute("open");
+    document.addEventListener("click", (event) => {
+      if (!involvementToggle.contains(event.target) && !involvementMenu.contains(event.target)) closeInvolvementMenu();
     });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !involvementMenu.hidden) {
+        closeInvolvementMenu();
+        involvementToggle.focus();
+      }
+    });
+    window.addEventListener("resize", closeInvolvementMenu);
+    document.querySelector(".nav-links").addEventListener("scroll", closeInvolvementMenu, { passive: true });
 
     document.querySelectorAll("[data-close-modal]").forEach((button) => {
       button.addEventListener("click", closeModals);
@@ -3474,7 +4478,8 @@
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         if (!document.getElementById("error-popup-overlay").hidden) {
-          closeErrorPopup();
+          const successPopup = document.querySelector("#error-popup-overlay .error-popup.is-success");
+          if (!successPopup) closeErrorPopup();
           return;
         }
         closeModals();
@@ -3497,9 +4502,9 @@
         setTimeout(() => {
           saveMessage.style.display = "none";
         }, 3000);
-        await updateVolunteerCount();
+        updateVolunteerCount().catch(() => {});
       } catch (error) {
-        saveMessage.textContent = "Volunteer registration failed. Please check Supabase settings and try again.";
+        saveMessage.textContent = "Volunteer registration failed: " + (error.message || "Please check Supabase settings and try again.");
         saveMessage.style.display = "block";
       }
     });
@@ -3567,9 +4572,13 @@
         const screenshotUpload = await uploadPaymentScreenshot(screenshot, activeDonation.certificateId, activeDonation.name);
         activeDonation.screenshotPath = screenshotUpload.path;
         activeDonation.driveFileUrl = screenshotUpload.driveUrl;
+        activeDonation.driveFolderYear = screenshotUpload.year;
+        activeDonation.driveFolderMonth = screenshotUpload.month;
+        activeDonation.driveFolderDay = screenshotUpload.day;
         activeDonation.screenshotFileName = screenshot.name;
         activeDonation.screenshotMimeType = screenshot.type || "image/jpeg";
-        await saveDonation(activeDonation);
+
+
         status.style.display = "none";
         setDonationStep(3);
       } catch (error) {
@@ -3586,14 +4595,37 @@
       }
     });
 
-    document.getElementById("download-certificate")?.addEventListener("click", () => {
-      downloadCertificate().catch((error) => {
-        console.error("Certificate generation failed.", error);
-        const message = document.querySelector("#donor-certificate-panel .certificate-ready p");
-        const errorMessage = "The certificate could not be created. Check your internet connection and try again.";
-        if (message) message.textContent = errorMessage;
-        showErrorPopup(errorMessage, "Certificate could not be created");
-      });
+    const certificateDeliveryChoices = [...document.querySelectorAll('input[name="certificate-delivery"]')];
+    const certificateDeliverySubmit = document.getElementById("submit-certificate-preference");
+    certificateDeliveryChoices.forEach((choice) => choice.addEventListener("change", () => {
+      certificateDeliverySubmit.disabled = !certificateDeliveryChoices.some((item) => item.checked);
+    }));
+    certificateDeliverySubmit?.addEventListener("click", async () => {
+      const selected = certificateDeliveryChoices.filter((item) => item.checked).map((item) => item.value);
+      const status = document.getElementById("certificate-delivery-status");
+      const loadingOverlay = document.getElementById("donation-loading-overlay");
+      const donorWindow = document.getElementById("donor-window");
+      const closeButton = document.querySelector('#donor-window [data-close-modal]');
+      if (!selected.length || !activeDonation || donationSubmitting) return;
+      certificateDeliverySubmit.disabled = true;
+      donationSubmitting = true;
+      donorWindow?.setAttribute("aria-busy", "true");
+      closeButton?.setAttribute("disabled", "");
+      loadingOverlay.hidden = false;
+      try {
+        activeDonation.certificateDelivery = selected;
+        await saveDonation(activeDonation);
+        donationSubmitting = false;
+        showThankYouPopup();
+      } catch (error) {
+        status.textContent = readableSubmissionError(error);
+        certificateDeliverySubmit.disabled = false;
+      } finally {
+        loadingOverlay.hidden = true;
+        donationSubmitting = false;
+        donorWindow?.removeAttribute("aria-busy");
+        closeButton?.removeAttribute("disabled");
+      }
     });
 
     document.getElementById("review-form")?.addEventListener("submit", async (event) => {
@@ -3613,7 +4645,7 @@
           message.style.display = "none";
         }, 2400);
       } catch (error) {
-        message.textContent = "Review submit failed. Please check settings and try again.";
+        message.textContent = "Review submit failed: " + (error.message || "Please check settings and try again.");
         message.style.display = "block";
       }
     });
@@ -3693,7 +4725,14 @@
       if (foodCount) foodCount.textContent = `${stats.foodPackets || 0}+`;
       if (studentCount) studentCount.textContent = `${stats.studentsSupported || 0}+`;
       if (medicalCount) medicalCount.textContent = `${stats.medicalCases || 0}+`;
+      const awarenessCount = document.getElementById("awareness-count");
+      const treeCount = document.getElementById("tree-count");
+      const communityCount = document.getElementById("community-count");
+      if (awarenessCount) awarenessCount.textContent = `${stats.awarenessDrives || 0}+`;
+      if (treeCount) treeCount.textContent = `${stats.treePlantations || 0}+`;
+      if (communityCount) communityCount.textContent = `${stats.communityWelfare || 0}+`;
     });
+    loadPartners().catch(() => {});
     loadNotice().catch(() => {
       const notice = JSON.parse(localStorage.getItem(TRUST_NOTICE_KEY) || "{}");
       if (notice.title) document.getElementById("notice-title").textContent = notice.title;
@@ -3709,6 +4748,15 @@
         volunteerCount.textContent = getVolunteers().length;
       }
     });
+    document.querySelectorAll("[data-pin-code]").forEach((field) => {
+      const sanitize = () => {
+        const value = field.value.replace(/[^0-9]/g, "");
+        if (value !== field.value) field.value = value;
+      };
+      field.addEventListener("input", (event) => { if (!event.isComposing) sanitize(); });
+      field.addEventListener("compositionend", sanitize);
+    });
   </script>
+  <script src="public-location-fields.js"></script>
 </body>
 </html>
