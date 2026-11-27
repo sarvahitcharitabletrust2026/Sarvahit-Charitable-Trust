@@ -1,0 +1,1 @@
+-- DEPRECATED: Use supabase-all-in-one.sql only. This file is retained as a pointer to the consolidated setup.
