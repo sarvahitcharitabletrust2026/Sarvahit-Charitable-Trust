@@ -499,10 +499,8 @@
     #dashboard > .grid-2 { align-items: start; }
     .dashboard-panel-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
     .dashboard-section-toggle { display: inline-flex; align-items: center; gap: 8px; }
-    .dashboard-section-toggle:has(.dashboard-panel-count) { padding-inline-end:0; overflow:hidden; gap:0; }
-    .dashboard-section-toggle .dashboard-panel-count { align-self:stretch; display:grid; place-items:center; padding-inline:12px; margin-inline-start:10px; border-inline-start:1px solid #bfd2c9; border-radius:0; }
-    #financial-doc-form-message.is-error { color:#a92328; font-weight:650; }
-    .dashboard-panel-count { background: #e4efe8; color: var(--green-dark); font-weight: 800; border-radius: 999px; min-width: 1.6em; padding: 1px 6px; text-align: center; }
+    #financial-doc-form-message.is-error, #financial-doc-success.is-error { color:#a92328; font-weight:650; }
+    .dashboard-panel-count { color:inherit; font-size:.78em; font-weight:700; margin-inline-start:.4em; white-space:nowrap; }
     .dashboard-panel-content[hidden], .dashboard-section-toggle[hidden] { display: none !important; }
     #dashboard .report-pending-only tr[data-report-published],
     #dashboard .panel:not(.report-pending-only) tr[data-report-pending-empty] { display: none; }
@@ -860,7 +858,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
 #mediaList article .actions{margin-top:auto;display:flex;flex-direction:column;align-items:flex-start}
 &lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;main&gt;&lt;nav id=&quot;nav&quot;&gt;&lt;/nav&gt;&lt;div&gt;
 &lt;section id=&quot;dashboard&quot; class=&quot;active&quot;&gt;&lt;h2&gt;Media Dashboard&lt;/h2&gt;&lt;p class=&quot;muted&quot;&gt;Upload once, organize by program, prepare for publication.&lt;/p&gt;&lt;div class=&quot;grid stats&quot; id=&quot;stats&quot;&gt;&lt;/div&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;go('programs')&quot;&gt;+ Create program&lt;/button&gt;&lt;button onclick=&quot;go('photos')&quot;&gt;Upload photos&lt;/button&gt;&lt;button onclick=&quot;go('videos')&quot;&gt;Prepare YouTube video&lt;/button&gt;&lt;/div&gt;&lt;h3 style=&quot;margin-top:30px&quot;&gt;Recent programs&lt;/h3&gt;&lt;div id=&quot;recent&quot;&gt;&lt;/div&gt;&lt;p id=&quot;studio-videos-status&quot; class=&quot;muted&quot; role=&quot;status&quot; hidden&gt;&lt;/p&gt;&lt;/section&gt;
-&lt;section id=&quot;programs&quot;&gt;&lt;h2&gt;Create &amp; Manage Programs&lt;/h2&gt;&lt;form id=&quot;programForm&quot;&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;&lt;label&gt;Program name *&lt;/label&gt;&lt;input name=&quot;name&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Category *&lt;/label&gt;&lt;select name=&quot;category&quot; required&gt;&lt;option value=&quot;&quot;&gt;Select Drive category&lt;/option&gt;&lt;option value=&quot;__new&quot;&gt;Add new category…&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Program date *&lt;/label&gt;&lt;input type=&quot;date&quot; name=&quot;date&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Location *&lt;/label&gt;&lt;input name=&quot;location&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-country&quot;&gt;Country&lt;/label&gt;&lt;select id=&quot;studio-country&quot; name=&quot;country&quot; autocomplete=&quot;country-name&quot;&gt;&lt;option selected&gt;India&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-state&quot;&gt;State&lt;/label&gt;&lt;select id=&quot;studio-state&quot; name=&quot;state&quot; autocomplete=&quot;address-level1&quot;&gt;&lt;option value=&quot;&quot;&gt;Select state&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-city&quot;&gt;City&lt;/label&gt;&lt;select id=&quot;studio-city&quot; name=&quot;city&quot; autocomplete=&quot;address-level2&quot;&gt;&lt;option value=&quot;&quot;&gt;Select city&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;p data-location-status role=&quot;status&quot; hidden&gt;&lt;/p&gt;&lt;div&gt;&lt;label&gt;PIN code&lt;/label&gt;&lt;input name=&quot;pin&quot; inputmode=&quot;numeric&quot; pattern=&quot;[0-9]{6}&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Beneficiaries&lt;/label&gt;&lt;input name=&quot;beneficiaries&quot; type=&quot;number&quot; min=&quot;0&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Volunteers&lt;/label&gt;&lt;input name=&quot;volunteers&quot; type=&quot;number&quot; min=&quot;0&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Working partner&lt;/label&gt;&lt;input name=&quot;partner&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Cover photo&lt;input name=&quot;cover&quot; type=&quot;file&quot; accept=&quot;image/*&quot;&gt;&lt;/label&gt;&lt;small&gt;Optional. The first program photo is used by default.&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;&lt;label&gt;Description *&lt;/label&gt;&lt;textarea name=&quot;description&quot; required&gt;&lt;/textarea&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;featured&quot;&gt; Feature on homepage&lt;/label&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;consent&quot; required&gt; Appropriate media publication consent obtained&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button&gt;Save program locally&lt;/button&gt;&lt;/div&gt;&lt;p id=&quot;programSaveStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/form&gt;&lt;h3 class=&quot;studio-list-title&quot;&gt;Saved Programs&lt;/h3&gt;&lt;div id=&quot;programList&quot; class=&quot;studio-scroll&quot; tabindex=&quot;0&quot; aria-label=&quot;Saved programs&quot;&gt;&lt;/div&gt;&lt;/section&gt;
+&lt;section id=&quot;programs&quot;&gt;&lt;h2&gt;Create &amp; Manage Programs&lt;/h2&gt;&lt;p id=&quot;program-folders-status&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;form id=&quot;programForm&quot;&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;&lt;label&gt;Program name *&lt;/label&gt;&lt;input name=&quot;name&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Category *&lt;/label&gt;&lt;select name=&quot;category&quot; required&gt;&lt;option value=&quot;&quot;&gt;Select Drive category&lt;/option&gt;&lt;option value=&quot;__new&quot;&gt;Add new category…&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Program date *&lt;/label&gt;&lt;input type=&quot;date&quot; name=&quot;date&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Location *&lt;/label&gt;&lt;input name=&quot;location&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-country&quot;&gt;Country&lt;/label&gt;&lt;select id=&quot;studio-country&quot; name=&quot;country&quot; autocomplete=&quot;country-name&quot;&gt;&lt;option selected&gt;India&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-state&quot;&gt;State&lt;/label&gt;&lt;select id=&quot;studio-state&quot; name=&quot;state&quot; autocomplete=&quot;address-level1&quot;&gt;&lt;option value=&quot;&quot;&gt;Select state&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-city&quot;&gt;City&lt;/label&gt;&lt;select id=&quot;studio-city&quot; name=&quot;city&quot; autocomplete=&quot;address-level2&quot;&gt;&lt;option value=&quot;&quot;&gt;Select city&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;p data-location-status role=&quot;status&quot; hidden&gt;&lt;/p&gt;&lt;div&gt;&lt;label&gt;PIN code&lt;/label&gt;&lt;input name=&quot;pin&quot; inputmode=&quot;numeric&quot; pattern=&quot;[0-9]{6}&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Beneficiaries&lt;/label&gt;&lt;input name=&quot;beneficiaries&quot; type=&quot;number&quot; min=&quot;0&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Volunteers&lt;/label&gt;&lt;input name=&quot;volunteers&quot; type=&quot;number&quot; min=&quot;0&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Working partner&lt;/label&gt;&lt;input name=&quot;partner&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Cover photo&lt;input name=&quot;cover&quot; type=&quot;file&quot; accept=&quot;image/*&quot;&gt;&lt;/label&gt;&lt;small&gt;Optional. The first program photo is used by default.&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;&lt;label&gt;Description *&lt;/label&gt;&lt;textarea name=&quot;description&quot; required&gt;&lt;/textarea&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;featured&quot;&gt; Feature on homepage&lt;/label&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;consent&quot; required&gt; Appropriate media publication consent obtained&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button&gt;Save program locally&lt;/button&gt;&lt;/div&gt;&lt;p id=&quot;programSaveStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/form&gt;&lt;h3 class=&quot;studio-list-title&quot;&gt;Saved Programs&lt;/h3&gt;&lt;div id=&quot;programList&quot; class=&quot;studio-scroll&quot; tabindex=&quot;0&quot; aria-label=&quot;Saved programs&quot;&gt;&lt;/div&gt;&lt;/section&gt;
 &lt;section id=&quot;photos&quot;&gt;&lt;h2&gt;Upload Program Photos&lt;/h2&gt;&lt;details class=&quot;studio-folders&quot;&gt;&lt;summary&gt;Google Drive Program Folders &lt;span id=&quot;studio-folders-status&quot; role=&quot;status&quot;&gt;&lt;/span&gt;&lt;/summary&gt;&lt;ul id=&quot;studio-drive-folders&quot; class=&quot;studio-scroll&quot;&gt;&lt;/ul&gt;&lt;/details&gt;&lt;label&gt;Program *&lt;/label&gt;&lt;select class=&quot;programSelect&quot; id=&quot;photoProgram&quot;&gt;&lt;/select&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;photoWatermark&quot; checked&gt; Apply Trust watermark&lt;/label&gt;&lt;div class=&quot;drop&quot;&gt;&lt;label&gt;Choose multiple photos&lt;/label&gt;&lt;input id=&quot;photoFiles&quot; type=&quot;file&quot; accept=&quot;image/jpeg,image/png,image/webp&quot; multiple&gt;&lt;small&gt;Photos upload to a Drive folder named after the selected program.&lt;/small&gt;&lt;/div&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;photoConsent&quot;&gt; Confirm permission to process these photos&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button id=&quot;uploadProgramPhotos&quot; type=&quot;button&quot; onclick=&quot;processPhotos()&quot;&gt;Process &amp; Upload to Google Drive&lt;/button&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;secondary&quot; id=&quot;retryPhotoUpload&quot; onclick=&quot;retryDrivePhotos()&quot;&gt;Retry pending uploads&lt;/button&gt;&lt;progress id=&quot;photoProgress&quot; value=&quot;0&quot; max=&quot;100&quot;&gt;&lt;/progress&gt;&lt;p id=&quot;photoStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/section&gt;
 &lt;section id=&quot;videos&quot;&gt;&lt;h2&gt;YouTube Video Preparation&lt;/h2&gt;&lt;p&gt;&lt;a  href=&quot;https://studio.youtube.com/channel/UCArUc8vHzOs3uQyhDwbl5eA/videos/upload?filter=%5B%5D&amp;amp;sort=%7B%22columnType%22%3A%22date%22%2C%22sortOrder%22%3A%22DESCENDING%22%7D&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Open YouTube Studio upload&lt;/a&gt;&lt;/p&gt;&lt;p class=&quot;muted&quot;&gt;Save the title and description here, then upload the video file with the YouTube Studio link above.&lt;/p&gt;&lt;form id=&quot;videoForm&quot;&gt;&lt;label&gt;Program *&lt;/label&gt;&lt;select class=&quot;programSelect&quot; name=&quot;program&quot; required&gt;&lt;/select&gt;&lt;label&gt;Video title *&lt;/label&gt;&lt;input name=&quot;title&quot; required maxlength=&quot;100&quot;&gt;&lt;label&gt;Description&lt;/label&gt;&lt;textarea name=&quot;description&quot;&gt;&lt;/textarea&gt;&lt;label&gt;Tags / hashtags&lt;/label&gt;&lt;input name=&quot;tags&quot; value=&quot;#SarvahitCharitableTrust #SocialWork&quot;&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;&lt;label&gt;Playlist&lt;/label&gt;&lt;input name=&quot;playlist&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Category&lt;/label&gt;&lt;select name=&quot;category&quot;&gt;&lt;option&gt;Nonprofits &amp; Activism&lt;/option&gt;&lt;option&gt;Education&lt;/option&gt;&lt;option&gt;People &amp; Blogs&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Format&lt;/label&gt;&lt;select name=&quot;format&quot;&gt;&lt;option&gt;Normal video&lt;/option&gt;&lt;option&gt;Shorts&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Visibility&lt;/label&gt;&lt;select name=&quot;visibility&quot;&gt;&lt;option&gt;Private&lt;/option&gt;&lt;option&gt;Unlisted&lt;/option&gt;&lt;option&gt;Public&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;&lt;label&gt;Audience *&lt;/label&gt;&lt;select name=&quot;audience&quot; required&gt;&lt;option value=&quot;&quot;&gt;Select audience&lt;/option&gt;&lt;option&gt;Made for kids&lt;/option&gt;&lt;option&gt;Not made for kids&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Video file (local preview only)&lt;/label&gt;&lt;input type=&quot;file&quot; id=&quot;videoFile&quot; accept=&quot;video/*&quot;&gt;&lt;video id=&quot;videoPreview&quot; controls style=&quot;width:100%;max-height:300px;display:none&quot;&gt;&lt;/video&gt;&lt;label&gt;Custom thumbnail&lt;/label&gt;&lt;input type=&quot;file&quot; accept=&quot;image/*&quot; id=&quot;thumbFile&quot;&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; required&gt; Publication consent confirmed&lt;/label&gt;&lt;p&gt;Requested video processing: bottom-right logo, 40% opacity, preserve original. Video rendering is not implemented in this prototype.&lt;/p&gt;&lt;button&gt;Save Draft Details&lt;/button&gt;&lt;p id=&quot;videoDraftStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/form&gt;&lt;/section&gt;
 &lt;section id=&quot;library&quot;&gt;&lt;h2&gt;Media Library&lt;/h2&gt;&lt;div class=&quot;grid&quot;&gt;&lt;input id=&quot;search&quot; placeholder=&quot;Search media&quot; oninput=&quot;render()&quot;&gt;&lt;select id=&quot;filter&quot; onchange=&quot;render()&quot;&gt;&lt;option value=&quot;all&quot;&gt;All media&lt;/option&gt;&lt;option value=&quot;photo&quot;&gt;Photos&lt;/option&gt;&lt;option value=&quot;video&quot;&gt;Video drafts&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;media&quot; id=&quot;mediaList&quot;&gt;&lt;/div&gt;&lt;/section&gt;
@@ -873,7 +871,11 @@ button:disabled{opacity:.55;cursor:not-allowed}
 &lt;label&gt;Fit&lt;select id=&quot;studio-fit&quot;&gt;&lt;option value=&quot;cover&quot;&gt;Fill frame&lt;/option&gt;&lt;option value=&quot;contain&quot;&gt;Fit entire image&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
 &lt;label&gt;Border&lt;select id=&quot;studio-border&quot;&gt;&lt;option value=&quot;&quot;&gt;None&lt;/option&gt;&lt;option value=&quot;#ffffff&quot;&gt;White&lt;/option&gt;&lt;option value=&quot;#115743&quot;&gt;Trust green&lt;/option&gt;&lt;option value=&quot;#d8ad60&quot;&gt;Gold&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
 &lt;label&gt;Video text&lt;input id=&quot;studio-overlay-text&quot; maxlength=&quot;100&quot; placeholder=&quot;Optional caption&quot;&gt;&lt;/label&gt;
-&lt;/div&gt;&lt;/fieldset&gt;&lt;div id=&quot;reel-options&quot; class=&quot;grid studio-reel-options&quot; hidden&gt;&lt;label&gt;Video Transition Effect&lt;select id=&quot;reel-transition&quot;&gt;&lt;option value=&quot;cut&quot;&gt;None&lt;/option&gt;&lt;option value=&quot;fade&quot;&gt;Crossfade&lt;/option&gt;&lt;option value=&quot;slide&quot;&gt;Slide left&lt;/option&gt;&lt;option value=&quot;up&quot;&gt;Slide up&lt;/option&gt;&lt;option value=&quot;wipe&quot;&gt;Wipe right&lt;/option&gt;&lt;option value=&quot;dip&quot;&gt;Fade through black&lt;/option&gt;&lt;option value=&quot;iris&quot;&gt;Circle reveal&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;FX Effect&lt;select id=&quot;reel-fx&quot;&gt;&lt;option value=&quot;none&quot;&gt;None&lt;/option&gt;&lt;option value=&quot;zoom&quot;&gt;Slow zoom&lt;/option&gt;&lt;option value=&quot;mono&quot;&gt;Black and white&lt;/option&gt;&lt;option value=&quot;warm&quot;&gt;Warm tint&lt;/option&gt;&lt;option value=&quot;cool&quot;&gt;Cool tint&lt;/option&gt;&lt;option value=&quot;vintage&quot;&gt;Vintage&lt;/option&gt;&lt;option value=&quot;bold&quot;&gt;High contrast&lt;/option&gt;&lt;option value=&quot;vignette&quot;&gt;Vignette&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;makeArt()&quot;&gt;Generate artwork&lt;/button&gt;&lt;button onclick=&quot;downloadArt()&quot;&gt;Download PNG&lt;/button&gt;&lt;button id=&quot;make-reel&quot; onclick=&quot;makeReel()&quot; disabled&gt;Generate slideshow preview&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;card&quot; id=&quot;reel-preview-panel&quot; hidden&gt;&lt;h3&gt;Slideshow Preview&lt;/h3&gt;&lt;video id=&quot;reel-preview&quot; controls playsinline preload=&quot;auto&quot; style=&quot;display:block;width:min(100%,360px);max-height:70vh;background:#111;margin-bottom:12px&quot;&gt;&lt;/video&gt;&lt;button id=&quot;reel-download&quot; type=&quot;button&quot; disabled&gt;Download Slideshow&lt;/button&gt;&lt;/div&gt;&lt;canvas id=&quot;art&quot; style=&quot;width:100%;max-height:520px;object-fit:contain;margin-top:16px&quot;&gt;&lt;/canvas&gt;&lt;p id=&quot;studioStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;label&gt;Video for permanent watermark&lt;/label&gt;&lt;input id=&quot;markVideo&quot; type=&quot;file&quot; accept=&quot;video/*&quot;&gt;&lt;label&gt;&lt;input id=&quot;videoConsent&quot; type=&quot;checkbox&quot;&gt; Permission to process this video confirmed&lt;/label&gt;&lt;button id=&quot;watermark-video-button&quot; onclick=&quot;watermarkVideo()&quot;&gt;Process &amp; download video&lt;/button&gt;&lt;p id=&quot;watermarkVideoStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;p class=&quot;muted&quot;&gt;Browser video export uses WebM where supported; processing runs in real time. Production MP4 with reliable audio requires FFmpeg.&lt;/p&gt;&lt;/section&gt;&lt;section id=&quot;cloud&quot;&gt;&lt;h2&gt;Cloud Publishing &amp; Integration Setup&lt;/h2&gt;&lt;p class=&quot;notice&quot;&gt;This tab previews publishing requests. Upload program photos from Upload Photos, or open YouTube Studio from YouTube Videos.&lt;/p&gt;&lt;label&gt;Program&lt;/label&gt;&lt;select class=&quot;programSelect&quot; id=&quot;cloudProgram&quot;&gt;&lt;/select&gt;&lt;label&gt;Media file (processed version)&lt;/label&gt;&lt;input id=&quot;cloudFile&quot; type=&quot;file&quot;&gt;&lt;label&gt;Platform&lt;/label&gt;&lt;select id=&quot;cloudPlatform&quot;&gt;&lt;option&gt;Google Drive&lt;/option&gt;&lt;option&gt;YouTube&lt;/option&gt;&lt;option&gt;Instagram&lt;/option&gt;&lt;option&gt;Facebook&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Title&lt;/label&gt;&lt;input id=&quot;cloudTitle&quot;&gt;&lt;label&gt;Description&lt;/label&gt;&lt;textarea id=&quot;cloudDescription&quot;&gt;&lt;/textarea&gt;&lt;label&gt;Visibility&lt;/label&gt;&lt;select id=&quot;cloudVisibility&quot;&gt;&lt;option&gt;private&lt;/option&gt;&lt;option&gt;unlisted&lt;/option&gt;&lt;option&gt;public&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Schedule (local time)&lt;/label&gt;&lt;input id=&quot;cloudSchedule&quot; type=&quot;datetime-local&quot;&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;cloudConsent&quot;&gt; Consent and publication rights confirmed&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;cloudPlan('upload')&quot;&gt;Preview request (no upload)&lt;/button&gt;&lt;button onclick=&quot;cloudPlan('schedule')&quot;&gt;Prepare scheduled post&lt;/button&gt;&lt;/div&gt;&lt;label&gt;Remote file/video ID&lt;/label&gt;&lt;input id=&quot;remoteId&quot;&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button class=&quot;danger&quot; onclick=&quot;cloudPlan('delete')&quot;&gt;Prepare deletion request&lt;/button&gt;&lt;button onclick=&quot;cloudPlan('analytics')&quot;&gt;Prepare analytics request&lt;/button&gt;&lt;/div&gt;&lt;pre id=&quot;cloudOutput&quot; style=&quot;white-space:pre-wrap;overflow-wrap:anywhere&quot;&gt;&lt;/pre&gt;&lt;/section&gt;&lt;/div&gt;&lt;/main&gt;
+&lt;/div&gt;&lt;/fieldset&gt;&lt;div id=&quot;reel-options&quot; class=&quot;grid studio-reel-options&quot; hidden&gt;&lt;label&gt;Video Transition Effect&lt;select id=&quot;reel-transition&quot;&gt;&lt;option value=&quot;cut&quot;&gt;None&lt;/option&gt;&lt;option value=&quot;fade&quot;&gt;Crossfade&lt;/option&gt;&lt;option value=&quot;slide&quot;&gt;Slide left&lt;/option&gt;&lt;option value=&quot;up&quot;&gt;Slide up&lt;/option&gt;&lt;option value=&quot;wipe&quot;&gt;Wipe right&lt;/option&gt;&lt;option value=&quot;dip&quot;&gt;Fade through black&lt;/option&gt;&lt;option value=&quot;iris&quot;&gt;Circle reveal&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;FX Effect&lt;select id=&quot;reel-fx&quot;&gt;&lt;option value=&quot;none&quot;&gt;None&lt;/option&gt;&lt;option value=&quot;zoom&quot;&gt;Slow zoom&lt;/option&gt;&lt;option value=&quot;mono&quot;&gt;Black and white&lt;/option&gt;&lt;option value=&quot;warm&quot;&gt;Warm tint&lt;/option&gt;&lt;option value=&quot;cool&quot;&gt;Cool tint&lt;/option&gt;&lt;option value=&quot;vintage&quot;&gt;Vintage&lt;/option&gt;&lt;option value=&quot;bold&quot;&gt;High contrast&lt;/option&gt;&lt;option value=&quot;vignette&quot;&gt;Vignette&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;/div&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;makeArt()&quot;&gt;Generate artwork&lt;/button&gt;&lt;button onclick=&quot;downloadArt()&quot;&gt;Download PNG&lt;/button&gt;&lt;button id=&quot;make-reel&quot; onclick=&quot;makeReel()&quot; hidden disabled&gt;Generate slideshow preview&lt;/button&gt;&lt;/div&gt;&lt;dialog id=&quot;reel-preview-panel&quot; aria-labelledby=&quot;reel-preview-title&quot; style=&quot;width:min(92%,450px);max-height:92vh;border:0;border-radius:16px;padding:16px;color:#153f34&quot;&gt;
+&lt;div class=&quot;actions&quot; style=&quot;justify-content:space-between;align-items:center;margin:0 0 12px&quot;&gt;&lt;h3 id=&quot;reel-preview-title&quot; style=&quot;margin:0&quot;&gt;Slideshow preview&lt;/h3&gt;&lt;form method=&quot;dialog&quot; style=&quot;margin:0&quot;&gt;&lt;button type=&quot;submit&quot; aria-label=&quot;Close preview&quot;&gt;&amp;times;&lt;/button&gt;&lt;/form&gt;&lt;/div&gt;
+&lt;video id=&quot;reel-preview&quot; controls playsinline preload=&quot;auto&quot; style=&quot;display:block;width:100%;max-height:62vh;background:#111;margin-bottom:12px&quot;&gt;&lt;/video&gt;
+&lt;button id=&quot;reel-download&quot; type=&quot;button&quot; disabled&gt;Download Slideshow&lt;/button&gt;&lt;/dialog&gt;
+&lt;canvas id=&quot;art&quot; hidden style=&quot;width:100%;max-height:520px;object-fit:contain;margin-top:16px&quot;&gt;&lt;/canvas&gt;&lt;p id=&quot;studioStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/section&gt;&lt;section id=&quot;cloud&quot;&gt;&lt;h2&gt;Cloud Publishing &amp; Integration Setup&lt;/h2&gt;&lt;p class=&quot;notice&quot;&gt;This tab previews publishing requests. Upload program photos from Upload Photos, or open YouTube Studio from YouTube Videos.&lt;/p&gt;&lt;label&gt;Program&lt;/label&gt;&lt;select class=&quot;programSelect&quot; id=&quot;cloudProgram&quot;&gt;&lt;/select&gt;&lt;label&gt;Media file (processed version)&lt;/label&gt;&lt;input id=&quot;cloudFile&quot; type=&quot;file&quot;&gt;&lt;label&gt;Platform&lt;/label&gt;&lt;select id=&quot;cloudPlatform&quot;&gt;&lt;option&gt;Google Drive&lt;/option&gt;&lt;option&gt;YouTube&lt;/option&gt;&lt;option&gt;Instagram&lt;/option&gt;&lt;option&gt;Facebook&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Title&lt;/label&gt;&lt;input id=&quot;cloudTitle&quot;&gt;&lt;label&gt;Description&lt;/label&gt;&lt;textarea id=&quot;cloudDescription&quot;&gt;&lt;/textarea&gt;&lt;label&gt;Visibility&lt;/label&gt;&lt;select id=&quot;cloudVisibility&quot;&gt;&lt;option&gt;private&lt;/option&gt;&lt;option&gt;unlisted&lt;/option&gt;&lt;option&gt;public&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Schedule (local time)&lt;/label&gt;&lt;input id=&quot;cloudSchedule&quot; type=&quot;datetime-local&quot;&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;cloudConsent&quot;&gt; Consent and publication rights confirmed&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;cloudPlan('upload')&quot;&gt;Preview request (no upload)&lt;/button&gt;&lt;button onclick=&quot;cloudPlan('schedule')&quot;&gt;Prepare scheduled post&lt;/button&gt;&lt;/div&gt;&lt;label&gt;Remote file/video ID&lt;/label&gt;&lt;input id=&quot;remoteId&quot;&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button class=&quot;danger&quot; onclick=&quot;cloudPlan('delete')&quot;&gt;Prepare deletion request&lt;/button&gt;&lt;button onclick=&quot;cloudPlan('analytics')&quot;&gt;Prepare analytics request&lt;/button&gt;&lt;/div&gt;&lt;pre id=&quot;cloudOutput&quot; style=&quot;white-space:pre-wrap;overflow-wrap:anywhere&quot;&gt;&lt;/pre&gt;&lt;/section&gt;&lt;/div&gt;&lt;/main&gt;
 &lt;script&gt;
 const $=id=&gt;document.getElementById(id), tabs={dashboard:'Dashboard',programs:'Manage Programs',photos:'Upload Photos',videos:'YouTube Videos',library:'Media Library',social:'Social Content',gallery:'Public Gallery Preview',watermark:'Watermark Settings',accounts:'Accounts &amp; Analytics',history:'Activity History',production:'Production Studio',cloud:'Cloud Publishing &amp; Setup'};let state={programs:[],media:[],history:[]},logo='',db;let publishedVideoCount='—';window.setPublishedVideoCount=count=&gt;{publishedVideoCount=count;render()};const uid=()=&gt;crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random();function go(id){document.querySelectorAll('section').forEach(s=&gt;s.classList.toggle('active',s.id===id));document.querySelectorAll('nav button').forEach(b=&gt;b.classList.toggle('active',b.dataset.tab===id));render()}Object.entries(tabs).forEach(([id,n])=&gt;{let b=document.createElement('button');b.textContent=n;b.dataset.tab=id;b.onclick=()=&gt;go(id);$('nav').append(b)});function esc(s){return String(s??'').replace(/[&amp;&lt;&gt;&quot;']/g,c=&gt;({'&amp;':'&amp;amp;','&lt;':'&amp;lt;','&gt;':'&amp;gt;','&quot;':'&amp;quot;',&quot;'&quot;:'&amp;#39;'}[c]))}function log(s){state.history.unshift({text:s,date:new Date().toLocaleString(),at:new Date().toISOString()})}function save(){if(!db)return Promise.resolve();return new Promise((resolve,reject)=&gt;{let t=db.transaction('data','readwrite');t.objectStore('data').put(state,'state');t.oncomplete=resolve;t.onerror=()=&gt;reject(t.error);t.onabort=()=&gt;reject(t.error)})}function persist(){save().catch(e=&gt;alert('Local save failed: '+e.message));render()}function render(){document.querySelectorAll('.programSelect').forEach(s=&gt;{let v=s.value;s.innerHTML='&lt;option value=&quot;&quot;&gt;Select program&lt;/option&gt;'+state.programs.map(p=&gt;`&lt;option value=&quot;${esc(p.id)}&quot;&gt;${esc(p.name)}&lt;/option&gt;`).join('');s.value=v});$('stats').innerHTML=[['Programs',state.programs.length],['Photos',state.media.filter(m=&gt;m.type==='photo').length],['YouTube Videos',publishedVideoCount],['Video Drafts',state.media.filter(m=&gt;m.type==='video').length]].map(([n,v])=&gt;`&lt;div class=&quot;card stat&quot;&gt;&lt;small&gt;${n}&lt;/small&gt;&lt;strong&gt;${v}&lt;/strong&gt;&lt;/div&gt;`).join('');$('recent').innerHTML=state.programs.slice(-4).map(p=&gt;`&lt;p&gt;${esc(p.name)} · ${esc(p.date)}&lt;/p&gt;`).join('')||'&lt;p&gt;No programs yet.&lt;/p&gt;';$('programList').innerHTML=state.programs.map(p=&gt;`&lt;div class=&quot;card&quot; style=&quot;margin-top:12px&quot;&gt;&lt;strong&gt;${esc(p.name)}&lt;/strong&gt;&lt;p&gt;${esc(p.date)} · ${esc(p.location)}&lt;/p&gt;&lt;button class=&quot;danger&quot; onclick=&quot;removeProgram('${p.id}')&quot;&gt;Delete program&lt;/button&gt;&lt;/div&gt;`).join('');let q=$('search').value.toLowerCase(),f=$('filter').value;$('mediaList').innerHTML=state.media.filter(m=&gt;(f==='all'||m.type===f)&amp;&amp;m.title.toLowerCase().includes(q)).map(m=&gt;`&lt;article&gt;${m.type==='photo'?`&lt;img src=&quot;${m.data}&quot; alt=&quot;${esc(m.title)}&quot;&gt;`:''}&lt;div&gt;&lt;strong&gt;${esc(m.title)}&lt;/strong&gt;&lt;p class=&quot;muted&quot;&gt;${esc(m.type)} · ${m.hidden?'Hidden':'Local preview'}&lt;/p&gt;&lt;div class=&quot;actions&quot;&gt;${m.type==='photo'?`&lt;button class=&quot;secondary&quot; onclick=&quot;downloadPhoto('${m.id}')&quot;&gt;Download&lt;/button&gt;&lt;button class=&quot;secondary&quot; onclick=&quot;toggle('${m.id}')&quot;&gt;${m.hidden?'Show':'Hide'}&lt;/button&gt;`:''}&lt;button class=&quot;danger&quot; onclick=&quot;removeMedia('${m.id}')&quot;&gt;Delete local&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/article&gt;`).join('')||'&lt;p&gt;No media found.&lt;/p&gt;';$('galleryList').innerHTML=state.programs.map(p=&gt;{let a=state.media.filter(m=&gt;m.program===p.id&amp;&amp;m.type==='photo'&amp;&amp;!m.hidden);return `&lt;article&gt;${(p.coverData||a.length)?`&lt;img src=&quot;${p.coverData||a[0].data}&quot; alt=&quot;${esc(p.name)}&quot;&gt;`:''}&lt;div&gt;&lt;span class=&quot;pill&quot;&gt;${esc(p.category)}&lt;/span&gt;&lt;h3 style=&quot;margin-top:12px&quot;&gt;${esc(p.name)}&lt;/h3&gt;&lt;p&gt;${esc(p.description)}&lt;/p&gt;&lt;small&gt;${a.length} photos · ${esc(p.date)}&lt;/small&gt;&lt;/div&gt;&lt;/article&gt;`}).join('');renderStudioHistory()}function removeProgram(id){if(state.media.some(m=&gt;m.program===id))return alert('Delete associated media first.');if(confirm('Delete this local program?')){state.programs=state.programs.filter(p=&gt;p.id!==id);log('Program deleted');persist()}}function removeMedia(id){if(confirm('Delete this local record? This does not affect Google Drive or YouTube.')){state.media=state.media.filter(m=&gt;m.id!==id);log('Local media deleted');persist()}}function toggle(id){let m=state.media.find(m=&gt;m.id===id);m.hidden=!m.hidden;persist()}function downloadPhoto(id){let m=state.media.find(m=&gt;m.id===id);let a=document.createElement('a');a.href=m.data;a.download=m.title.replace(/\.[^.]+$/,'')+'-watermarked.jpg';a.click()}
 const driveCategory = $('programForm').elements.category;
@@ -1030,7 +1032,7 @@ $('videoFile').onchange=e=&gt;{if(e.target.files[0]){let v=$('videoPreview');if(
 function saveBlob(blob,name){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=&gt;URL.revokeObjectURL(a.href),2000)}
 function cover(ctx,im,x,y,w,h){let r=Math.max(w/im.width,h/im.height);ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.drawImage(im,x+(w-im.width*r)/2,y+(h-im.height*r)/2,im.width*r,im.height*r);ctx.restore()}
 async function stamp(ctx,w,h,loadedLogo){if(!logo)throw Error('Upload original Trust logo in Watermark Settings first');let im=loadedLogo||await load(logo),a=w*.18,b=a*im.height/im.width;if(b&gt;h*.8){b=h*.8;a=b*im.width/im.height}ctx.save();ctx.globalAlpha=.4;ctx.drawImage(im,w*.98-a,h*.98-b,a,b);ctx.restore()}
-async function makeArt(){try{let fs=[...$('studioPhotos').files];if(!fs.length)throw Error('Choose photos');let c=$('art'),[w,h]=$('studioFormat').value.split(',').map(Number);c.width=w;c.height=h;let x=c.getContext('2d');x.fillStyle='#173f35';x.fillRect(0,0,w,h);let ims=await Promise.all(fs.slice(0,9).map(async f=&gt;load(await read(f))));let n=$('studioFormat').selectedIndex===3?ims.length:1,cols=Math.ceil(Math.sqrt(n)),rows=Math.ceil(n/cols);for(let i=0;i&lt;n;i++)cover(x,ims[i],i%cols*w/cols,Math.floor(i/cols)*h*.76/rows,w/cols,h*.76/rows);x.fillStyle='white';x.font=`bold ${Math.round(w*.042)}px sans-serif`;x.fillText($('studioTitle').value,w*.05,h*.84,w*.9);x.fillStyle='#e8d9ae';x.font=`${Math.round(w*.026)}px sans-serif`;x.fillText('SARVAHIT CHARITABLE TRUST',w*.05,h*.92,w*.68);await stamp(x,w,h);$('studioStatus').textContent='Artwork ready.'}catch(e){$('studioStatus').textContent=e.message}}
+async function makeArt(){try{let fs=[...$('studioPhotos').files];if(!fs.length)throw Error('Choose photos');let c=$('art'),[w,h]=$('studioFormat').value.split(',').map(Number);c.width=w;c.height=h;let x=c.getContext('2d');x.fillStyle='#173f35';x.fillRect(0,0,w,h);let ims=await Promise.all(fs.slice(0,9).map(async f=&gt;load(await read(f))));let n=$('studioFormat').selectedIndex===3?ims.length:1,cols=Math.ceil(Math.sqrt(n)),rows=Math.ceil(n/cols);for(let i=0;i&lt;n;i++)cover(x,ims[i],i%cols*w/cols,Math.floor(i/cols)*h*.76/rows,w/cols,h*.76/rows);x.fillStyle='white';x.font=`bold ${Math.round(w*.042)}px sans-serif`;x.fillText($('studioTitle').value,w*.05,h*.84,w*.9);x.fillStyle='#e8d9ae';x.font=`${Math.round(w*.026)}px sans-serif`;x.fillText('SARVAHIT CHARITABLE TRUST',w*.05,h*.92,w*.68);await stamp(x,w,h);c.hidden=false;$('studioStatus').textContent='Artwork ready.'}catch(e){$('studioStatus').textContent=e.message}}
 function downloadArt(){if(!$('art').width||!logo)return; $('art').toBlob(b=&gt;saveBlob(b,'sarvahit-artwork.png'))}
 async function recordCanvas(canvas, draw, duration, audio, finished = () =&gt; false) {
   if (!window.MediaRecorder || !canvas.captureStream) throw Error('Video recording is unavailable in this browser.');
@@ -1076,12 +1078,16 @@ function clearReelPreview() {
   preview.pause();
   preview.removeAttribute('src');
   preview.load();
-  $('reel-preview-panel').hidden = true;
+  if ($('reel-preview-panel').open) $('reel-preview-panel').close();
   $('reel-download').disabled = true;
 }
+$('reel-preview-panel').addEventListener('close', () =&gt; {
+  if (!$('reel-preview-panel').open) clearReelPreview();
+});
 $('reel-preview').addEventListener('loadeddata', () =&gt; {
   if (!reelPreviewBlob || !$('reel-preview').videoWidth) return;
   $('reel-download').disabled = false;
+  if (!$('reel-preview-panel').open) $('reel-preview-panel').showModal();
   $('studioStatus').style.color = '';
   $('studioStatus').textContent = 'Slideshow successfully generated. Play it to check the effects before downloading.';
 });
@@ -1092,8 +1098,10 @@ $('reel-preview').addEventListener('error', () =&gt; {
   $('studioStatus').textContent = 'The recorded video could not be played. Generate the preview again.';
 });
 $('reel-download').addEventListener('click', () =&gt; {
-  if (reelPreviewBlob &amp;&amp; !$('reel-download').disabled)
-    saveBlob(reelPreviewBlob, 'sarvahit-slideshow.' + (reelPreviewBlob.type.includes('mp4') ? 'mp4' : 'webm'));
+  if (!reelPreviewBlob || $('reel-download').disabled) return;
+  saveBlob(reelPreviewBlob, 'sarvahit-slideshow.' + (reelPreviewBlob.type.includes('mp4') ? 'mp4' : 'webm'));
+  clearStudioInputs($('production'));
+  $('studioStatus').textContent = 'Slideshow download started.';
 });
 for (const id of ['studioFormat','studioPhotos','studio-resolution','studio-fit','studio-border','studio-overlay-text','reel-transition','reel-fx']) {
   $(id).addEventListener('change', () =&gt; {
@@ -1103,11 +1111,13 @@ for (const id of ['studioFormat','studioPhotos','studio-resolution','studio-fit'
   });
 }
 function updateReelOptions() {
-    $('reel-options').hidden = false;
-  $('make-reel').disabled = reelBusy;
+  const isStory = $('studioFormat').value === '1080,1920';
+  $('reel-options').hidden = !isStory;
+  $('make-reel').hidden = !isStory;
+  $('make-reel').disabled = !isStory || reelBusy;
 }
 async function makeReel() {
-  if (reelBusy) return;
+  if (reelBusy || $('studioFormat').value !== '1080,1920') return;
   reelBusy = true;
   clearReelPreview();
   updateReelOptions();
@@ -1118,7 +1128,7 @@ async function makeReel() {
     const mark = await load(logo);
     const transition = $('reel-transition').value;
     const effect = $('reel-fx').value;
-    const canvas = $('art'), [w, height] = studioDimensions();
+    const canvas = document.createElement('canvas'), [w, height] = studioDimensions();
     canvas.width = w; canvas.height = height;
     const ctx = canvas.getContext('2d');
     const draw = (image, x, y, progress, alpha = 1) =&gt; {
@@ -1170,7 +1180,6 @@ async function makeReel() {
     }, images.length * 3000);
     reelPreviewBlob = result;
     reelPreviewUrl = URL.createObjectURL(result);
-    $('reel-preview-panel').hidden = false;
     $('studioStatus').textContent = 'Checking the recorded preview…';
     $('reel-preview').src = reelPreviewUrl;
     $('reel-preview').load();
@@ -1221,54 +1230,6 @@ function studioDecorate(ctx, width, height) {
   }
   ctx.restore();
 }
-async function watermarkVideo() {
-  const video = document.createElement('video');
-  const status = $('watermarkVideoStatus');
-  const button = $('watermark-video-button');
-  let url;
-  button.disabled = true;
-  button.textContent = 'Processing…';
-  status.style.color = '';
-  try {
-    const file = $('markVideo').files[0];
-    if (!file || !logo || !$('videoConsent').checked) throw Error('Choose a video and confirm permission.');
-    url = URL.createObjectURL(file);
-    video.muted = true;
-    video.playsInline = true;
-    await new Promise((resolve, reject) =&gt; {
-      video.onloadeddata = resolve;
-      video.onerror = () =&gt; reject(Error('This video format could not be opened.'));
-      video.src = url;
-    });
-    const canvas = $('art');
-    const [w, h] = studioDimensions();
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    const mark = await load(logo);
-    status.textContent = 'Processing video…';
-    await video.play();
-    const blob = await recordCanvas(canvas, async () =&gt; {
-      ctx.fillStyle = '#111';
-      ctx.fillRect(0, 0, w, h);
-      studioFit(ctx, video, 0, 0, w, h);
-      studioDecorate(ctx, w, h);
-      await stamp(ctx, w, h, mark);
-    }, Number.isFinite(video.duration) ? video.duration * 1000 : Infinity, null, () =&gt; video.ended || Boolean(video.error));
-    if (video.error) throw Error('Video playback failed during processing.');
-    saveBlob(blob, 'sarvahit-watermarked-silent.' + (blob.type.includes('mp4') ? 'mp4' : 'webm'));
-    status.textContent = 'Successfully exported watermarked video.';
-  } catch (error) {
-    status.style.color = '#a92328';
-    status.textContent = error.message;
-  } finally {
-    video.pause();
-    if (url) URL.revokeObjectURL(url);
-    button.disabled = false;
-    button.textContent = 'Process &amp; download video';
-  }
-}
-
 function cloudPlan(action){let p=state.programs.find(p=&gt;p.id===$('cloudProgram').value);if(['upload','schedule'].includes(action)&amp;&amp;(!p||!$('cloudFile').files.length||!$('cloudConsent').checked))return alert('Select program, file and consent');if(action==='delete'&amp;&amp;(!$('remoteId').value||!confirm('Prepare deletion request only? No remote file will be deleted.')))return;let data={action,platform:$('cloudPlatform').value,programId:p?.id,programName:p?.name,year:p?.date?.slice(0,4),filename:$('cloudFile').files[0]?.name,title:$('cloudTitle').value,description:$('cloudDescription').value,visibility:$('cloudVisibility').value,schedule:$('cloudSchedule').value,remoteId:$('remoteId').value,consent:$('cloudConsent').checked};$('cloudOutput').textContent='Request preview only — not sent to any provider.\n'+JSON.stringify(data,null,2)}
 
 var defaultTrustLogo;
@@ -1365,6 +1326,7 @@ function clearStudioInputs(panel) {
     const artwork = $('art');
     artwork.getContext('2d').clearRect(0, 0, artwork.width, artwork.height);
     artwork.width = 0;
+    artwork.hidden = true;
     $('studioStatus').textContent = '';
     updateReelOptions();
   }
@@ -1417,7 +1379,7 @@ for (const tab of Object.keys(tabs)) {
   heading.before(header);
   header.append(heading, toolbar);
 }
-&lt;/script&gt;&lt;script src=&quot;public-location-fields.js&quot;&gt;&lt;/script&gt;&lt;script src=&quot;https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js&quot;&gt;&lt;/script&gt;&lt;script src=&quot;media-google-admin.js?v=studio-updates&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+&lt;/script&gt;&lt;script src=&quot;public-location-fields.js&quot;&gt;&lt;/script&gt;&lt;script src=&quot;https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js&quot;&gt;&lt;/script&gt;&lt;script src=&quot;media-google-admin.js?v=studio-preview&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
           </template>
         </section>
 
@@ -2763,11 +2725,13 @@ for (const tab of Object.keys(tabs)) {
       const button = doc.getElementById("studio-refresh-folders");
       const status = doc.getElementById("studio-folders-status");
       const list = doc.getElementById("studio-drive-folders");
+      const programStatus = doc.getElementById("program-folders-status");
       if (!canManagePortal() || button.dataset.folderLoading) return false;
       const wasDisabled = button.disabled;
       button.dataset.folderLoading = "true";
       button.disabled = true;
-      status.textContent = "Loading folders from Google Drive...";
+      status.style.color = programStatus.style.color = "";
+      status.textContent = programStatus.textContent = "Loading folders from Google Drive...";
       try {
         const { folders } = await sendFinanceDriveUpload({ type: "media_folder_list", accessToken: adminAccessToken });
         if (!Array.isArray(folders)) throw new Error("No folder list returned.");
@@ -2792,10 +2756,12 @@ for (const tab of Object.keys(tabs)) {
         doc.defaultView.setDriveProgramCategories?.([...new Set(names)].sort((a, b) => a.localeCompare(b)));
         status.style.color = "";
         status.textContent = items.length ? items.length + " folders" : "No program folders found.";
+        programStatus.textContent = names.length ? "" : "No Drive program categories found.";
         return true;
       } catch (error) {
         status.style.color = "#a92328";
-        status.textContent = "Could not refresh folders: " + error.message;
+        programStatus.style.color = "#a92328";
+        status.textContent = programStatus.textContent = "Could not refresh folders: " + error.message;
         return false;
       } finally {
         delete button.dataset.folderLoading;
@@ -2871,9 +2837,11 @@ for (const tab of Object.keys(tabs)) {
           if (tab === "photos" || tab === "programs") return loadStudioDriveFolders(doc);
           if (tab === "dashboard" || tab === "videos") return loadStudioVideos(frame);
         };
-        doc.querySelector('[data-tab="photos"]').addEventListener("click", () => {
-          if (!doc.getElementById("studio-folders-status").textContent) loadStudioDriveFolders(doc);
-        });
+        for (const tab of ["photos", "programs"]) {
+          doc.querySelector('[data-tab="' + tab + '"]').addEventListener("click", () => {
+            void loadStudioDriveFolders(doc);
+          });
+        }
         frame.contentWindow.uploadProgramPhoto = async (photo) => {
           if (!canManagePortal() || !adminAccessToken) throw new Error("Sign in as an authorized admin to upload photos.");
           return sendFinanceDriveUpload({ ...photo, type: "media_photo_upload", accessToken: adminAccessToken });
@@ -3513,7 +3481,7 @@ for (const tab of Object.keys(tabs)) {
       try { await financialSessionRefresh; }
       finally { financialSessionRefresh = null; }
     }
-    async function stageFinancialFile(file, id, year, category) {
+    async function stageFinancialFile(file, id) {
       const extension = file.name.split(".").pop().toLowerCase();
       if (!Object.hasOwn(docTypes, extension) || (file.type && file.type !== docTypes[extension])) {
         throw new Error("Choose a PDF, XLSX, DOCX, JPG or PNG file.");
@@ -3539,10 +3507,6 @@ for (const tab of Object.keys(tabs)) {
         }
         staged.uploaded = true;
       }
-      await sendFinanceDriveUpload({
-        type: "financial_document_backup", fiscalYear: year, category,
-        storagePath: staged.path, fileName: file.name, accessToken: adminAccessToken
-      });
       return staged.path;
     }
 
@@ -3574,7 +3538,7 @@ for (const tab of Object.keys(tabs)) {
       const buttons = Array.from(docForm.querySelectorAll("button"));
       buttons.forEach((button) => { button.disabled = true; });
       document.getElementById("financial-doc-close").disabled = true;
-      docFormMessage.textContent = file ? "Uploading to private storage and Google Drive…" : "Saving document…";
+      docFormMessage.textContent = file ? "Uploading to private storage…" : "Saving document…";
       try {
         const jwtPayload = adminAccessToken.split(".")[1];
         const expires = jwtPayload ? JSON.parse(atob(jwtPayload.replace(/-/g, "+").replace(/_/g, "/"))).exp : 0;
@@ -3582,7 +3546,7 @@ for (const tab of Object.keys(tabs)) {
         const id = editingDoc?.id || pendingDocUpload?.id || crypto.randomUUID();
         const year = Number(docFields.fiscal_year.value);
         const category = docFields.category.value;
-        const path = file ? await stageFinancialFile(file, id, year, category) : editingDoc.storage_path;
+        const path = file ? await stageFinancialFile(file, id) : editingDoc.storage_path;
         const record = {
           id, fiscal_year: year, category, title, status: publish ? status : "Draft", published: publish,
           document_date: docFields.document_date.value || null, prepared_by: docFields.prepared_by.value.trim(),
@@ -3601,9 +3565,20 @@ for (const tab of Object.keys(tabs)) {
         pendingDocUpload = null;
         docYear.value = category === "Permanent Documents" ? "permanent" : year;
         clearTimeout(docSuccessTimer);
-        docSuccess.textContent = publish ? "Document published successfully." : "Draft saved successfully.";
-        docSuccessTimer = setTimeout(() => { docSuccess.textContent = ""; }, 6000);
+        const success = publish ? "Document published successfully." : "Draft saved successfully.";
+        docSuccess.textContent = success;
+        docSuccess.classList.remove("is-error");
         void loadFinancialDocuments();
+        try {
+          await sendFinanceDriveUpload({
+            type: "financial_document_backup", fiscalYear: year, category,
+            storagePath: path, fileName: record.file_name, accessToken: adminAccessToken
+          });
+          docSuccessTimer = setTimeout(() => { docSuccess.textContent = ""; }, 6000);
+        } catch (error) {
+          docSuccess.classList.add("is-error");
+          docSuccess.textContent = success + " Drive backup failed: " + error.message;
+        }
       } catch (error) {
         docFormMessage.classList.add("is-error");
         docFormMessage.textContent = error.message || "Could not save the document.";
@@ -3856,7 +3831,7 @@ for (const tab of Object.keys(tabs)) {
     }
 
     function applyDashboardCount(id, count) {
-      document.getElementById(id + "-count").textContent = String(count);
+      document.getElementById(id + "-count").textContent = "[" + count + "]";
     }
 
     const dashboardPanelDisplays = [];
@@ -3912,8 +3887,8 @@ for (const tab of Object.keys(tabs)) {
           const badge = document.createElement("span");
           badge.className = "dashboard-panel-count";
           badge.id = id + "-count";
-          badge.textContent = "—";
-          toggle.append(badge);
+          badge.textContent = "[-]";
+          heading.querySelector("h2").append(badge);
         }
         actions.prepend(toggle);
         const key = "sarvahit-dashboard-open-" + id;

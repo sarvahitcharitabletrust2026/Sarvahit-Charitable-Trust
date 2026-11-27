@@ -368,7 +368,7 @@
   editSubmit.type = "submit";
   const editMessage = element("p");
   editMessage.setAttribute("role", "status");
-  videoEditor.className = "card media-operation";
+  videoEditor.className = "media-operation";
   videoEditor.prepend(element("h4", "Edit channel video"));
   videoEditor.append(editSubmit, button("Delete Video", () => {
     if (!selected.value || !confirm("Permanently delete this video from the Trust YouTube channel?")) return;
@@ -407,12 +407,20 @@
     }
     selected.dispatchEvent(new Event("change"));
   }
+  const youtubeManager = element("fieldset");
+  youtubeManager.className = "card media-operation";
+  youtubeManager.style.minWidth = "0";
+  youtubeManager.append(
+    element("legend", "Manage YouTube Videos"),
+    button("Load Channel Videos & Playlists", () => run(() => listYouTube(), editMessage)),
+    button("Load More Videos", () => videoPage && run(() => listYouTube(videoPage), editMessage)),
+    videoEditor
+  );
   operations.className = "card";
   operations.append(element("h3", "Media Upload"), uploadForm,
     element("h3", "Google Drive Files"), button("Open Root Folder", () => run(() => listDrive(), driveMessage)),
     button("Load More Files", () => drivePage && run(() => listDrive(currentFolder, drivePage), driveMessage)), driveMessage, files,
-    element("h3", "Manage YouTube Videos"), button("Load Channel Videos & Playlists", () => run(() => listYouTube(), editMessage)),
-    button("Load More Videos", () => videoPage && run(() => listYouTube(videoPage), editMessage)), videoEditor,
+    youtubeManager,
     element("h3", "Upload Jobs & Activity"), button("Refresh Jobs", () => run(loadHistory, jobsMessage)), jobsMessage, details);
   cloud.append(operations);
   videos.append(button("Open Direct YouTube Upload", () => { go("cloud"); kind.value = "youtube-video"; kind.dispatchEvent(new Event("change")); media.focus(); }));
