@@ -113,7 +113,7 @@
   const actions = element("div");
   actions.className = "actions";
   actions.append(
-    button("Connect Google Account", () => connect("drive")),
+    button("Connect Google Drive", () => connect("drive")),
     button("Connect YouTube Channel", () => connect("youtube")),
     button("Connect YouTube Analytics", () => connect("analytics")),
     button("Test Connection", () => run(status)), button("Refresh Status", () => run(status)),

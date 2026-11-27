@@ -10,12 +10,11 @@ If your production alias is sarvahitcharitabletrust.vercel.app, the exact value 
 
     https://sarvahitcharitabletrust.vercel.app/api/google/callback
 
-Confirm the alias in Vercel before saving it. The workspace does not contain the production hostname. Set GOOGLE_REDIRECT_URI to the same full URI. Use the production origin when opening Admin, as the OAuth state cookie is host-bound.
+Confirm the alias in Vercel before saving it. Set GOOGLE_REDIRECT_URI to the same full URI. Use the production origin when opening Admin, as the OAuth state cookie is host-bound.
 
 Enable Google Drive API, YouTube Data API v3 and YouTube Analytics API. Configure Google Auth Platform branding, audience, data access, and a Web application OAuth client. Add the Trust account as a test user if the external app is in Testing. Add these permissions in Data Access and authorize all when prompted.
 
     https://www.googleapis.com/auth/drive.file
-    https://www.googleapis.com/auth/youtube.upload
     https://www.googleapis.com/auth/youtube.force-ssl
     https://www.googleapis.com/auth/yt-analytics.readonly
 
@@ -23,7 +22,7 @@ The code additionally requests openid and email to display the verified Google a
 
 ## Environment and database
 
-For an existing installation, run only the Google OAuth and Media Studio section at the end of supabase-all-in-one.sql in the Supabase SQL editor. For a fresh installation, that section is included in the full script. It creates separate, RLS-enabled media tables and a private staging bucket. It does not update donation, finance, portal-role, or existing Apps Script data.
+In the Supabase SQL Editor, run the complete supabase-all-in-one.sql for a fresh or existing installation. It includes the website schema, separate Google media connections and private staging bucket.
 
 Set these values in Vercel Project Settings > Environment Variables, and redeploy.
 
@@ -33,7 +32,6 @@ Set these values in Vercel Project Settings > Environment Variables, and redeplo
 | GOOGLE_CLIENT_SECRET | Its client secret |
 | GOOGLE_REDIRECT_URI | Exact production callback registered in Google Cloud |
 | GOOGLE_DRIVE_FOLDER_ID | 1s_N4J6ed4EDn_cj7UpqBb3pDjcA4VAdv, or the authorized replacement root |
-| GOOGLE_OAUTH_SCOPES | All four URLs above, separated by spaces |
 | GOOGLE_YOUTUBE_CHANNEL_ID | UCArUc8vHzOs3uQyhDwbl5eA, also the code default |
 | SUPABASE_URL | https://oqumyvitsaflllgihlgi.supabase.co |
 | SUPABASE_ANON_KEY | Existing Supabase publishable/anon key |
@@ -43,6 +41,12 @@ Set these values in Vercel Project Settings > Environment Variables, and redeplo
 | MEDIA_VIDEO_LIMIT_MB | Optional. Default 512. Choose a size supported by the project and worker |
 
 Generate MEDIA_TOKEN_ENCRYPTION_KEY locally with Node or your secret manager. The Vercel backend and the worker must use the same value. Reauthorizing accounts is necessary if the encryption key changes without migrating saved ciphertext.
+
+## Upgrade from the combined Google Connect flow
+
+Run supabase-all-in-one.sql as described above before deploying.
+Redeploy the complete outputs directory to the existing Vercel production project. The backend selects the scope for each connection automatically.
+Open the published admin.html and use Connect Google Drive, Connect YouTube Channel and Connect YouTube Analytics separately. An approval URL containing all media scopes together is from the previous flow.
 
 ## Worker
 

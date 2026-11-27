@@ -677,8 +677,18 @@ alter table public.donation_records
   add column if not exists certificate_delivery_status jsonb not null default '{}'::jsonb;
 
 alter table public.donation_records
-  add column if not exists eighty_g_certificate_status text,
+  add column if not exists eighty_g_certificate_status text not null default 'Pending',
   add column if not exists eighty_g_certificate_url text;
+
+alter table public.donation_records
+  alter column eighty_g_certificate_status set default 'Pending';
+
+update public.donation_records
+  set eighty_g_certificate_status = 'Pending'
+  where eighty_g_certificate_status is null;
+
+alter table public.donation_records
+  alter column eighty_g_certificate_status set not null;
 
 alter table public.trust_financial_entries
   add column if not exists eighty_g_certificate_status text,
