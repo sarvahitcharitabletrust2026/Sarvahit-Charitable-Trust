@@ -99,7 +99,7 @@ async function processJob(job) {
   const update = fields => db("media_upload_jobs", filter, "PATCH", { ...fields, updated_at: new Date().toISOString() });
   try {
     await m.verifyAdminId(job.owner_id);
-    const row = await m.connection(job.owner_id);
+    const row = await m.connection(job.owner_id, m.uploadProvider(job.request.kind));
     if (row?.updated_at !== job.connection_at) throw new Error("Google connection changed. Start a new upload.");
     const token = await m.access(row);
     const request = job.request;

@@ -36,7 +36,7 @@
   const dashboard = $("dashboard");
   const account = element("div");
   const report = element("div");
-  const dashboardMetrics = element("p", "Connect YouTube in Cloud Publishing to load analytics.");
+  const dashboardMetrics = element("p", "Connect YouTube Analytics in Cloud Publishing to load analytics.");
   dashboard.append(element("h3", "YouTube Analytics · last 30 reported days"), dashboardMetrics);
   account.className = "card";
   account.append(element("h3", "Google Account & YouTube"));
@@ -80,10 +80,12 @@
     updateUploadAvailability();
     connectionInfo.replaceChildren();
     const items = [
-      ["Google account", state.email || "Disconnected"],
+      ["Google Drive account", state.accounts?.drive || "Disconnected"],
+      ["YouTube account", state.accounts?.youtube || "Disconnected"],
+      ["YouTube Analytics account", state.accounts?.analytics || "Disconnected"],
       ["Google Drive Connection Status", state.drive ? link(state.drive.name + " · " + state.drive.id, state.drive.url) : state.driveError || "Unavailable"],
-      ["YouTube Channel Connection Status", state.channel ? state.channel.name + " · " + state.channel.id : "Trust channel not verified"],
-      ["YouTube Analytics Connection Status", state.analytics ? "Verified" : "Unavailable"]
+      ["YouTube Channel Connection Status", state.channel ? state.channel.name + " · " + state.channel.id : state.channelError || "Disconnected"],
+      ["YouTube Analytics Connection Status", state.analytics ? "Verified" : state.analyticsError || "Disconnected"]
     ];
     for (const [name, value] of items) {
       const term = element("dt", name);
@@ -95,14 +97,14 @@
       ? state.analytics.views + " views · " + state.analytics.minutes + " minutes watched · " + state.analytics.subscribers + " subscribers gained"
       : "YouTube Analytics unavailable.";
   }
-  function connect() {
+  function connect(provider) {
     if (busy) return;
     const popup = window.open("about:blank", "_blank");
     if (!popup) { message.textContent = "Allow the Google sign-in popup and try again."; return; }
     popup.opener = null;
     run(async () => {
       try {
-        const { url } = await request("connect");
+        const { url } = await request("connect", { provider });
         popup.location.replace(url);
         return "Complete Google consent, then click Refresh Status.";
       } catch (error) { popup.close(); throw error; }
@@ -111,10 +113,12 @@
   const actions = element("div");
   actions.className = "actions";
   actions.append(
-    button("Connect Google Account", connect), button("Connect YouTube Channel", connect),
+    button("Connect Google Account", () => connect("drive")),
+    button("Connect YouTube Channel", () => connect("youtube")),
+    button("Connect YouTube Analytics", () => connect("analytics")),
     button("Test Connection", () => run(status)), button("Refresh Status", () => run(status)),
-    button("Reconnect Account", connect), button("Disconnect Account", () => {
-      if (!connected || !confirm("Revoke this portal’s Google permissions and disconnect the account?")) return;
+    button("Reconnect Google Drive", () => connect("drive")), button("Disconnect Accounts", () => {
+      if (!connected || !confirm("Revoke this portal’s Google permissions and disconnect all Google connections?")) return;
       run(async () => { await request("disconnect"); await status(); return "Google confirmed revocation."; });
     })
   );

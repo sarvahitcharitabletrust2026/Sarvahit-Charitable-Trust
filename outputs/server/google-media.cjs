@@ -7,6 +7,14 @@ const scopes = [
   "https://www.googleapis.com/auth/youtube.force-ssl",
   "https://www.googleapis.com/auth/yt-analytics.readonly"
 ];
+const providerScopes = { drive: [scopes[0]], youtube: scopes.slice(1, 3), analytics: [scopes[3]] };
+const connectionKey = row => row.owner_id + ":" + row.provider;
+const uploadProvider = kind => {
+  if (["drive-photo", "drive-video"].includes(kind)) return "drive";
+  if (["youtube-video", "youtube-thumbnail"].includes(kind)) return "youtube";
+  throw new PublicError("Choose a supported upload destination.");
+};
+const trustChannelId = () => config.GOOGLE_YOUTUBE_CHANNEL_ID || "UCArUc8vHzOs3uQyhDwbl5eA";
 const uuid = () => crypto.randomUUID();
 const nonce = () => crypto.randomBytes(32).toString("base64url");
 const digest = value => crypto.createHash("sha256").update(value).digest("base64url");
@@ -70,8 +78,11 @@ async function admin(req) {
 async function verifyAdminId(id) {
   if (await db("rpc/media_is_admin", "", "POST", { candidate: id }) !== true) throw new PublicError("Admin access is required.", 403);
 }
-async function connection(owner) {
-  return (await db("media_google_connections", "?owner_id=eq." + owner))[0];
+function connections(owner) {
+  return db("media_google_provider_connections", "?owner_id=eq." + owner);
+}
+async function connection(owner, provider) {
+  return (await db("media_google_provider_connections", "?owner_id=eq." + owner + "&provider=eq." + provider))[0];
 }
 function google(url, token, method = "GET", body) {
   return json(url, { method, headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
@@ -86,10 +97,11 @@ function tokenRequest(payload) {
 const tokenCache = new Map();
 async function access(row) {
   if (!row) throw new PublicError("Connect a Google account first.", 409);
-  const cached = tokenCache.get(row.owner_id);
+  const cacheKey = connectionKey(row);
+  const cached = tokenCache.get(cacheKey);
   if (cached?.version === row.updated_at && cached.until > Date.now()) return cached.token;
-  const refreshed = await tokenRequest({ grant_type: "refresh_token", refresh_token: unseal(row.encrypted_refresh, row.owner_id) });
-  tokenCache.set(row.owner_id, { version: row.updated_at, token: refreshed.access_token, until: Date.now() + (refreshed.expires_in - 60) * 1000 });
+  const refreshed = await tokenRequest({ grant_type: "refresh_token", refresh_token: unseal(row.encrypted_refresh, cacheKey) });
+  tokenCache.set(cacheKey, { version: row.updated_at, token: refreshed.access_token, until: Date.now() + (refreshed.expires_in - 60) * 1000 });
   if (tokenCache.size > 100) tokenCache.delete(tokenCache.keys().next().value);
   return refreshed.access_token;
 }
@@ -100,7 +112,7 @@ function googleQuery(url, params, token) {
 }
 async function channel(token) {
   const data = await googleQuery(youtube + "/channels", { part: "id,snippet", mine: "true", maxResults: "50" }, token);
-  const expected = config.GOOGLE_YOUTUBE_CHANNEL_ID || "UCArUc8vHzOs3uQyhDwbl5eA";
+  const expected = trustChannelId();
   return data.items?.find(item => item.id === expected) || null;
 }
 async function folder(token) {
@@ -115,4 +127,4 @@ async function folder(token) {
 async function audit(owner, action, details = {}) {
   await db("media_activity_events", "", "POST", { owner_id: owner, action, details }, "return=minimal");
 }
-module.exports = { config, bucket, scopes, uuid, nonce, digest, PublicError, required, seal, unseal, json, sb, serviceHeaders, db, admin, verifyAdminId, connection, access, tokenRequest, google, googleQuery, folder, channel, drive, youtube, audit, tokenCache };
+module.exports = { config, bucket, scopes, uuid, nonce, digest, PublicError, required, seal, unseal, json, sb, serviceHeaders, db, admin, verifyAdminId, connections, connection, connectionKey, uploadProvider, providerScopes, trustChannelId, access, tokenRequest, google, googleQuery, folder, channel, drive, youtube, audit, tokenCache };
