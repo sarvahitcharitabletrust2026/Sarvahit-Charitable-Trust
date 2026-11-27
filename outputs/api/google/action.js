@@ -1,12 +1,6 @@
 const m = require("../../server/google-media.cjs");
 const { config, db, google, googleQuery, drive, youtube, PublicError } = m;
 const callbackPath = "/api/google/callback";
-const requestedScopes = provider => {
-  const selected = m.required("GOOGLE_OAUTH_SCOPES").split(/[\s,]+/).filter(Boolean);
-  if (selected.some(scope => !m.scopes.includes(scope)) || m.scopes.some(scope => !selected.includes(scope)))
-    throw new PublicError("GOOGLE_OAUTH_SCOPES must contain the four portal scopes.", 503);
-  return ["openid", "email", ...m.providerScopes[provider]];
-};
 function callbackUrl() {
   const url = new URL(m.required("GOOGLE_REDIRECT_URI"));
   if (url.protocol !== "https:" || url.pathname !== callbackPath || url.search || url.hash || url.username || url.password)
@@ -18,7 +12,7 @@ function cookie(state, value, age) {
 }
 async function start(owner, provider, res) {
   if (!Object.hasOwn(m.providerScopes, provider)) throw new PublicError("Select a Google connection type.");
-  const scopes = requestedScopes(provider);
+  const scopes = ["openid", "email", ...m.providerScopes[provider]];
   const active = await db("media_upload_jobs", "?owner_id=eq." + owner + "&status=in.(queued,processing)&select=id&limit=1");
   if (active.length) throw new PublicError("Wait for active media uploads before reconnecting.", 409);
   const state = m.nonce();

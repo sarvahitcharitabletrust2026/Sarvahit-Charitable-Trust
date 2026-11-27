@@ -3,11 +3,10 @@ const config = process.env;
 const bucket = "trust-media-staging";
 const scopes = [
   "https://www.googleapis.com/auth/drive.file",
-  "https://www.googleapis.com/auth/youtube.upload",
   "https://www.googleapis.com/auth/youtube.force-ssl",
   "https://www.googleapis.com/auth/yt-analytics.readonly"
 ];
-const providerScopes = { drive: [scopes[0]], youtube: scopes.slice(1, 3), analytics: [scopes[3]] };
+const providerScopes = { drive: [scopes[0]], youtube: [scopes[1]], analytics: [scopes[2]] };
 const connectionKey = row => row.owner_id + ":" + row.provider;
 const uploadProvider = kind => {
   if (["drive-photo", "drive-video"].includes(kind)) return "drive";
@@ -127,4 +126,4 @@ async function folder(token) {
 async function audit(owner, action, details = {}) {
   await db("media_activity_events", "", "POST", { owner_id: owner, action, details }, "return=minimal");
 }
-module.exports = { config, bucket, scopes, uuid, nonce, digest, PublicError, required, seal, unseal, json, sb, serviceHeaders, db, admin, verifyAdminId, connections, connection, connectionKey, uploadProvider, providerScopes, trustChannelId, access, tokenRequest, google, googleQuery, folder, channel, drive, youtube, audit, tokenCache };
+module.exports = { config, bucket, uuid, nonce, digest, PublicError, required, seal, unseal, json, sb, serviceHeaders, db, admin, verifyAdminId, connections, connection, connectionKey, uploadProvider, providerScopes, trustChannelId, access, tokenRequest, google, googleQuery, folder, channel, drive, youtube, audit, tokenCache };
