@@ -1,12 +1,6 @@
 const m = require("../../server/google-media.cjs");
 const { config, db, google, googleQuery, drive, youtube, PublicError } = m;
 const callbackPath = "/api/google/callback";
-const requestedScopes = () => {
-  const selected = m.required("GOOGLE_OAUTH_SCOPES").split(/[\s,]+/).filter(Boolean);
-  if (selected.some(scope => !m.scopes.includes(scope)) || m.scopes.some(scope => !selected.includes(scope)))
-    throw new PublicError("GOOGLE_OAUTH_SCOPES must contain the four portal scopes.", 503);
-  return ["openid", "email", ...new Set(selected)];
-};
 function callbackUrl() {
   const url = new URL(m.required("GOOGLE_REDIRECT_URI"));
   if (url.protocol !== "https:" || url.pathname !== callbackPath || url.search || url.hash || url.username || url.password)
@@ -16,7 +10,9 @@ function callbackUrl() {
 function cookie(state, value, age) {
   return "__Secure-media_oauth_" + state + "=" + value + "; Path=" + callbackPath + "; Max-Age=" + age + "; HttpOnly; Secure; SameSite=Lax";
 }
-async function start(owner, res) {
+async function start(owner, provider, res) {
+  if (!Object.hasOwn(m.providerScopes, provider)) throw new PublicError("Select a Google connection type.");
+  const scopes = ["openid", "email", ...m.providerScopes[provider]];
   const active = await db("media_upload_jobs", "?owner_id=eq." + owner + "&status=in.(queued,processing)&select=id&limit=1");
   if (active.length) throw new PublicError("Wait for active media uploads before reconnecting.", 409);
   const state = m.nonce();
@@ -26,12 +22,12 @@ async function start(owner, res) {
   await db("media_oauth_states", "?expires_at=lt." + encodeURIComponent(new Date().toISOString()), "DELETE");
   await db("media_oauth_states", "", "POST", {
     state_hash: m.digest(state), browser_hash: m.digest(browser), owner_id: owner,
-    verifier: m.seal(verifier, state), expires_at: new Date(Date.now() + 600000).toISOString()
+    verifier: m.seal(JSON.stringify({ provider, verifier }), state), expires_at: new Date(Date.now() + 600000).toISOString()
   });
   res.setHeader("Set-Cookie", cookie(state, browser, 600));
   const query = new URLSearchParams({
     client_id: m.required("GOOGLE_CLIENT_ID"), redirect_uri: redirect.href, response_type: "code",
-    scope: requestedScopes().join(" "), state, code_challenge: m.digest(verifier),
+    scope: scopes.join(" "), include_granted_scopes: "false", state, code_challenge: m.digest(verifier),
     code_challenge_method: "S256", access_type: "offline", prompt: "consent select_account"
   });
   return { url: "https://accounts.google.com/o/oauth2/v2/auth?" + query };
@@ -51,22 +47,27 @@ async function callback(req, res) {
   if (!entry) throw new PublicError("OAuth state expired or was already used.");
   if (query.has("error") || !query.get("code")) throw new PublicError("Google authorization was cancelled or denied.");
   await m.verifyAdminId(entry.owner_id);
+  const { provider, verifier } = JSON.parse(m.unseal(entry.verifier, state));
+  if (!Object.hasOwn(m.providerScopes, provider)) throw new PublicError("Invalid OAuth connection type.");
   const tokens = await m.tokenRequest({
     grant_type: "authorization_code", code: query.get("code"),
-    redirect_uri: redirect.href, code_verifier: m.unseal(entry.verifier, state)
+    redirect_uri: redirect.href, code_verifier: verifier
   });
   const granted = String(tokens.scope || "").split(/\s+/);
-  if (m.scopes.some(scope => !granted.includes(scope)) || !tokens.refresh_token)
-    throw new PublicError("Google did not grant all four scopes and offline access. Reconnect and approve all permissions.", 403);
+  if (m.providerScopes[provider].some(scope => !granted.includes(scope)) || !tokens.refresh_token)
+    throw new PublicError("Google did not grant the requested permissions and offline access. Reconnect and approve all permissions.", 403);
   const profile = await google("https://openidconnect.googleapis.com/v1/userinfo", tokens.access_token);
   if (!profile.email || !profile.email_verified) throw new PublicError("Google did not return a verified account email.", 403);
-  const linked = await m.channel(tokens.access_token);
-  await db("media_google_connections", "?on_conflict=owner_id", "POST", {
-    owner_id: entry.owner_id, email: profile.email, encrypted_refresh: m.seal(tokens.refresh_token, entry.owner_id),
+  const linked = provider === "youtube" ? await m.channel(tokens.access_token) : null;
+  if (provider === "youtube" && !linked) throw new PublicError("Select the configured Trust YouTube channel.", 403);
+  if (provider === "analytics") await analytics(tokens.access_token);
+  await db("media_google_provider_connections", "?on_conflict=owner_id,provider", "POST", {
+    owner_id: entry.owner_id, provider, email: profile.email,
+    encrypted_refresh: m.seal(tokens.refresh_token, m.connectionKey({ owner_id: entry.owner_id, provider })),
     channel_id: linked?.id || null, channel_name: linked?.snippet?.title || null,
     scopes: granted, updated_at: new Date().toISOString()
   }, "resolution=merge-duplicates,return=minimal");
-  await m.audit(entry.owner_id, "google_connected");
+  await m.audit(entry.owner_id, "google_connected", { provider });
   res.setHeader("Location", redirect.origin + "/admin.html?mediaOAuth=connected#media-social-panel");
   res.status(303).end();
 }
@@ -74,22 +75,31 @@ async function analytics(token) {
   const end = new Date(Date.now() - 2 * 86400000);
   const startDate = new Date(end.getTime() - 29 * 86400000);
   return googleQuery("https://youtubeanalytics.googleapis.com/v2/reports", {
-    ids: "channel==MINE", startDate: startDate.toISOString().slice(0, 10), endDate: end.toISOString().slice(0, 10),
+    ids: "channel==" + m.trustChannelId(), startDate: startDate.toISOString().slice(0, 10), endDate: end.toISOString().slice(0, 10),
     metrics: "views,estimatedMinutesWatched,subscribersGained", dimensions: "day", sort: "day"
   }, token);
 }
 async function status(owner) {
-  const row = await m.connection(owner);
-  if (!row) return { connected: false };
-  const token = await m.access(row);
-  const [driveResult, channelResult] = await Promise.allSettled([m.folder(token), m.channel(token)]);
-  const report = channelResult.value?.id && channelResult.value.id === row.channel_id
-    ? (await Promise.allSettled([analytics(token)]))[0] : {};
+  const rows = await m.connections(owner);
+  const get = provider => rows.find(row => row.provider === provider);
+  const check = (provider, verify) => Promise.resolve().then(async () => {
+    const row = get(provider);
+    return row ? verify(await m.access(row)) : null;
+  });
+  const [driveResult, channelResult, report] = await Promise.allSettled([
+    check("drive", m.folder),
+    check("youtube", token => requireChannel(get("youtube"), token)),
+    check("analytics", analytics)
+  ]);
+  const youtubeRow = get("youtube");
   return {
-    connected: true, email: row.email,
-    drive: driveResult.status === "fulfilled" ? driveResult.value : null,
-    driveError: driveResult.status === "rejected" ? driveResult.reason.message : null,
-    channel: channelResult.value ? { id: channelResult.value.id, name: channelResult.value.snippet.title } : null,
+    connected: rows.length > 0,
+    accounts: Object.fromEntries(rows.map(row => [row.provider, row.email])),
+    drive: driveResult.value || null,
+    driveError: driveResult.reason?.message || null,
+    channel: channelResult.value ? { id: channelResult.value, name: youtubeRow.channel_name } : null,
+    channelError: channelResult.reason?.message || null,
+    analyticsError: report.reason?.message || null,
     analytics: report.value ? {
       views: (report.value.rows || []).reduce((sum, item) => sum + Number(item[1]), 0),
       minutes: (report.value.rows || []).reduce((sum, item) => sum + Number(item[2]), 0),
@@ -158,12 +168,13 @@ async function stage(owner, row, payload) {
   await db("media_upload_jobs", "", "POST", { id, owner_id: owner, source_path: source, request, connection_at: row.updated_at, status: "staging" });
   return { id, source, signature, bucket: m.bucket, endpoint: tus.href };
 }
-async function queue(owner, row, payload, retry) {
+async function queue(owner, payload, retry) {
   const id = idValue(payload.id);
   const filter = "?id=eq." + id + "&owner_id=eq." + owner;
   const job = (await db("media_upload_jobs", filter))[0];
   if (!job) throw new PublicError("Upload job was not found.", 404);
-  if (job.connection_at !== row.updated_at) throw new PublicError("Google connection changed. Start a new upload.", 409);
+  const row = await m.connection(owner, m.uploadProvider(job.request.kind));
+  if (job.connection_at !== row?.updated_at) throw new PublicError("Google connection changed. Start a new upload.", 409);
   const next = await db("media_upload_jobs", filter + "&status=eq." + (retry ? "failed" : "staging"), "PATCH", {
     status: "queued", stage: "Queued for processing", error: null, updated_at: new Date().toISOString()
   });
@@ -171,7 +182,7 @@ async function queue(owner, row, payload, retry) {
   return { id, status: "queued" };
 }
 async function perform(owner, action, payload, res) {
-  if (action === "connect") return start(owner, res);
+  if (action === "connect") return start(owner, payload.provider, res);
   if (action === "status") return status(owner);
   if (action === "history") {
     const [jobs, events] = await Promise.all([
@@ -180,19 +191,33 @@ async function perform(owner, action, payload, res) {
     ]);
     return { jobs, events };
   }
-  const row = await m.connection(owner);
-  if (!row) throw new PublicError("Connect a Google account first.", 409);
   if (action === "disconnect") {
     const active = await db("media_upload_jobs", "?owner_id=eq." + owner + "&status=in.(queued,processing)&select=id&limit=1");
     if (active.length) throw new PublicError("Wait for active upload jobs to complete before disconnecting.", 409);
-    await m.json("https://oauth2.googleapis.com/revoke", {
-      method: "POST", body: new URLSearchParams({ token: m.unseal(row.encrypted_refresh, owner) })
-    }, "Google token revocation");
-    await db("media_google_connections", "?owner_id=eq." + owner + "&updated_at=eq." + encodeURIComponent(row.updated_at), "DELETE");
-    m.tokenCache.delete(owner);
+    for (const row of await m.connections(owner)) {
+      try {
+        await m.json("https://oauth2.googleapis.com/revoke", {
+          method: "POST", body: new URLSearchParams({ token: m.unseal(row.encrypted_refresh, m.connectionKey(row)) })
+        }, "Google token revocation");
+      } catch (error) {
+        if (error.message !== "Google token revocation returned HTTP 400 (invalid_token).") throw error;
+      }
+      await db("media_google_provider_connections", "?owner_id=eq." + owner + "&provider=eq." + row.provider +
+        "&updated_at=eq." + encodeURIComponent(row.updated_at), "DELETE");
+      m.tokenCache.delete(m.connectionKey(row));
+    }
     await m.audit(owner, "google_disconnected");
     return { disconnected: true };
   }
+  if (action === "queue" || action === "retry") return queue(owner, payload, action === "retry");
+  const providers = {
+    "drive-list": "drive", "drive-trash": "drive",
+    "youtube-list": "youtube", "youtube-edit": "youtube", "youtube-delete": "youtube"
+  };
+  const provider = action === "stage" ? m.uploadProvider(payload.kind) : Object.hasOwn(providers, action) && providers[action];
+  if (!provider) throw new PublicError("Unknown media action.");
+  const row = await m.connection(owner, provider);
+  if (!row) throw new PublicError("Connect " + (provider === "drive" ? "Google Drive" : "the Trust YouTube channel") + " first.", 409);
   const token = await m.access(row);
   if (action === "stage") {
     if (String(payload.kind).startsWith("drive")) await m.folder(token);
@@ -202,7 +227,6 @@ async function perform(owner, action, payload, res) {
     }
     return stage(owner, row, payload);
   }
-  if (action === "queue" || action === "retry") return queue(owner, row, payload, action === "retry");
   if (action === "drive-list") {
     const item = payload.parent ? await driveItem(token, payload.parent) : await m.folder(token);
     const result = await googleQuery(drive + "/files", {
@@ -222,7 +246,6 @@ async function perform(owner, action, payload, res) {
     await m.audit(owner, action, { id: item.id });
     return { ok: true };
   }
-  if (!["youtube-list","youtube-edit","youtube-delete"].includes(action)) throw new PublicError("Unsupported media action.", 404);
   const channelId = await requireChannel(row, token);
   if (action === "youtube-list") {
     const info = await googleQuery(youtube + "/channels", { part: "contentDetails", id: channelId }, token);
