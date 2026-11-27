@@ -118,7 +118,12 @@ async function folder(token) {
   const id = required("GOOGLE_DRIVE_FOLDER_ID");
   const item = await googleQuery(drive + "/files/" + encodeURIComponent(id), {
     fields: "id,name,mimeType,trashed,webViewLink,capabilities(canAddChildren)", supportsAllDrives: "true"
-  }, token);
+  }, token).catch(error => {
+    if (/HTTP (403|404)/.test(error.message)) {
+      throw new PublicError("Drive signed in, but the app cannot access the configured folder. Check GOOGLE_DRIVE_FOLDER_ID and grant this OAuth app access to that folder via Google Picker, or use a folder created by this app.", 409);
+    }
+    throw error;
+  });
   if (item.trashed || item.mimeType !== "application/vnd.google-apps.folder" || !item.capabilities?.canAddChildren)
     throw new PublicError("The configured Drive folder is unavailable or cannot accept uploads.", 409);
   return { id: item.id, name: item.name, url: item.webViewLink || "https://drive.google.com/drive/folders/" + item.id };

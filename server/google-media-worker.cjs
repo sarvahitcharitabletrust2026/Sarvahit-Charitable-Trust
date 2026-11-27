@@ -160,10 +160,17 @@ async function processJob(job) {
       }, onProgress: percent => update({ stage: "Uploading to Google · " + percent + "%" }) });
       result = { id: media.id, url: isDrive ? media.webViewLink || "https://drive.google.com/open?id=" + media.id : "https://youtu.be/" + media.id,
         ...(media.status?.privacyStatus ? { visibility: media.status.privacyStatus } : {}) };
-      if (request.playlist && !isDrive) {
+      if ((request.playlist || request.playlistName) && !isDrive) {
         try {
+          let playlistId = request.playlist;
+          if (!playlistId) {
+            const created = await google(youtube + "/playlists?part=snippet,status", token, "POST", {
+              snippet: { title: request.playlistName }, status: { privacyStatus: "private" }
+            });
+            playlistId = created.id;
+          }
           await google(youtube + "/playlistItems?part=snippet", token, "POST", {
-            snippet: { playlistId: request.playlist, resourceId: { kind: "youtube#video", videoId: media.id } }
+            snippet: { playlistId, resourceId: { kind: "youtube#video", videoId: media.id } }
           });
         } catch { result.warning = "Video uploaded. YouTube did not confirm adding it to the playlist."; }
       }

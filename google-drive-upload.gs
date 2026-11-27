@@ -99,7 +99,7 @@ function doPost(event) {
     }
     if (data.type === "media_default_logo") {
       verifyFinanceAdmin_(data.accessToken);
-      const file = DriveApp.getFileById("1PyLduahRVahq0b8lWzIVSxvvGrJDSoVo");
+      const file = DriveApp.getFileById("1UWrgO3w4EcsO-GG9YUjRubZfDGYgB-g7");
       const blob = file.getBlob();
       const mime = blob.getContentType();
       if (!["image/png", "image/jpeg", "image/webp"].includes(mime)) throw new Error("The Drive watermark must be PNG, JPEG or WebP.");

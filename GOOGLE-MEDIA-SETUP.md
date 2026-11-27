@@ -58,10 +58,16 @@ Configure these runtime secrets on the runner: SUPABASE_URL, SUPABASE_SERVICE_RO
 
 The browser stages media directly to private Supabase Storage via a path-limited signed TUS upload. Vercel does not proxy the video bytes. The worker uploads to Drive and YouTube using Google's resumable protocol. If Google might have accepted a file but confirmation is missing, the job enters Check destination to avoid publishing duplicates. Inspect Google and the queue before restarting a job left Processing after a worker crash. Queue execution, disk, Supabase plan limits and provider quotas must be validated with expected production file sizes.
 
+## Existing Google Drive program folder
+
+Enable Google Picker API in the OAuth project's Google Cloud Console. Create a browser API key restricted to Google Picker API and the production website referrer (https://sarvahitcharitabletrust.vercel.app/*). Set GOOGLE_PICKER_API_KEY in Vercel Production and deploy. In Cloud Publishing, connect Drive, click Authorize Drive Folder and select the exact folder configured in GOOGLE_DRIVE_FOLDER_ID. Then verify its status.
+
+The default Studio watermark uses Drive file 1UWrgO3w4EcsO-GG9YUjRubZfDGYgB-g7. Redeploy google-drive-upload.gs for the Studio preview and update the worker's mounted MEDIA_WATERMARK_FILE with the new image for cloud exports.
+
 ## Provider checks
 
 - Test Google connection in Cloud Publishing. A successful Google login is separate from Drive, YouTube Channel and Analytics verification. A wrong YouTube channel is shown as unverified and cannot publish through the portal.
-- drive.file is per-file access. Existing shared folder membership alone may not grant this OAuth client access to a pre-existing folder. The status check calls Drive files.get and checks canAddChildren. If Drive returns 403/404, authorize the target using an approved Google Picker or Open with workflow for this OAuth project, or configure a folder created by that same app through Drive. This delivery does not include a Picker or folder-adoption flow. Keep existing Apps Script uploads available independently.
+- drive.file is per-file access. Existing shared folder membership alone may not grant this OAuth client access to a pre-existing folder. The status check calls Drive files.get and checks canAddChildren. If Drive returns 403/404, authorize the target using an approved Google Picker or Open with workflow for this OAuth project, or configure a folder created by that same app through Drive. Keep existing Apps Script uploads available independently.
 - Before sharing live videos, test a small private video and confirm its result in YouTube Studio. YouTube may restrict uploads from an unverified API project to Private even if another visibility is selected. OAuth app verification and YouTube API compliance audit are separate. External Testing refresh tokens may expire after seven days.
 - Check both a small Drive photo and a video with audio. Confirm the Year / Program folder, visual watermark placement, audio, media list and Trash action. Test video edit, playlist, thumbnail and analytics on test assets. Only delete a video deliberately created for the test.
 - Drive and YouTube lists support loading more files/videos. The playlist selector shows the first 50 owned playlists.

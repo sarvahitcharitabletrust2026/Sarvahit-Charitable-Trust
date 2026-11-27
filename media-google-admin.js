@@ -5,10 +5,21 @@
     if (text) node.textContent = text;
     return node;
   };
+  function feedback(node, text, error = false) {
+    node.textContent = text;
+    node.classList.toggle("media-error", error);
+  }
   function button(text, handler) {
     const node = element("button", text);
     node.type = "button";
-    node.addEventListener("click", handler);
+    node.addEventListener("click", async event => {
+      const result = handler(event);
+      if (!result?.then) return;
+      node.disabled = true;
+      node.textContent = "Processing…";
+      try { await result; }
+      finally { node.disabled = false; node.textContent = text; }
+    });
     return node;
   }
   function link(text, url) {
@@ -30,6 +41,7 @@
     return input;
   }
   const styles = element("style", "[hidden]{display:none!important} #cloud dt{font-weight:700} #cloud dd{margin:0 0 .5rem} #cloud form.card{margin:1rem 0} #cloud button{margin:.15rem}");
+  styles.textContent += ".media-error{color:#a92328!important}.media-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}.media-status-card{text-align:center;border:1px solid #bfd6ca;border-radius:10px}.media-status-card dt,.media-status-pill{display:block;padding:10px}.media-status-pill{position:relative;background:#fce4e4;color:#8e2424;font-weight:700}.media-status-pill.connected{background:#d7f0df;color:#105a38}.media-status-tooltip{display:none;position:absolute;z-index:5;inset:auto 0 100%;padding:9px;background:#163d32;color:white;border-radius:8px;overflow-wrap:anywhere}.media-status-pill:is(:hover,:focus) .media-status-tooltip{display:block}#cloud .media-job-details ul{max-height:15rem;overflow:auto}#cloud .media-operation{margin-block:1rem}";
   document.head.append(styles);
   const cloud = $("cloud");
   const videos = $("videos");
@@ -41,11 +53,20 @@
   account.className = "card";
   account.append(element("h3", "Google Account & YouTube"));
   const connectionInfo = element("dl");
+  connectionInfo.className = "media-status-grid";
   connectionInfo.setAttribute("aria-live", "polite");
   const message = element("p");
   message.setAttribute("role", "status");
   report.setAttribute("role", "status");
   const activity = element("ul");
+  const details = element("details");
+  details.className = "media-job-details";
+  const jobSummary = element("summary", "Show upload jobs and activity");
+  details.append(jobSummary, activity);
+  const jobsMessage = element("p");
+  jobsMessage.setAttribute("role", "status");
+  const driveMessage = element("p");
+  driveMessage.setAttribute("role", "status");
   const files = element("ul");
   const operations = element("div");
   let connected = false, busy = false, videoPage, drivePage, currentFolder = "";
@@ -55,14 +76,14 @@
     if (!window.googleMediaRequest) throw new Error("Open the deployed HTTPS Admin Portal and sign in as an admin.");
     return window.googleMediaRequest({ action, ...payload });
   };
-  async function run(fn) {
+  async function run(fn, target = message) {
     if (busy) return;
     busy = true;
     account.setAttribute("aria-busy", "true");
     operations.inert = true;
-    message.textContent = "Working…";
-    try { message.textContent = await fn() || ""; }
-    catch (error) { message.textContent = error.message; }
+    feedback(target, "Processing…");
+    try { feedback(target, await fn() || "Successfully updated."); }
+    catch (error) { feedback(target, error.message, true); }
     finally { busy = false; operations.inert = false; account.setAttribute("aria-busy", "false"); }
   }
   async function status() {
@@ -80,19 +101,39 @@
     updateUploadAvailability();
     connectionInfo.replaceChildren();
     const items = [
-      ["Google Drive account", state.accounts?.drive || "Disconnected"],
-      ["YouTube account", state.accounts?.youtube || "Disconnected"],
-      ["YouTube Analytics account", state.accounts?.analytics || "Disconnected"],
-      ["Google Drive Connection Status", state.drive ? link(state.drive.name + " · " + state.drive.id, state.drive.url) : state.driveError || "Unavailable"],
-      ["YouTube Channel Connection Status", state.channel ? state.channel.name + " · " + state.channel.id : state.channelError || "Disconnected"],
-      ["YouTube Analytics Connection Status", state.analytics ? "Verified" : state.analyticsError || "Disconnected"]
+      ["Google Drive account", "drive", state.drive, state.driveError],
+      ["YouTube account", "youtube", state.channel, state.channelError],
+      ["YouTube Analytics account", "analytics", state.analytics, state.analyticsError]
     ];
-    for (const [name, value] of items) {
-      const term = element("dt", name);
+    for (const [name, provider, verified, error] of items) {
+      const card = element("div");
+      card.className = "media-status-card";
       const definition = element("dd");
-      definition.append(value);
-      connectionInfo.append(term, definition);
+      const badge = element("span", verified ? "Connected" : error ? "Needs attention" : "Disconnected");
+      badge.className = "media-status-pill" + (verified ? " connected" : "");
+      if (state.accounts?.[provider]) {
+        badge.tabIndex = 0;
+        const tooltip = element("span", state.accounts[provider]);
+        tooltip.className = "media-status-tooltip";
+        tooltip.id = "media-account-" + provider;
+        badge.setAttribute("aria-describedby", tooltip.id);
+        badge.append(tooltip);
+      }
+      definition.append(badge);
+      if (error) {
+        const detail = element("p");
+        feedback(detail, error, true);
+        definition.append(detail);
+      }
+      card.append(element("dt", name), definition);
+      connectionInfo.append(card);
     }
+    if (state.drive) {
+      try {
+        const { names } = await request("drive-programs");
+        setPrograms(names);
+      } catch (error) { feedback(programMessage, error.message, true); }
+    } else setPrograms([]);
     dashboardMetrics.textContent = state.analytics
       ? state.analytics.views + " views · " + state.analytics.minutes + " minutes watched · " + state.analytics.subscribers + " subscribers gained"
       : "YouTube Analytics unavailable.";
@@ -100,9 +141,9 @@
   function connect(provider) {
     if (busy) return;
     const popup = window.open("about:blank", "_blank");
-    if (!popup) { message.textContent = "Allow the Google sign-in popup and try again."; return; }
+    if (!popup) { feedback(message, "Allow the Google sign-in popup and try again.", true); return; }
     popup.opener = null;
-    run(async () => {
+    return run(async () => {
       try {
         const { url } = await request("connect", { provider });
         popup.location.replace(url);
@@ -114,6 +155,12 @@
   actions.className = "actions";
   actions.append(
     button("Connect Google Drive", () => connect("drive")),
+    button("Authorize Drive Folder", () => run(async () => {
+      await window.authorizeStudioDriveFolder(await request("drive-picker"));
+      await status();
+      if (!verifiedConnection?.drive) throw new Error(verifiedConnection?.driveError || "Drive folder verification failed.");
+      return "Drive folder successfully verified.";
+    })),
     button("Connect YouTube Channel", () => connect("youtube")),
     button("Connect YouTube Analytics", () => connect("analytics")),
     button("Test Connection", () => run(status)), button("Refresh Status", () => run(status)),
@@ -136,13 +183,38 @@
   ]);
   const media = field(uploadForm, "Media file", "media", "file");
   media.required = true;
-  const program = field(uploadForm, "Program name", "program", "text");
+  const program = field(uploadForm, "Program", "program", "select", [["","Select a Drive program"],["__new","Add new category…"]]);
+  const programMessage = element("p");
+  programMessage.setAttribute("role", "status");
+  program.closest("label").after(programMessage);
+  let newProgram = "";
+  function setPrograms(names) {
+    const previous = program.value;
+    program.replaceChildren(new Option("Select a Drive program", ""), ...names.map(name => new Option(name, name)), new Option(newProgram || "Add new category…", "__new"));
+    if ([...program.options].some(option => option.value === previous)) program.value = previous;
+    feedback(programMessage, "");
+    window.setDriveProgramCategories?.(names);
+  }
+  program.addEventListener("change", () => {
+    if (program.value !== "__new") return;
+    newProgram = (prompt("New Drive program/category name") || "").trim().slice(0, 120);
+    program.options[program.options.length - 1].text = newProgram || "Add new category…";
+    if (!newProgram) program.value = "";
+  });
   const title = field(uploadForm, "Video title", "title", "text");
   title.maxLength = 100;
   const description = field(uploadForm, "Description", "description", "textarea");
   const visibility = field(uploadForm, "Visibility", "visibility", "select", [["private","Private"],["unlisted","Unlisted"],["public","Public"]]);
   const audience = field(uploadForm, "Audience", "audience", "select", [["","Select audience"],["no","Not made for kids"],["yes","Made for kids"]]);
   const playlist = field(uploadForm, "Playlist", "playlist", "select", [["","No playlist"]]);
+  let newPlaylist = "";
+  playlist.add(new Option("Add new playlist…", "__new"));
+  playlist.addEventListener("change", () => {
+    if (playlist.value !== "__new") return;
+    newPlaylist = (prompt("New YouTube playlist name (created as Private)") || "").trim().slice(0, 150);
+    playlist.options[playlist.options.length - 1].text = newPlaylist || "Add new playlist…";
+    if (!newPlaylist) playlist.value = "";
+  });
   const thumbnailVideo = field(uploadForm, "Video to update", "videoId", "select", [["","Select video"]]);
   const consent = field(uploadForm, "I confirm I have permission to upload this media", "consent", "checkbox");
   consent.required = true;
@@ -178,7 +250,13 @@
     media.accept = thumb ? "image/jpeg,image/png" : kind.value === "drive-photo" ? "image/jpeg,image/png,image/webp" : "video/*";
     updateUploadAvailability();
   }
-  kind.addEventListener("change", updateDestination);
+  kind.addEventListener("change", async () => {
+    updateDestination();
+    if (kind.value === "youtube-video" && verifiedConnection?.channel) {
+      try { await listYouTube(); }
+      catch (error) { feedback(report, error.message, true); }
+    }
+  });
   uploadForm.addEventListener("reset", () => queueMicrotask(() => {
     updateDestination();
     if (!upload) { progress.value = 0; report.textContent = ""; }
@@ -187,16 +265,18 @@
   uploadForm.addEventListener("submit", async event => {
     event.preventDefault();
     if (upload || submit.disabled || !uploadForm.reportValidity()) return;
-    if (!window.tus?.Upload) { report.textContent = "Resumable-upload library could not load."; return; }
+    if (!window.tus?.Upload) { feedback(report, "Resumable-upload library could not load.", true); return; }
     const file = media.files[0];
     if (!file || !consent.checked) return;
     submit.disabled = true;
+    submit.textContent = "Processing…";
+    progress.value = 0;
     overlay.hidden = false;
-    report.textContent = "Preparing private staging…";
+    feedback(report, "Preparing private staging…");
     try {
       const staged = await request("stage", {
-        kind: kind.value, program: program.value, title: title.value, description: description.value,
-        visibility: visibility.value, madeForKids: audience.value === "yes", playlist: playlist.value,
+        kind: kind.value, program: program.value === "__new" ? newProgram : program.value, title: title.value, description: description.value,
+        visibility: visibility.value, madeForKids: audience.value === "yes", playlist: playlist.value === "__new" ? "" : playlist.value, playlistName: playlist.value === "__new" ? newPlaylist : "",
         videoId: thumbnailVideo.value, consent: consent.checked, size: file.size, filename: file.name
       });
       await new Promise((resolve, reject) => {
@@ -206,16 +286,20 @@
           retryDelays: [0, 1000, 3000, 5000, 10000],
           metadata: { bucketName: staged.bucket, objectName: staged.source, contentType: file.type || "application/octet-stream" },
           onProgress: (sent, total) => { progress.value = sent / total * 100; report.textContent = "Staging · " + Math.floor(progress.value) + "%"; },
-          onSuccess: resolve, onError: () => reject(new Error("Staging upload failed after retries. Try uploading the file again."))
+          onSuccess: resolve, onError: error => {
+            const status = error.originalResponse?.getStatus();
+            reject(new Error(status ? "Private staging upload failed (HTTP " + status + ")." : "Private staging upload could not reach Supabase Storage."));
+          }
         });
         upload.start();
       });
-      lastJob = staged.id;
       await request("queue", { id: staged.id });
+      lastJob = staged.id;
+      activeJobs = true;
       report.textContent = "Queued. The worker will process the watermark and upload to Google.";
-      await loadHistory();
-    } catch (error) { report.textContent = error.message; }
-    finally { upload = null; overlay.hidden = true; updateUploadAvailability(); }
+      void loadHistory().catch(error => feedback(jobsMessage, error.message, true));
+    } catch (error) { feedback(report, error.message, true); }
+    finally { upload = null; overlay.hidden = true; submit.textContent = "Upload Media"; updateUploadAvailability(); }
   });
   async function loadHistory() {
     if (loadingJobs) return;
@@ -224,6 +308,7 @@
     const data = await request("history");
     activeJobs = data.jobs.some(job => ["queued", "processing"].includes(job.status));
     activity.replaceChildren();
+    jobSummary.textContent = "Upload jobs and activity (" + (data.jobs.length + data.events.length) + ")";
     for (const job of data.jobs) {
       const row = element("li", job.request.filename + " · " + job.stage + (job.error ? " · " + job.error : ""));
       if (job.result?.url) row.append(" ", link("Open on Google", job.result.url));
@@ -231,9 +316,20 @@
       if (job.result?.warning) row.append(" · " + job.result.warning);
       if (job.status === "failed") row.append(" ", button("Retry", () => run(async () => {
         await request("retry", { id: job.id }); await loadHistory(); return "Upload queued for retry.";
-      })));
+      }, jobsMessage)));
       activity.append(row);
-      if (job.id === lastJob) report.textContent = job.stage + (job.error ? " · " + job.error : "");
+      if (job.id === lastJob) {
+        feedback(report, job.status === "done" ? "Successfully uploaded." + (job.result?.warning ? " " + job.result.warning : "") : job.stage + (job.error ? " — " + job.error : ""), Boolean(job.error));
+        if (job.status === "done") {
+          lastJob = null;
+          if (job.request.playlistName) {
+            newPlaylist = "";
+            playlist.value = "";
+            void listYouTube().catch(error => feedback(report, "Successfully uploaded. Playlist refresh failed: " + error.message, true));
+          }
+          if (job.request.kind.startsWith("drive")) void status().catch(() => {});
+        }
+      }
     }
     for (const event of data.events) activity.append(element("li", new Date(event.created_at).toLocaleString() + " · " + event.action));
     } finally { loadingJobs = false; }
@@ -245,12 +341,12 @@
     if (!page) files.replaceChildren();
     for (const file of response.files) {
       const row = element("li");
-      if (file.mimeType === "application/vnd.google-apps.folder") row.append(button(file.name, () => run(() => listDrive(file.id))));
+      if (file.mimeType === "application/vnd.google-apps.folder") row.append(button(file.name, () => run(() => listDrive(file.id), driveMessage)));
       else {
         row.append(link(file.name, file.webViewLink || "https://drive.google.com/open?id=" + file.id), " ",
           button("Move to Trash", () => {
             if (!confirm("Move this Google Drive file to Trash?")) return;
-            run(async () => { await request("drive-trash", { id: file.id }); await listDrive(currentFolder); return "Google confirmed the move to Trash."; });
+            run(async () => { await request("drive-trash", { id: file.id }); await listDrive(currentFolder); return "Google confirmed the move to Trash."; }, driveMessage);
           }));
       }
       files.append(row);
@@ -270,15 +366,32 @@
   });
   const editSubmit = element("button", "Save YouTube Changes");
   editSubmit.type = "submit";
+  const editMessage = element("p");
+  editMessage.setAttribute("role", "status");
+  videoEditor.className = "card media-operation";
+  videoEditor.prepend(element("h4", "Edit channel video"));
   videoEditor.append(editSubmit, button("Delete Video", () => {
     if (!selected.value || !confirm("Permanently delete this video from the Trust YouTube channel?")) return;
-    run(async () => { await request("youtube-delete", { id: selected.value }); await listYouTube(); return "YouTube confirmed deletion."; });
-  }));
+    run(async () => { await request("youtube-delete", { id: selected.value }); await listYouTube(); return "YouTube confirmed deletion."; }, editMessage);
+  }), editMessage);
   videoEditor.addEventListener("submit", event => {
     event.preventDefault();
-    run(async () => {
+    if (editSubmit.disabled) return;
+    editSubmit.disabled = true;
+    editSubmit.textContent = "Processing...";
+    void run(async () => {
       await request("youtube-edit", { id: selected.value, title: editTitle.value, description: editDescription.value });
-      await listYouTube(); return "YouTube confirmed the metadata update.";
+      const video = remoteVideos.find(item => item.id === selected.value);
+      if (video) {
+        video.title = editTitle.value;
+        video.description = editDescription.value;
+        selected.selectedOptions[0].text = video.title;
+      }
+      selected.value = editTitle.value = editDescription.value = "";
+      return "Successfully updated!";
+    }, editMessage).finally(() => {
+      editSubmit.disabled = false;
+      editSubmit.textContent = "Save YouTube Changes";
     });
   });
   async function listYouTube(page) {
@@ -289,19 +402,20 @@
       const old = select.value;
       const list = select === playlist ? data.playlists : remoteVideos;
       select.replaceChildren(new Option(select === playlist ? "No playlist" : "Select video", ""), ...list.map(item => new Option(item.title, item.id)));
-      if (list.some(item => item.id === old)) select.value = old;
+      if (select === playlist) select.add(new Option(newPlaylist || "Add new playlist…", "__new"));
+      if ([...select.options].some(option => option.value === old)) select.value = old;
     }
     selected.dispatchEvent(new Event("change"));
   }
   operations.className = "card";
   operations.append(element("h3", "Media Upload"), uploadForm,
-    element("h3", "Google Drive Files"), button("Open Root Folder", () => run(() => listDrive())),
-    button("Load More Files", () => drivePage && run(() => listDrive(currentFolder, drivePage))), files,
-    element("h3", "Manage YouTube Videos"), button("Load Channel Videos & Playlists", () => run(() => listYouTube())),
-    button("Load More Videos", () => videoPage && run(() => listYouTube(videoPage))), videoEditor,
-    element("h3", "Upload Jobs & Activity"), button("Refresh Jobs", () => run(loadHistory)), activity);
+    element("h3", "Google Drive Files"), button("Open Root Folder", () => run(() => listDrive(), driveMessage)),
+    button("Load More Files", () => drivePage && run(() => listDrive(currentFolder, drivePage), driveMessage)), driveMessage, files,
+    element("h3", "Manage YouTube Videos"), button("Load Channel Videos & Playlists", () => run(() => listYouTube(), editMessage)),
+    button("Load More Videos", () => videoPage && run(() => listYouTube(videoPage), editMessage)), videoEditor,
+    element("h3", "Upload Jobs & Activity"), button("Refresh Jobs", () => run(loadHistory, jobsMessage)), jobsMessage, details);
   cloud.append(operations);
-  videos.append(button("Open Direct YouTube Upload", () => { go("cloud"); kind.value = "youtube-video"; updateDestination(); media.focus(); }));
+  videos.append(button("Open Direct YouTube Upload", () => { go("cloud"); kind.value = "youtube-video"; kind.dispatchEvent(new Event("change")); media.focus(); }));
   $("photos").append(button("Open OAuth Drive Upload", () => { go("cloud"); kind.value = "drive-photo"; updateDestination(); media.focus(); }));
   updateDestination();
   setInterval(() => { if (activeJobs && !document.hidden) loadHistory().catch(() => {}); }, 5000);

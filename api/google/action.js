@@ -149,6 +149,7 @@ async function stage(owner, row, payload) {
     title: String(payload.title || "").trim().slice(0, 100),
     description: String(payload.description || "").slice(0, 5000),
     playlist: payload.playlist ? idValue(payload.playlist) : "",
+    playlistName: String(payload.playlistName || "").trim().slice(0, 150),
     videoId: payload.videoId ? idValue(payload.videoId) : "",
     madeForKids: payload.madeForKids === true,
     visibility: ["private","unlisted","public"].includes(payload.visibility) ? payload.visibility : "private"
@@ -164,6 +165,7 @@ async function stage(owner, row, payload) {
   const signature = signed.token || new URL(signed.url, m.sb()).searchParams.get("token");
   const tus = new URL(m.required("SUPABASE_TUS_URL"));
   if (tus.protocol !== "https:" || !tus.pathname.endsWith("/storage/v1/upload/resumable") || tus.username || tus.password) throw new PublicError("Invalid Supabase resumable upload endpoint.", 503);
+  tus.pathname = tus.pathname.replace(/\/$/, "") + "/sign";
   if (!signature) throw new PublicError("Supabase did not return a staging signature.", 502);
   await db("media_upload_jobs", "", "POST", { id, owner_id: owner, source_path: source, request, connection_at: row.updated_at, status: "staging" });
   return { id, source, signature, bucket: m.bucket, endpoint: tus.href };
@@ -211,7 +213,7 @@ async function perform(owner, action, payload, res) {
   }
   if (action === "queue" || action === "retry") return queue(owner, payload, action === "retry");
   const providers = {
-    "drive-list": "drive", "drive-trash": "drive",
+    "drive-list": "drive", "drive-trash": "drive", "drive-programs": "drive", "drive-picker": "drive",
     "youtube-list": "youtube", "youtube-edit": "youtube", "youtube-delete": "youtube"
   };
   const provider = action === "stage" ? m.uploadProvider(payload.kind) : Object.hasOwn(providers, action) && providers[action];
@@ -226,6 +228,34 @@ async function perform(owner, action, payload, res) {
       if (payload.kind === "youtube-thumbnail") await verifyVideo(token, payload.videoId, channelId);
     }
     return stage(owner, row, payload);
+  }
+  if (action === "drive-picker") {
+    const clientId = m.required("GOOGLE_CLIENT_ID");
+    const appId = /^([0-9]+)-/.exec(clientId)?.[1];
+    if (!appId || !config.GOOGLE_PICKER_API_KEY) {
+      throw new PublicError("Set GOOGLE_PICKER_API_KEY and enable Google Picker API in the OAuth project.", 503);
+    }
+    return { token, appId, apiKey: config.GOOGLE_PICKER_API_KEY, folderId: m.required("GOOGLE_DRIVE_FOLDER_ID") };
+  }
+  if (action === "drive-programs") {
+    const root = await m.folder(token);
+    const folders = async parent => {
+      const items = [];
+      let pageToken;
+      do {
+        const page = await googleQuery(drive + "/files", {
+          q: "'" + idValue(parent) + "' in parents and trashed = false and mimeType = 'application/vnd.google-apps.folder'",
+          fields: "nextPageToken,files(id,name)", pageSize: "100", supportsAllDrives: "true", includeItemsFromAllDrives: "true",
+          ...(pageToken ? { pageToken } : {})
+        }, token);
+        items.push(...(page.files || []));
+        pageToken = page.nextPageToken;
+      } while (pageToken);
+      return items;
+    };
+    const years = (await folders(root.id)).filter(item => /^\d{4}$/.test(item.name));
+    const programs = (await Promise.all(years.map(year => folders(year.id)))).flat();
+    return { names: [...new Set(programs.map(item => item.name))].sort((a, b) => a.localeCompare(b)) };
   }
   if (action === "drive-list") {
     const item = payload.parent ? await driveItem(token, payload.parent) : await m.folder(token);

@@ -2064,12 +2064,13 @@
     #youtube-library { width: min(94vw, 1180px); background: linear-gradient(145deg, #e5f2e9, #fcf7ea); border-color: #bdd4c4; border-radius: 20px; }
     :is(#youtube-library, #youtube-player) .public-review-dialog-header { justify-content: flex-end; margin-bottom: 12px; }
     :is(#youtube-library, #youtube-player) .public-review-dialog-close { width: 38px; height: 38px; line-height: 1; border: 1px solid #bfd7c8; border-radius: 50%; background: #fff; color: var(--green-dark); }
-    #youtube-library-list { --video-row: clamp(86px, 15vh, 130px); display: grid; grid-template-columns: repeat(min(5, var(--video-count, 5)), minmax(0, 1fr)); grid-auto-rows: var(--video-row); gap: 16px; margin: 0; padding: 6px 12px 6px 6px; list-style: none; max-height: calc(3 * var(--video-row) + 44px); overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+    #youtube-library-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr)); gap:16px; margin:0; padding:6px 12px 6px 6px; list-style:none; max-height:60dvh; overflow-y:auto; overscroll-behavior:contain; }
+    #youtube-library-list li { width:100%; max-width:244px; aspect-ratio:16 / 9; justify-self:start; min-width:0; }
     #youtube-library-list button { position: relative; display: block; width: 100%; height: 100%; padding: 4px; background: white; border: 1px solid #9ebfad; border-radius: 12px; box-shadow: 0 2px 5px rgba(18,106,81,.17); cursor: pointer; }
     #youtube-library-list button:is(:hover, :focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
     #youtube-library-list button::after { content: ""; position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: 38px; height: 38px; border-radius: 50%; background: #0c4b3b; opacity: .94; }
     #youtube-library-list button::before { content: ""; position: absolute; z-index: 1; left: 50%; top: 50%; transform: translate(-35%, -50%); border-block: 7px solid transparent; border-left: 11px solid #fff; }
-    #youtube-library-list img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+    #youtube-library-list img { display: block; width: 100%; height: 100%; object-fit: contain; background:#101b17; border-radius: 8px; }
     #youtube-player { width: min(94vw, 1160px); border-radius: 20px; background: linear-gradient(145deg, #e5f2e9, #fcf7ea); }
     #youtube-player .public-review-dialog-header { justify-content: flex-start; flex-wrap: wrap; gap: 10px; }
     #youtube-player .public-review-dialog-header form { margin-inline-start: auto; }
@@ -2090,8 +2091,6 @@
     #youtube-player-notice { margin: 0; padding: 20px; border: 1px solid #bdd4c4; border-radius: 12px; background: #fff; color: var(--green-dark); }
     #youtube-player-frame { display: block; width: 100%; aspect-ratio: 16 / 9; min-height: 200px; background: #111; border: 0; border-radius: 8px; }
     #youtube-gallery button.blog-item { border: 0; padding: 0; text-align: left; cursor: pointer; }
-    @media (max-width: 860px) { #youtube-library-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (max-width: 540px) { #youtube-library-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     :is(#partners-directory, #content-directory)[open] { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
     :is(#partners-directory, #content-directory) > .public-review-dialog-header {
@@ -2135,7 +2134,11 @@
     .finance-more { flex: 0 0 44px; min-height: 44px; margin-inline-start: auto; border: 0; border-radius: 8px; background: transparent; color: #fff; font: 800 20px/1 system-ui, sans-serif; letter-spacing: 2px; cursor: pointer; }
     .finance-more:is(:hover, :focus-visible) { background: #ffffff30; outline: 2px solid #fff; outline-offset: -2px; }
     #hero-finance-report { width: min(92vw, 520px); max-height: 85dvh; padding: 0; border: 1px solid var(--line); border-radius: 14px; }
-    #hero-finance-report::backdrop { background: #111a1cad; }
+    body.finance-scroll-lock { position:fixed; top:var(--finance-scroll-top); width:100%; overflow:hidden; }
+    #hero-finance-report::backdrop { background: #111a1c80; backdrop-filter: blur(8px); }
+    @media (hover:none), (max-width:1024px) {
+      #hero-finance-report { max-height:calc(100dvh - 24px); overflow:auto; overscroll-behavior:contain; }
+    }
     #get-involved-menu:not([hidden]) { display: grid; }
     #hero-finance-report .bank-table thead th {
       background: #dfece4; color: var(--green-dark); border-bottom: 2px solid #96b8a5;
@@ -2832,9 +2835,43 @@
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
     const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycby-g5wS4xmG9Y0zrGXkJIe-dKmI8QkXGGlHbNGp4Gav6QknLYVry0td3KvFm7VeGDGXGQ/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyzwu3e6mnqYQxzhjgqzJT2ACunYjusxzb77IS5HLzv3NP1cUyGEsL6mBMI9OUTAXnA/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbx6sVyQmWES44SvnMLNl-xRo6Pj2Cg33PyVLfYTrjlldxB1WWQnQPqtEwf9lFn_xnES/exec";
     const GOOGLE_DRIVE_TEAM_API_URL = GOOGLE_DRIVE_UPLOAD_URL;
     const volunteerCount = document.getElementById("volunteer-count");
+    const impactStrip = document.querySelector(".impact-strip");
+    if ("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const animated = new WeakSet();
+      let visible = false;
+      function animateImpactCounts() {
+        if (!visible) return;
+        for (const item of impactStrip.querySelectorAll(".stat strong")) {
+          if (animated.has(item)) continue;
+          const initial = item.textContent.trim();
+          const match = /^(\d+)(\+?)$/.exec(initial);
+          if (!match || Number(match[1]) < 1) continue;
+          animated.add(item);
+          const end = Number(match[1]);
+          let shown = "1" + match[2];
+          item.textContent = shown;
+          if (end === 1) continue;
+          const start = performance.now();
+          const tick = now => {
+            if (item.textContent !== shown) return;
+            const progress = Math.min(1, (now - start) / 1050);
+            shown = Math.max(1, Math.round(end * (1 - (1 - progress) ** 3))) + match[2];
+            item.textContent = shown;
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      }
+      const observer = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        animateImpactCounts();
+      }, { threshold: .2 });
+      new MutationObserver(animateImpactCounts).observe(impactStrip, { childList:true, subtree:true, characterData:true });
+      observer.observe(impactStrip);
+    }
     const TRUST_STATS_KEY = "trustImpactStats";
     const TRUST_NOTICE_KEY = "trustNotice";
     const TRUST_REVIEWS_KEY = "trustReviews";
@@ -2996,6 +3033,13 @@
     const financeCurrency = (value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 2 }).format(Number(value || 0));
     const financeMonthNames = Array.from({ length: 12 }, (_, month) => new Intl.DateTimeFormat("en-IN", { month: "long" }).format(new Date(2024, month, 1)));
     const heroFinanceReport = document.getElementById("hero-finance-report");
+    let financeScrollPosition = 0;
+    heroFinanceReport.addEventListener("close", () => {
+      if (!document.body.classList.contains("finance-scroll-lock")) return;
+      document.body.classList.remove("finance-scroll-lock");
+      document.body.style.removeProperty("--finance-scroll-top");
+      window.scrollTo(0, financeScrollPosition);
+    });
     let publicFinanceAvailable = false;
     let financeReportType = "donation";
 
@@ -3034,7 +3078,12 @@
     document.querySelectorAll("[data-finance-report]").forEach((button) => {
       button.addEventListener("click", () => {
         financeReportType = button.dataset.financeReport;
-        heroFinanceReport.showModal();
+        if (matchMedia("(hover:none), (max-width:1024px)").matches) {
+        financeScrollPosition = window.scrollY;
+        document.body.style.setProperty("--finance-scroll-top", -financeScrollPosition + "px");
+        document.body.classList.add("finance-scroll-lock");
+      }
+      heroFinanceReport.showModal();
         renderPublicFinance();
       });
     });
@@ -3663,7 +3712,6 @@
         youtubePlaylist.append(playlistItem);
       });
 
-      youtubeLibraryList.style.setProperty("--video-count", Math.max(1, youtubeLibraryList.children.length));
       const videoCount = youtubeGallery.children.length;
       youtubeCount.textContent = "View all videos (" + videoCount + ")";
       youtubeCount.hidden = !videoCount;
