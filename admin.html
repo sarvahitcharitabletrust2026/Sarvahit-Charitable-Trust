@@ -500,8 +500,10 @@
     #dashboard > .grid-2 { align-items: start; }
     .dashboard-panel-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
     .dashboard-section-toggle { display: inline-flex; align-items: center; gap: 8px; }
-    #dashboard .dashboard-panel-actions .dashboard-section-toggle { background: transparent; color: inherit; border: 1px solid currentColor; padding: 8px 12px; min-width: 42px; justify-content: center; }
-    .dashboard-section-chevron { display: block; width: 9px; height: 9px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); }
+    #dashboard .dashboard-panel-actions .dashboard-section-toggle { background: #ffffff20; color: inherit; border: 1px solid #ffffff70; padding: 0; width: 44px; height: 44px; border-radius: 50%; justify-content: center; transition: background .18s, box-shadow .18s; }
+    #dashboard .dashboard-panel-actions .dashboard-section-toggle:is(:hover, :focus-visible, [aria-expanded="true"]) { background: #fff; color: #0c4b3b; box-shadow: 0 2px 8px #062c2566; }
+    #dashboard .dashboard-panel-actions .dashboard-section-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    .dashboard-section-chevron { display: block; width: 10px; height: 10px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); transition: transform .18s; }
     [aria-expanded="true"] > .dashboard-section-chevron { transform: translateY(2px) rotate(225deg); }
     #financial-doc-form-message.is-error, #financial-doc-success.is-error { color:#a92328; font-weight:650; }
     .dashboard-panel-count { color:inherit; font-size:.78em; font-weight:700; margin-inline-start:.4em; white-space:nowrap; }
@@ -509,6 +511,10 @@
     #dashboard .report-pending-only tr[data-report-published],
     #dashboard .panel:not(.report-pending-only) tr[data-report-pending-empty] { display: none; }
     #dashboard .expense-report-heading .dashboard-section-toggle { white-space: nowrap; }
+    dialog::backdrop { background: rgba(17, 26, 28, 0.57); backdrop-filter: blur(7px); }
+    html:has(dialog:modal, .media-studio-frame[data-popup-open]) { overflow: hidden; }
+    dialog { overscroll-behavior: contain; }
+    [data-studio-popup-background] { filter: blur(7px); }
   </style>
 </head>
 <body>
@@ -841,6 +847,37 @@ a{color:#126a51;font-weight:700}input,select,textarea{border-color:#e6e0d6;min-w
 [hidden]{display:none!important}
 .studio-scroll{max-height:22rem;overflow:auto;overscroll-behavior:contain;padding:12px;border:1px solid #cbdcd4;border-radius:10px;background:#edf5f0}
 .studio-list-title{margin:20px 0 8px}
+
+:root{--portal-green:#126a51;--portal-dark:#0c4b3b;--portal-line:#d7e4da}
+:where(input,select,textarea,button){font:inherit}
+section :is(input:not([type=checkbox]):not([type=radio]),select,textarea){color:#172026;border:1px solid #bacfc3;border-radius:9px;background:#fff;padding:12px;line-height:1.4}
+section :is(input,select,textarea,button,summary):focus-visible{outline:2px solid var(--portal-green);outline-offset:2px}
+section label{color:#172026;font-weight:700}
+section fieldset{border:1px solid var(--portal-line);border-radius:10px;min-width:0}
+section legend{color:var(--portal-dark);font-weight:700}
+#mediaList,#galleryList{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#mediaList article,#galleryList article{border:1px solid var(--portal-line);background:#f4f8f5;border-radius:12px;overflow:hidden}
+#mediaList .studio-card-cover,#galleryList .studio-card-cover{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:#e5efe8}
+#mediaList button.studio-card-cover{padding:0;border:0;border-radius:0;overflow:hidden}
+#mediaList .studio-card-cover img{display:block;width:100%;height:100%;object-fit:cover}
+#mediaList .media-actions{display:flex;justify-content:flex-start;flex-wrap:wrap;gap:6px;padding:10px;border-top:1px solid var(--portal-line)}
+#mediaList .media-actions button{margin:0;padding:6px 10px;font-size:.9rem}
+#galleryList details{padding:10px 12px;border-top:1px solid var(--portal-line)}
+#galleryList summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none}
+#galleryList summary::-webkit-details-marker{display:none}
+#galleryList summary::after{content:&quot;&quot;;border:solid var(--portal-green);border-width:0 2px 2px 0;width:8px;height:8px;flex:none;transform:rotate(45deg)}
+#galleryList details[open]&gt;summary::after{transform:rotate(225deg)}
+#galleryList summary strong{display:block;margin-top:3px;color:var(--portal-dark)}
+.studio-media-preview{border:1px solid var(--portal-line);border-radius:14px;width:min(880px,92vw);max-height:90vh;padding:16px;color:#172026}
+.studio-media-preview::backdrop{background:#10251bba}
+dialog::backdrop{background:#10251b99;backdrop-filter:blur(7px)}
+html:has(dialog:modal){overflow:hidden}
+dialog{overscroll-behavior:contain}
+.studio-media-preview header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.studio-media-preview img{display:block;max-width:100%;max-height:72vh;margin:auto;object-fit:contain}
+@media(max-width:820px){#mediaList,#galleryList{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){#mediaList,#galleryList{grid-template-columns:minmax(0,1fr)}}
+
 #programList{display:flex;align-items:center;gap:10px;padding:10px}#programList select{flex:1;margin:0;min-width:0}#programList button{flex:none;margin:0;white-space:nowrap}
 .studio-scroll .card{margin:0 0 8px!important;padding:12px}
 .studio-scroll p{margin:0 0 8px}
@@ -882,7 +919,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
 &lt;button id=&quot;reel-download&quot; type=&quot;button&quot; disabled&gt;Download Slideshow&lt;/button&gt;&lt;/dialog&gt;
 &lt;canvas id=&quot;art&quot; hidden style=&quot;width:100%;max-height:520px;object-fit:contain;margin-top:16px&quot;&gt;&lt;/canvas&gt;&lt;p id=&quot;studioStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/section&gt;&lt;section id=&quot;cloud&quot;&gt;&lt;h2&gt;Cloud Publishing &amp; Integration Setup&lt;/h2&gt;&lt;p class=&quot;notice&quot;&gt;This tab previews publishing requests. Upload program photos from Upload Photos, or open YouTube Studio from YouTube Videos.&lt;/p&gt;&lt;label&gt;Program&lt;/label&gt;&lt;select class=&quot;programSelect&quot; id=&quot;cloudProgram&quot;&gt;&lt;/select&gt;&lt;label&gt;Media file (processed version)&lt;/label&gt;&lt;input id=&quot;cloudFile&quot; type=&quot;file&quot;&gt;&lt;label&gt;Platform&lt;/label&gt;&lt;select id=&quot;cloudPlatform&quot;&gt;&lt;option&gt;Google Drive&lt;/option&gt;&lt;option&gt;YouTube&lt;/option&gt;&lt;option&gt;Instagram&lt;/option&gt;&lt;option&gt;Facebook&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Title&lt;/label&gt;&lt;input id=&quot;cloudTitle&quot;&gt;&lt;label&gt;Description&lt;/label&gt;&lt;textarea id=&quot;cloudDescription&quot;&gt;&lt;/textarea&gt;&lt;label&gt;Visibility&lt;/label&gt;&lt;select id=&quot;cloudVisibility&quot;&gt;&lt;option&gt;private&lt;/option&gt;&lt;option&gt;unlisted&lt;/option&gt;&lt;option&gt;public&lt;/option&gt;&lt;/select&gt;&lt;label&gt;Schedule (local time)&lt;/label&gt;&lt;input id=&quot;cloudSchedule&quot; type=&quot;datetime-local&quot;&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;cloudConsent&quot;&gt; Consent and publication rights confirmed&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;cloudPlan('upload')&quot;&gt;Preview request (no upload)&lt;/button&gt;&lt;button onclick=&quot;cloudPlan('schedule')&quot;&gt;Prepare scheduled post&lt;/button&gt;&lt;/div&gt;&lt;label&gt;Remote file/video ID&lt;/label&gt;&lt;input id=&quot;remoteId&quot;&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button class=&quot;danger&quot; onclick=&quot;cloudPlan('delete')&quot;&gt;Prepare deletion request&lt;/button&gt;&lt;button onclick=&quot;cloudPlan('analytics')&quot;&gt;Prepare analytics request&lt;/button&gt;&lt;/div&gt;&lt;pre id=&quot;cloudOutput&quot; style=&quot;white-space:pre-wrap;overflow-wrap:anywhere&quot;&gt;&lt;/pre&gt;&lt;/section&gt;&lt;/div&gt;&lt;/main&gt;
 &lt;script&gt;
-const $=id=&gt;document.getElementById(id), tabs={dashboard:'Dashboard',programs:'Manage Programs',watermark:'Watermark Settings',photos:'Upload Photos',library:'Media Library',production:'Production Studio',social:'Social Content',cloud:'Cloud Publishing &amp; Setup',videos:'YouTube Videos',gallery:'Public Gallery Preview',accounts:'Accounts &amp; Analytics',history:'Activity History'};let state={programs:[],media:[],history:[]},logo='',db;let publishedVideoCount='—';window.setPublishedVideoCount=count=&gt;{publishedVideoCount=count;render()};const uid=()=&gt;crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random();function go(id){document.querySelectorAll('section').forEach(s=&gt;s.classList.toggle('active',s.id===id));document.querySelectorAll('nav button').forEach(b=&gt;b.classList.toggle('active',b.dataset.tab===id));render()}Object.entries(tabs).forEach(([id,n])=&gt;{let b=document.createElement('button');b.textContent=n;b.dataset.tab=id;b.onclick=()=&gt;go(id);$('nav').append(b)});function esc(s){return String(s??'').replace(/[&amp;&lt;&gt;&quot;']/g,c=&gt;({'&amp;':'&amp;amp;','&lt;':'&amp;lt;','&gt;':'&amp;gt;','&quot;':'&amp;quot;',&quot;'&quot;:'&amp;#39;'}[c]))}function log(s){state.history.unshift({text:s,date:new Date().toLocaleString(),at:new Date().toISOString()})}function save(){if(!db)return Promise.resolve();return new Promise((resolve,reject)=&gt;{let t=db.transaction('data','readwrite');t.objectStore('data').put(state,'state');t.oncomplete=resolve;t.onerror=()=&gt;reject(t.error);t.onabort=()=&gt;reject(t.error)})}function persist(){save().catch(e=&gt;alert('Local save failed: '+e.message));render()}function renderSavedPrograms(){
+const $=id=&gt;document.getElementById(id), tabs={dashboard:'Dashboard',programs:'Manage Programs',watermark:'Watermark Settings',photos:'Upload Photos',library:'Media Library',production:'Production Studio',social:'Social Content',cloud:'Cloud Publishing &amp; Setup',videos:'YouTube Videos',gallery:'Public Gallery Preview',accounts:'Accounts &amp; Analytics',history:'Activity History'};let state={programs:[],media:[],history:[]},logo='',db;let publishedVideoCount='—';window.setPublishedVideoCount=count=&gt;{publishedVideoCount=count;render()};const uid=()=&gt;crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random();function go(id){document.querySelectorAll('section').forEach(s=&gt;s.classList.toggle('active',s.id===id));document.querySelectorAll('nav button').forEach(b=&gt;b.classList.toggle('active',b.dataset.tab===id));render()}Object.entries(tabs).forEach(([id,n])=&gt;{let b=document.createElement('button');b.textContent=n;b.dataset.tab=id;b.onclick=()=&gt;go(id);$('nav').append(b)});function esc(s){return String(s??'').replace(/[&amp;&lt;&gt;&quot;']/g,c=&gt;({'&amp;':'&amp;amp;','&lt;':'&amp;lt;','&gt;':'&amp;gt;','&quot;':'&amp;quot;',&quot;'&quot;:'&amp;#39;'}[c]))}function log(s){state.history.unshift({text:s,date:new Date().toLocaleString(),at:new Date().toISOString()})}function save(){if(!db)return Promise.resolve();return new Promise((resolve,reject)=&gt;{let t=db.transaction('data','readwrite');t.objectStore('data').put(state,'state');t.oncomplete=resolve;t.onerror=()=&gt;reject(t.error);t.onabort=()=&gt;reject(t.error)})}function persist(){save().catch(e=&gt;showMediaAdminError('Local save failed: '+e.message));render()}function renderSavedPrograms(){
   const select = $('savedProgram');
   const previous = select.value;
   select.replaceChildren(...state.programs.map(program =&gt; new Option([program.name, program.date, program.location].filter(Boolean).join(' · '), program.id)));
@@ -892,7 +929,81 @@ const $=id=&gt;document.getElementById(id), tabs={dashboard:'Dashboard',programs
   $('deleteSavedProgram').hidden = select.disabled;
 }
 $('deleteSavedProgram').onclick = () =&gt; { if ($('savedProgram').value) removeProgram($('savedProgram').value); };
-function render(){document.querySelectorAll('.programSelect').forEach(s=&gt;{let v=s.value;s.innerHTML='&lt;option value=&quot;&quot;&gt;Select program&lt;/option&gt;'+state.programs.map(p=&gt;`&lt;option value=&quot;${esc(p.id)}&quot;&gt;${esc(p.name)}&lt;/option&gt;`).join('');s.value=v});$('stats').innerHTML=[['Programs',state.programs.length],['Photos',state.media.filter(m=&gt;m.type==='photo').length],['YouTube Videos',publishedVideoCount],['Video Drafts',state.media.filter(m=&gt;m.type==='video').length]].map(([n,v])=&gt;`&lt;div class=&quot;card stat&quot;&gt;&lt;small&gt;${n}&lt;/small&gt;&lt;strong&gt;${v}&lt;/strong&gt;&lt;/div&gt;`).join('');$('recent').innerHTML=state.programs.slice(-4).map(p=&gt;`&lt;p&gt;${esc(p.name)} · ${esc(p.date)}&lt;/p&gt;`).join('')||'&lt;p&gt;No programs yet.&lt;/p&gt;';renderSavedPrograms();let q=$('search').value.toLowerCase(),f=$('filter').value;$('mediaList').innerHTML=state.media.filter(m=&gt;(f==='all'||m.type===f)&amp;&amp;m.title.toLowerCase().includes(q)).map(m=&gt;`&lt;article&gt;${m.type==='photo'?`&lt;img src=&quot;${m.data}&quot; alt=&quot;${esc(m.title)}&quot;&gt;`:''}&lt;div&gt;&lt;strong&gt;${esc(m.title)}&lt;/strong&gt;&lt;p class=&quot;muted&quot;&gt;${esc(m.type)} · ${m.hidden?'Hidden':'Local preview'}&lt;/p&gt;&lt;div class=&quot;actions&quot;&gt;${m.type==='photo'?`&lt;button class=&quot;secondary&quot; onclick=&quot;downloadPhoto('${m.id}')&quot;&gt;Download&lt;/button&gt;&lt;button class=&quot;secondary&quot; onclick=&quot;toggle('${m.id}')&quot;&gt;${m.hidden?'Show':'Hide'}&lt;/button&gt;`:''}&lt;button class=&quot;danger&quot; onclick=&quot;removeMedia('${m.id}')&quot;&gt;Delete local&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/article&gt;`).join('')||'&lt;p&gt;No media found.&lt;/p&gt;';$('galleryList').innerHTML=state.programs.map(p=&gt;{let a=state.media.filter(m=&gt;m.program===p.id&amp;&amp;m.type==='photo'&amp;&amp;!m.hidden);return `&lt;article&gt;${(p.coverData||a.length)?`&lt;img src=&quot;${p.coverData||a[0].data}&quot; alt=&quot;${esc(p.name)}&quot;&gt;`:''}&lt;div&gt;&lt;span class=&quot;pill&quot;&gt;${esc(p.category)}&lt;/span&gt;&lt;h3 style=&quot;margin-top:12px&quot;&gt;${esc(p.name)}&lt;/h3&gt;&lt;p&gt;${esc(p.description)}&lt;/p&gt;&lt;small&gt;${a.length} photos · ${esc(p.date)}&lt;/small&gt;&lt;/div&gt;&lt;/article&gt;`}).join('');renderStudioHistory()}function removeProgram(id){if(state.media.some(m=&gt;m.program===id))return alert('Delete associated media first.');if(confirm('Delete this local program?')){state.programs=state.programs.filter(p=&gt;p.id!==id);log('Program deleted');persist()}}function removeMedia(id){if(confirm('Delete this local record? This does not affect Google Drive or YouTube.')){state.media=state.media.filter(m=&gt;m.id!==id);log('Local media deleted');persist()}}function toggle(id){let m=state.media.find(m=&gt;m.id===id);m.hidden=!m.hidden;persist()}function downloadPhoto(id){let m=state.media.find(m=&gt;m.id===id);let a=document.createElement('a');a.href=m.data;a.download=m.title.replace(/\.[^.]+$/,'')+'-watermarked.jpg';a.click()}
+
+function studioNode(tag, text = '', className = '') {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  node.className = className;
+  return node;
+}
+function studioButton(text, action, className = 'secondary') {
+  const button = studioNode('button', text, className);
+  button.type = 'button';
+  button.addEventListener('click', action);
+  return button;
+}
+function studioCover(data, alt) {
+  const image = studioNode('img', '', 'studio-card-cover');
+  image.src = data;
+  image.alt = alt;
+  image.loading = 'lazy';
+  return image;
+}
+function previewLibraryPhoto(media) {
+  const dialog = studioNode('dialog', '', 'studio-media-preview');
+  dialog.setAttribute('aria-label', media.title);
+  const header = studioNode('header');
+  header.append(studioNode('strong', media.title), studioButton('Close', () =&gt; dialog.close()));
+  dialog.append(header, studioCover(media.data, media.title));
+  dialog.addEventListener('close', () =&gt; dialog.remove(), { once: true });
+  document.body.append(dialog);
+  dialog.showModal();
+}
+function renderMediaCards(query, filter) {
+  const cards = state.media.filter(media =&gt; (filter === 'all' || media.type === filter) &amp;&amp; media.title.toLowerCase().includes(query))
+    .map(media =&gt; {
+      const card = studioNode('article');
+      card.setAttribute('aria-label', media.title);
+      const actions = studioNode('div', '', 'media-actions');
+      if (media.type === 'photo' &amp;&amp; media.data) {
+        const open = studioButton('', () =&gt; previewLibraryPhoto(media), 'studio-card-cover');
+        open.setAttribute('aria-label', 'Preview ' + media.title);
+        open.append(studioCover(media.data, media.title));
+        card.append(open);
+        actions.append(studioButton('Preview', () =&gt; previewLibraryPhoto(media)), studioButton('Download', () =&gt; downloadPhoto(media.id)),
+          studioButton(media.hidden ? 'Show' : 'Hide', () =&gt; toggle(media.id)));
+      } else {
+        card.append(studioNode('div', media.title));
+      }
+      actions.append(studioButton('Delete', () =&gt; removeMedia(media.id), 'danger'));
+      card.append(actions);
+      return card;
+    });
+  $('mediaList').replaceChildren(...(cards.length ? cards : [studioNode('p', 'No media found.')]));
+}
+function renderGalleryCards() {
+  const openPrograms = new Set([...$('galleryList').querySelectorAll('details[open]')].map(details =&gt; details.dataset.program));
+  $('galleryList').replaceChildren(...state.programs.map(program =&gt; {
+    const photos = state.media.filter(media =&gt; media.program === program.id &amp;&amp; media.type === 'photo' &amp;&amp; !media.hidden);
+    const card = studioNode('article');
+    const cover = program.coverData || photos[0]?.data;
+    if (cover) card.append(studioCover(cover, program.name));
+    const details = studioNode('details');
+    details.dataset.program = program.id;
+    details.open = openPrograms.has(program.id);
+    const summary = studioNode('summary');
+    const title = studioNode('span');
+    title.append(studioNode('span', program.category, 'pill'), studioNode('strong', program.name));
+    summary.append(title);
+    details.append(summary);
+    for (const value of [program.description, program.location, program.date, photos.length + ' photos']) {
+      if (value) details.append(studioNode('p', value));
+    }
+    card.append(details);
+    return card;
+  }));
+}
+function render(){document.querySelectorAll('.programSelect').forEach(s=&gt;{let v=s.value;s.innerHTML='&lt;option value=&quot;&quot;&gt;Select program&lt;/option&gt;'+state.programs.map(p=&gt;`&lt;option value=&quot;${esc(p.id)}&quot;&gt;${esc(p.name)}&lt;/option&gt;`).join('');s.value=v});$('stats').innerHTML=[['Programs',state.programs.length],['Photos',state.media.filter(m=&gt;m.type==='photo').length],['YouTube Videos',publishedVideoCount],['Video Drafts',state.media.filter(m=&gt;m.type==='video').length]].map(([n,v])=&gt;`&lt;div class=&quot;card stat&quot;&gt;&lt;small&gt;${n}&lt;/small&gt;&lt;strong&gt;${v}&lt;/strong&gt;&lt;/div&gt;`).join('');$('recent').innerHTML=state.programs.slice(-4).map(p=&gt;`&lt;p&gt;${esc(p.name)} · ${esc(p.date)}&lt;/p&gt;`).join('')||'&lt;p&gt;No programs yet.&lt;/p&gt;';renderSavedPrograms();let q=$('search').value.toLowerCase(),f=$('filter').value;renderMediaCards(q, f);renderGalleryCards();renderStudioHistory()}function removeProgram(id){if(state.media.some(m=&gt;m.program===id))return showMediaAdminError('Delete associated media first.');if(confirm('Delete this local program?')){state.programs=state.programs.filter(p=&gt;p.id!==id);log('Program deleted');persist()}}function removeMedia(id){if(confirm('Delete this local record? This does not affect Google Drive or YouTube.')){state.media=state.media.filter(m=&gt;m.id!==id);log('Local media deleted');persist()}}function toggle(id){let m=state.media.find(m=&gt;m.id===id);m.hidden=!m.hidden;persist()}function downloadPhoto(id){let m=state.media.find(m=&gt;m.id===id);let a=document.createElement('a');a.href=m.data;a.download=m.title.replace(/\.[^.]+$/,'')+'-watermarked.jpg';a.click()}
 const driveCategory = $('programForm').elements.category;
 let customCategory = '';
 window.setDriveProgramCategories = names =&gt; {
@@ -1042,7 +1153,8 @@ $('videoFile').onchange=e=&gt;{if(e.target.files[0]){let v=$('videoPreview');if(
      button.textContent = previousLabel;
    }
  };
- function caption(){let p=state.programs.find(p=&gt;p.id===$('socialProgram').value);if(!p)return alert('Select program');let t={English:`Together for a better tomorrow. Sarvahit Charitable Trust organized ${p.name} at ${p.location}. Thank you to everyone who supported this initiative.`,Hindi:`एक बेहतर कल की ओर। सर्वहित चैरिटेबल ट्रस्ट ने ${p.location} में ${p.name} कार्यक्रम आयोजित किया। सभी सहयोगियों का धन्यवाद।`,Marathi:`उज्ज्वल उद्यासाठी एकत्र. सर्वहित चॅरिटेबल ट्रस्टने ${p.location} येथे ${p.name} कार्यक्रम आयोजित केला. सर्व सहकाऱ्यांचे मनःपूर्वक आभार.`};$('caption').value=t[$('language').value]+'\n\n#SarvahitCharitableTrust #SocialWork #TogetherForGood'}async function copyCaption(){try{await navigator.clipboard.writeText($('caption').value)}catch{ $('caption').select();alert('Select and copy the caption manually.')}}function exportData(){let data={...state,media:state.media.map(({data,...m})=&gt;m)};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='sarvahit-media-metadata.json';a.click();setTimeout(()=&gt;URL.revokeObjectURL(a.href),1000)}$('accountList').innerHTML=['Google Drive','YouTube','Instagram','Facebook','WhatsApp'].map(n=&gt;`&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;${n}&lt;/h3&gt;&lt;small&gt;Not connected · Backend setup required&lt;/small&gt;&lt;/div&gt;`).join('');try{let r=indexedDB.open('sarvahit-media-studio',1);r.onupgradeneeded=()=&gt;r.result.createObjectStore('data');r.onsuccess=()=&gt;{db=r.result;let g=db.transaction('data').objectStore('data').get('state');g.onsuccess=()=&gt;{if(g.result)state=g.result;render()}};r.onerror=()=&gt;alert('Browser storage unavailable; changes are temporary.')}catch(e){alert('Browser storage unavailable; changes are temporary.')}go('dashboard');
+ function caption(){let p=state.programs.find(p=&gt;p.id===$('socialProgram').value);if(!p)return showMediaAdminError('Select program');let t={English:`Together for a better tomorrow. Sarvahit Charitable Trust organized ${p.name} at ${p.location}. Thank you to everyone who supported this initiative.`,Hindi:`एक बेहतर कल की ओर। सर्वहित चैरिटेबल ट्रस्ट ने ${p.location} में ${p.name} कार्यक्रम आयोजित किया। सभी सहयोगियों का धन्यवाद।`,Marathi:`उज्ज्वल उद्यासाठी एकत्र. सर्वहित चॅरिटेबल ट्रस्टने ${p.location} येथे ${p.name} कार्यक्रम आयोजित केला. सर्व सहकाऱ्यांचे मनःपूर्वक आभार.`};$('caption').value=t[$('language').value]+'\n\n#SarvahitCharitableTrust #SocialWork #TogetherForGood'}async function copyCaption(){try{await navigator.clipboard.writeText($('caption').value)}catch{ $('caption').select();showMediaAdminError('Select and copy the caption manually.')}}function exportData(){let data={...state,media:state.media.map(({data,...m})=&gt;m)};let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='sarvahit-media-metadata.json';a.click();setTimeout(()=&gt;URL.revokeObjectURL(a.href),1000)}$('accountList').innerHTML=['Google Drive','YouTube','Instagram','Facebook','WhatsApp'].map(n=&gt;`&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;${n}&lt;/h3&gt;&lt;small&gt;Not connected · Backend setup required&lt;/small&gt;&lt;/div&gt;`).join('');try{let r=indexedDB.open('sarvahit-media-studio',1);r.onupgradeneeded=()=&gt;r.result.createObjectStore('data');r.onsuccess=()=&gt;{db=r.result;let g=db.transaction('data').objectStore('data').get('state');g.onsuccess=()=&gt;{if(g.result)state=g.result;render()}};r.onerror=()=&gt;showMediaAdminError('Browser storage unavailable; changes are temporary.')}catch(e){showMediaAdminError('Browser storage unavailable; changes are temporary.')}go('dashboard');
+function showMediaAdminError(message){parent.showAdminError(message,document)}
 &lt;/script&gt;&lt;!-- Integration contract: authenticate admin server-side with Supabase JWT/RLS; private original media storage; Drive folder Year YYYY / program ID and name / Original Photos, Watermarked Photos, Original Videos, Watermarked Videos, Thumbnails; server-side OAuth tokens; resumable uploads; FFmpeg worker overlays transparent logo at 40% opacity bottom right; YouTube Data API upload/update/delete with explicit confirmation; persist provider IDs and audit trail; use authorized consent, retry and job status; never expose service keys. Keep originals and processed copies separate. --&gt; &lt;script&gt;
 function saveBlob(blob,name){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=&gt;URL.revokeObjectURL(a.href),2000)}
 function cover(ctx,im,x,y,w,h){let r=Math.max(w/im.width,h/im.height);ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.drawImage(im,x+(w-im.width*r)/2,y+(h-im.height*r)/2,im.width*r,im.height*r);ctx.restore()}
@@ -1245,7 +1357,7 @@ function studioDecorate(ctx, width, height) {
   }
   ctx.restore();
 }
-function cloudPlan(action){let p=state.programs.find(p=&gt;p.id===$('cloudProgram').value);if(['upload','schedule'].includes(action)&amp;&amp;(!p||!$('cloudFile').files.length||!$('cloudConsent').checked))return alert('Select program, file and consent');if(action==='delete'&amp;&amp;(!$('remoteId').value||!confirm('Prepare deletion request only? No remote file will be deleted.')))return;let data={action,platform:$('cloudPlatform').value,programId:p?.id,programName:p?.name,year:p?.date?.slice(0,4),filename:$('cloudFile').files[0]?.name,title:$('cloudTitle').value,description:$('cloudDescription').value,visibility:$('cloudVisibility').value,schedule:$('cloudSchedule').value,remoteId:$('remoteId').value,consent:$('cloudConsent').checked};$('cloudOutput').textContent='Request preview only — not sent to any provider.\n'+JSON.stringify(data,null,2)}
+function cloudPlan(action){let p=state.programs.find(p=&gt;p.id===$('cloudProgram').value);if(['upload','schedule'].includes(action)&amp;&amp;(!p||!$('cloudFile').files.length||!$('cloudConsent').checked))return showMediaAdminError('Select program, file and consent');if(action==='delete'&amp;&amp;(!$('remoteId').value||!confirm('Prepare deletion request only? No remote file will be deleted.')))return;let data={action,platform:$('cloudPlatform').value,programId:p?.id,programName:p?.name,year:p?.date?.slice(0,4),filename:$('cloudFile').files[0]?.name,title:$('cloudTitle').value,description:$('cloudDescription').value,visibility:$('cloudVisibility').value,schedule:$('cloudSchedule').value,remoteId:$('remoteId').value,consent:$('cloudConsent').checked};$('cloudOutput').textContent='Request preview only — not sent to any provider.\n'+JSON.stringify(data,null,2)}
 
 var defaultTrustLogo;
 function showStudioLogo(src) {
@@ -1423,7 +1535,7 @@ for (const tab of Object.keys(tabs)) {
       <div class="financial-document-header"><div><h2 id="cash-donation-title">Add Donation</h2><p>Record a donation received by the trust.</p></div><button class="entry-dialog-close" type="button" id="cash-donation-close" aria-label="Close form">&times;</button></div>
       <div class="finance-dialog-body"><form id="cash-donation-form"><div class="form-grid">
         <label>Date<input name="entry_date" type="date" required /></label>
-        <label>Amount (INR)<input name="amount" type="number" inputmode="numeric" min="100" step="1" data-integer-amount required /></label>
+        <label>Amount (INR)<input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount data-min-amount="100" required /></label>
         <label>Donor name<input name="donor_name" required autocomplete="name" placeholder="Letters only" /></label>
         <label>Mobile number<input name="donor_phone" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter a 10-digit mobile number." placeholder="10-digit mobile number" /></label>
         <label>Email ID<input name="donor_email" type="email" autocomplete="email" placeholder="Required for donations of INR 4,999 or more" /></label>
@@ -1498,7 +1610,7 @@ for (const tab of Object.keys(tabs)) {
       <div class="entry-dialog-header"><div><h2 id="80g-certificate-title">Send 80G Certificate</h2><p id="80g-donor-name"></p></div><button class="entry-dialog-close" type="button" data-close-80g aria-label="Close certificate form">&times;</button></div>
       <dl class="certificate-donor-details"><div><dt>Donor name</dt><dd id="80g-donor-name-detail">—</dd></div><div><dt>PAN</dt><dd id="80g-donor-pan">—</dd></div><div><dt>Mobile number</dt><dd id="80g-donor-mobile">—</dd></div><div><dt>Donation amount</dt><dd id="80g-donation-amount">—</dd></div></dl>
       <p id="80g-delivery-channels"></p>
-      <form id="80g-certificate-form"><label>Upload certificate (PDF)<input name="certificate" type="file" accept="application/pdf" required /></label><div class="form-grid"><button class="btn btn-primary" type="submit"><span class="button-spinner" hidden aria-hidden="true"></span><span class="button-label">Send</span></button><button class="btn btn-light" type="button" data-close-80g>Cancel</button></div></form><div class="message" id="80g-message" role="status" aria-live="polite"></div>
+      <form id="80g-certificate-form"><label>80G Certificate Number<input name="certificate_number" type="text" required maxlength="120" pattern=".*\S.*" /></label><label>Upload certificate (PDF)<input name="certificate" type="file" accept="application/pdf" required /></label><div class="form-grid"><button class="btn btn-primary" type="submit"><span class="button-spinner" hidden aria-hidden="true"></span><span class="button-label">Send</span></button><button class="btn btn-light" type="button" data-close-80g>Cancel</button></div></form><div class="message" id="80g-message" role="status" aria-live="polite"></div>
     </dialog>
 
   <dialog class="entry-dialog" id="trustee-access-dialog" aria-labelledby="trustee-access-title">
@@ -1553,6 +1665,40 @@ for (const tab of Object.keys(tabs)) {
     <button type="button" class="recovery-back" id="recovery-back">Back to Trust Portal Login</button>
   </dialog>
   <script>
+    function showAdminError(message, targetDocument = document) {
+      const existing = targetDocument.getElementById("admin-error-popup");
+      if (existing?.open) existing.close();
+      existing?.remove();
+
+      const popup = targetDocument.createElement("dialog");
+      popup.id = "admin-error-popup";
+      popup.setAttribute("aria-label", "Admin message");
+      popup.style.cssText = "width:min(420px,calc(100% - 32px));box-sizing:border-box;border:1px solid #d7e4da;border-radius:12px;padding:20px;color:#172026;background:#fff;box-shadow:0 12px 36px #10251b55;font-family:inherit;overflow-wrap:anywhere";
+      const text = targetDocument.createElement("p");
+      text.textContent = message;
+      const close = targetDocument.createElement("button");
+      close.type = "button";
+      close.className = "btn btn-primary";
+      close.textContent = "Close";
+      close.autofocus = true;
+      close.addEventListener("click", () => popup.close());
+      let timer;
+      const scheduleDismiss = () => {
+        if (timer === undefined) timer = setTimeout(() => popup.close(), 3000);
+      };
+      const events = new AbortController();
+      for (const type of ["pointermove", "pointerdown"]) {
+        targetDocument.addEventListener(type, scheduleDismiss, { passive: true, signal: events.signal });
+      }
+      popup.addEventListener("close", () => {
+        clearTimeout(timer);
+        events.abort();
+        popup.remove();
+      }, { once: true });
+      popup.append(text, close);
+      targetDocument.body.append(popup);
+      popup.showModal();
+    }
   (() => {
     const SUPABASE_URL = "https://oqumyvitsaflllgihlgi.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_tGTPBACxYOVNqQsQubUeaQ_GII9Q_Jt";
@@ -1697,13 +1843,17 @@ for (const tab of Object.keys(tabs)) {
   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script>
+    document.addEventListener("beforeinput", (event) => {
+      if (event.target.matches("input[data-integer-amount]") && event.data && /\D/.test(event.data)) event.preventDefault();
+    });
     document.addEventListener("input", (event) => {
       const input = event.target;
       if (input instanceof HTMLInputElement && input.hasAttribute("data-integer-amount")) {
-        const digits = input.value.replace(/\D/g, "");
-        if (input.value !== digits) input.value = digits;
+        if (/\D/.test(input.value)) input.value = "";
+        input.setCustomValidity(input.value && Number(input.value) < Number(input.dataset.minAmount || 1)
+          ? "Enter at least ₹" + (input.dataset.minAmount || 1) + "." : "");
       }
-    });
+    }, true);
     document.addEventListener("wheel", (event) => {
       const input = event.target;
       if (input instanceof HTMLInputElement && input.type === "number" && document.activeElement === input) event.preventDefault();
@@ -1718,7 +1868,7 @@ for (const tab of Object.keys(tabs)) {
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzTS6PmZFue-KvXl-QBTXoOVxOigqmVm3XAwyo3ZwE71vqys4_l-ytL2_0e_dg1YEPa/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxxmx58NYpxoWcK8Qqj2hevorTLQsJ-DMr8ZWE_tztGKhY5ysmHPI__CtMUiTEh_Bre/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let portalRole = "";
     let portalIdentity = null;
@@ -2257,7 +2407,7 @@ for (const tab of Object.keys(tabs)) {
         link.download = partner.supporting_document_name;
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-      } catch (error) { alert(error.message || "Could not download document."); }
+      } catch (error) { showAdminError(error.message || "Could not download document."); }
     });
     document.getElementById("partner-admin-list").addEventListener("click", async (event) => {
       const view = event.target.closest("[data-view-partner]");
@@ -2283,7 +2433,7 @@ for (const tab of Object.keys(tabs)) {
       try {
         if (edit) { openPartnerForm(partnerRecords.find((partner) => partner.id === edit.dataset.editPartner)); }
         if (remove && confirm("Remove this partner from the website?")) { await supabaseRequest(`${PARTNER_TABLE}?id=eq.${encodeURIComponent(remove.dataset.deletePartner)}`, { method: "DELETE" }); await loadPartners(); }
-      } catch (error) { alert(error.message || "Could not save partner."); }
+      } catch (error) { showAdminError(error.message || "Could not save partner."); }
     });
     async function sendDonationCertificate(record) {
       const channels = Array.isArray(record.certificate_delivery) ? record.certificate_delivery : [];
@@ -2336,7 +2486,7 @@ for (const tab of Object.keys(tabs)) {
         try {
           await supabaseRequest(`${SUPABASE_DONATION_TABLE}?id=eq.${encodeURIComponent(record.id)}`, { method: "PATCH", body: JSON.stringify({ payment_status: "cancelled" }) });
           await renderDonationReport(true);
-        } catch (error) { alert("Could not cancel donation: " + error.message); cancelButton.disabled = false; }
+        } catch (error) { showAdminError("Could not cancel donation: " + error.message); cancelButton.disabled = false; }
         return;
       }
       const open80G = event.target.closest("[data-open-eighty-g]");
@@ -2390,7 +2540,7 @@ for (const tab of Object.keys(tabs)) {
       message.style.display = "block";
       message.textContent = "Uploading the 80G certificate and sending it to the selected channels…";
       try {
-        const result = await sendFinanceDriveUpload({ type: "80g_certificate", sourceType: active80GDonation.donation_source || "online", donationId: active80GDonation.id, fullName: active80GDonation.donor_name || "Donor", certificateId: active80GDonation.certificate_id || active80GDonation.id, fileName: file.name, mimeType: file.type, base64: await fileAsBase64(file), channels: active80GDonation.donation_source === "ledger" ? ["email"] : active80GDonation.certificate_delivery || [], accessToken: adminAccessToken });
+        const result = await sendFinanceDriveUpload({ type: "80g_certificate", certificateNumber: form.elements.certificate_number.value.trim(), sourceType: active80GDonation.donation_source || "online", donationId: active80GDonation.id, fullName: active80GDonation.donor_name || "Donor", certificateId: active80GDonation.certificate_id || active80GDonation.id, fileName: file.name, mimeType: file.type, base64: await fileAsBase64(file), channels: active80GDonation.donation_source === "ledger" ? ["email"] : active80GDonation.certificate_delivery || [], accessToken: adminAccessToken });
         const deliveryFailures = Object.entries(result.delivery || {}).filter(([, state]) => String(state).startsWith("failed"));
         const deliveryStatus = deliveryFailures.length ? "Pending" : "Done";
         const statusTable = active80GDonation.donation_source === "ledger" ? FINANCE_TABLE : SUPABASE_DONATION_TABLE;
@@ -2787,6 +2937,7 @@ for (const tab of Object.keys(tabs)) {
     const mediaStudioToggle = document.getElementById("media-studio-toggle");
     const mediaStudioContainer = document.getElementById("media-studio-container");
     let mediaStudioResize;
+    let clearStudioPopupLock;
     let pickerLibrary;
     function loadDrivePicker() {
       if (pickerLibrary) return pickerLibrary;
@@ -2834,6 +2985,34 @@ for (const tab of Object.keys(tabs)) {
       frame.addEventListener("load", () => {
         const doc = frame.contentDocument;
         const body = doc.body;
+        clearStudioPopupLock?.();
+        const locked = new Set();
+        const unlock = () => {
+          for (const element of locked) {
+            element.inert = false;
+            element.removeAttribute("data-studio-popup-background");
+          }
+          locked.clear();
+          frame.removeAttribute("data-popup-open");
+        };
+        const popupObserver = new MutationObserver(() => {
+          if (!doc.querySelector("dialog:modal")) {
+            unlock();
+          } else if (!frame.hasAttribute("data-popup-open")) {
+            frame.setAttribute("data-popup-open", "");
+            for (let branch = frame; branch !== document.body; branch = branch.parentElement) {
+              for (const sibling of branch.parentElement.children) {
+                if (sibling !== branch && !sibling.inert && !sibling.matches("script, template, dialog")) {
+                  sibling.inert = true;
+                  sibling.setAttribute("data-studio-popup-background", "");
+                  locked.add(sibling);
+                }
+              }
+            }
+          }
+        });
+        popupObserver.observe(body, { subtree: true, childList: true, attributes: true, attributeFilter: ["open"] });
+        clearStudioPopupLock = () => { popupObserver.disconnect(); unlock(); };
         frame.contentWindow.authorizeStudioDriveFolder = authorizeStudioDriveFolder;
         frame.contentWindow.googleMediaRequest = async (payload) => {
           if (location.protocol !== "https:") throw new Error("Open the deployed HTTPS Admin Portal to connect Google.");
@@ -2879,6 +3058,8 @@ for (const tab of Object.keys(tabs)) {
       mediaStudioContainer.append(frame);
     });
     document.getElementById("admin-logout").addEventListener("click", () => {
+      clearStudioPopupLock?.();
+      clearStudioPopupLock = null;
       mediaStudioResize?.disconnect();
       mediaStudioContainer.replaceChildren();
       mediaStudioContainer.hidden = true;
@@ -2932,7 +3113,7 @@ for (const tab of Object.keys(tabs)) {
       button.disabled = true;
       try {
         const donations = await loadDonations({ exportAll: true });
-        if (!donations.length) { alert("No donation records to export."); return; }
+        if (!donations.length) { showAdminError("No donation records to export."); return; }
         const rows = donations.map((item) => {
           const contact = donorContactDetails(item);
           const { appreciationStatus, eightyGStatus } = donationCertificateStatuses(item);
@@ -2958,7 +3139,7 @@ for (const tab of Object.keys(tabs)) {
         });
         writeStyledReport(rows, "Donations", "Sarvahit-Donations-All.xlsx");
       } catch (error) {
-        alert("Could not export donation records: " + error.message);
+        showAdminError("Could not export donation records: " + error.message);
       } finally {
         button.disabled = false;
       }
@@ -3139,7 +3320,7 @@ for (const tab of Object.keys(tabs)) {
       try {
         if (!window.XLSX) throw new Error("Excel export is unavailable. Reload the admin page and try again.");
         const volunteers = await loadVolunteers();
-        if (!volunteers.length) { alert("There is no volunteer data to download yet."); return; }
+        if (!volunteers.length) { showAdminError("There is no volunteer data to download yet."); return; }
         const rows = volunteers.map((volunteer, index) => ({
           "Sr.No": index + 1,
           "Full Name": volunteer.name || "",
@@ -3151,7 +3332,7 @@ for (const tab of Object.keys(tabs)) {
           "Joined At": volunteer.joinedAt ? dateFormat.format(new Date(volunteer.joinedAt)) + " " + timeFormat.format(new Date(volunteer.joinedAt)).toLowerCase() : ""
         }));
         writeStyledReport(rows, "Volunteers", "Sarvahit-Volunteer-Data-" + new Date().toISOString().slice(0, 10) + ".xlsx");
-      } catch (error) { alert("Could not download volunteer data: " + (error.message || error)); }
+      } catch (error) { showAdminError("Could not download volunteer data: " + (error.message || error)); }
       finally { button.disabled = false; button.textContent = originalLabel; }
     }
 
@@ -3605,15 +3786,22 @@ for (const tab of Object.keys(tabs)) {
         docSuccess.classList.remove("is-error");
         void loadFinancialDocuments();
         try {
-          await sendFinanceDriveUpload({
+          document.getElementById("financial-doc-wait-label").textContent = "Copying document to Google Drive...";
+          const drive = await sendFinanceDriveUpload({
             type: "financial_document_backup", fiscalYear: year, category,
             storagePath: path, fileName: record.file_name, accessToken: adminAccessToken
           });
-          docSuccess.textContent = success;
+          docSuccess.textContent = success + (drive.folderName ? " Drive copy saved in " + drive.folderName + "." : "");
           docSuccessTimer = setTimeout(() => { docSuccess.textContent = ""; }, 6000);
         } catch (error) {
-          docSuccess.classList.add("is-error");
-          docSuccess.textContent = success + " Drive backup failed: " + error.message;
+          editingDoc = saved[0];
+          docFields.document.value = "";
+          docFields.document.required = false;
+          document.getElementById("financial-doc-title").textContent = "Edit Financial Document";
+          document.getElementById("financial-doc-filename").textContent = "Current file: " + editingDoc.file_name;
+          docFormMessage.classList.add("is-error");
+          docFormMessage.textContent = success + " Drive copy failed: " + error.message + " Click the same save button to retry with the saved file.";
+          return;
         }
         docDialog.close();
       } catch (error) {
@@ -3736,7 +3924,13 @@ for (const tab of Object.keys(tabs)) {
     docDialog.addEventListener("cancel", (event) => { if (docSaving) event.preventDefault(); });
     docForm.addEventListener("change", updateDocForm);
     docFields.document.addEventListener("change", () => {
-      document.getElementById("financial-doc-filename").textContent = docFields.document.files[0]?.name || editingDoc?.file_name || "";
+      const file = docFields.document.files[0];
+      document.getElementById("financial-doc-filename").textContent = file?.name || editingDoc?.file_name || "";
+      if (file) {
+        docFields.title.value = file.name.replace(/\.[^.]+$/, "").trim();
+        docFormMessage.classList.remove("is-error");
+        docFormMessage.textContent = "";
+      }
     });
     const docDrop = document.getElementById("financial-doc-drop");
     docDrop.addEventListener("dragover", (event) => { event.preventDefault(); docDrop.classList.add("is-dragging"); });
@@ -3974,7 +4168,7 @@ for (const tab of Object.keys(tabs)) {
         if (!entry || !confirm("Approve and publish this cash donation? It will then be included in the totals.")) return;
         approveLedgerDonation.disabled = true;
         try { await approveFinanceEntry(entry); await renderDonationReport(true); }
-        catch (error) { alert("Could not approve this donation: " + error.message); approveLedgerDonation.disabled = false; }
+        catch (error) { showAdminError("Could not approve this donation: " + error.message); approveLedgerDonation.disabled = false; }
         return;
       }
       const publishButton = event.target.closest("[data-publish-donation]");
@@ -3990,10 +4184,10 @@ for (const tab of Object.keys(tabs)) {
           if (record.certificate_delivery?.length) {
             const delivery = await sendDonationCertificate(record);
             const failures = Object.entries(delivery).filter(([, state]) => String(state).startsWith("failed"));
-            if (failures.length) alert("Donation published. Certificate delivery needs attention: " + failures.map(([channel, state]) => channel + ": " + state).join("; "));
+            if (failures.length) showAdminError("Donation published. Certificate delivery needs attention: " + failures.map(([channel, state]) => channel + ": " + state).join("; "));
           }
           await renderDonationReport(true);
-        } catch (error) { alert((published ? "Donation was published, but certificate delivery status could not be saved: " : "Could not publish donation: ") + error.message); await renderDonationReport(true); }
+        } catch (error) { showAdminError((published ? "Donation was published, but certificate delivery status could not be saved: " : "Could not publish donation: ") + error.message); await renderDonationReport(true); }
         return;
       }
       const sendButton = event.target.closest("[data-send-certificate]");
@@ -4004,9 +4198,9 @@ for (const tab of Object.keys(tabs)) {
         try {
           const delivery = await sendDonationCertificate(record);
           const failures = Object.entries(delivery).filter(([, state]) => String(state).startsWith("failed"));
-          if (failures.length) alert("Certificate delivery needs attention: " + failures.map(([channel, state]) => channel + ": " + state).join("; "));
+          if (failures.length) showAdminError("Certificate delivery needs attention: " + failures.map(([channel, state]) => channel + ": " + state).join("; "));
           await renderDonationReport(true);
-        } catch (error) { alert("Could not save certificate delivery status: " + error.message); sendButton.disabled = false; }
+        } catch (error) { showAdminError("Could not save certificate delivery status: " + error.message); sendButton.disabled = false; }
         return;
       }
       const button = event.target.closest("[data-delete-donation]");
@@ -4028,7 +4222,7 @@ for (const tab of Object.keys(tabs)) {
         await renderDonationReport(true);
         if (supabaseEnabled()) await loadFinanceEntries();
       } catch (error) {
-        alert("Could not delete donation: " + error.message);
+        showAdminError("Could not delete donation: " + error.message);
         button.disabled = false;
       }
     });

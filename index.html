@@ -2151,6 +2151,62 @@
     :is(#donor-window, #volunteer-window, #hero-finance-report) .modal-head { background: var(--green-dark); color: #fff; padding: 15px 20px; }
     :is(#donor-window, #volunteer-window, #hero-finance-report) .modal-close { flex: none; border: 0; background: transparent; color: #fff; font-size: 28px; }
     :is(#donor-window, #volunteer-window) .form-grid > * { min-width: 0; }
+    #donor-window .donation-steps { margin-bottom: 12px; }
+    #donor-certificate-panel .certificate-ready { padding: clamp(20px, 4vw, 32px); }
+    #donor-certificate-panel .certificate-ready h3 {
+      max-width: 24ch;
+      margin: 0 auto 14px;
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 750;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+      text-wrap: balance;
+    }
+    #donor-certificate-panel .certificate-ready h3::after {
+      content: "";
+      display: block;
+      width: 48px;
+      height: 3px;
+      margin: 14px auto 0;
+      border-radius: 3px;
+      background: var(--gold);
+    }
+    #donor-certificate-panel .certificate-message {
+      max-width: 60ch;
+      margin: 0 auto 18px;
+      color: #38524a;
+      font-size: clamp(16px, 2.5vw, 18px);
+      line-height: 1.65;
+      text-wrap: pretty;
+    }
+    #donor-certificate-panel .certificate-note { padding: 12px; border: 1px solid #d4aa4b; border-radius: 8px; background: #fff3cf; color: #765000; }
+    #certificate-delivery-status:empty { display: none; }
+    #donation-80g-note {
+      grid-column: 1 / -1;
+      margin: -6px 0 0;
+      padding: 9px 12px;
+      border-left: 3px solid #b58007;
+      border-radius: 6px;
+      background: #fff3cf;
+      color: #765000;
+      font-weight: 700;
+    }
+    #donor-window .donation-panel {
+      padding: clamp(12px, 2vw, 18px);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fbf9;
+    }
+    dialog::backdrop { background: rgba(17, 26, 28, 0.57); }
+    dialog::backdrop,
+    :is(.modal-overlay, .error-popup-overlay, .donation-loading-overlay):not([hidden]) {
+      backdrop-filter: blur(7px);
+    }
+    html:has(dialog:modal, .modal-overlay:not([hidden]), .error-popup-overlay:not([hidden]), .donation-loading-overlay:not([hidden])) {
+      overflow: hidden;
+    }
+    .modal-window, dialog { overscroll-behavior: contain; }
   </style>
 </head>
 <body>
@@ -2616,7 +2672,7 @@
               <label>PIN Code<input name="pin_code" type="text" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]+" data-pin-code required /></label>
               <label>
                 Donation Amount
-                <input name="amount" type="number" inputmode="numeric" min="100" step="1" data-integer-amount required />
+                <input name="amount" type="text" inputmode="numeric" pattern="[0-9]+" data-integer-amount data-min-amount="100" aria-describedby="donation-80g-note" required />
               </label>
               <label>
                 Donation Purpose
@@ -2630,6 +2686,7 @@
                   <option>General Donation</option>
                 </select>
               </label>
+              <p id="donation-80g-note" hidden role="status">The Trust’s 80G certificate request threshold on this website is donations above ₹4,999. Thank you for supporting Sarvahit Charitable Trust!</p>
               <div class="full">
                 <button class="btn btn-primary" type="submit">Confirm Details and Continue</button>
               </div>
@@ -2670,14 +2727,17 @@
 
         <section class="donation-panel" id="donor-certificate-panel" hidden>
           <div class="certificate-ready">
-            <h3>Choose Certificate Delivery</h3>
-            <p>Select where you would like to receive your certificate.</p>
-            <fieldset class="certificate-delivery"><legend>Choose one or both options</legend>
+            <h3>Thank You for Your Generous Donation!</h3>
+            <p class="certificate-message">Your kindness helps us bring hope, care, and meaningful change to those in need. We sincerely appreciate your support of Sarvahit Charitable Trust.</p>
+            <p class="certificate-note"><strong>80G Tax Benefit Certificate:</strong> The Trust’s website threshold is ₹5,000 or more for eligible donations, subject to applicable rules and verification.</p>
+            <p class="certificate-message">We’ll send a thank-you email after you submit. Your Certificate of Appreciation will be emailed after the Trust verifies your donation.</p>
+            <fieldset hidden disabled><legend>Certificate delivery options</legend>
               <label><input type="checkbox" name="certificate-delivery" value="email"> Email</label>
               <label><input type="checkbox" name="certificate-delivery" value="whatsapp"> WhatsApp</label>
-              <button class="btn btn-primary" type="button" id="submit-certificate-preference" disabled>Submit</button>
-              <p id="certificate-delivery-status" role="status" aria-live="polite"></p>
             </fieldset>
+            <button class="btn btn-primary" type="button" id="submit-certificate-preference">Submit &amp; Continue</button>
+            <p id="certificate-delivery-status" role="status" aria-live="polite"></p>
+            <p><a href="mailto:sarvahitcharitabletrust2026@gmail.com">Need help? Contact our team</a></p>
           </div>
         </section>
       </div>
@@ -2811,11 +2871,20 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
+    document.addEventListener("beforeinput", (event) => {
+      if (event.target.matches("input[data-integer-amount]") && event.data && /\D/.test(event.data)) event.preventDefault();
+    });
     document.addEventListener("input", (event) => {
       const input = event.target;
       if (input instanceof HTMLInputElement && input.hasAttribute("data-integer-amount")) {
         const digits = input.value.replace(/\D/g, "");
-        if (input.value !== digits) input.value = digits;
+        if (input.value !== digits) input.value = "";
+        input.setCustomValidity(input.value && Number(input.value) < Number(input.dataset.minAmount || 1)
+          ? "Enter at least ₹" + (input.dataset.minAmount || 1) + "." : "");
+        if (input.form?.id === "donor-form" && input.name === "amount") {
+          const amount = Number(input.value);
+          document.getElementById("donation-80g-note").hidden = !(amount > 0 && amount <= 4999);
+        }
       }
     });
     document.addEventListener("wheel", (event) => {
@@ -2835,7 +2904,7 @@
     // Paste your deployed Google Apps Script Web App URL here.
     // The gallery will show one photo at a time for each work-wise folder.
     const GOOGLE_DRIVE_GALLERY_API_URL = "https://script.google.com/macros/s/AKfycby-g5wS4xmG9Y0zrGXkJIe-dKmI8QkXGGlHbNGp4Gav6QknLYVry0td3KvFm7VeGDGXGQ/exec";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzTS6PmZFue-KvXl-QBTXoOVxOigqmVm3XAwyo3ZwE71vqys4_l-ytL2_0e_dg1YEPa/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxxmx58NYpxoWcK8Qqj2hevorTLQsJ-DMr8ZWE_tztGKhY5ysmHPI__CtMUiTEh_Bre/exec";
     const GOOGLE_DRIVE_TEAM_API_URL = GOOGLE_DRIVE_UPLOAD_URL;
     const volunteerCount = document.getElementById("volunteer-count");
     const impactStrip = document.querySelector(".impact-strip");
@@ -3414,9 +3483,15 @@
       document.getElementById("donor-certificate-panel").hidden = step !== 3;
     }
 
+    let errorPopupDismissTimer;
+    let errorPopupPreviousFocus;
+
     function showErrorPopup(message, title = "Something went wrong") {
+      clearTimeout(errorPopupDismissTimer);
+      errorPopupDismissTimer = undefined;
       document.querySelector("#error-popup-overlay .error-popup")?.classList.remove("is-success");
       const overlay = document.getElementById("error-popup-overlay");
+      if (overlay.hidden) errorPopupPreviousFocus = document.activeElement;
       document.getElementById("error-popup-title").textContent = title;
       document.getElementById("error-popup-message").textContent = message;
       overlay.hidden = false;
@@ -3424,6 +3499,8 @@
     }
 
     function showThankYouPopup() {
+      clearTimeout(errorPopupDismissTimer);
+      errorPopupDismissTimer = undefined;
       const popup = document.querySelector("#error-popup-overlay .error-popup");
       popup?.classList.add("is-success");
       document.getElementById("error-popup-title").textContent = "Thank You For Supporting";
@@ -3433,11 +3510,15 @@
     }
 
     function closeErrorPopup() {
+      clearTimeout(errorPopupDismissTimer);
+      errorPopupDismissTimer = undefined;
       const popup = document.querySelector("#error-popup-overlay .error-popup");
       const wasSuccess = popup?.classList.contains("is-success");
       document.getElementById("error-popup-overlay").hidden = true;
       popup?.classList.remove("is-success");
       if (wasSuccess) closeModals();
+      else if (errorPopupPreviousFocus?.isConnected) errorPopupPreviousFocus.focus({ preventScroll: true });
+      errorPopupPreviousFocus = undefined;
     }
 
     function readableSubmissionError(error) {
@@ -4407,6 +4488,42 @@
 
     let donationSubmitting = false;
 
+    const publicPopups = [...document.querySelectorAll("body > .modal-overlay, body > .donation-loading-overlay, body > .error-popup-overlay")];
+    const lockedPublicElements = new Set();
+    let activePublicPopup;
+    let publicPopupReturnFocus;
+    const syncPublicPopup = () => {
+      const topPopup = publicPopups.find(popup => !popup.hidden && popup.matches(".error-popup-overlay"))
+        || publicPopups.find(popup => !popup.hidden && popup.matches(".donation-loading-overlay"))
+        || publicPopups.find(popup => !popup.hidden);
+      if (topPopup === activePublicPopup) return;
+      if (!activePublicPopup) publicPopupReturnFocus = document.activeElement;
+      activePublicPopup = topPopup;
+      for (const element of lockedPublicElements) {
+        if (!topPopup || element === topPopup) {
+          element.inert = false;
+          lockedPublicElements.delete(element);
+        }
+      }
+      if (topPopup) {
+        for (const element of document.body.children) {
+          if (element !== topPopup && !element.inert && !element.matches("script, template, dialog")) {
+            element.inert = true;
+            lockedPublicElements.add(element);
+          }
+        }
+        if (!topPopup.contains(document.activeElement)) {
+          topPopup.tabIndex = -1;
+          topPopup.focus({ preventScroll: true });
+        }
+      } else {
+        publicPopupReturnFocus?.focus({ preventScroll: true });
+        publicPopupReturnFocus = null;
+      }
+    };
+    const publicPopupObserver = new MutationObserver(syncPublicPopup);
+    publicPopups.forEach(popup => publicPopupObserver.observe(popup, { attributes: true, attributeFilter: ["hidden"] }));
+
     function closeModals() {
       const successPopupOpen = !document.getElementById("error-popup-overlay").hidden && document.querySelector("#error-popup-overlay .error-popup.is-success");
       if (donationSubmitting || successPopupOpen) return;
@@ -4424,10 +4541,12 @@
       if (id === "donor-window") {
         activeDonation = null;
         document.getElementById("donor-form")?.reset();
+        document.getElementById("donation-80g-note").hidden = true;
         document.getElementById("payment-screenshot").value = "";
         document.getElementById("donation-status").style.display = "none";
-        document.querySelectorAll('input[name="certificate-delivery"]').forEach((choice) => { choice.checked = false; });
-        document.getElementById("submit-certificate-preference").disabled = true;
+        document.querySelector('#donor-form [name="amount"]').setCustomValidity("");
+        document.getElementById("submit-certificate-preference").disabled = false;
+        document.getElementById("submit-certificate-preference").textContent = "Submit & Continue";
         document.getElementById("certificate-delivery-status").textContent = "";
         setDonationStep(1);
       }
@@ -4499,6 +4618,14 @@
     });
 
     document.getElementById("error-popup-close")?.addEventListener("click", closeErrorPopup);
+    const errorPopupOverlay = document.getElementById("error-popup-overlay");
+    const scheduleErrorPopupDismiss = () => {
+      if (errorPopupOverlay.hidden || errorPopupDismissTimer !== undefined ||
+          errorPopupOverlay.querySelector(".error-popup.is-success")) return;
+      errorPopupDismissTimer = setTimeout(closeErrorPopup, 3000);
+    };
+    errorPopupOverlay.addEventListener("pointermove", scheduleErrorPopupDismiss, { passive: true });
+    errorPopupOverlay.addEventListener("pointerdown", scheduleErrorPopupDismiss, { passive: true });
 
     document.querySelectorAll("[data-copy-upi]").forEach((button) => {
       button.addEventListener("click", async () => {
@@ -4643,30 +4770,35 @@
       }
     });
 
-    const certificateDeliveryChoices = [...document.querySelectorAll('input[name="certificate-delivery"]')];
     const certificateDeliverySubmit = document.getElementById("submit-certificate-preference");
-    certificateDeliveryChoices.forEach((choice) => choice.addEventListener("change", () => {
-      certificateDeliverySubmit.disabled = !certificateDeliveryChoices.some((item) => item.checked);
-    }));
     certificateDeliverySubmit?.addEventListener("click", async () => {
-      const selected = certificateDeliveryChoices.filter((item) => item.checked).map((item) => item.value);
       const status = document.getElementById("certificate-delivery-status");
       const loadingOverlay = document.getElementById("donation-loading-overlay");
       const donorWindow = document.getElementById("donor-window");
       const closeButton = document.querySelector('#donor-window [data-close-modal]');
-      if (!selected.length || !activeDonation || donationSubmitting) return;
+      if (!activeDonation || donationSubmitting) return;
       certificateDeliverySubmit.disabled = true;
       donationSubmitting = true;
       donorWindow?.setAttribute("aria-busy", "true");
       closeButton?.setAttribute("disabled", "");
       loadingOverlay.hidden = false;
       try {
-        activeDonation.certificateDelivery = selected;
-        await saveDonation(activeDonation);
+        if (!activeDonation.saved) {
+          activeDonation.certificateDelivery = ["email"];
+          await saveDonation(activeDonation);
+          activeDonation.saved = true;
+        }
+        if (supabaseEnabled()) {
+          await sendDriveUpload({ type: "donation_acknowledgment", certificateId: activeDonation.certificateId, screenshotPath: activeDonation.screenshotPath });
+        }
         donationSubmitting = false;
         showThankYouPopup();
       } catch (error) {
-        status.textContent = readableSubmissionError(error);
+        if (activeDonation.saved) {
+          status.textContent = "Donation saved. The thank-you email could not be sent. You can retry the email below.";
+          certificateDeliverySubmit.textContent = "Retry Thank-You Email";
+          console.error("Donation acknowledgment failed.", error);
+        } else status.textContent = readableSubmissionError(error);
         certificateDeliverySubmit.disabled = false;
       } finally {
         loadingOverlay.hidden = true;
