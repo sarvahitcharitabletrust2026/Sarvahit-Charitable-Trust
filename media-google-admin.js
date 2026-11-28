@@ -43,6 +43,7 @@
   const styles = element("style", "[hidden]{display:none!important} #cloud dt{font-weight:700} #cloud dd{margin:0 0 .5rem} #cloud form.card{margin:1rem 0} #cloud button{margin:.15rem}");
   styles.textContent += ".media-error{color:#a92328!important}.media-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}.media-status-card{text-align:center;border:1px solid #bfd6ca;border-radius:10px}.media-status-card dt,.media-status-pill{display:block;padding:10px}.media-status-pill{position:relative;background:#fce4e4;color:#8e2424;font-weight:700}.media-status-pill.connected{background:#d7f0df;color:#105a38}.media-status-tooltip{display:none;position:absolute;z-index:5;inset:auto 0 100%;padding:9px;background:#163d32;color:white;border-radius:8px;overflow-wrap:anywhere}.media-status-pill:is(:hover,:focus) .media-status-tooltip{display:block}#cloud .media-job-details ul{max-height:15rem;overflow:auto}#cloud .media-operation{margin-block:1rem}";
   document.head.append(styles);
+  styles.textContent += ".media-status-card{background:#f1f7f3}.media-status-card h3{margin:0;padding:10px}.media-status-pill{border-radius:0 0 9px 9px}.media-connection-actions{display:grid;gap:10px;margin-block:16px}.media-connection-actions div{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.media-connection-actions strong{flex:0 0 8rem}.media-card-header{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.media-card-header h3{margin:0}#cloud .media-card-header button{font-size:.85rem;padding:5px 10px;min-height:0}.media-preview summary{cursor:pointer;font-weight:700;color:#0c4b3b}.media-status-tooltip{inset:100% 0 auto}";
   const cloud = $("cloud");
   const videos = $("videos");
   const dashboard = $("dashboard");
@@ -55,6 +56,9 @@
   const connectionInfo = element("dl");
   connectionInfo.className = "media-status-grid";
   connectionInfo.setAttribute("aria-live", "polite");
+  const accountOverview = $("accountList");
+  accountOverview.className = "media-status-grid";
+  const accountMetrics = accountOverview.parentElement.querySelector("p");
   const message = element("p");
   message.setAttribute("role", "status");
   report.setAttribute("role", "status");
@@ -82,9 +86,43 @@
     account.setAttribute("aria-busy", "true");
     operations.inert = true;
     feedback(target, "Processing…");
-    try { feedback(target, await fn() || "Successfully updated."); }
-    catch (error) { feedback(target, error.message, true); }
+    try { feedback(target, await fn() || "Successfully updated."); return true; }
+    catch (error) { feedback(target, error.message, true); return false; }
     finally { busy = false; operations.inert = false; account.setAttribute("aria-busy", "false"); }
+  }
+  function renderConnections(state = {}, requestError) {
+    const items = [
+      ["Google Drive account", "drive", state.drive, state.driveError, state.drive?.name],
+      ["YouTube account", "youtube", state.channel, state.channelError, state.channel?.name],
+      ["YouTube Analytics account", "analytics", state.analytics, state.analyticsError]
+    ];
+    function renderCard([name, provider, verified, error, accountName], scope) {
+      const card = element("div");
+      card.className = "media-status-card";
+      const definition = element(scope === "cloud" ? "dd" : "div");
+      const badge = element("span", verified ? "Connected" : "Unconnected");
+      badge.className = "media-status-pill" + (verified ? " connected" : "");
+      badge.tabIndex = 0;
+      badge.addEventListener("click", () => badge.focus());
+      const email = state.accounts?.[provider];
+      const description = verified
+        ? [...new Set([accountName, email].filter(Boolean))].join(" · ") || "Account verified by Google."
+        : ["instagram", "facebook", "whatsapp"].includes(provider)
+          ? "This platform has no connection configured in the Media Studio."
+          : error || requestError || "Connect this account in Cloud Publishing & Setup.";
+      const tooltip = element("span", description);
+      tooltip.className = "media-status-tooltip";
+      tooltip.id = scope + "-media-account-" + provider;
+      tooltip.setAttribute("role", "tooltip");
+      badge.setAttribute("aria-describedby", tooltip.id);
+      badge.append(tooltip);
+      definition.append(badge);
+      card.append(element(scope === "cloud" ? "dt" : "h3", name), definition);
+      return card;
+    }
+    const otherPlatforms = [["Instagram", "instagram"], ["Facebook", "facebook"], ["WhatsApp", "whatsapp"]];
+    connectionInfo.replaceChildren(...items.map(item => renderCard(item, "cloud")));
+    accountOverview.replaceChildren(...[...items, ...otherPlatforms].map(item => renderCard(item, "overview")));
   }
   async function status() {
     let state;
@@ -92,42 +130,16 @@
     catch (error) {
       verifiedConnection = null;
       connected = false;
-      connectionInfo.replaceChildren();
+      renderConnections({}, error.message);
+      dashboardMetrics.textContent = "YouTube Analytics unavailable.";
+      accountMetrics.textContent = dashboardMetrics.textContent;
       updateUploadAvailability();
       throw error;
     }
     verifiedConnection = state;
     connected = state.connected === true;
     updateUploadAvailability();
-    connectionInfo.replaceChildren();
-    const items = [
-      ["Google Drive account", "drive", state.drive, state.driveError],
-      ["YouTube account", "youtube", state.channel, state.channelError],
-      ["YouTube Analytics account", "analytics", state.analytics, state.analyticsError]
-    ];
-    for (const [name, provider, verified, error] of items) {
-      const card = element("div");
-      card.className = "media-status-card";
-      const definition = element("dd");
-      const badge = element("span", verified ? "Connected" : error ? "Needs attention" : "Disconnected");
-      badge.className = "media-status-pill" + (verified ? " connected" : "");
-      if (state.accounts?.[provider]) {
-        badge.tabIndex = 0;
-        const tooltip = element("span", state.accounts[provider]);
-        tooltip.className = "media-status-tooltip";
-        tooltip.id = "media-account-" + provider;
-        badge.setAttribute("aria-describedby", tooltip.id);
-        badge.append(tooltip);
-      }
-      definition.append(badge);
-      if (error) {
-        const detail = element("p");
-        feedback(detail, error, true);
-        definition.append(detail);
-      }
-      card.append(element("dt", name), definition);
-      connectionInfo.append(card);
-    }
+    renderConnections(state);
     if (state.drive) {
       try {
         const { names } = await request("drive-programs");
@@ -137,6 +149,9 @@
     dashboardMetrics.textContent = state.analytics
       ? state.analytics.views + " views · " + state.analytics.minutes + " minutes watched · " + state.analytics.subscribers + " subscribers gained"
       : "YouTube Analytics unavailable.";
+    accountMetrics.textContent = state.analytics
+      ? "YouTube, last 30 reported days: " + dashboardMetrics.textContent
+      : "Connect YouTube Analytics in Cloud Publishing & Setup to see live metrics.";
   }
   function connect(provider) {
     if (busy) return;
@@ -147,34 +162,61 @@
       try {
         const { url } = await request("connect", { provider });
         popup.location.replace(url);
-        return "Complete Google consent, then click Refresh Status.";
+        const deadline = Date.now() + 5 * 60 * 1000;
+        const watch = setInterval(() => {
+          if (Date.now() > deadline) { clearInterval(watch); return; }
+          let completed = false;
+          try {
+            completed = new URL(popup.location.href).searchParams.get("mediaOAuth") === "connected";
+          } catch {}
+          if (!completed && !popup.closed) return;
+          if (busy) return;
+          clearInterval(watch);
+          if (completed) popup.close();
+          void run(status);
+        }, 1000);
+        return "Complete Google consent in the popup.";
       } catch (error) { popup.close(); throw error; }
     });
   }
+  const authorizeDriveFolder = async () => {
+    await window.authorizeStudioDriveFolder(await request("drive-picker"));
+    await status();
+    if (!verifiedConnection?.drive) throw new Error(verifiedConnection?.driveError || "Drive folder verification failed.");
+    return "Drive folder successfully verified.";
+  };
   const actions = element("div");
-  actions.className = "actions";
-  actions.append(
+  actions.className = "media-connection-actions";
+  function actionRow(label, ...buttons) {
+    const row = element("div");
+    row.append(element("strong", label), ...buttons);
+    actions.append(row);
+  }
+  actionRow("Google Drive",
     button("Connect Google Drive", () => connect("drive")),
-    button("Authorize Drive Folder", () => run(async () => {
-      await window.authorizeStudioDriveFolder(await request("drive-picker"));
-      await status();
-      if (!verifiedConnection?.drive) throw new Error(verifiedConnection?.driveError || "Drive folder verification failed.");
-      return "Drive folder successfully verified.";
-    })),
+    button("Authorize Drive Folder", () => run(authorizeDriveFolder)),
+    button("Reconnect Google Drive", () => connect("drive"))
+  );
+  actionRow("YouTube",
     button("Connect YouTube Channel", () => connect("youtube")),
-    button("Connect YouTube Analytics", () => connect("analytics")),
+    button("Connect YouTube Analytics", () => connect("analytics"))
+  );
+  actionRow("Account access",
     button("Test Connection", () => run(status)), button("Refresh Status", () => run(status)),
-    button("Reconnect Google Drive", () => connect("drive")), button("Disconnect Accounts", () => {
+    button("Disconnect Accounts", () => {
       if (!connected || !confirm("Revoke this portal’s Google permissions and disconnect all Google connections?")) return;
       run(async () => { await request("disconnect"); await status(); return "Google confirmed revocation."; });
     })
   );
   account.append(connectionInfo, actions, message);
   const cloudHeader = cloud.querySelector(".studio-tab-header");
-  cloudHeader.after(account);
+  const preview = element("details");
+  preview.className = "card media-preview media-operation";
+  preview.append(element("summary", "More · Publishing request preview"));
   for (const child of [...cloud.children]) {
-    if (child !== account && child !== cloudHeader) child.hidden = true;
+    if (child !== cloudHeader) preview.append(child);
   }
+  cloudHeader.after(account);
   const uploadForm = element("form");
   uploadForm.className = "card";
   const kind = field(uploadForm, "Destination", "kind", "select", [
@@ -417,18 +459,31 @@
     videoEditor
   );
   operations.className = "card";
-  operations.append(element("h3", "Media Upload"), uploadForm,
-    element("h3", "Google Drive Files"), button("Open Root Folder", () => run(() => listDrive(), driveMessage)),
-    button("Load More Files", () => drivePage && run(() => listDrive(currentFolder, drivePage), driveMessage)), driveMessage, files,
-    youtubeManager,
-    element("h3", "Upload Jobs & Activity"), button("Refresh Jobs", () => run(loadHistory, jobsMessage)), jobsMessage, details);
-  cloud.append(operations);
+  const driveBrowser = element("div");
+  driveBrowser.className = "card media-operation";
+  driveBrowser.append(
+    element("h3", "Google Drive Files"),
+    element("p", "Browse files and program folders in the configured Media Drive folder."),
+    button("Open Root Folder", () => run(() => listDrive(), driveMessage)),
+    button("Authorize Drive Folder", () => run(authorizeDriveFolder, driveMessage)),
+    button("Load More Files", () => drivePage && run(() => listDrive(currentFolder, drivePage), driveMessage)), driveMessage, files
+  );
+  const jobs = element("div");
+  jobs.className = "card media-operation";
+  const jobsHeader = element("div");
+  jobsHeader.className = "media-card-header";
+  jobsHeader.append(element("h3", "Upload Jobs & Activity"), button("Refresh Jobs", () => run(loadHistory, jobsMessage)));
+  jobs.append(jobsHeader, jobsMessage, details);
+  operations.append(element("h3", "Media Upload"), uploadForm, driveBrowser, youtubeManager, jobs);
+  cloud.append(operations, preview);
   videos.append(button("Open Direct YouTube Upload", () => { go("cloud"); kind.value = "youtube-video"; kind.dispatchEvent(new Event("change")); media.focus(); }));
   $("photos").append(button("Open OAuth Drive Upload", () => { go("cloud"); kind.value = "drive-photo"; updateDestination(); media.focus(); }));
   updateDestination();
+  renderConnections();
   setInterval(() => { if (activeJobs && !document.hidden) loadHistory().catch(() => {}); }, 5000);
   document.addEventListener("google-media-ready", () => run(async () => { await status(); await loadHistory(); }), { once: true });
   window.refreshGoogleMedia = tab => {
-    if (tab === "cloud" || tab === "dashboard" || tab === "accounts") return run(async () => { await status(); await loadHistory(); });
+    if (tab === "accounts") return run(status);
+    if (tab === "cloud" || tab === "dashboard") return run(async () => { await status(); await loadHistory(); });
   };
 })();
