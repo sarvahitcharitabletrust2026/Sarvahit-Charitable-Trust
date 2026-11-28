@@ -96,7 +96,11 @@ async function processJob(job) {
   const directory = await fsp.mkdtemp(path.join(os.tmpdir(), "sarvahit-media-"));
   const filter = "?id=eq." + job.id + "&status=eq.processing";
   let remoteStarted = false, result;
-  const update = fields => db("media_upload_jobs", filter, "PATCH", { ...fields, updated_at: new Date().toISOString() });
+  const write = fields => db("media_upload_jobs", filter, "PATCH", { ...fields, updated_at: new Date().toISOString() });
+  const update = async fields => {
+    if (!(await write(fields)).length) throw new Error("Upload job is no longer processing.");
+  };
+  const heartbeat = setInterval(() => { void write({}).catch(() => {}); }, 60000);
   try {
     await m.verifyAdminId(job.owner_id);
     const row = await m.connection(job.owner_id, m.uploadProvider(job.request.kind));
@@ -180,9 +184,12 @@ async function processJob(job) {
     await fetch(m.sb() + "/storage/v1/object/" + m.bucket, { method: "DELETE", signal: AbortSignal.timeout(10000),
       headers: { ...m.serviceHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ prefixes: [job.source_path] }) }).catch(() => {});
   } catch (error) {
-    await update({ status: remoteStarted || result ? "review" : "failed", stage: remoteStarted || result ? "Check destination" : "Failed",
+    await write({ status: remoteStarted || result ? "review" : "failed", stage: remoteStarted || result ? "Check destination" : "Failed",
       result: result || null, error: typeof error.message === "string" ? error.message.slice(0, 220) : "Media processing failed." });
-  } finally { await fsp.rm(directory, { recursive: true, force: true }); }
+  } finally {
+    clearInterval(heartbeat);
+    await fsp.rm(directory, { recursive: true, force: true });
+  }
 }
 async function main() {
   for (;;) {

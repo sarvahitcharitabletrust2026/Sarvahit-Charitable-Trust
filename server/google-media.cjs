@@ -120,7 +120,7 @@ async function folder(token) {
     fields: "id,name,mimeType,trashed,webViewLink,capabilities(canAddChildren)", supportsAllDrives: "true"
   }, token).catch(error => {
     if (/HTTP (403|404)/.test(error.message)) {
-      throw new PublicError("Drive signed in, but the app cannot access the configured folder. Check GOOGLE_DRIVE_FOLDER_ID and grant this OAuth app access to that folder via Google Picker, or use a folder created by this app.", 409);
+      throw new PublicError("The signed-in account or this app cannot open the configured Drive folder. Open the folder with the connected account, check that the account can edit it, then select the same folder using Authorize Drive Folder.", 409);
     }
     throw error;
   });

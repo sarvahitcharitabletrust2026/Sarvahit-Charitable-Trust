@@ -10,11 +10,26 @@ function callbackUrl() {
 function cookie(state, value, age) {
   return "__Secure-media_oauth_" + state + "=" + value + "; Path=" + callbackPath + "; Max-Age=" + age + "; HttpOnly; Secure; SameSite=Lax";
 }
+async function assertUploadsIdle(owner, provider) {
+  const kinds = provider === "drive" ? "&request->>kind=in.(drive-photo,drive-video)"
+    : provider === "youtube" ? "&request->>kind=in.(youtube-video,youtube-thumbnail)" : "";
+  if (provider === "analytics") return;
+  const scope = "?owner_id=eq." + owner + kinds;
+  const staleBefore = encodeURIComponent(new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString());
+  await db("media_upload_jobs", scope + "&status=eq.processing&updated_at=lt." + staleBefore, "PATCH", {
+    status: "review", stage: "Check destination",
+    error: "The worker stopped reporting progress. Check Google before uploading this file again.",
+    updated_at: new Date().toISOString()
+  });
+  const [job] = await db("media_upload_jobs", scope + "&status=in.(queued,processing)&select=status&order=status.asc&limit=1");
+  if (job) throw new PublicError(job.status === "queued"
+    ? "An upload is queued. Open Upload Jobs & Activity and cancel the queued upload, or wait for the media worker to finish."
+    : "An upload is still processing for this connection. Check its progress in Upload Jobs & Activity.", 409);
+}
 async function start(owner, provider, res) {
   if (!Object.hasOwn(m.providerScopes, provider)) throw new PublicError("Select a Google connection type.");
   const scopes = ["openid", "email", ...m.providerScopes[provider]];
-  const active = await db("media_upload_jobs", "?owner_id=eq." + owner + "&status=in.(queued,processing)&select=id&limit=1");
-  if (active.length) throw new PublicError("Wait for active media uploads before reconnecting.", 409);
+  await assertUploadsIdle(owner, provider);
   const state = m.nonce();
   const browser = m.nonce();
   const verifier = m.nonce();
@@ -61,6 +76,7 @@ async function callback(req, res) {
   const linked = provider === "youtube" ? await m.channel(tokens.access_token) : null;
   if (provider === "youtube" && !linked) throw new PublicError("Select the configured Trust YouTube channel.", 403);
   if (provider === "analytics") await analytics(tokens.access_token);
+  await assertUploadsIdle(entry.owner_id, provider);
   await db("media_google_provider_connections", "?on_conflict=owner_id,provider", "POST", {
     owner_id: entry.owner_id, provider, email: profile.email,
     encrypted_refresh: m.seal(tokens.refresh_token, m.connectionKey({ owner_id: entry.owner_id, provider })),
@@ -95,6 +111,7 @@ async function status(owner) {
   return {
     connected: rows.length > 0,
     accounts: Object.fromEntries(rows.map(row => [row.provider, row.email])),
+    driveFolderId: get("drive") ? config.GOOGLE_DRIVE_FOLDER_ID || null : null,
     drive: driveResult.value || null,
     driveError: driveResult.reason?.message || null,
     channel: channelResult.value ? { id: channelResult.value, name: youtubeRow.channel_name } : null,
@@ -187,15 +204,23 @@ async function perform(owner, action, payload, res) {
   if (action === "connect") return start(owner, payload.provider, res);
   if (action === "status") return status(owner);
   if (action === "history") {
-    const [jobs, events] = await Promise.all([
+    const [jobs, activeJobs, events] = await Promise.all([
       db("media_upload_jobs", "?owner_id=eq." + owner + "&select=id,status,stage,result,error,created_at,request&order=created_at.desc&limit=25"),
+      db("media_upload_jobs", "?owner_id=eq." + owner + "&status=in.(queued,processing)&select=id,status,stage,result,error,created_at,request&order=created_at.desc"),
       db("media_activity_events", "?owner_id=eq." + owner + "&select=action,details,created_at&order=created_at.desc&limit=25")
     ]);
-    return { jobs, events };
+    return { jobs: [...new Map([...jobs, ...activeJobs].map(job => [job.id, job])).values()], events };
+  }
+  if (action === "cancel-queued") {
+    const id = idValue(payload.id);
+    const rows = await db("media_upload_jobs", "?id=eq." + id + "&owner_id=eq." + owner + "&status=eq.queued", "PATCH", {
+      status: "failed", stage: "Cancelled before processing", error: null, updated_at: new Date().toISOString()
+    });
+    if (!rows.length) throw new PublicError("This upload is no longer queued. Refresh the job list.", 409);
+    return { id };
   }
   if (action === "disconnect") {
-    const active = await db("media_upload_jobs", "?owner_id=eq." + owner + "&status=in.(queued,processing)&select=id&limit=1");
-    if (active.length) throw new PublicError("Wait for active upload jobs to complete before disconnecting.", 409);
+    await assertUploadsIdle(owner);
     for (const row of await m.connections(owner)) {
       try {
         await m.json("https://oauth2.googleapis.com/revoke", {

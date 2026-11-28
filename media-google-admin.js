@@ -56,6 +56,8 @@
   const connectionInfo = element("dl");
   connectionInfo.className = "media-status-grid";
   connectionInfo.setAttribute("aria-live", "polite");
+  const driveAccessHelp = element("p");
+  driveAccessHelp.hidden = true;
   const accountOverview = $("accountList");
   accountOverview.className = "media-status-grid";
   const accountMetrics = accountOverview.parentElement.querySelector("p");
@@ -131,6 +133,7 @@
       verifiedConnection = null;
       connected = false;
       renderConnections({}, error.message);
+      driveAccessHelp.hidden = true;
       dashboardMetrics.textContent = "YouTube Analytics unavailable.";
       accountMetrics.textContent = dashboardMetrics.textContent;
       updateUploadAvailability();
@@ -140,6 +143,14 @@
     connected = state.connected === true;
     updateUploadAvailability();
     renderConnections(state);
+    driveAccessHelp.replaceChildren();
+    driveAccessHelp.hidden = Boolean(state.drive) || !state.driveError;
+    if (!driveAccessHelp.hidden) {
+      driveAccessHelp.append(state.driveError);
+      if (state.driveFolderId && /^[\w-]+$/.test(state.driveFolderId)) {
+        driveAccessHelp.append(" ", link("Open configured folder in Google Drive", "https://drive.google.com/drive/folders/" + state.driveFolderId));
+      }
+    }
     if (state.drive) {
       try {
         const { names } = await request("drive-programs");
@@ -152,6 +163,7 @@
     accountMetrics.textContent = state.analytics
       ? "YouTube, last 30 reported days: " + dashboardMetrics.textContent
       : "Connect YouTube Analytics in Cloud Publishing & Setup to see live metrics.";
+    return state.driveError ? "Google Drive needs attention. See the folder access details above." : "Account status refreshed.";
   }
   function connect(provider) {
     if (busy) return;
@@ -208,7 +220,7 @@
       run(async () => { await request("disconnect"); await status(); return "Google confirmed revocation."; });
     })
   );
-  account.append(connectionInfo, actions, message);
+  account.append(connectionInfo, driveAccessHelp, actions, message);
   const cloudHeader = cloud.querySelector(".studio-tab-header");
   const preview = element("details");
   preview.className = "card media-preview media-operation";
@@ -356,6 +368,14 @@
       if (job.result?.url) row.append(" ", link("Open on Google", job.result.url));
       if (job.result?.visibility) row.append(" · " + job.result.visibility);
       if (job.result?.warning) row.append(" · " + job.result.warning);
+      if (job.status === "queued") row.append(" ", button("Cancel Queued Upload", () => {
+        if (!confirm("Cancel this queued upload?")) return;
+        return run(async () => {
+          await request("cancel-queued", { id: job.id });
+          await loadHistory();
+          return "Queued upload cancelled.";
+        }, jobsMessage);
+      }));
       if (job.status === "failed") row.append(" ", button("Retry", () => run(async () => {
         await request("retry", { id: job.id }); await loadHistory(); return "Upload queued for retry.";
       }, jobsMessage)));
