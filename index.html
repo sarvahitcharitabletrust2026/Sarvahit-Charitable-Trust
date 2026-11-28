@@ -2207,7 +2207,16 @@
       overflow: hidden;
     }
     .modal-window, dialog { overscroll-behavior: contain; }
-  </style>
+  
+body input:is([type=checkbox],[type=radio]){
+  appearance:none;width:20px;height:20px;min-width:20px;min-height:0;padding:0;
+  flex-shrink:0;vertical-align:middle;border:1.5px solid #47765f;border-radius:50%;background:#fff;box-shadow:none;cursor:pointer
+}
+body input:is([type=checkbox],[type=radio]):checked{background:#126a51;border-color:#126a51}
+body input:is([type=checkbox],[type=radio]):focus-visible{outline:2px solid #126a51;outline-offset:3px}
+body input:is([type=checkbox],[type=radio]):disabled{opacity:.55;cursor:not-allowed}
+@media(forced-colors:active){body input:is([type=checkbox],[type=radio]){appearance:auto}}
+</style>
 </head>
 <body>
   <div class="topbar">

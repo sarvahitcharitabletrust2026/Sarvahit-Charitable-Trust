@@ -328,7 +328,7 @@
     #partner-form label { display: block; min-width: 0; }
     #partner-form .partner-setting { display: flex; align-items: center; gap: 10px; min-height: 56px; cursor: pointer; }
     #partner-form .partner-setting input { appearance: none; display: grid; place-content: center; flex: 0 0 22px; width: 22px; height: 22px; min-height: 0; margin: 0; padding: 0; border: 2px solid currentColor; border-radius: 50%; cursor: pointer; }
-    #partner-form .partner-setting input:checked::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+    #partner-form .partner-setting input:checked { background:var(--green);border-color:var(--green); }
     #partner-form .partner-setting input:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
     #partner-location-status:empty { display: none; }
     .partner-location { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
@@ -409,7 +409,7 @@
     #financial-doc-form fieldset { display: grid; gap: 7px; border: 0; border-top: 1px solid var(--line); padding: 10px 0 0; margin: 0; min-width: 0; }
     #financial-doc-form legend { color: var(--green-dark); font-weight: 700; padding-right: 7px; }
     #financial-doc-form .financial-access-choice { display: flex; align-items: center; justify-content: flex-start; gap: 9px; padding: 6px 0; margin: 0; }
-    #financial-doc-form .financial-access-choice input[type=radio], #financial-checklist-options input[type=checkbox] { appearance: auto; flex: 0 0 17px; width: 17px; height: 17px; min-width: 17px; min-height: 0; padding: 0; margin: 0; accent-color: var(--green); }
+    #financial-doc-form .financial-access-choice input[type=radio], #financial-checklist-options input[type=checkbox] { appearance: none; flex: 0 0 20px; width: 20px; height: 20px; min-width: 20px; min-height: 0; padding: 0; margin: 0; accent-color: var(--green); }
     #financial-doc-trustee-picker select { display: block; width: 100%; margin-top: 6px; }
     #financial-doc-drop { background: #f5faf6; border: 1px dashed #82a992; padding: 18px; border-radius: 12px; text-align: center; }
     #financial-doc-drop.is-dragging { background: #e4f4e9; }
@@ -435,7 +435,6 @@
     .financial-checklist progress { display: block; height: 12px; margin: 0 0 12px; }
     #financial-checklist-options input[type=checkbox] { appearance: none; position: relative; border: 1.5px solid var(--green); border-radius: 50%; background: #fff; }
     #financial-checklist-options input[type=checkbox]:checked { background: var(--green); }
-    #financial-checklist-options input[type=checkbox]:checked::after { content: ""; position: absolute; left: 5px; top: 2px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
     #financial-checklist-options input[type=checkbox]:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
     #dashboard > .panel:not(#financial-documents-panel), #dashboard > .grid-2 > .panel {
       --section-padding: clamp(16px, 3vw, 30px);
@@ -517,7 +516,16 @@
     html:has(dialog:modal, .media-studio-frame[data-popup-open]) { overflow: hidden; }
     dialog { overscroll-behavior: contain; }
     [data-studio-popup-background] { filter: blur(7px); }
-  </style>
+  
+body input:is([type=checkbox],[type=radio]){
+  appearance:none;width:20px;height:20px;min-width:20px;min-height:0;padding:0;
+  flex-shrink:0;vertical-align:middle;border:1.5px solid #47765f;border-radius:50%;background:#fff;box-shadow:none;cursor:pointer
+}
+body input:is([type=checkbox],[type=radio]):checked{background:#126a51;border-color:#126a51}
+body input:is([type=checkbox],[type=radio]):focus-visible{outline:2px solid #126a51;outline-offset:3px}
+body input:is([type=checkbox],[type=radio]):disabled{opacity:.55;cursor:not-allowed}
+@media(forced-colors:active){body input:is([type=checkbox],[type=radio]){appearance:auto}}
+</style>
 </head>
 <body>
   <div class="topbar">
@@ -906,7 +914,7 @@ section{border-color:#ccddd3}
 section .card,.media article{background:#f3f8f5;border-color:#c9dbd2}
 section input,section select,section textarea{border-color:#b9cec3}
 input[type=checkbox]{appearance:none;width:1.1rem;height:1.1rem;padding:0;vertical-align:middle;border:1.5px solid #126a51;border-radius:50%;background:white;cursor:pointer}
-input[type=checkbox]:checked{background:#126a51;box-shadow:inset 0 0 0 3px #fff}
+input[type=checkbox]:checked{background:#126a51;box-shadow:none}
 input[type=checkbox]:focus-visible{outline:2px solid #0c4b3b;outline-offset:2px}
 button:disabled{opacity:.55;cursor:not-allowed}
 #mediaList article{display:flex;flex-direction:column}
@@ -927,10 +935,11 @@ main section :is(input[type=checkbox],input[type=radio]){
   width:20px;height:20px;min-width:20px;padding:0;border:1.5px solid #47765f;border-radius:50%;background:#fff;cursor:pointer
 }
 main section :is(input[type=checkbox],input[type=radio]):checked{background:var(--green);border-color:var(--green)}
-main section :is(input[type=checkbox],input[type=radio]):checked::after{content:&quot;&quot;;width:8px;height:5px;border:solid #fff;border-width:0 0 2px 2px;transform:translateY(-1px) rotate(-45deg)}
 main section :is(input[type=checkbox],input[type=radio]):disabled{opacity:.55;cursor:not-allowed}
 #mediaList .media-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;background:#e7f1eb}
-#mediaList .media-actions button{width:100%;min-width:0;text-align:center;line-height:1.2}
+#mediaList .media-actions button{width:100%;min-width:0;text-align:center;line-height:1.2;background:var(--green-dark);border-color:var(--green-dark);color:#fff}
+#mediaList .media-actions button:is(:hover,:focus-visible){background:var(--green);border-color:var(--green);color:#fff}
+#mediaList button.studio-card-cover img{object-fit:contain;object-position:center;background:#e5efe8}
 #mediaList article,#galleryList article{display:flex;flex-direction:column;min-width:0}
 #mediaList .media-actions,#galleryList .gallery-card-action{margin-top:auto}
 #galleryList .gallery-card-action{display:flex;width:100%;justify-content:space-between;gap:10px;border:0;border-top:1px solid #b8cec3;border-radius:0;background:#e4f0e9;color:var(--green-dark);text-align:left;padding:10px 12px}

@@ -43,7 +43,8 @@
   }
   const styles = element("style", "[hidden]{display:none!important} #cloud dt{font-weight:700} #cloud dd{margin:0 0 .5rem} #cloud form.card{margin:1rem 0} #cloud button{margin:.15rem}");
   styles.textContent += ".media-error{color:#a92328!important}.media-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}.media-status-card{text-align:center;border:1px solid #bfd6ca;border-radius:10px}.media-status-card dt,.media-status-pill{display:block;padding:10px}.media-status-pill{position:relative;background:#fce4e4;color:#8e2424;font-weight:700}.media-status-pill.connected{background:#d7f0df;color:#105a38}.media-status-pill:is(:hover,:focus) #cloud .media-job-details ul{max-height:15rem;overflow:auto}#cloud .media-operation{margin-block:1rem}";
-  styles.textContent += ".media-connection-details{margin:8px 10px;text-align:left}.media-connection-details summary{cursor:pointer;color:#0c4b3b;font-weight:700}.media-connection-details p{margin:5px 0;overflow-wrap:anywhere}.media-status-card dd{margin:0}#cloud button.btn{margin:0}";
+  styles.textContent += ".media-status-card dd{margin:0}#cloud button.btn{margin:0}";
+  styles.textContent += ".media-status-card dd{position:relative;margin:0}.media-status-pill{width:100%;min-height:44px;border:0;cursor:pointer}.media-status-pill:not(.connected){background:#fce4e4;color:#8e2424}.media-status-pill.connected{background:#d7f0df;color:#105a38}.media-status-card:focus-within,.media-status-card:hover{position:relative;z-index:3}.media-status-detail{position:absolute;inset:100% 0 auto;z-index:4;margin:0;padding:12px;border:1px solid #779786;border-radius:8px;background:#fff;color:#173a32;box-shadow:0 6px 16px #10251b33;text-align:left;overflow-wrap:anywhere}.media-status-detail p{margin:0}.media-status-detail a{display:block;margin-top:8px;text-decoration:underline}";
   document.head.append(styles);
   styles.textContent += ".media-status-card{background:#f1f7f3}.media-status-card h3{margin:0;padding:10px}.media-status-pill{border-radius:0 0 9px 9px}.media-connection-actions{display:grid;gap:10px;margin-block:16px}.media-connection-actions div{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.media-connection-actions strong{flex:0 0 8rem}.media-card-header{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.media-card-header h3{margin:0}.media-preview summary{cursor:pointer;font-weight:700;color:#0c4b3b}";
   const cloud = $("cloud");
@@ -58,11 +59,6 @@
   const connectionInfo = element("dl");
   connectionInfo.className = "media-status-grid";
   connectionInfo.setAttribute("aria-live", "polite");
-  const driveAccessHelp = element("p");
-  driveAccessHelp.hidden = true;
-  driveAccessHelp.className = "message error";
-  driveAccessHelp.style.display = "block";
-  driveAccessHelp.setAttribute("role", "status");
   const accountOverview = $("accountList");
   accountOverview.className = "media-status-grid";
   const accountMetrics = accountOverview.parentElement.querySelector("p");
@@ -107,7 +103,7 @@
       const card = element("div");
       card.className = "media-status-card";
       const definition = element(scope === "cloud" ? "dd" : "div");
-      const badge = element("span", verified ? "Connected" : "Unconnected");
+      const badge = element("button", verified ? "Connected" : "Unconnected");
       badge.className = "media-status-pill" + (verified ? " connected" : "");
       const email = state.accounts?.[provider];
       const description = verified
@@ -115,13 +111,34 @@
         : ["instagram", "facebook", "whatsapp"].includes(provider)
           ? "This platform has no connection configured in the Media Studio."
           : error || requestError || "Connect this account in Cloud Publishing & Setup.";
-      definition.append(badge);
-      if (!(scope === "cloud" && provider === "drive" && error)) {
-        const disclosure = element("details");
-        disclosure.className = "media-connection-details";
-        disclosure.append(element("summary", "Connection details"), element("p", description));
-        definition.append(disclosure);
+      badge.type = "button";
+      const detail = element("div");
+      detail.className = "media-status-detail";
+      detail.id = "media-status-" + scope + "-" + provider;
+      detail.hidden = true;
+      detail.append(element("p", description));
+      if (provider === "drive" && error && /^[\w-]+$/.test(state.driveFolderId || "")) {
+        detail.append(link("Open configured folder in Google Drive", "https://drive.google.com/drive/folders/" + state.driveFolderId));
       }
+      badge.setAttribute("aria-controls", detail.id);
+      const reveal = (open) => {
+        detail.hidden = !open;
+        badge.setAttribute("aria-expanded", String(open));
+      };
+      reveal(false);
+      definition.addEventListener("pointerenter", event => { if (event.pointerType !== "touch") reveal(true); });
+      definition.addEventListener("pointerleave", () => { if (!definition.contains(document.activeElement)) reveal(false); });
+      definition.addEventListener("focusout", event => { if (!definition.contains(event.relatedTarget)) reveal(false); });
+      badge.addEventListener("focus", () => reveal(true));
+      badge.addEventListener("click", () => reveal(true));
+      definition.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !detail.hidden) {
+          event.stopPropagation();
+          badge.focus();
+          reveal(false);
+        }
+      });
+      definition.append(badge, detail);
       card.append(element(scope === "cloud" ? "dt" : "h3", name), definition);
       return card;
     }
@@ -136,7 +153,6 @@
       verifiedConnection = null;
       connected = false;
       renderConnections({}, error.message);
-      driveAccessHelp.hidden = true;
       dashboardMetrics.textContent = "YouTube Analytics unavailable.";
       accountMetrics.textContent = dashboardMetrics.textContent;
       updateUploadAvailability();
@@ -146,14 +162,6 @@
     connected = state.connected === true;
     updateUploadAvailability();
     renderConnections(state);
-    driveAccessHelp.replaceChildren();
-    driveAccessHelp.hidden = Boolean(state.drive) || !state.driveError;
-    if (!driveAccessHelp.hidden) {
-      driveAccessHelp.append(state.driveError);
-      if (state.driveFolderId && /^[\w-]+$/.test(state.driveFolderId)) {
-        driveAccessHelp.append(" ", link("Open configured folder in Google Drive", "https://drive.google.com/drive/folders/" + state.driveFolderId));
-      }
-    }
     if (state.drive) {
       try {
         const { names } = await request("drive-programs");
@@ -166,7 +174,7 @@
     accountMetrics.textContent = state.analytics
       ? "YouTube, last 30 reported days: " + dashboardMetrics.textContent
       : "Connect YouTube Analytics in Cloud Publishing & Setup to see live metrics.";
-    return state.driveError ? "Google Drive needs attention. See the folder access details above." : "Account status refreshed.";
+    return state.driveError ? "Google Drive needs attention. Open the Drive status for details." : "Account status refreshed.";
   }
   function connect(provider) {
     if (busy) return;
@@ -223,7 +231,7 @@
       run(async () => { await request("disconnect"); await status(); return "Google confirmed revocation."; });
     }, "danger")
   );
-  account.append(connectionInfo, driveAccessHelp, actions, message);
+  account.append(connectionInfo, actions, message);
   const cloudHeader = cloud.querySelector(".studio-tab-header");
   const preview = element("details");
   preview.className = "card media-preview media-operation";
