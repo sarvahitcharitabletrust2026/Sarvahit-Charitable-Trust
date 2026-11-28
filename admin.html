@@ -294,7 +294,7 @@
     .team-row-actions { gap: 6px; }
     .team-row-actions .btn { min-width: 58px; min-height: 34px; padding: 5px 9px; font-size: 12px; }
     #volunteer-panel .team-row-actions { flex-wrap: wrap; gap: 10px; }
-    #volunteer-panel .btn, #volunteer-panel .entry-name { min-height: 44px; padding: 9px 15px; font-size: 15px; }
+    #volunteer-panel .btn:not(.dashboard-section-toggle), #volunteer-panel .entry-name { min-height: 44px; padding: 9px 15px; font-size: 15px; }
     #volunteer-panel .entry-name { overflow-wrap: anywhere; }
     .team-row-actions [data-team-remove] { min-width: 72px; }
     .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; clip-path: inset(50%); border: 0; }
@@ -499,8 +499,10 @@
     .media-studio-frame { display: block; width: 100%; min-height: 460px; border: 1px solid var(--line); border-radius: 8px; margin-top: 16px; background: #f0f6f2; }
     #dashboard > .grid-2 { align-items: start; }
     .dashboard-panel-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
+    #media-social-panel .media-destinations .btn-light { background: #daeae1; border-color: #779786; }
+    #media-social-panel .media-destinations .btn-light:is(:hover, :focus-visible) { background: #c7e1d3; border-color: var(--green); }
     .dashboard-section-toggle { display: inline-flex; align-items: center; gap: 8px; }
-    #dashboard .dashboard-panel-actions .dashboard-section-toggle { background: #ffffff20; color: inherit; border: 1px solid #ffffff70; padding: 0; width: 44px; height: 44px; border-radius: 50%; justify-content: center; transition: background .18s, box-shadow .18s; }
+    #dashboard .dashboard-panel-actions .dashboard-section-toggle { background: #ffffff20; color: inherit; border: 1px solid #ffffff70; padding: 0; box-sizing: border-box; flex: 0 0 44px; width: 44px; min-width: 44px; height: 44px; border-radius: 50%; justify-content: center; transition: background .18s, box-shadow .18s; }
     #dashboard .dashboard-panel-actions .dashboard-section-toggle:is(:hover, :focus-visible, [aria-expanded="true"]) { background: #fff; color: #0c4b3b; box-shadow: 0 2px 8px #062c2566; }
     #dashboard .dashboard-panel-actions .dashboard-section-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
     .dashboard-section-chevron { display: block; width: 10px; height: 10px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); transition: transform .18s; }
@@ -821,7 +823,7 @@
           </div>
           <div id="media-studio-container" hidden></div>
           <template id="media-studio-template">
-            <iframe class="media-studio-frame" title="Sarvahit Media Studio" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-downloads allow-popups allow-popups-to-escape-sandbox" allow="clipboard-write" srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;title&gt;Sarvahit Media Studio V02&lt;/title&gt;&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&amp;family=Poppins:wght@500;600;700;800&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;&lt;style&gt;
+            <iframe class="media-studio-frame" title="Sarvahit Media Studio" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-downloads allow-popups allow-popups-to-escape-sandbox" allow="clipboard-write" srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;title&gt;Sarvahit Media Studio V02&lt;/title&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;trust-portal.css&quot;&gt;&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&amp;family=Poppins:wght@500;600;700;800&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;&lt;style&gt;
 *{box-sizing:border-box}body{margin:0;background:#f3f6f4;color:#20382f;font:15px system-ui,sans-serif}header{background:#173f35;color:white;padding:24px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px}header small{color:#e8d9ae;letter-spacing:2px}h1,h2,h3{margin:0 0 12px}h1{font-size:26px}h2{font-size:22px}p{line-height:1.6}main{max-width:1400px;margin:auto;display:grid;grid-template-columns:240px 1fr;gap:24px;padding:24px}nav,section,.card{background:white;border:1px solid #dce5df;border-radius:14px;padding:22px;box-shadow:0 3px 12px #173f3508}nav{align-self:start;position:sticky;top:16px}nav button{display:block;width:100%;text-align:left;background:transparent;color:#345448;margin:4px 0}nav button.active,nav button:hover{background:#e0eee5;color:#173f35}button{border:0;border-radius:8px;padding:11px 16px;background:#173f35;color:white;font:inherit;font-weight:600;cursor:pointer}button.secondary{background:#e8efeb;color:#173f35}button.danger{background:#a52d2d}button:hover{filter:brightness(1.08)}section{display:none}section.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.stat strong{display:block;font-size:30px;color:#176547}.muted,small{color:#64786d}.notice{background:#fff6df;border:1px solid #e7d5a5;padding:12px;border-radius:8px;margin-bottom:18px}label{display:block;font-weight:600;margin:12px 0 6px}input,select,textarea{width:100%;padding:11px;border:1px solid #c9d7ce;border-radius:8px;background:white;font:inherit;color:inherit}input[type=checkbox]{width:auto}input[type=range]{padding:0}textarea{min-height:90px}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.drop{border:2px dashed #a9c3b4;border-radius:12px;padding:20px;background:#f6faf7}.media{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:20px}.media article{border:1px solid #dce5df;border-radius:12px;overflow:hidden;background:white}.media article&gt;div{padding:14px}.media img,.media video{width:100%;aspect-ratio:4/3;object-fit:cover;background:#e4eee7}.preview{position:relative;background:linear-gradient(140deg,#a8c8b3,#345c49);min-height:240px;border-radius:12px;overflow:hidden;display:grid;place-items:center;color:white}.preview img{width:100%;display:block}.preview .mark{position:absolute;right:2%;bottom:2%;width:18%;opacity:.4;text-align:center;font-weight:bold;font-size:12px}.mark img{width:100%}.pill{background:#e3efe7;border-radius:20px;padding:5px 10px;font-size:12px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.row&gt;*{flex:1}progress{width:100%;accent-color:#176547}footer{text-align:center;padding:20px;color:#64786d} @media(max-width:800px){main{display:block;padding:12px}nav{position:static;display:flex;overflow:auto;gap:5px;margin-bottom:12px;padding:8px}nav button{white-space:nowrap;width:auto}.stats{grid-template-columns:repeat(2,1fr)}header{padding:18px}section{padding:16px}}@media(max-width:480px){.grid:not(.stats){grid-template-columns:1fr}h1{font-size:20px}}
 
 body{background:#f0f6f2;color:#172026;font:16px/1.45 &quot;Hind&quot;,system-ui,sans-serif}
@@ -848,6 +850,24 @@ a{color:#126a51;font-weight:700}input,select,textarea{border-color:#e6e0d6;min-w
 .studio-scroll{max-height:22rem;overflow:auto;overscroll-behavior:contain;padding:12px;border:1px solid #cbdcd4;border-radius:10px;background:#edf5f0}
 .studio-list-title{margin:20px 0 8px}
 
+body{font-size:17px;line-height:1.6}
+main section label{font-weight:800;margin:0 0 6px}
+main section :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea){min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit}
+main section textarea{min-height:112px;resize:vertical}
+main section :is(input[type=checkbox],input[type=radio],input[type=range]){min-height:0;accent-color:var(--green)}
+main section :is(input[type=checkbox],input[type=radio]){width:auto;margin:0 6px 0 0}
+main section input[type=file]::file-selector-button{margin-inline-end:10px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:#f8faf8;color:var(--green-dark);font:inherit;font-weight:700;cursor:pointer}
+main section .grid{gap:14px}
+main section form:not(.studio-inline-form) .grid{margin-bottom:14px}
+main section form label:has(&gt; :is(input,textarea,select):not([type=checkbox]):not([type=radio])){display:grid;gap:6px}
+main section form &gt; label{margin-bottom:12px}
+main section form &gt; label:has(&gt; input:is([type=checkbox],[type=radio])){display:flex;align-items:center;gap:6px}
+main section :is(.actions,.studio-tab-actions){gap:8px}
+main section button.btn{filter:none}
+main section button.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+main section button.btn:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+
+
 :root{--portal-green:#126a51;--portal-dark:#0c4b3b;--portal-line:#d7e4da}
 :where(input,select,textarea,button){font:inherit}
 section :is(input:not([type=checkbox]):not([type=radio]),select,textarea){color:#172026;border:1px solid #bacfc3;border-radius:9px;background:#fff;padding:12px;line-height:1.4}
@@ -862,12 +882,6 @@ section legend{color:var(--portal-dark);font-weight:700}
 #mediaList .studio-card-cover img{display:block;width:100%;height:100%;object-fit:cover}
 #mediaList .media-actions{display:flex;justify-content:flex-start;flex-wrap:wrap;gap:6px;padding:10px;border-top:1px solid var(--portal-line)}
 #mediaList .media-actions button{margin:0;padding:6px 10px;font-size:.9rem}
-#galleryList details{padding:10px 12px;border-top:1px solid var(--portal-line)}
-#galleryList summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none}
-#galleryList summary::-webkit-details-marker{display:none}
-#galleryList summary::after{content:&quot;&quot;;border:solid var(--portal-green);border-width:0 2px 2px 0;width:8px;height:8px;flex:none;transform:rotate(45deg)}
-#galleryList details[open]&gt;summary::after{transform:rotate(225deg)}
-#galleryList summary strong{display:block;margin-top:3px;color:var(--portal-dark)}
 .studio-media-preview{border:1px solid var(--portal-line);border-radius:14px;width:min(880px,92vw);max-height:90vh;padding:16px;color:#172026}
 .studio-media-preview::backdrop{background:#10251bba}
 dialog::backdrop{background:#10251b99;backdrop-filter:blur(7px)}
@@ -898,6 +912,35 @@ button:disabled{opacity:.55;cursor:not-allowed}
 #mediaList article{display:flex;flex-direction:column}
 #mediaList article&gt;div{display:flex;flex-direction:column;flex:1}
 #mediaList article .actions{margin-top:auto;display:flex;flex-direction:column;align-items:flex-start}
+
+main section{background:#f2f7f4;border-color:#b8cec3}
+main section .card{background:#e8f2ec;border-color:#b8cec3}
+main section :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea){border-color:#778f82;background:#fff;box-shadow:0 1px 2px #17382a14}
+main section :is(input,select,textarea):disabled{background:#e8efeb;color:#53675e}
+main section :is(input,select,textarea):focus{border-color:var(--green)}
+main section button.btn-light{background:#daeae1;border-color:#779786;color:var(--green-dark)}
+main section button.btn-light:is(:hover,:focus-visible){background:#c7e1d3;border-color:var(--green)}
+main section button.btn-danger{background:#fce6e6;border-color:#c08686}
+main section input[type=file]::file-selector-button{background:#daeae1;border-color:#779786}
+main section :is(input[type=checkbox],input[type=radio]){
+  appearance:none;display:inline-grid;place-items:center;vertical-align:middle;flex:none;
+  width:20px;height:20px;min-width:20px;padding:0;border:1.5px solid #47765f;border-radius:50%;background:#fff;cursor:pointer
+}
+main section :is(input[type=checkbox],input[type=radio]):checked{background:var(--green);border-color:var(--green)}
+main section :is(input[type=checkbox],input[type=radio]):checked::after{content:&quot;&quot;;width:8px;height:5px;border:solid #fff;border-width:0 0 2px 2px;transform:translateY(-1px) rotate(-45deg)}
+main section :is(input[type=checkbox],input[type=radio]):disabled{opacity:.55;cursor:not-allowed}
+#mediaList .media-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;background:#e7f1eb}
+#mediaList .media-actions button{width:100%;min-width:0;text-align:center;line-height:1.2}
+#mediaList article,#galleryList article{display:flex;flex-direction:column;min-width:0}
+#mediaList .media-actions,#galleryList .gallery-card-action{margin-top:auto}
+#galleryList .gallery-card-action{display:flex;width:100%;justify-content:space-between;gap:10px;border:0;border-top:1px solid #b8cec3;border-radius:0;background:#e4f0e9;color:var(--green-dark);text-align:left;padding:10px 12px}
+#galleryList .gallery-card-action strong{display:block;margin-top:4px}
+#galleryList .gallery-card-action::after{content:&quot;&quot;;border:solid var(--green);border-width:0 2px 2px 0;width:8px;height:8px;flex:none;transform:rotate(45deg)}
+.studio-program-preview{width:min(560px,92vw)}
+.studio-program-preview header{background:#e4f0e9;color:var(--green-dark);padding:12px;border-radius:8px}
+.studio-program-preview header h3{margin:0}
+.studio-program-preview img{border-radius:8px;max-height:42vh}
+@media(forced-colors:active){main section :is(input[type=checkbox],input[type=radio]){appearance:auto}}
 &lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;main&gt;&lt;nav id=&quot;nav&quot;&gt;&lt;/nav&gt;&lt;div&gt;
 &lt;section id=&quot;dashboard&quot; class=&quot;active&quot;&gt;&lt;h2&gt;Media Dashboard&lt;/h2&gt;&lt;p class=&quot;muted&quot;&gt;Upload once, organize by program, prepare for publication.&lt;/p&gt;&lt;div class=&quot;grid stats&quot; id=&quot;stats&quot;&gt;&lt;/div&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;go('programs')&quot;&gt;+ Create program&lt;/button&gt;&lt;button onclick=&quot;go('photos')&quot;&gt;Upload photos&lt;/button&gt;&lt;button onclick=&quot;go('videos')&quot;&gt;Prepare YouTube video&lt;/button&gt;&lt;/div&gt;&lt;h3 style=&quot;margin-top:30px&quot;&gt;Recent programs&lt;/h3&gt;&lt;div id=&quot;recent&quot;&gt;&lt;/div&gt;&lt;p id=&quot;studio-videos-status&quot; class=&quot;muted&quot; role=&quot;status&quot; hidden&gt;&lt;/p&gt;&lt;/section&gt;
 &lt;section id=&quot;programs&quot;&gt;&lt;h2&gt;Create &amp; Manage Programs&lt;/h2&gt;&lt;p id=&quot;program-folders-status&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;form id=&quot;programForm&quot;&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;&lt;label&gt;Program name *&lt;/label&gt;&lt;input name=&quot;name&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Category *&lt;/label&gt;&lt;select name=&quot;category&quot; required&gt;&lt;option value=&quot;&quot;&gt;Select Drive category&lt;/option&gt;&lt;option value=&quot;__new&quot;&gt;Add new category…&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Program date *&lt;/label&gt;&lt;input type=&quot;date&quot; name=&quot;date&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Location *&lt;/label&gt;&lt;input name=&quot;location&quot; required&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-country&quot;&gt;Country&lt;/label&gt;&lt;select id=&quot;studio-country&quot; name=&quot;country&quot; autocomplete=&quot;country-name&quot;&gt;&lt;option selected&gt;India&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-state&quot;&gt;State&lt;/label&gt;&lt;select id=&quot;studio-state&quot; name=&quot;state&quot; autocomplete=&quot;address-level1&quot;&gt;&lt;option value=&quot;&quot;&gt;Select state&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;div&gt;&lt;label for=&quot;studio-city&quot;&gt;City&lt;/label&gt;&lt;select id=&quot;studio-city&quot; name=&quot;city&quot; autocomplete=&quot;address-level2&quot;&gt;&lt;option value=&quot;&quot;&gt;Select city&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;p data-location-status role=&quot;status&quot; hidden&gt;&lt;/p&gt;&lt;div&gt;&lt;label&gt;PIN code&lt;/label&gt;&lt;input name=&quot;pin&quot; inputmode=&quot;numeric&quot; pattern=&quot;[0-9]{6}&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Beneficiaries&lt;/label&gt;&lt;input name=&quot;beneficiaries&quot; type=&quot;number&quot; min=&quot;0&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Volunteers&lt;/label&gt;&lt;input name=&quot;volunteers&quot; type=&quot;number&quot; min=&quot;0&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Working partner&lt;/label&gt;&lt;input name=&quot;partner&quot;&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Cover photo&lt;input name=&quot;cover&quot; type=&quot;file&quot; accept=&quot;image/*&quot;&gt;&lt;/label&gt;&lt;small&gt;Optional. The first program photo is used by default.&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;&lt;label&gt;Description *&lt;/label&gt;&lt;textarea name=&quot;description&quot; required&gt;&lt;/textarea&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;featured&quot;&gt; Feature on homepage&lt;/label&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;consent&quot; required&gt; Appropriate media publication consent obtained&lt;/label&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button&gt;Save program locally&lt;/button&gt;&lt;/div&gt;&lt;p id=&quot;programSaveStatus&quot; role=&quot;status&quot;&gt;&lt;/p&gt;&lt;/form&gt;&lt;h3 class=&quot;studio-list-title&quot;&gt;Saved Programs&lt;/h3&gt;&lt;div id=&quot;programList&quot; class=&quot;card&quot;&gt;&lt;select id=&quot;savedProgram&quot; aria-label=&quot;Saved program&quot;&gt;&lt;/select&gt;&lt;button type=&quot;button&quot; id=&quot;deleteSavedProgram&quot; class=&quot;danger&quot;&gt;Delete program&lt;/button&gt;&lt;/div&gt;&lt;/section&gt;
@@ -937,7 +980,7 @@ function studioNode(tag, text = '', className = '') {
   return node;
 }
 function studioButton(text, action, className = 'secondary') {
-  const button = studioNode('button', text, className);
+  const button = studioNode('button', text, className === 'danger' ? 'btn btn-danger' : className === 'secondary' ? 'btn btn-light' : className);
   button.type = 'button';
   button.addEventListener('click', action);
   return button;
@@ -981,25 +1024,32 @@ function renderMediaCards(query, filter) {
     });
   $('mediaList').replaceChildren(...(cards.length ? cards : [studioNode('p', 'No media found.')]));
 }
+function openGalleryProgram(program, photos, cover) {
+  const dialog = studioNode('dialog', '', 'studio-media-preview studio-program-preview');
+  dialog.setAttribute('aria-label', program.name);
+  const header = studioNode('header');
+  header.append(studioNode('h3', program.name), studioButton('Close', () =&gt; dialog.close()));
+  dialog.append(header);
+  if (cover) dialog.append(studioCover(cover, program.name));
+  for (const value of [program.description, program.location, program.date, photos.length + ' photos']) {
+    if (value) dialog.append(studioNode('p', value));
+  }
+  dialog.addEventListener('close', () =&gt; dialog.remove(), { once: true });
+  document.body.append(dialog);
+  dialog.showModal();
+}
 function renderGalleryCards() {
-  const openPrograms = new Set([...$('galleryList').querySelectorAll('details[open]')].map(details =&gt; details.dataset.program));
   $('galleryList').replaceChildren(...state.programs.map(program =&gt; {
     const photos = state.media.filter(media =&gt; media.program === program.id &amp;&amp; media.type === 'photo' &amp;&amp; !media.hidden);
     const card = studioNode('article');
     const cover = program.coverData || photos[0]?.data;
     if (cover) card.append(studioCover(cover, program.name));
-    const details = studioNode('details');
-    details.dataset.program = program.id;
-    details.open = openPrograms.has(program.id);
-    const summary = studioNode('summary');
+    const trigger = studioButton('', () =&gt; openGalleryProgram(program, photos, cover), 'gallery-card-action');
+    trigger.setAttribute('aria-haspopup', 'dialog');
     const title = studioNode('span');
     title.append(studioNode('span', program.category, 'pill'), studioNode('strong', program.name));
-    summary.append(title);
-    details.append(summary);
-    for (const value of [program.description, program.location, program.date, photos.length + ' photos']) {
-      if (value) details.append(studioNode('p', value));
-    }
-    card.append(details);
+    trigger.append(title);
+    card.append(trigger);
     return card;
   }));
 }
@@ -1461,6 +1511,13 @@ function clearStudioInputs(panel) {
   render();
 }
 
+for (const button of document.querySelectorAll('main section button:not(.btn)')) {
+  const label = button.textContent.trim();
+  if (button.classList.contains('danger') || /^(Delete|Remove)\b/i.test(label)) button.classList.add('btn', 'btn-danger');
+  else if (button.classList.contains('secondary') || /^(Refresh|Clear|Cancel|Close|Download|Open|Copy|View|Back|Next|Previous|Reset|Hide|Show|Preview)\b/i.test(label)) button.classList.add('btn', 'btn-light');
+  else button.classList.add('btn', 'btn-primary');
+  button.classList.remove('secondary', 'danger');
+}
 for (const tab of Object.keys(tabs)) {
   const panel = $(tab);
   const toolbar = document.createElement('div');
@@ -1469,6 +1526,7 @@ for (const tab of Object.keys(tabs)) {
   status.setAttribute('role', 'status');
   const refresh = document.createElement('button');
   refresh.type = 'button';
+  refresh.className = 'btn btn-light';
   refresh.textContent = 'Refresh';
   if (tab === 'photos') refresh.id = 'studio-refresh-folders';
   refresh.addEventListener('click', async () =&gt; {
@@ -1490,10 +1548,12 @@ for (const tab of Object.keys(tabs)) {
   if (panel.querySelector('input, select, textarea')) {
     const clear = document.createElement('button');
     clear.type = 'button';
+    clear.className = 'btn btn-light';
     clear.textContent = 'Clear';
     clear.addEventListener('click', () =&gt; {
       if (photoUploadBusy) { status.textContent = 'Wait for the photo upload to finish.'; return; }
       if (panel.id === 'production' &amp;&amp; reelBusy) { status.textContent = 'Wait for the preview to finish.'; return; }
+      if (tab === 'cloud' &amp;&amp; window.isCloudUploadBusy?.()) { status.textContent = 'Wait for the active upload to finish.'; return; }
       clearStudioInputs(panel);
       status.textContent = 'Inputs cleared.';
     });

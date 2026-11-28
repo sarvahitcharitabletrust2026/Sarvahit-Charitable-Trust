@@ -9,9 +9,10 @@
     node.textContent = text;
     node.classList.toggle("media-error", error);
   }
-  function button(text, handler) {
+  function button(text, handler, variant = "light") {
     const node = element("button", text);
     node.type = "button";
+    node.className = "btn btn-" + variant;
     node.addEventListener("click", async event => {
       const result = handler(event);
       if (!result?.then) return;
@@ -41,9 +42,10 @@
     return input;
   }
   const styles = element("style", "[hidden]{display:none!important} #cloud dt{font-weight:700} #cloud dd{margin:0 0 .5rem} #cloud form.card{margin:1rem 0} #cloud button{margin:.15rem}");
-  styles.textContent += ".media-error{color:#a92328!important}.media-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}.media-status-card{text-align:center;border:1px solid #bfd6ca;border-radius:10px}.media-status-card dt,.media-status-pill{display:block;padding:10px}.media-status-pill{position:relative;background:#fce4e4;color:#8e2424;font-weight:700}.media-status-pill.connected{background:#d7f0df;color:#105a38}.media-status-tooltip{display:none;position:absolute;z-index:5;inset:auto 0 100%;padding:9px;background:#163d32;color:white;border-radius:8px;overflow-wrap:anywhere}.media-status-pill:is(:hover,:focus) .media-status-tooltip{display:block}#cloud .media-job-details ul{max-height:15rem;overflow:auto}#cloud .media-operation{margin-block:1rem}";
+  styles.textContent += ".media-error{color:#a92328!important}.media-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}.media-status-card{text-align:center;border:1px solid #bfd6ca;border-radius:10px}.media-status-card dt,.media-status-pill{display:block;padding:10px}.media-status-pill{position:relative;background:#fce4e4;color:#8e2424;font-weight:700}.media-status-pill.connected{background:#d7f0df;color:#105a38}.media-status-pill:is(:hover,:focus) #cloud .media-job-details ul{max-height:15rem;overflow:auto}#cloud .media-operation{margin-block:1rem}";
+  styles.textContent += ".media-connection-details{margin:8px 10px;text-align:left}.media-connection-details summary{cursor:pointer;color:#0c4b3b;font-weight:700}.media-connection-details p{margin:5px 0;overflow-wrap:anywhere}.media-status-card dd{margin:0}#cloud button.btn{margin:0}";
   document.head.append(styles);
-  styles.textContent += ".media-status-card{background:#f1f7f3}.media-status-card h3{margin:0;padding:10px}.media-status-pill{border-radius:0 0 9px 9px}.media-connection-actions{display:grid;gap:10px;margin-block:16px}.media-connection-actions div{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.media-connection-actions strong{flex:0 0 8rem}.media-card-header{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.media-card-header h3{margin:0}#cloud .media-card-header button{font-size:.85rem;padding:5px 10px;min-height:0}.media-preview summary{cursor:pointer;font-weight:700;color:#0c4b3b}.media-status-tooltip{inset:100% 0 auto}";
+  styles.textContent += ".media-status-card{background:#f1f7f3}.media-status-card h3{margin:0;padding:10px}.media-status-pill{border-radius:0 0 9px 9px}.media-connection-actions{display:grid;gap:10px;margin-block:16px}.media-connection-actions div{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.media-connection-actions strong{flex:0 0 8rem}.media-card-header{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.media-card-header h3{margin:0}.media-preview summary{cursor:pointer;font-weight:700;color:#0c4b3b}";
   const cloud = $("cloud");
   const videos = $("videos");
   const dashboard = $("dashboard");
@@ -58,6 +60,9 @@
   connectionInfo.setAttribute("aria-live", "polite");
   const driveAccessHelp = element("p");
   driveAccessHelp.hidden = true;
+  driveAccessHelp.className = "message error";
+  driveAccessHelp.style.display = "block";
+  driveAccessHelp.setAttribute("role", "status");
   const accountOverview = $("accountList");
   accountOverview.className = "media-status-grid";
   const accountMetrics = accountOverview.parentElement.querySelector("p");
@@ -104,21 +109,19 @@
       const definition = element(scope === "cloud" ? "dd" : "div");
       const badge = element("span", verified ? "Connected" : "Unconnected");
       badge.className = "media-status-pill" + (verified ? " connected" : "");
-      badge.tabIndex = 0;
-      badge.addEventListener("click", () => badge.focus());
       const email = state.accounts?.[provider];
       const description = verified
         ? [...new Set([accountName, email].filter(Boolean))].join(" · ") || "Account verified by Google."
         : ["instagram", "facebook", "whatsapp"].includes(provider)
           ? "This platform has no connection configured in the Media Studio."
           : error || requestError || "Connect this account in Cloud Publishing & Setup.";
-      const tooltip = element("span", description);
-      tooltip.className = "media-status-tooltip";
-      tooltip.id = scope + "-media-account-" + provider;
-      tooltip.setAttribute("role", "tooltip");
-      badge.setAttribute("aria-describedby", tooltip.id);
-      badge.append(tooltip);
       definition.append(badge);
+      if (!(scope === "cloud" && provider === "drive" && error)) {
+        const disclosure = element("details");
+        disclosure.className = "media-connection-details";
+        disclosure.append(element("summary", "Connection details"), element("p", description));
+        definition.append(disclosure);
+      }
       card.append(element(scope === "cloud" ? "dt" : "h3", name), definition);
       return card;
     }
@@ -205,20 +208,20 @@
     actions.append(row);
   }
   actionRow("Google Drive",
-    button("Connect Google Drive", () => connect("drive")),
-    button("Authorize Drive Folder", () => run(authorizeDriveFolder)),
+    button("Connect Google Drive", () => connect("drive"), "primary"),
+    button("Authorize Drive Folder", () => run(authorizeDriveFolder), "primary"),
     button("Reconnect Google Drive", () => connect("drive"))
   );
   actionRow("YouTube",
-    button("Connect YouTube Channel", () => connect("youtube")),
-    button("Connect YouTube Analytics", () => connect("analytics"))
+    button("Connect YouTube Channel", () => connect("youtube"), "primary"),
+    button("Connect YouTube Analytics", () => connect("analytics"), "primary")
   );
   actionRow("Account access",
     button("Test Connection", () => run(status)), button("Refresh Status", () => run(status)),
     button("Disconnect Accounts", () => {
       if (!connected || !confirm("Revoke this portal’s Google permissions and disconnect all Google connections?")) return;
       run(async () => { await request("disconnect"); await status(); return "Google confirmed revocation."; });
-    })
+    }, "danger")
   );
   account.append(connectionInfo, driveAccessHelp, actions, message);
   const cloudHeader = cloud.querySelector(".studio-tab-header");
@@ -276,6 +279,7 @@
   progress.max = 100;
   progress.value = 0;
   const submit = element("button", "Upload Media");
+  submit.className = "btn btn-primary";
   submit.type = "submit";
   const uploadHint = element("p");
   uploadHint.className = "muted";
@@ -375,7 +379,7 @@
           await loadHistory();
           return "Queued upload cancelled.";
         }, jobsMessage);
-      }));
+      }, "danger"));
       if (job.status === "failed") row.append(" ", button("Retry", () => run(async () => {
         await request("retry", { id: job.id }); await loadHistory(); return "Upload queued for retry.";
       }, jobsMessage)));
@@ -427,6 +431,7 @@
     editDescription.value = video?.description || "";
   });
   const editSubmit = element("button", "Save YouTube Changes");
+  editSubmit.className = "btn btn-primary";
   editSubmit.type = "submit";
   const editMessage = element("p");
   editMessage.setAttribute("role", "status");
@@ -506,4 +511,5 @@
     if (tab === "accounts") return run(status);
     if (tab === "cloud" || tab === "dashboard") return run(async () => { await status(); await loadHistory(); });
   };
+  window.isCloudUploadBusy = () => Boolean(upload);
 })();
