@@ -1703,7 +1703,7 @@ for (const tab of Object.keys(tabs)) {
     const PAYMENT_BUCKET = "payment-screenshots";
     const FINANCE_BUCKET = "trust-finance-private";
     const FINANCE_TABLE = "trust_financial_entries";
-    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyBp7IU2hRjlhLM_Fv1lMD1UKGSAbWxAHrtufJEtnr3PTtgTyIMbtYYOb2icj7EKHYK/exec";
+    const GOOGLE_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzTS6PmZFue-KvXl-QBTXoOVxOigqmVm3XAwyo3ZwE71vqys4_l-ytL2_0e_dg1YEPa/exec";
     let adminAccessToken = sessionStorage.getItem("trustAdminAccessToken") || "";
     let portalRole = "";
     let portalIdentity = null;
@@ -3561,12 +3561,11 @@ for (const tab of Object.keys(tabs)) {
           body: JSON.stringify(record)
         });
         if (!saved?.length) throw new Error("This document changed in another session. Reopen it and try again.");
-        docDialog.close();
         pendingDocUpload = null;
         docYear.value = category === "Permanent Documents" ? "permanent" : year;
         clearTimeout(docSuccessTimer);
         const success = publish ? "Document published successfully." : "Draft saved successfully.";
-        docSuccess.textContent = success;
+        docSuccess.textContent = "";
         docSuccess.classList.remove("is-error");
         void loadFinancialDocuments();
         try {
@@ -3574,11 +3573,13 @@ for (const tab of Object.keys(tabs)) {
             type: "financial_document_backup", fiscalYear: year, category,
             storagePath: path, fileName: record.file_name, accessToken: adminAccessToken
           });
+          docSuccess.textContent = success;
           docSuccessTimer = setTimeout(() => { docSuccess.textContent = ""; }, 6000);
         } catch (error) {
           docSuccess.classList.add("is-error");
           docSuccess.textContent = success + " Drive backup failed: " + error.message;
         }
+        docDialog.close();
       } catch (error) {
         docFormMessage.classList.add("is-error");
         docFormMessage.textContent = error.message || "Could not save the document.";
